@@ -1,0 +1,14 @@
+{
+  "region": "eu-central-1",
+  "app": {
+    "name": "services-platform-backend",
+    "root": "backend",
+    "framework": "bun",
+    "entry": "src/index.js",
+    "httpPort": 3000,
+    "build": {
+      "command": "echo 'Build completo'",
+      "outputDirectory": "."
+    }
+  }
+}
