@@ -7,6 +7,7 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "build": "echo 'Build completo'",
+    "test:connections": "node scripts/test-connections.js",
     "prisma:gen": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
@@ -30,6 +31,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
+    "pg": "^8.22.0",
     "stripe": "^14.7.0",
     "zod": "^3.22.4"
   },
