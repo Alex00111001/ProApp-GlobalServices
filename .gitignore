@@ -1,35 +1,19 @@
 ```
-# Dependencies
-node_modules/
-
-# Prisma
-prisma/migrations/
-
-# Environment
+# Environment variables
 .env
 .env.local
 .env.*
 
+# Dependencies
+node_modules/
+
 # Logs
 *.log
 
-# Temporary files
-*.tmp
-*.swp
-*.swo
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# IDE
-.vscode/
-.idea/
+# Build artifacts
+dist/
+build/
+target/
 
 # Python
 __pycache__/
@@ -37,28 +21,11 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
-*.so
-
-# Build outputs
-dist/
-build/
-*.out
-*.exe
-*.dll
-*.so
-*.dylib
-*.jar
-*.war
-*.zip
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-
-# Testing
-.mypy_cache/
-.pytest_cache/
-.nyc_output/
-coverage/
+env/
+venv/
+.venv/
+pip-log.txt
+pip-selfcheck.json
 
 # Node.js
 npm-debug.log*
@@ -67,9 +34,15 @@ yarn-error.log*
 
 # Database
 *.db
-*.db-journal
+*.sqlite
+*.sqlite3
 
-# Cache
-.cache/
-.target/
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 ```
