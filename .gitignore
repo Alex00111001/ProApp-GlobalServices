@@ -1,7 +1,6 @@
 ```
 # Dependencies
 node_modules/
-backend/node_modules/
 
 # Environment variables
 .env
@@ -17,24 +16,20 @@ backend/node_modules/
 *.swp
 *.swo
 
-# Build outputs
-dist/
-build/
-target/
-backend/dist/
-backend/build/
-
 # Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
+# Build outputs
+dist/
+build/
+*.egg-info/
+
 # Temporary files
 *.tmp
-*.temp
-
-# OS generated files
+*~
 .DS_Store
 Thumbs.db
 
@@ -43,11 +38,7 @@ coverage/
 htmlcov/
 .coverage
 
-# Prisma
-backend/prisma/migrations/
-*.generated.ts
-
-# Package lock files (already tracked in your case, but good to have)
-package-lock.json
-backend/package-lock.json
+# Testing
+.pytest_cache/
+.mypy_cache/
 ```
