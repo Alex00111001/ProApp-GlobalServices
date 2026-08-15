@@ -1,0 +1,70 @@
+{
+  "expo": {
+    "name": "HomeServices Client",
+    "slug": "home-services-client",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.homeservices.client"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.homeservices.client",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_CALENDAR",
+        "WRITE_CALENDAR"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app needs access to your photos to upload profile pictures and service requests.",
+          "cameraPermission": "The app needs access to your camera to take photos for service requests."
+        }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "The app needs access to your calendar to schedule services."
+        }
+      ],
+      [
+        "react-native-maps",
+        {
+          "locationWhenInUsePermission": "The app needs access to your location to find nearby professionals."
+        }
+      ]
+    ],
+    "scheme": "homeservices-client",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
