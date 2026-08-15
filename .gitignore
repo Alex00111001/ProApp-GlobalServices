@@ -2,74 +2,48 @@
 # Dependencies
 node_modules/
 
-# Prisma
-prisma/migrations/
+# Build outputs
+dist/
+build/
+target/
 
-# Environment
+# Environment variables
 .env
 .env.local
-.env.*
+*.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # Logs
 *.log
 
-# Temporary files
+# Temp files
 *.tmp
-*.swp
-*.swo
 
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# IDE
-.vscode/
-.idea/
-
-# Python
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-*.so
 
-# Build outputs
-dist/
-build/
-*.out
-*.exe
-*.dll
-*.so
-*.dylib
-*.jar
-*.war
-*.zip
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-
-# Testing
-.mypy_cache/
-.pytest_cache/
-.nyc_output/
+# Coverage reports
 coverage/
+htmlcov/
+.coverage
 
-# Node.js
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Prisma
+prisma/migrations/
+prisma/schema.prisma.bak
 
-# Database
-*.db
-*.db-journal
-
-# Cache
-.cache/
-.target/
+# Mobile app specific
+.mobile/
+ios/Pods/
+ios/build/
+android/build/
+*.apk
+*.aab
 ```
