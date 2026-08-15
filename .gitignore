@@ -1,16 +1,15 @@
 ```
 # Dependencies
 node_modules/
-
-# Build outputs
-dist/
-build/
-target/
+backend/node_modules/
 
 # Environment variables
 .env
 .env.local
 *.env.*
+
+# Logs
+*.log
 
 # IDE files
 .vscode/
@@ -18,11 +17,12 @@ target/
 *.swp
 *.swo
 
-# Logs
-*.log
-
-# Temp files
-*.tmp
+# Build outputs
+dist/
+build/
+target/
+backend/dist/
+backend/build/
 
 # Python cache
 __pycache__/
@@ -30,20 +30,24 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
 # Coverage reports
 coverage/
 htmlcov/
 .coverage
 
 # Prisma
-prisma/migrations/
-prisma/schema.prisma.bak
+backend/prisma/migrations/
+*.generated.ts
 
-# Mobile app specific
-.mobile/
-ios/Pods/
-ios/build/
-android/build/
-*.apk
-*.aab
+# Package lock files (already tracked in your case, but good to have)
+package-lock.json
+backend/package-lock.json
 ```
