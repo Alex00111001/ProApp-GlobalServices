@@ -12,7 +12,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "prisma:push": "prisma db push",
-    "seed": "ts-node prisma/seed.ts",
+    "seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset && npm run seed"
   },
   "keywords": [
@@ -43,10 +43,11 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20.19.0",
+    "@types/node": "^20.19.43",
     "nodemon": "^3.1.14",
     "prisma": "^7.9.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.3"
   }
 }
