@@ -1,11 +1,35 @@
+// 1. Cargar variables de entorno EXPLÍCITAMENTE antes de nada
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+import bcrypt from 'bcryptjs';
+// Carga el .env desde la carpeta backend
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+// Verificación temprana para depuración
+if (!process.env.DATABASE_URL) {
+  console.error('❌ ERROR CRÍTICO: No se encontró DATABASE_URL en el .env');
+  console.error('📂 Ruta buscando .env:', path.resolve(__dirname, '../.env'));
+  console.error('📄 Contenido del proceso env:', Object.keys(process.env));
+  process.exit(1);
+}
+
+// 2. Imports normales después de cargar dotenv
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
-import bcrypt from 'bcryptjs';
 
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/servicepro?schema=public';
+// Configuración de conexión
+const connectionString = process.env.DATABASE_URL;
 
-const pool = new pg.Pool({ connectionString });
+console.log('🔗 Conectando a la base de datos...');
+
+const pool = new pg.Pool({
+  connectionString,
+  max: 5, // Limitar conexiones para evitar saturar el pooler de Supabase
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
