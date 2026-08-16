@@ -10,6 +10,10 @@ const professionalRoutes = require('./routes/professional.routes');
 const bookingRoutes = require('./routes/booking.routes');
 const uploadRoutes = require('./routes/upload.routes');
 const adminRoutes = require('./routes/admin.routes');
+const paymentRoutes = require('./routes/payment.routes');
+const notificationRoutes = require('./routes/notification.routes');
+const favoriteRoutes = require('./routes/favorite.routes');
+const reviewRoutes = require('./routes/review.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +51,10 @@ app.use('/api/professionals', professionalRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/favorites', favoriteRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Ruta 404
 app.use((req, res) => {
