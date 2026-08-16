@@ -1,26 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
 
 import { Button, Input } from '@/components/ui';
 import { useAuthStore } from '@/store/authStore';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
 import { LoginCredentials } from '@/types';
 
-type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  Home: undefined;
-  MainTabs: undefined;
-};
-
-type NavigationProp = StackNavigationProp<RootStackParamList>;
-
 export const LoginScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const router = useRouter();
   const { login, isLoading, error } = useAuthStore();
   
   const [formData, setFormData] = useState<LoginCredentials>({
