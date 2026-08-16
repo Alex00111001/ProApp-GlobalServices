@@ -6,11 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -61,7 +56,8 @@
         {
           "locationWhenInUsePermission": "The app needs access to your location to find nearby professionals."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "scheme": "homeservices-client",
     "experiments": {
