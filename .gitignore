@@ -1,1 +1,82 @@
-Nothing should be ignored based on the provided file changes. The only modified file is a source code file (`LoginScreen.tsx`) which should not be added to .gitignore.
+Nothing should be ignored based on the provided file changes. The only modified file is a source code file (`LoginScreen.tsx`) which should not be added to .gitignore.# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Expo / Metro
+.expo/
+/dist/
+/web-build/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Native builds
+*.ipa
+*.apk
+*.aab
+*.xcarchive
+build/
+
+# Bundle artifacts
+*.jsbundle
+
+# CocoaPods (iOS)
+/ios/Pods/
+/vendor/bundle/
+
+# Fastlane
+*/fastlane/report.xml
+*/fastlane/Preview.html
+*/fastlane/screenshots
+*/fastlane/test_output
+
+# Gradle (Android)
+*/gradle/wrapper/gradle-wrapper.jar
+!**/gradle/wrapper/gradle-wrapper.properties
+.gradle/
+
+# IDEs
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Temporary files
+*.log
+*.tmp
+.temp/
