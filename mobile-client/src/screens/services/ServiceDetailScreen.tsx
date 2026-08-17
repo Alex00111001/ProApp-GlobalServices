@@ -1,30 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 
-type RootStackParamList = {
-  ServiceDetail: { serviceId: string };
-  BookingFlow: { professionalId: string; serviceId?: string };
-};
-
-type NavigationProp = StackNavigationProp<RootStackParamList>;
-type RoutePropType = RouteProp<RootStackParamList, 'ServiceDetail'>;
-
 export const ServiceDetailScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
-  const route = useRoute<RoutePropType>();
-  const { serviceId } = route.params;
+  const router = useRouter();
+  const { serviceId } = useLocalSearchParams<{ serviceId: string }>();
 
   // Mock data - will be replaced with API call
   const service = {
-    id: serviceId,
+    id: serviceId || '1',
     name: 'Complete Electrical Installation',
     description: 'Professional electrical installation service for residential and commercial properties. Includes wiring, outlets, switches, circuit breakers, and safety inspections.',
     basePrice: 150,
@@ -58,7 +49,7 @@ export const ServiceDetailScreen: React.FC = () => {
               </TouchableOpacity>
             ))}
           </View>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </TouchableOpacity>
         </View>
@@ -114,7 +105,7 @@ export const ServiceDetailScreen: React.FC = () => {
         </View>
         <Button
           title="Book This Service"
-          onPress={() => navigation.navigate('BookingFlow' as never, { serviceId })}
+          onPress={() => router.push(`/booking-flow?professionalId=${service.id}&serviceId=${service.id}`)}
           style={styles.bookButton}
         />
       </View>

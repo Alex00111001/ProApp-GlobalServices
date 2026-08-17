@@ -129,7 +129,7 @@ export const LoginScreen: React.FC = () => {
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register' as never)}>
+            <TouchableOpacity onPress={() => router.push('/auth/register')}>
               <Text style={styles.linkText}>Sign Up</Text>
             </TouchableOpacity>
           </View>

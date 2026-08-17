@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
+
 
 import { ProfessionalCard } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 import { ProfessionalProfile } from '@/types';
 
-type RootStackParamList = {
-  Favorites: undefined;
-  ProfessionalDetail: { id: string };
 };
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 export const FavoritesScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const router = useRouter();
   
   const [favorites, setFavorites] = useState<ProfessionalProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,7 +58,7 @@ export const FavoritesScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Favorites</Text>
@@ -78,7 +74,7 @@ export const FavoritesScreen: React.FC = () => {
           </Text>
           <TouchableOpacity
             style={styles.browseButton}
-            onPress={() => navigation.goBack()}
+            onPress={() => router.back()}
           >
             <Text style={styles.browseButtonText}>Browse Professionals</Text>
           </TouchableOpacity>
@@ -96,7 +92,7 @@ export const FavoritesScreen: React.FC = () => {
             renderItem={({ item }) => (
               <ProfessionalCard
                 professional={item}
-                onPress={() => navigation.navigate('ProfessionalDetail' as never, { id: item.id })}
+                onPress={() => router.push(`/professional/${item.id}`)}
                 isFavorite={true}
                 onToggleFavorite={() => handleToggleFavorite(item.id)}
               />
