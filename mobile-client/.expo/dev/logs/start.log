@@ -1,0 +1,16 @@
+{"_e":"root:init","_t":1786973801827,"format":"v0-jsonl","version":"57.0.16"}
+{"_e":"env:mode","_t":1786973801827,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1786973801829,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1786973802166,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../src/app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1786973802412,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1786973802766,"plugins":[]}
+{"_e":"metro:server_log","_t":1786973808372,"level":"error","data":["An unknown error occurred while installing React Native DevTools. Details:\n\n/workspace/mobile-client/node_modules/@react-native/debugger-shell/bin/react-native-devtools: error while loading shared libraries: libgtk-3.so.0: cannot open shared object file: No such file or directory\n"]}
+{"_e":"metro:instantiate","_t":1786973809987,"atlas":false,"workers":1,"host":"::","port":8081}
+{"_e":"root:init","_t":1786973844001,"format":"v0-jsonl","version":"57.0.16"}
+{"_e":"env:mode","_t":1786973844002,"nodeEnv":"production","babelEnv":"production","mode":"production"}
+{"_e":"env:load","_t":1786973844003,"mode":"production","files":[],"env":{}}
+{"_e":"devserver:start","_t":1786973844314,"mode":"production","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../src/app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1786973844590,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"metro:server_log","_t":1786973844701,"level":"error","data":["An unknown error occurred while installing React Native DevTools. Details:\n\n/workspace/mobile-client/node_modules/@react-native/debugger-shell/bin/react-native-devtools: error while loading shared libraries: libgtk-3.so.0: cannot open shared object file: No such file or directory\n"]}
+{"_e":"expo:dev-tools-plugin:load","_t":1786973844887,"plugins":[]}
+{"_e":"metro:instantiate","_t":1786973850382,"atlas":false,"workers":1,"host":"::","port":8081}
