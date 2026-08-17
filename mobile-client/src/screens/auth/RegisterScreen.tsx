@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -25,7 +25,7 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export const RegisterScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const router = useRouter();
   const { register: registerUser, isLoading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -181,7 +181,7 @@ export const RegisterScreen: React.FC = () => {
               <Text style={styles.loginText}>Already have an account? </Text>
               <Button
                 title="Sign In"
-                onPress={() => navigation.navigate('Login' as never)}
+                onPress={() => router.push('/auth/login')}
                 variant="ghost"
                 size="small"
               />

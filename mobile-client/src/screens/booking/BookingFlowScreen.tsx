@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 
-type RootStackParamList = {
-  BookingFlow: { professionalId: string; serviceId?: string };
   Checkout: { bookingId: string; amount: number };
   ProfessionalDetail: { id: string };
 };
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
-type RoutePropType = RouteProp<RootStackParamList, 'BookingFlow'>;
 
 interface ServiceItem {
   id: string;
@@ -28,9 +24,9 @@ interface ServiceItem {
 }
 
 export const BookingFlowScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const router = useRouter();
   const route = useRoute<RoutePropType>();
-  const { professionalId, serviceId } = route.params;
+  // Params now from useLocalSearchParams
 
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -94,7 +90,7 @@ export const BookingFlowScreen: React.FC = () => {
       const response = await apiClient.createBooking(bookingData);
       
       // Navigate to checkout
-      navigation.navigate('Checkout' as never, { 
+      router.push(`/checkout?bookingId=${bookingId}&amount=${amount}`); // was: navigation.navigate('Checkout' 
         bookingId: response.id, 
         amount: total 
       });
@@ -303,7 +299,7 @@ export const BookingFlowScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => (step > 1 ? setStep(step - 1) : navigation.goBack())}>
+        <TouchableOpacity onPress={() => (step > 1 ? setStep(step - 1) : router.back())}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Book Service</Text>
