@@ -1,3 +1,35 @@
-```ts
+```
+# Dependencies
+node_modules/
+
+# Build artifacts
+mobile-client/node_modules/react-native-screens/lib/
+mobile-client/node_modules/react-native-vector-icons/dist/
+mobile-client/node_modules/react-native-worklets/lib/
+mobile-client/node_modules/react-native/Libraries/
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
 
 ```
