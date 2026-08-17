@@ -44,7 +44,7 @@ export const LoginScreen: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={styles.container as StyleProp<ViewStyle>}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContent as StyleProp<ViewStyle>} keyboardShouldPersistTaps="handled">
