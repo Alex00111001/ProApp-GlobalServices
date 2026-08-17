@@ -1,102 +1,53 @@
-```
 # Dependencies
 node_modules/
 
-# Build outputs
+# Build artifacts
 dist/
 build/
-target/
+*.js.map
+*.ts.map
+*.jsx.map
+*.tsx.map
 
 # Environment variables
 .env
 .env.local
 .env.*
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
+!.env.example
 
 # Logs
 *.log
 
 # Temporary files
 *.tmp
+*.temp
+.DS_Store
+Thumbs.db
 
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git/
-.mypy_cache/
-.pytest_cache/
-.hypothesis/
-
-# Node.js specific
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-node_modules/
-dist/
-build/
-.nyc_output
-coverage/
-*.lcov
-.next/
-.nuxt/
-public/
-__tests__/
-test/
-spec/
-*.min.js
-*.min.css
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # Mobile app specific
-# iOS
-Pods/
 *.ipa
-*.app
-*.xcworkspace
-*.xcodeproj/
-build/
-
-# Android
-android/.gradle/
-android/build/
 *.apk
 *.aab
-*.dex
-
-# React Native
-metro.config.js
-index.js
-index.android.js
-index.ios.js
-
-# Expo
-.expo/
-.expo-shared/
-
-# General mobile
 platforms/
 plugins/
 hooks/
-*.keystore
-*.jks
-```
+
+# Expo specific
+.expo/
+.expo-shared/
+web-build/
+.cache/
+
+# React Native specific
+*.xcodeproj
+*.xcworkspace
+Pods/
+ios/Pods/
+android/build/
+android/app/build/
