@@ -9,10 +9,6 @@ import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { ProfessionalProfile, Portfolio, Certification } from '@/types';
 
-  BookingFlow: { professionalId: string; serviceId?: string };
-};
-
-
 interface ProfessionalDetailScreenProps {
   professional: ProfessionalProfile & {
     services?: any[];
@@ -22,12 +18,11 @@ interface ProfessionalDetailScreenProps {
 
 export const ProfessionalDetailScreen: React.FC = () => {
   const router = useRouter();
-  const route = useRoute<RoutePropType>();
-  // Params now from useLocalSearchParams
-
+  const params = useLocalSearchParams<{ professionalId?: string; serviceId?: string }>();
+  
   // Mock data - will be replaced with API call
   const professional: ProfessionalDetailScreenProps['professional'] = {
-    id,
+    id: params.professionalId || '1',
     userId: '1',
     bio: 'Professional electrician with over 10 years of experience. Specialized in residential and commercial electrical installations, repairs, and maintenance. Licensed and insured.',
     hourlyRate: 45,
@@ -205,7 +200,7 @@ export const ProfessionalDetailScreen: React.FC = () => {
         </View>
         <Button
           title="Book Now"
-          onPress={() => router.push(`/booking-flow?professionalId=${professional.id }})}
+          onPress={() => router.push(`/booking-flow?professionalId=${professional.id}`)}
           style={styles.bookButton}
         />
       </View>
