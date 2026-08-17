@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
+
 
 import { ProfessionalCard } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 import { ProfessionalProfile } from '@/types';
 
-type RootStackParamList = {
-  Search: undefined;
-  ProfessionalDetail: { id: string };
 };
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 interface FilterState {
   category: string;
@@ -25,7 +21,7 @@ interface FilterState {
 }
 
 export const SearchScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const router = useRouter();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [professionals, setProfessionals] = useState<ProfessionalProfile[]>([]);
@@ -104,7 +100,7 @@ export const SearchScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Search</Text>
@@ -189,7 +185,7 @@ export const SearchScreen: React.FC = () => {
         renderItem={({ item }) => (
           <ProfessionalCard
             professional={item}
-            onPress={() => navigation.navigate('ProfessionalDetail' as never, { id: item.id })}
+            onPress={() => router.push(`/professional/${item.id}`)}
           />
         )}
         keyExtractor={(item) => item.id}
