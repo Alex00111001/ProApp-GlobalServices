@@ -1,27 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
 
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 
-type RootStackParamList = {
-  Checkout: { bookingId: string; amount: number };
-  BookingDetail: { bookingId: string };
-};
-
-type NavigationProp = StackNavigationProp<RootStackParamList>;
-type RoutePropType = RouteProp<RootStackParamList, 'Checkout'>;
-
 export const CheckoutScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
-  const route = useRoute<RoutePropType>();
-  const { bookingId, amount } = route.params;
+  const router = useRouter();
+  const { bookingId, amount } = useLocalSearchParams<{ bookingId: string; amount: string }>();
+  const numericAmount = parseFloat(amount || '0');
   
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +37,7 @@ export const CheckoutScreen: React.FC = () => {
       try {
         await apiClient.createPaymentIntent(bookingId, total);
         Alert.alert('Success', 'Booking confirmed! Pay the professional in cash.');
-        navigation.navigate('BookingDetail' as never, { bookingId });
+        router.push(`/booking/${bookingId}`);
       } catch (error) {
         Alert.alert('Error', 'Failed to confirm booking');
       }
@@ -79,7 +70,7 @@ export const CheckoutScreen: React.FC = () => {
 
       // Payment successful
       Alert.alert('Success', 'Payment completed! Your booking is confirmed.');
-      navigation.navigate('BookingDetail' as never, { bookingId });
+      router.push(`/booking/${bookingId}`);
     } catch (error: any) {
       Alert.alert('Payment Failed', error.message || 'Please try again');
     } finally {
@@ -91,7 +82,7 @@ export const CheckoutScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Checkout</Text>

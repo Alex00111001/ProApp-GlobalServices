@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
+
 
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 
-type RootStackParamList = {
-  Notifications: undefined;
-  BookingDetail: { bookingId: string };
 };
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 interface Notification {
   id: string;
@@ -26,7 +22,7 @@ interface Notification {
 }
 
 export const NotificationsScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const router = useRouter();
   
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,7 +71,7 @@ export const NotificationsScreen: React.FC = () => {
     }
     
     if (notification.bookingId) {
-      navigation.navigate('BookingDetail' as never, { bookingId: notification.bookingId });
+      router.push(`/booking/${notification.bookingId}`);
     }
   };
 
@@ -138,7 +134,7 @@ export const NotificationsScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notifications</Text>
