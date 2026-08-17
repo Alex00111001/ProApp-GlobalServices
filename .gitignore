@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 Nothing should be ignored based on the provided file changes. The only modified file is a source code file (`LoginScreen.tsx`) which should not be added to .gitignore.# Dependencies
 node_modules/
 /.pnp
@@ -86,3 +87,40 @@ yarn-error.log*
 
 ```
 >>>>>>> d95c757a8d5ac873d1da8d49c1974a28eeab0ccc
+=======
+```
+# Dependencies
+node_modules/
+
+# Build artifacts
+mobile-client/node_modules/react-native-screens/lib/
+mobile-client/node_modules/react-native-vector-icons/dist/
+mobile-client/node_modules/react-native-worklets/lib/
+mobile-client/node_modules/react-native/Libraries/
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+
+```
+>>>>>>> fe5f4155f541f2e195cfc9ead86fcc27d3911a44
