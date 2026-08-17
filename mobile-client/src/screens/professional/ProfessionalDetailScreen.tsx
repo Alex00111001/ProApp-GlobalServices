@@ -1,21 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
+
 
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { ProfessionalProfile, Portfolio, Certification } from '@/types';
 
-type RootStackParamList = {
-  ProfessionalDetail: { id: string };
   BookingFlow: { professionalId: string; serviceId?: string };
 };
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
-type RoutePropType = RouteProp<RootStackParamList, 'ProfessionalDetail'>;
 
 interface ProfessionalDetailScreenProps {
   professional: ProfessionalProfile & {
@@ -25,9 +21,9 @@ interface ProfessionalDetailScreenProps {
 }
 
 export const ProfessionalDetailScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const router = useRouter();
   const route = useRoute<RoutePropType>();
-  const { id } = route.params;
+  // Params now from useLocalSearchParams
 
   // Mock data - will be replaced with API call
   const professional: ProfessionalDetailScreenProps['professional'] = {
@@ -94,7 +90,7 @@ export const ProfessionalDetailScreen: React.FC = () => {
             source={{ uri: professional.user.avatar || 'https://via.placeholder.com/400x200' }}
             style={styles.headerImage}
           />
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.favoriteButton}>
@@ -209,7 +205,7 @@ export const ProfessionalDetailScreen: React.FC = () => {
         </View>
         <Button
           title="Book Now"
-          onPress={() => navigation.navigate('BookingFlow' as never, { professionalId: professional.id })}
+          onPress={() => router.push(`/booking-flow?professionalId=${professional.id }})}
           style={styles.bookButton}
         />
       </View>
