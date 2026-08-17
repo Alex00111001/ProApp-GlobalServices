@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { ProfessionalCard } from '@/components/ui';
@@ -10,7 +10,7 @@ import { COLORS, SPACING, FONTS } from '@/constants/theme';
 import { ProfessionalProfile } from '@/types';
 
 export const HomeScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const router = useRouter();
   const { categories, professionals, isLoadingCategories, isLoadingProfessionals, fetchCategories, fetchProfessionals } = useAppStore();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export const HomeScreen: React.FC = () => {
   const renderCategory = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.categoryCard}
-      onPress={() => navigation.navigate('Professionals' as never, { categoryId: item.id })}
+      onPress={() => router.push(`/professionals?categoryId=${item.id}`)}
     >
       <View style={styles.categoryIcon}>
         <Ionicons name={item.icon || 'construct-outline'} size={24} color={COLORS.primary} />
@@ -33,7 +33,7 @@ export const HomeScreen: React.FC = () => {
   const renderProfessional = ({ item }: { item: ProfessionalProfile }) => (
     <ProfessionalCard
       professional={item}
-      onPress={() => navigation.navigate('ProfessionalDetail' as never, { id: item.id })}
+      onPress={() => router.push(`/professional/${item.id}`)}
     />
   );
 

@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StackNavigationProp } from '@react-navigation/stack';
+
 import MapView, { Marker } from 'react-native-maps';
 
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 
-type RootStackParamList = {
-  BookingDetail: { bookingId: string };
   ProfessionalDetail: { id: string };
 };
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
-type RoutePropType = RouteProp<RootStackParamList, 'BookingDetail'>;
 
 interface BookingService {
   id: string;
@@ -76,9 +72,9 @@ interface Booking {
 }
 
 export const BookingDetailScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const router = useRouter();
   const route = useRoute<RoutePropType>();
-  const { bookingId } = route.params;
+  // Params now from useLocalSearchParams
 
   const [booking, setBooking] = useState<Booking | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -237,7 +233,7 @@ export const BookingDetailScreen: React.FC = () => {
         <View style={styles.emptyContainer}>
           <Ionicons name="calendar-outline" size={64} color={COLORS.gray400} />
           <Text style={styles.emptyText}>Booking not found</Text>
-          <Button title="Go Back" onPress={() => navigation.goBack()} />
+          <Button title="Go Back" onPress={() => router.back()} />
         </View>
       </SafeAreaView>
     );
@@ -258,7 +254,7 @@ export const BookingDetailScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Booking Details</Text>
@@ -282,7 +278,7 @@ export const BookingDetailScreen: React.FC = () => {
             <Text style={styles.sectionTitle}>Professional</Text>
             <TouchableOpacity
               style={styles.professionalCard}
-              onPress={() => navigation.navigate('ProfessionalDetail' as never, { id: booking.professional!.id })}
+              onPress={() => router.push(`/professional/${booking.professional!.id}`)}
             >
               <Image
                 source={{ uri: booking.professional.user.avatar || 'https://via.placeholder.com/100' }}
