@@ -1,94 +1,52 @@
-node_modules/
-/.pnp
-.pnp.js
-
-# Expo / Metro
-.expo/
-/dist/
-/web-build/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-# Native builds
-*.ipa
-*.apk
-*.aab
-*.xcarchive
+```
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+dist/
 build/
+*.class
+*.exe
+*.dll
+*.so
+*.a
+*.out
 
-# Bundle artifacts
-*.jsbundle
-
-# CocoaPods (iOS)
-/ios/Pods/
-/vendor/bundle/
-
-# Fastlane
-*/fastlane/report.xml
-*/fastlane/Preview.html
-*/fastlane/screenshots
-*/fastlane/test_output
-
-# Gradle (Android)
-*/gradle/wrapper/gradle-wrapper.jar
-!**/gradle/wrapper/gradle-wrapper.properties
+# Dependencies
+.venv/
+venv/
+node_modules/
+.mypy_cache/
+.pytest_cache/
+target/
 .gradle/
 
-# IDEs
-.idea/
-*.iml
-.vscode/*
-!.vscode/extensions.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/settings.json
+# Logs and temp files
+*.log
+*.tmp
 *.swp
 *.swo
-*~
 
-# OS files
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System
 .DS_Store
 Thumbs.db
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Debug logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Temporary files
-*.log
-*.tmp
-.temp/
-=======
-```
-# Dependencies
-node_modules/
-
-# Build artifacts
-mobile-client/node_modules/react-native-screens/lib/
-mobile-client/node_modules/react-native-vector-icons/dist/
-mobile-client/node_modules/react-native-worklets/lib/
-mobile-client/node_modules/react-native/Libraries/
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
 # Compressed files
 *.zip
@@ -113,3 +71,4 @@ mobile-client/node_modules/react-native/Libraries/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
+```
