@@ -14,6 +14,7 @@ const paymentRoutes = require('./routes/payment.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const favoriteRoutes = require('./routes/favorite.routes');
 const reviewRoutes = require('./routes/review.routes');
+const serviceRoutes = require('./routes/service.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -55,6 +56,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/services', serviceRoutes);
 
 // Ruta 404
 app.use((req, res) => {
