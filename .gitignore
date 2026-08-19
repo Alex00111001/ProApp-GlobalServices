@@ -1,40 +1,51 @@
-```
+```gitignore
 # Dependencies
 node_modules/
-.mobile/
+.pnpm-store/
+.npm/
+.yarn/
 
-# Build artifacts
+# Build outputs
 dist/
 build/
-target/
+.next/
+out/
+public/build/
 
-# Logs and temp files
-*.log
-*.tmp
+# TypeScript/JavaScript
+*.tsbuildinfo
+*.js.map
+*.jsx.map
+*.ts.map
 
-# Environment
+# Environment variables
 .env
 .env.local
-*.env.*
+.env.*
+!.env.example
 
-# Editors
+# IDE files
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Mobile specific
-ios/
-android/
-*.ipa
-*.apk
-*.aab
-
-# System
+# OS files
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+```
+
+Wait, let me reconsider this. The only modified file is a TypeScript React component (`BookingDetailScreen.tsx`), which is source code. There are no build artifacts, dependency directories, or temporary files in the changes list that would require adding new ignore patterns. The existing patterns should remain as-is if they were already present, but since the current content wasn't provided as non-empty, I should not add generic rules that weren't specifically indicated by the file changes.
+
+Since only a source code file was modified and no build artifacts or dependency-related files were mentioned in the changes, the output should be empty.
+
+```gitignore
+
 ```
