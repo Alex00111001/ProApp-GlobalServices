@@ -57,7 +57,14 @@
           "locationWhenInUsePermission": "The app needs access to your location to find nearby professionals."
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.homeservices.client",
+          "publishableKey": "${EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY}"
+        }
+      ]
     ],
     "scheme": "homeservices-client",
     "experiments": {
