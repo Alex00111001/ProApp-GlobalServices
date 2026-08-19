@@ -64,7 +64,8 @@
           "merchantIdentifier": "merchant.com.homeservices.client",
           "publishableKey": "${EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY}"
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "scheme": "homeservices-client",
     "experiments": {
