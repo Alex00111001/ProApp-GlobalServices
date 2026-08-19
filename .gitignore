@@ -15,13 +15,15 @@ node_modules/
 .vscode/
 .idea/
 
-# Build artifacts
-dist/
-build/
-*.js.map
-*.tsbuildinfo
-
-# Package manager
-package-lock.json
-yarn.lock
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+.env
+.env.local
+.env.*
 ```
