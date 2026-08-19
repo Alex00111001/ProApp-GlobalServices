@@ -28,8 +28,8 @@ export const CheckoutScreen: React.FC = () => {
     address: '123 Main St, City, State 12345',
   };
 
-  const platformFee = amount * 0.1;
-  const total = amount + platformFee;
+  const platformFee = numericAmount * 0.1;
+  const total = numericAmount + platformFee;
 
   const handlePayment = async () => {
     if (paymentMethod === 'CASH') {
@@ -181,7 +181,7 @@ export const CheckoutScreen: React.FC = () => {
           <View style={styles.priceCard}>
             <View style={styles.priceRow}>
               <Text style={styles.priceLabel}>Service Cost</Text>
-              <Text style={styles.priceValue}>${amount.toFixed(2)}</Text>
+              <Text style={styles.priceValue}>${numericAmount.toFixed(2)}</Text>
             </View>
             <View style={styles.priceRow}>
               <Text style={styles.priceLabel}>Platform Fee</Text>
