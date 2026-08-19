@@ -1,4 +1,7 @@
 ```
+# Expo
+.expo/
+
 # Dependencies
 node_modules/
 
@@ -10,19 +13,11 @@ node_modules/
 # Logs
 *.log
 
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# IDE files
+# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*.tmp
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
@@ -31,15 +26,25 @@ dist/
 build/
 target/
 
-# Python cache
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.Python
+venv/
+.venv/
+.env
 
-# Testing
-.pytest_cache/
-.mypy_cache/
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
 # Compressed files
 *.zip
