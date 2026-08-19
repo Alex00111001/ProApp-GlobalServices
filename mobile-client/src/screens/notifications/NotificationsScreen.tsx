@@ -8,9 +8,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 
-};
-
-
 interface Notification {
   id: string;
   title: string;
