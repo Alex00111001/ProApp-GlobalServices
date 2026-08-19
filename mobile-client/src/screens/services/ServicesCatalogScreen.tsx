@@ -8,10 +8,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 
-  ServiceDetail: { serviceId: string };
-};
-
-
 interface Service {
   id: string;
   name: string;
@@ -32,8 +28,7 @@ interface Category {
 
 export const ServicesCatalogScreen: React.FC = () => {
   const router = useRouter();
-  const route = useRoute<RoutePropType>();
-  const { categoryId, categoryName } = route.params || {};
+  const { categoryId, categoryName } = useLocalSearchParams<{ categoryId?: string; categoryName?: string }>();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [services, setServices] = useState<Service[]>([]);
