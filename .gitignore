@@ -89,6 +89,7 @@ mobile-client/node_modules/react-native-screens/lib/
 mobile-client/node_modules/react-native-vector-icons/dist/
 mobile-client/node_modules/react-native-worklets/lib/
 mobile-client/node_modules/react-native/Libraries/
+mobile-client/node_modules/react-native/ReactCommon
 
 # Compressed files
 *.zip
