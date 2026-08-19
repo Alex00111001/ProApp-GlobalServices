@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -173,7 +173,7 @@ export const BookingFlowScreen: React.FC = () => {
         <Ionicons name="chevron-forward" size={24} color={COLORS.gray400} />
       </TouchableOpacity>
 
-      {showDatePicker && (
+      {showDatePicker && Platform.OS !== 'web' && (
         <DateTimePicker
           value={selectedDate}
           mode="date"
@@ -183,6 +183,19 @@ export const BookingFlowScreen: React.FC = () => {
             setShowDatePicker(false);
             if (date) setSelectedDate(date);
           }}
+        />
+      )}
+
+      {Platform.OS === 'web' && showDatePicker && (
+        <input
+          type="date"
+          value={selectedDate.toISOString().split('T')[0]}
+          onChange={(e) => {
+            const newDate = new Date(e.target.value);
+            if (!isNaN(newDate.getTime())) setSelectedDate(newDate);
+            setShowDatePicker(false);
+          }}
+          style={{ marginTop: 10 }}
         />
       )}
 
@@ -203,7 +216,7 @@ export const BookingFlowScreen: React.FC = () => {
         <Ionicons name="chevron-forward" size={24} color={COLORS.gray400} />
       </TouchableOpacity>
 
-      {showTimePicker && (
+      {showTimePicker && Platform.OS !== 'web' && (
         <DateTimePicker
           value={selectedTime}
           mode="time"
@@ -212,6 +225,22 @@ export const BookingFlowScreen: React.FC = () => {
             setShowTimePicker(false);
             if (time) setSelectedTime(time);
           }}
+        />
+      )}
+
+      {Platform.OS === 'web' && showTimePicker && (
+        <input
+          type="time"
+          value={selectedTime.toTimeString().slice(0, 5)}
+          onChange={(e) => {
+            const [hours, minutes] = e.target.value.split(':');
+            const newTime = new Date();
+            newTime.setHours(parseInt(hours, 10));
+            newTime.setMinutes(parseInt(minutes, 10));
+            setSelectedTime(newTime);
+            setShowTimePicker(false);
+          }}
+          style={{ marginTop: 10 }}
         />
       )}
     </View>
