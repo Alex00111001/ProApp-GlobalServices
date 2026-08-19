@@ -10,9 +10,6 @@ import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/them
 import { apiClient } from '@/services/api';
 import { ProfessionalProfile } from '@/types';
 
-};
-
-
 interface FilterState {
   category: string;
   minRating: number;
