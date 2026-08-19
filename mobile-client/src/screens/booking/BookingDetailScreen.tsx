@@ -10,11 +10,6 @@ import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 
-  interface BookingRouteParams {
-  bookingId: string;
-  ProfessionalDetail: { id: string };
-};
-
 interface BookingService {
   id: string;
   serviceId: string;
@@ -74,8 +69,7 @@ interface Booking {
 
 export const BookingDetailScreen: React.FC = () => {
   const router = useRouter();
-  const route = useRoute<RoutePropType>();
-  // Params now from useLocalSearchParams
+  const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
 
   const [booking, setBooking] = useState<Booking | null>(null);
   const [isLoading, setIsLoading] = useState(true);
