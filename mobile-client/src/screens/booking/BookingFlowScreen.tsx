@@ -330,12 +330,6 @@ export const BookingFlowScreen: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
-// Helper component for step indicator
-const React = require('react');
-
-=======
->>>>>>> fe5f4155f541f2e195cfc9ead86fcc27d3911a44
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -10,9 +10,6 @@ import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 import { ProfessionalProfile } from '@/types';
 
-};
-
-
 export const FavoritesScreen: React.FC = () => {
   const router = useRouter();
   
