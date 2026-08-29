@@ -14,19 +14,22 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONTS } from '@/constants/theme';
 import { useAppStore } from '@/store/appStore';
 import type { Booking } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 // Componente temporal para mostrar reservas (puede ser reemplazado por un componente dedicado)
 const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ booking, onPress }) => {
+  const { t, i18n } = useTranslation();
   const bookingData = booking as any;
   const scheduledDate = new Date(bookingData.scheduledDate);
   const serviceName = bookingData.bookingServices
     ?.map((item: any) => item.service?.name)
     .filter(Boolean)
-    .join(', ') || 'Servicio';
+    .join(', ') || t('common.services');
   const professionalName = [
     bookingData.professional?.user?.firstName,
     bookingData.professional?.user?.lastName,
-  ].filter(Boolean).join(' ') || 'Profesional';
+  ].filter(Boolean).join(' ') || t('common.professional');
+  const statusKey = booking.status.toLowerCase() as 'confirmed'|'pending'|'completed'|'cancelled';
 
   return (
   <TouchableOpacity style={styles.bookingCard} onPress={onPress}>
@@ -36,14 +39,14 @@ const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ book
         <Text style={styles.professionalName}>{professionalName}</Text>
       </View>
       <View style={[styles.statusBadge, styles[`status${booking.status.toLowerCase()}` as keyof typeof styles]]}>
-        <Text style={styles.statusText}>{booking.status}</Text>
+        <Text style={styles.statusText}>{t(`bookings.${statusKey}`, { defaultValue: booking.status })}</Text>
       </View>
     </View>
     
     <View style={styles.bookingDetails}>
       <View style={styles.detailRow}>
         <Ionicons name="calendar-outline" size={16} color={COLORS.textSecondary} />
-        <Text style={styles.detailText}>{scheduledDate.toLocaleDateString()}</Text>
+        <Text style={styles.detailText}>{scheduledDate.toLocaleDateString(i18n.resolvedLanguage)}</Text>
       </View>
       <View style={styles.detailRow}>
         <Ionicons name="time-outline" size={16} color={COLORS.textSecondary} />
@@ -61,6 +64,7 @@ const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ book
 
 export default function BookingsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { bookings, isLoadingBookings, fetchBookings } = useAppStore();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
 
@@ -83,19 +87,17 @@ export default function BookingsScreen() {
         color={COLORS.textSecondary}
       />
       <Text style={styles.emptyTitle}>
-        {activeTab === 'upcoming' ? 'No tienes reservas próximas' : 'No hay historial de reservas'}
+        {t('bookings.empty')}
       </Text>
       <Text style={styles.emptySubtitle}>
-        {activeTab === 'upcoming'
-          ? 'Explora nuestros servicios y haz tu primera reserva'
-          : 'Tus reservas pasadas aparecerán aquí'}
+        {activeTab === 'upcoming' ? t('home.subtitle') : t('bookings.history')}
       </Text>
       {activeTab === 'upcoming' && (
         <TouchableOpacity
           style={styles.browseButton}
           onPress={() => router.push('/(tabs)')}
         >
-          <Text style={styles.browseButtonText}>Explorar Servicios</Text>
+          <Text style={styles.browseButtonText}>{t('home.title')}</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -112,7 +114,7 @@ export default function BookingsScreen() {
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Mis Reservas</Text>
+        <Text style={styles.title}>{t('bookings.title')}</Text>
       </View>
 
       {/* Tabs */}
@@ -127,7 +129,7 @@ export default function BookingsScreen() {
               activeTab === 'upcoming' && styles.activeTabText,
             ]}
           >
-            Próximas
+            {t('bookings.upcoming')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -140,7 +142,7 @@ export default function BookingsScreen() {
               activeTab === 'past' && styles.activeTabText,
             ]}
           >
-            Historial
+            {t('bookings.history')}
           </Text>
         </TouchableOpacity>
       </View>

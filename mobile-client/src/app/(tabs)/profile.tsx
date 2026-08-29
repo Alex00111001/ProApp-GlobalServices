@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
 import { Button } from '@/components/ui';
 import { useAuthStore } from '@/store/authStore';
+import { useTranslation } from 'react-i18next';
+import { setAppLanguage } from '@/i18n';
 
 type MenuItemProps = { icon: keyof typeof Ionicons.glyphMap; title: string; value?: string; onPress: () => void };
 const MenuItem = ({ icon, title, value, onPress }: MenuItemProps) => (
@@ -17,33 +19,39 @@ const MenuItem = ({ icon, title, value, onPress }: MenuItemProps) => (
 
 export default function ProfileTab() {
   const router = useRouter();
+  const { t, i18n } = useTranslation();
   const { user, profile, loadUser, logout, isLoading } = useAuthStore();
   useFocusEffect(useCallback(() => { loadUser(); }, [loadUser]));
   const currentUser = user as any;
   const currentProfile = profile as any;
   const name = `${currentUser?.firstName || ''} ${currentUser?.lastName || ''}`.trim();
   const avatarUrl = currentUser?.avatarUrl || currentUser?.avatar;
-  const handleLogout = () => Alert.alert('Cerrar sesión', '¿Deseas cerrar tu sesión?', [
-    { text: 'Cancelar', style: 'cancel' },
-    { text: 'Cerrar sesión', style: 'destructive', onPress: async () => { await logout(); router.replace('/auth/login'); } },
+  const languageName = t(`profile.${i18n.language === 'en' ? 'english' : i18n.language === 'pt' ? 'portuguese' : 'spanish'}`);
+  const chooseLanguage = () => Alert.alert(t('profile.language'), t('profile.languageQuestion'), [
+    { text:t('profile.spanish'), onPress:()=>setAppLanguage('es') }, { text:t('profile.english'), onPress:()=>setAppLanguage('en') }, { text:t('profile.portuguese'), onPress:()=>setAppLanguage('pt') }, { text:t('common.cancel'), style:'cancel' }
+  ]);
+  const handleLogout = () => Alert.alert(t('profile.logout'), t('profile.logoutQuestion'), [
+    { text: t('common.cancel'), style: 'cancel' },
+    { text: t('profile.logout'), style: 'destructive', onPress: async () => { await logout(); router.replace('/auth/login'); } },
   ]);
 
   return <SafeAreaView style={styles.container} edges={['top']}><ScrollView>
     <View style={styles.header}>
       {avatarUrl ? <Image source={{ uri: avatarUrl }} style={styles.avatar} /> : <View style={styles.avatarPlaceholder}><Ionicons name="person" size={44} color={COLORS.primary} /></View>}
-      <Text style={styles.userName}>{name || 'Mi perfil'}</Text><Text style={styles.userEmail}>{currentUser?.email}</Text>
-      <TouchableOpacity style={styles.editButton} onPress={() => router.push('/profile/edit' as any)}><Ionicons name="pencil" size={17} color={COLORS.primary} /><Text style={styles.editText}>Editar perfil</Text></TouchableOpacity>
+      <Text style={styles.userName}>{name || t('profile.title')}</Text><Text style={styles.userEmail}>{currentUser?.email}</Text>
+      <TouchableOpacity style={styles.editButton} onPress={() => router.push('/profile/edit' as any)}><Ionicons name="pencil" size={17} color={COLORS.primary} /><Text style={styles.editText}>{t('profile.edit')}</Text></TouchableOpacity>
     </View>
-    <View style={styles.section}><Text style={styles.sectionTitle}>Información personal</Text><View style={styles.card}>
-      <MenuItem icon="call-outline" title="Teléfono" value={currentUser?.phone || 'Sin registrar'} onPress={() => router.push('/profile/edit' as any)} />
-      <MenuItem icon="location-outline" title="Dirección" value={currentProfile?.address || 'Sin registrar'} onPress={() => router.push('/profile/edit' as any)} />
+    <View style={styles.section}><Text style={styles.sectionTitle}>{t('profile.personalInfo')}</Text><View style={styles.card}>
+      <MenuItem icon="call-outline" title={t('profile.phone')} value={currentUser?.phone || t('profile.missing')} onPress={() => router.push('/profile/edit' as any)} />
+      <MenuItem icon="location-outline" title={t('profile.address')} value={currentProfile?.address || t('profile.missing')} onPress={() => router.push('/profile/edit' as any)} />
     </View></View>
-    <View style={styles.section}><Text style={styles.sectionTitle}>Cuenta</Text><View style={styles.card}>
-      <MenuItem icon="lock-closed-outline" title="Cambiar contraseña" onPress={() => router.push('/profile/security' as any)} />
-      <MenuItem icon="notifications-outline" title="Notificaciones" onPress={() => router.push('/notifications')} />
-      <MenuItem icon="calendar-outline" title="Mis reservas" onPress={() => router.push('/(tabs)/bookings')} />
+    <View style={styles.section}><Text style={styles.sectionTitle}>{t('profile.account')}</Text><View style={styles.card}>
+      <MenuItem icon="language-outline" title={t('profile.language')} value={languageName} onPress={chooseLanguage} />
+      <MenuItem icon="lock-closed-outline" title={t('profile.changePassword')} onPress={() => router.push('/profile/security' as any)} />
+      <MenuItem icon="notifications-outline" title={t('profile.notifications')} onPress={() => router.push('/notifications')} />
+      <MenuItem icon="calendar-outline" title={t('profile.myBookings')} onPress={() => router.push('/(tabs)/bookings')} />
     </View></View>
-    <View style={styles.logout}><Button title="Cerrar sesión" variant="outline" loading={isLoading} onPress={handleLogout} fullWidth /><Text style={styles.version}>Versión 1.0.0</Text></View>
+    <View style={styles.logout}><Button title={t('profile.logout')} variant="outline" loading={isLoading} onPress={handleLogout} fullWidth /><Text style={styles.version}>{t('profile.version',{version:'1.0.0'})}</Text></View>
   </ScrollView></SafeAreaView>;
 }
 

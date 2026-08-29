@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { ProfessionalProfile } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 interface ProfessionalCardProps {
   professional: ProfessionalProfile;
@@ -17,6 +18,7 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   isFavorite = false,
   onToggleFavorite,
 }) => {
+  const { t } = useTranslation();
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
       <Ionicons
@@ -40,7 +42,7 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85}>{professional.user.name}</Text>
           <Text style={styles.specialty} numberOfLines={1}>
-            {professional.categories[0]?.name || 'Professional'}
+            {professional.categories[0]?.name || t('home.defaultProfessional')}
           </Text>
           <View style={styles.ratingContainer}>
             <View style={styles.stars}>{renderStars(professional.rating)}</View>
@@ -69,13 +71,13 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         <View style={styles.rateContainer}>
           <Ionicons name="cash-outline" size={16} color={COLORS.primary} />
           <Text style={styles.rateText}>
-            ${professional.hourlyRate?.toFixed(2) || '0'}/hour
+            €{professional.hourlyRate?.toFixed(2) || '0'}{t('home.perHour')}
           </Text>
         </View>
         <View style={styles.experienceContainer}>
           <Ionicons name="briefcase-outline" size={16} color={COLORS.gray500} />
           <Text style={styles.experienceText}>
-            {professional.yearsOfExperience || 0} years
+            {t('home.years', { count: professional.yearsOfExperience || 0 })}
           </Text>
         </View>
       </View>
@@ -84,13 +86,13 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         {professional.isVerified && (
           <View style={[styles.badge, styles.verifiedBadge]}>
             <Ionicons name="checkmark-circle" size={14} color={COLORS.success} />
-            <Text style={[styles.badgeText, styles.verifiedText]}>Verified</Text>
+            <Text style={[styles.badgeText, styles.verifiedText]}>{t('home.verified')}</Text>
           </View>
         )}
         {professional.isApproved && (
           <View style={[styles.badge, styles.approvedBadge]}>
             <Ionicons name="shield-checkmark" size={14} color={COLORS.primary} />
-            <Text style={[styles.badgeText, styles.approvedText]}>Approved</Text>
+            <Text style={[styles.badgeText, styles.approvedText]}>{t('home.approved')}</Text>
           </View>
         )}
       </View>
