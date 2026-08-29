@@ -32,30 +32,37 @@ interface Booking {
   state: string;
   postalCode: string;
   notes?: string;
-  totalPrice: number;
-  professionalEarnings: number;
-  platformFee: number;
+  totalPrice: number | string;
+  professionalEarnings: number | string;
+  platformFee: number | string;
   client: {
     id: string;
     user: {
-      name: string;
-      phone: string;
+      name?: string;
+      firstName?: string;
+      lastName?: string;
+      phone?: string;
       avatar?: string;
+      avatarUrl?: string;
     };
   };
   professional?: {
     id: string;
     user: {
-      name: string;
-      phone: string;
+      name?: string;
+      firstName?: string;
+      lastName?: string;
+      phone?: string;
       avatar?: string;
+      avatarUrl?: string;
     };
-    rating: number;
+    rating?: number;
+    averageRating?: number;
   };
   bookingServices: BookingService[];
   payment?: {
     id: string;
-    amount: number;
+    amount: number | string;
     status: string;
     method: string;
   };
@@ -67,9 +74,10 @@ interface Booking {
   createdAt: string;
 }
 
-export const BookingDetailScreen: React.FC = () => {
+export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingId: bookingIdProp }) => {
   const router = useRouter();
-  const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const bookingId = bookingIdProp || id;
 
   const [booking, setBooking] = useState<Booking | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -79,76 +87,14 @@ export const BookingDetailScreen: React.FC = () => {
   }, [bookingId]);
 
   const loadBooking = async () => {
+    if (!bookingId) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     try {
-      // In real app, fetch booking details from API
-      // const data = await apiClient.getBookingById(bookingId);
-      // setBooking(data);
-      
-      // Mock data for now
-      setBooking({
-        id: bookingId,
-        status: 'CONFIRMED',
-        scheduledDate: new Date().toISOString(),
-        address: '123 Main Street',
-        city: 'Mexico City',
-        state: 'CDMX',
-        postalCode: '12345',
-        notes: 'Please call when you arrive',
-        totalPrice: 225,
-        professionalEarnings: 200,
-        platformFee: 25,
-        client: {
-          id: '1',
-          user: {
-            name: 'John Doe',
-            phone: '+52 55 1234 5678',
-            avatar: 'https://via.placeholder.com/100',
-          },
-        },
-        professional: {
-          id: '2',
-          user: {
-            name: 'Maria Garcia',
-            phone: '+52 55 8765 4321',
-            avatar: 'https://via.placeholder.com/100',
-          },
-          rating: 4.8,
-        },
-        bookingServices: [
-          {
-            id: '1',
-            serviceId: '1',
-            quantity: 1,
-            price: 150,
-            subtotal: 150,
-            service: {
-              id: '1',
-              name: 'Electrical Installation',
-              description: 'Complete electrical installation',
-            },
-          },
-          {
-            id: '2',
-            serviceId: '2',
-            quantity: 1,
-            price: 75,
-            subtotal: 75,
-            service: {
-              id: '2',
-              name: 'Safety Inspection',
-              description: 'Safety check and testing',
-            },
-          },
-        ],
-        payment: {
-          id: '1',
-          amount: 225,
-          status: 'COMPLETED',
-          method: 'STRIPE',
-        },
-        createdAt: new Date().toISOString(),
-      });
+      const data = await apiClient.getBookingById(bookingId);
+      setBooking(data);
     } catch (error) {
       console.error('Error loading booking:', error);
       Alert.alert('Error', 'Failed to load booking details');
@@ -245,6 +191,9 @@ export const BookingDetailScreen: React.FC = () => {
     ));
   };
 
+  const totalPrice = Number(booking.totalPrice) || 0;
+  const platformFee = Number(booking.platformFee) || 0;
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -276,14 +225,16 @@ export const BookingDetailScreen: React.FC = () => {
               onPress={() => router.push(`/professional/${booking.professional!.id}`)}
             >
               <Image
-                source={{ uri: booking.professional.user.avatar || 'https://via.placeholder.com/100' }}
+                source={{ uri: booking.professional.user.avatar || booking.professional.user.avatarUrl || 'https://via.placeholder.com/100' }}
                 style={styles.avatar}
               />
               <View style={styles.professionalInfo}>
-                <Text style={styles.professionalName}>{booking.professional.user.name}</Text>
+                <Text style={styles.professionalName}>
+                  {booking.professional.user.name || `${booking.professional.user.firstName || ''} ${booking.professional.user.lastName || ''}`.trim()}
+                </Text>
                 <View style={styles.ratingRow}>
-                  <View style={styles.stars}>{renderStars(booking.professional.rating)}</View>
-                  <Text style={styles.ratingText}>{booking.professional.rating.toFixed(1)}</Text>
+                  <View style={styles.stars}>{renderStars(booking.professional.averageRating ?? booking.professional.rating ?? 0)}</View>
+                  <Text style={styles.ratingText}>{(booking.professional.averageRating ?? booking.professional.rating ?? 0).toFixed(1)}</Text>
                 </View>
               </View>
               <TouchableOpacity style={styles.callButton}>
@@ -305,7 +256,7 @@ export const BookingDetailScreen: React.FC = () => {
                 <Text style={styles.serviceName}>{bs.service.name}</Text>
                 <Text style={styles.serviceQuantity}>Qty: {bs.quantity}</Text>
               </View>
-              <Text style={styles.servicePrice}>${bs.subtotal}</Text>
+              <Text style={styles.servicePrice}>€{Number(bs.subtotal).toFixed(2)}</Text>
             </View>
           ))}
         </View>
@@ -351,16 +302,16 @@ export const BookingDetailScreen: React.FC = () => {
             <View style={styles.priceCard}>
               <View style={styles.priceRow}>
                 <Text style={styles.priceLabel}>Subtotal</Text>
-                <Text style={styles.priceValue}>${(booking.totalPrice - booking.platformFee).toFixed(2)}</Text>
+                <Text style={styles.priceValue}>€{(totalPrice - platformFee).toFixed(2)}</Text>
               </View>
               <View style={styles.priceRow}>
                 <Text style={styles.priceLabel}>Platform Fee</Text>
-                <Text style={styles.priceValue}>${booking.platformFee.toFixed(2)}</Text>
+                <Text style={styles.priceValue}>€{platformFee.toFixed(2)}</Text>
               </View>
               <View style={styles.divider} />
               <View style={[styles.priceRow, styles.totalRow]}>
                 <Text style={styles.totalLabel}>Total Paid</Text>
-                <Text style={styles.totalValue}>${booking.totalPrice.toFixed(2)}</Text>
+                <Text style={styles.totalValue}>€{totalPrice.toFixed(2)}</Text>
               </View>
               <View style={styles.paymentMethod}>
                 <Ionicons

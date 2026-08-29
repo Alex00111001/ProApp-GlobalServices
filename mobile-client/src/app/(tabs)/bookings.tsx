@@ -16,14 +16,26 @@ import { useAppStore } from '@/store/appStore';
 import type { Booking } from '@/types';
 
 // Componente temporal para mostrar reservas (puede ser reemplazado por un componente dedicado)
-const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ booking, onPress }) => (
+const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ booking, onPress }) => {
+  const bookingData = booking as any;
+  const scheduledDate = new Date(bookingData.scheduledDate);
+  const serviceName = bookingData.bookingServices
+    ?.map((item: any) => item.service?.name)
+    .filter(Boolean)
+    .join(', ') || 'Servicio';
+  const professionalName = [
+    bookingData.professional?.user?.firstName,
+    bookingData.professional?.user?.lastName,
+  ].filter(Boolean).join(' ') || 'Profesional';
+
+  return (
   <TouchableOpacity style={styles.bookingCard} onPress={onPress}>
     <View style={styles.bookingHeader}>
       <View style={styles.serviceInfo}>
-        <Text style={styles.serviceName}>{booking.serviceName || 'Servicio'}</Text>
-        <Text style={styles.professionalName}>{booking.professionalName || 'Profesional'}</Text>
+        <Text style={styles.serviceName}>{serviceName}</Text>
+        <Text style={styles.professionalName}>{professionalName}</Text>
       </View>
-      <View style={[styles.statusBadge, styles[`status${booking.status}` as keyof typeof styles]]}>
+      <View style={[styles.statusBadge, styles[`status${booking.status.toLowerCase()}` as keyof typeof styles]]}>
         <Text style={styles.statusText}>{booking.status}</Text>
       </View>
     </View>
@@ -31,42 +43,42 @@ const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ book
     <View style={styles.bookingDetails}>
       <View style={styles.detailRow}>
         <Ionicons name="calendar-outline" size={16} color={COLORS.textSecondary} />
-        <Text style={styles.detailText}>{booking.date}</Text>
+        <Text style={styles.detailText}>{scheduledDate.toLocaleDateString()}</Text>
       </View>
       <View style={styles.detailRow}>
         <Ionicons name="time-outline" size={16} color={COLORS.textSecondary} />
-        <Text style={styles.detailText}>{booking.time}</Text>
+        <Text style={styles.detailText}>{scheduledDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
       </View>
     </View>
     
     <View style={styles.bookingFooter}>
-      <Text style={styles.price}>{booking.totalPrice ? `$${booking.totalPrice}` : ''}</Text>
+      <Text style={styles.price}>{booking.totalPrice ? `€${booking.totalPrice}` : ''}</Text>
       <Ionicons name="chevron-forward" size={20} color={COLORS.textSecondary} />
     </View>
   </TouchableOpacity>
-);
+  );
+};
 
 export default function BookingsScreen() {
   const router = useRouter();
-  const { myBookings, isLoadingBookings, fetchMyBookings } = useAppStore();
+  const { bookings, isLoadingBookings, fetchBookings } = useAppStore();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
 
   useEffect(() => {
-    fetchMyBookings();
+    fetchBookings();
   }, []);
 
-  const filteredBookings = myBookings?.filter((booking) => {
-    // Lógica simple para filtrar reservas (ajustar según tu modelo de datos)
-    const bookingDate = new Date(booking.date);
+  const filteredBookings = bookings.filter((booking) => {
+    const bookingDate = new Date(booking.scheduledDate);
     const now = new Date();
     const isUpcoming = bookingDate >= now;
     return activeTab === 'upcoming' ? isUpcoming : !isUpcoming;
-  }) || [];
+  });
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Ionicons
-        name={activeTab === 'upcoming' ? 'calendar-outline' : 'history-outline'}
+        name={activeTab === 'upcoming' ? 'calendar-outline' : 'time-outline'}
         size={64}
         color={COLORS.textSecondary}
       />
@@ -165,8 +177,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: COLORS.text,
-    ...FONTS.heading,
+    color: COLORS.textPrimary,
+    fontFamily: FONTS.bold,
   },
   tabsContainer: {
     flexDirection: 'row',
@@ -210,7 +222,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.text,
+    color: COLORS.textPrimary,
     marginTop: SPACING.lg,
     textAlign: 'center',
   },
@@ -255,7 +267,7 @@ const styles = StyleSheet.create({
   serviceName: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: COLORS.textPrimary,
   },
   professionalName: {
     fontSize: 14,

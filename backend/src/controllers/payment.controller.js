@@ -1,66 +1,88 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const prisma = require('../lib/prisma');
+const prisma = require('../config/prisma');
 
-/**
- * Crear una intención de pago con Stripe
- */
+const STRIPE_CURRENCY = (process.env.STRIPE_CURRENCY || 'eur').toLowerCase();
+
+const getOwnedBooking = async (bookingId, userId) => {
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: {
+      client: true,
+      professional: { include: { user: true } },
+      payment: true,
+    },
+  });
+
+  if (!booking) {
+    const error = new Error('Reserva no encontrada');
+    error.status = 404;
+    throw error;
+  }
+  if (booking.client.userId !== userId) {
+    const error = new Error('No tienes permiso para pagar esta reserva');
+    error.status = 403;
+    throw error;
+  }
+  return booking;
+};
+
 exports.createPaymentIntent = async (req, res) => {
   try {
-    const { amount, currency = 'usd', bookingId } = req.body;
-    const userId = req.user.id;
-
-    if (!amount || amount < 100) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'El monto mínimo es $1.00' 
-      });
+    const { bookingId } = req.body;
+    if (!bookingId) {
+      return res.status(400).json({ success: false, message: 'bookingId es obligatorio' });
     }
 
-    // Verificar que el booking existe y pertenece al usuario
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: {
-        professional: true,
-        service: true
+    const booking = await getOwnedBooking(bookingId, req.user.id);
+    const amount = Number(booking.totalPrice);
+    if (!Number.isFinite(amount) || amount < 1) {
+      return res.status(400).json({ success: false, message: 'El importe de la reserva no es válido' });
+    }
+    if (booking.payment?.status === 'COMPLETED') {
+      return res.status(409).json({ success: false, message: 'La reserva ya está pagada' });
+    }
+
+    let paymentIntent = null;
+    if (booking.payment?.transactionId) {
+      try {
+        const existing = await stripe.paymentIntents.retrieve(booking.payment.transactionId);
+        if (!['canceled', 'succeeded'].includes(existing.status)) paymentIntent = existing;
+      } catch (error) {
+        if (error.code !== 'resource_missing') throw error;
       }
-    });
+    }
 
-    if (!booking) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Reserva no encontrada' 
+    if (!paymentIntent) {
+      paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100),
+        currency: STRIPE_CURRENCY,
+        metadata: {
+          bookingId: booking.id,
+          userId: req.user.id,
+          professionalId: booking.professionalId || '',
+        },
+        automatic_payment_methods: { enabled: true },
       });
     }
 
-    if (booking.userId !== userId) {
-      return res.status(403).json({ 
-        success: false, 
-        message: 'No tienes permiso para pagar esta reserva' 
-      });
-    }
-
-    // Crear PaymentIntent en Stripe
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Stripe usa centavos
-      currency,
-      metadata: {
-        bookingId,
-        userId,
-        professionalId: booking.professionalId,
-        serviceId: booking.serviceId
+    await prisma.payment.upsert({
+      where: { bookingId: booking.id },
+      update: {
+        amount,
+        currency: paymentIntent.currency.toUpperCase(),
+        status: 'PROCESSING',
+        method: 'STRIPE',
+        transactionId: paymentIntent.id,
+        failedReason: null,
       },
-      automatic_payment_methods: {
-        enabled: true,
+      create: {
+        bookingId: booking.id,
+        amount,
+        currency: paymentIntent.currency.toUpperCase(),
+        status: 'PROCESSING',
+        method: 'STRIPE',
+        transactionId: paymentIntent.id,
       },
-    });
-
-    // Actualizar el booking con el paymentIntentId
-    await prisma.booking.update({
-      where: { id: bookingId },
-      data: {
-        paymentIntentId: paymentIntent.id,
-        status: 'PENDING_PAYMENT'
-      }
     });
 
     res.json({
@@ -68,198 +90,173 @@ exports.createPaymentIntent = async (req, res) => {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
       amount: paymentIntent.amount,
-      currency: paymentIntent.currency
+      currency: paymentIntent.currency,
     });
-
   } catch (error) {
     console.error('Error creando PaymentIntent:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error procesando el pago',
-      error: error.message 
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.status ? error.message : 'Error procesando el pago',
     });
   }
 };
 
-/**
- * Confirmar un pago después de que Stripe lo procesa
- */
 exports.confirmPayment = async (req, res) => {
   try {
     const { paymentIntentId, bookingId } = req.body;
-    const userId = req.user.id;
+    if (!paymentIntentId || !bookingId) {
+      return res.status(400).json({ success: false, message: 'Datos de pago incompletos' });
+    }
 
-    // Verificar el estado del PaymentIntent en Stripe
+    const booking = await getOwnedBooking(bookingId, req.user.id);
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
+    if (
+      paymentIntent.metadata.bookingId !== booking.id ||
+      paymentIntent.metadata.userId !== req.user.id ||
+      booking.payment?.transactionId !== paymentIntent.id
+    ) {
+      return res.status(403).json({ success: false, message: 'El pago no pertenece a esta reserva' });
+    }
     if (paymentIntent.status !== 'succeeded') {
-      return res.status(400).json({ 
-        success: false, 
-        message: `El pago no fue exitoso. Estado: ${paymentIntent.status}` 
+      return res.status(400).json({
+        success: false,
+        message: `El pago todavía no se ha completado (${paymentIntent.status})`,
       });
     }
 
-    // Actualizar el booking a CONFIRMED
-    const updatedBooking = await prisma.booking.update({
-      where: { id: bookingId },
-      data: {
-        status: 'CONFIRMED',
-        paidAt: new Date(),
-        paymentStatus: 'PAID'
-      },
-      include: {
-        professional: true,
-        service: true,
-        user: true
+    const result = await prisma.$transaction(async (tx) => {
+      const payment = await tx.payment.update({
+        where: { bookingId: booking.id },
+        data: { status: 'COMPLETED', processedAt: new Date(), failedReason: null },
+      });
+      const updatedBooking = await tx.booking.update({
+        where: { id: booking.id },
+        data: { status: 'CONFIRMED' },
+        include: { payment: true },
+      });
+      if (booking.professional?.userId) {
+        await tx.notification.create({
+          data: {
+            userId: booking.professional.userId,
+            bookingId: booking.id,
+            type: 'PAYMENT_RECEIVED',
+            title: 'Pago recibido',
+            message: `Se ha recibido el pago de la reserva ${booking.id}.`,
+          },
+        });
       }
+      return { payment, booking: updatedBooking };
     });
 
-    // Crear notificación para el profesional
-    await prisma.notification.create({
-      data: {
-        userId: updatedBooking.professionalId,
-        type: 'NEW_BOOKING',
-        title: '¡Nueva reserva confirmada!',
-        message: `Tienes una nueva reserva de ${updatedBooking.user.name} para ${updatedBooking.service.name}`,
-        bookingId: updatedBooking.id,
-        isRead: false
-      }
-    });
-
-    res.json({
-      success: true,
-      booking: updatedBooking,
-      message: 'Pago confirmado exitosamente'
-    });
-
+    res.json({ success: true, ...result, message: 'Pago confirmado exitosamente' });
   } catch (error) {
     console.error('Error confirmando pago:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error confirmando el pago',
-      error: error.message 
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.status ? error.message : 'Error confirmando el pago',
     });
   }
 };
 
-/**
- * Webhook para recibir eventos de Stripe
- */
-exports.stripeWebhook = async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  let event;
-
+exports.confirmCashPayment = async (req, res) => {
   try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    console.error('Error verificando webhook:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    const { bookingId } = req.body;
+    if (!bookingId) {
+      return res.status(400).json({ success: false, message: 'bookingId es obligatorio' });
+    }
+    const booking = await getOwnedBooking(bookingId, req.user.id);
+    const amount = Number(booking.totalPrice);
+    const [payment, updatedBooking] = await prisma.$transaction([
+      prisma.payment.upsert({
+        where: { bookingId },
+        update: { amount, currency: STRIPE_CURRENCY.toUpperCase(), status: 'PENDING', method: 'CASH' },
+        create: { bookingId, amount, currency: STRIPE_CURRENCY.toUpperCase(), status: 'PENDING', method: 'CASH' },
+      }),
+      prisma.booking.update({ where: { id: bookingId }, data: { status: 'CONFIRMED' } }),
+    ]);
+    res.json({ success: true, payment, booking: updatedBooking });
+  } catch (error) {
+    console.error('Error confirmando pago en efectivo:', error);
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.status ? error.message : 'Error confirmando pago en efectivo',
+    });
   }
-
-  // Manejar diferentes tipos de eventos
-  switch (event.type) {
-    case 'payment_intent.succeeded':
-      const paymentIntent = event.data.object;
-      console.log('PaymentIntent fue exitoso:', paymentIntent.id);
-      
-      // Actualizar booking si es necesario
-      if (paymentIntent.metadata.bookingId) {
-        await prisma.booking.update({
-          where: { id: paymentIntent.metadata.bookingId },
-          data: {
-            status: 'CONFIRMED',
-            paidAt: new Date(),
-            paymentStatus: 'PAID'
-          }
-        });
-      }
-      break;
-
-    case 'payment_intent.payment_failed':
-      const failedIntent = event.data.object;
-      console.log('PaymentIntent falló:', failedIntent.id);
-      
-      if (failedIntent.metadata.bookingId) {
-        await prisma.booking.update({
-          where: { id: failedIntent.metadata.bookingId },
-          data: {
-            status: 'CANCELLED',
-            paymentStatus: 'FAILED'
-          }
-        });
-      }
-      break;
-
-    default:
-      console.log(`Evento no manejado: ${event.type}`);
-  }
-
-  res.json({ received: true });
 };
 
-/**
- * Obtener historial de pagos del usuario
- */
+exports.stripeWebhook = async (req, res) => {
+  const signature = req.headers['stripe-signature'];
+  const webhookSecret =
+    process.env.STRIPE_WEBHOOK_SECRET_CURRENT || process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    return res.status(503).json({ error: 'Webhook de Stripe no configurado' });
+  }
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
+  } catch (error) {
+    console.error('Error verificando webhook:', error.message);
+    return res.status(400).send('Firma de webhook no válida');
+  }
+
+  try {
+    const intent = event.data.object;
+    const bookingId = intent.metadata?.bookingId;
+    if (bookingId && event.type === 'payment_intent.succeeded') {
+      await prisma.$transaction([
+        prisma.payment.updateMany({
+          where: { bookingId, transactionId: intent.id },
+          data: { status: 'COMPLETED', processedAt: new Date(), failedReason: null },
+        }),
+        prisma.booking.update({ where: { id: bookingId }, data: { status: 'CONFIRMED' } }),
+      ]);
+    }
+    if (bookingId && event.type === 'payment_intent.payment_failed') {
+      await prisma.payment.updateMany({
+        where: { bookingId, transactionId: intent.id },
+        data: {
+          status: 'FAILED',
+          failedReason: intent.last_payment_error?.message || 'Pago rechazado',
+        },
+      });
+    }
+    res.json({ received: true });
+  } catch (error) {
+    console.error('Error procesando webhook:', error);
+    res.status(500).json({ error: 'No se pudo procesar el webhook' });
+  }
+};
+
 exports.getPaymentHistory = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { page = 1, limit = 10 } = req.query;
-
-    const payments = await prisma.booking.findMany({
-      where: {
-        userId,
-        paymentStatus: 'PAID'
-      },
-      include: {
-        professional: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            profileImage: true
-          }
+    const parsedPage = Math.max(1, parseInt(req.query.page || 1));
+    const parsedLimit = Math.min(50, Math.max(1, parseInt(req.query.limit || 10)));
+    const where = { booking: { client: { userId: req.user.id } } };
+    const [payments, total] = await prisma.$transaction([
+      prisma.payment.findMany({
+        where,
+        include: {
+          booking: {
+            include: {
+              professional: { include: { user: true } },
+              bookingServices: { include: { service: true } },
+            },
+          },
         },
-        service: {
-          select: {
-            id: true,
-            name: true,
-            price: true
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' },
-      skip: (page - 1) * limit,
-      take: parseInt(limit)
-    });
-
-    const total = await prisma.booking.count({
-      where: {
-        userId,
-        paymentStatus: 'PAID'
-      }
-    });
-
+        orderBy: { createdAt: 'desc' },
+        skip: (parsedPage - 1) * parsedLimit,
+        take: parsedLimit,
+      }),
+      prisma.payment.count({ where }),
+    ]);
     res.json({
       success: true,
       payments,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
+      pagination: { page: parsedPage, limit: parsedLimit, total, pages: Math.ceil(total / parsedLimit) },
     });
-
   } catch (error) {
     console.error('Error obteniendo historial de pagos:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error obteniendo historial de pagos',
-      error: error.message 
-    });
+    res.status(500).json({ success: false, message: 'Error obteniendo historial de pagos' });
   }
 };

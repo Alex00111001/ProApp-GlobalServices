@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 
 interface ButtonProps {
@@ -42,16 +42,21 @@ export const Button: React.FC<ButtonProps> = ({
   ];
 
   return (
-    <View style={buttonStyles}>
+    <TouchableOpacity
+      style={buttonStyles}
+      onPress={onPress}
+      disabled={disabled || loading}
+      activeOpacity={0.7}
+    >
       {loading ? (
         <ActivityIndicator color={variant === 'outline' || variant === 'ghost' ? COLORS.primary : COLORS.white} />
       ) : (
         <>
           {icon && <View style={styles.icon}>{icon}</View>}
-          <Text style={textStyles}>{title}</Text>
+          <Text style={textStyles} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.8}>{title}</Text>
         </>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -61,6 +66,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    minWidth: 0,
     ...SHADOWS.sm,
   },
   // Variants
@@ -102,6 +108,8 @@ const styles = StyleSheet.create({
   },
   // Text
   text: {
+    flexShrink: 1,
+    textAlign: 'center',
     fontWeight: FONTS.weights.semibold,
   },
   primaryText: {

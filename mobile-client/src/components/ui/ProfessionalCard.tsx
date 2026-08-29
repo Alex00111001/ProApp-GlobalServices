@@ -38,7 +38,7 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
           style={styles.avatar}
         />
         <View style={styles.info}>
-          <Text style={styles.name}>{professional.user.name}</Text>
+          <Text style={styles.name} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85}>{professional.user.name}</Text>
           <Text style={styles.specialty} numberOfLines={1}>
             {professional.categories[0]?.name || 'Professional'}
           </Text>
@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
+    minWidth: 0,
   },
   name: {
     fontSize: FONTS.sizes.lg,
@@ -133,6 +134,7 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
   },
   stars: {
     flexDirection: 'row',
@@ -165,16 +167,20 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.md,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
+    flexWrap: 'wrap',
+    gap: SPACING.sm,
   },
   rateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 1,
   },
   rateText: {
     fontSize: FONTS.sizes.sm,
     fontWeight: FONTS.weights.semibold,
     color: COLORS.primary,
     marginLeft: SPACING.xs,
+    flexShrink: 1,
   },
   experienceContainer: {
     flexDirection: 'row',

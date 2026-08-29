@@ -23,7 +23,7 @@ interface AuthState {
   }) => Promise<void>;
   logout: () => Promise<void>;
   loadUser: () => Promise<void>;
-  updateProfile: (data: Partial<ClientProfile>) => Promise<void>;
+  updateProfile: (data: Record<string, unknown>) => Promise<void>;
   clearError: () => void;
 }
 
@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState>()(
           set({
             isAuthenticated: true,
             user: response.user,
-            profile: response.profile as ClientProfile,
+            profile: (response.profile || (response.user as any)?.clientProfile) as ClientProfile,
             token: response.token,
             isLoading: false,
           });
@@ -76,7 +76,7 @@ export const useAuthStore = create<AuthState>()(
           set({
             isAuthenticated: true,
             user: response.user,
-            profile: response.profile as ClientProfile,
+            profile: (response.profile || (response.user as any)?.clientProfile) as ClientProfile,
             token: response.token,
             isLoading: false,
           });
@@ -113,8 +113,8 @@ export const useAuthStore = create<AuthState>()(
           set({
             isAuthenticated: true,
             user: response.user,
-            profile: response.profile as ClientProfile,
-            token: response.token,
+            profile: (response.profile || (response.user as any)?.clientProfile) as ClientProfile,
+            token: response.token || token,
             isLoading: false,
           });
         } catch (error) {

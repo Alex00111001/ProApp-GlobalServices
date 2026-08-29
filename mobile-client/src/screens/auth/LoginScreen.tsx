@@ -36,7 +36,7 @@ export const LoginScreen: React.FC = () => {
 
     try {
       await login(formData.email, formData.password);
-      // Navigation is handled by the auth store observer
+      router.replace('/(tabs)');
     } catch (err) {
       // Error is handled by the store
     }
@@ -64,7 +64,7 @@ export const LoginScreen: React.FC = () => {
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
-              icon="mail-outline"
+              icon={<Ionicons name="mail-outline" size={20} color={COLORS.gray400} />}
             />
 
             <Input
@@ -74,7 +74,7 @@ export const LoginScreen: React.FC = () => {
               onChangeText={(text) => setFormData({ ...formData, password: text })}
               secureTextEntry={!showPassword}
               autoCapitalize="none"
-              icon="lock-closed-outline"
+              icon={<Ionicons name="lock-closed-outline" size={20} color={COLORS.gray400} />}
               rightIcon={
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                   <Ionicons

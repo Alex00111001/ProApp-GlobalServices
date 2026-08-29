@@ -48,6 +48,15 @@ exports.getProfessionals = async (req, res) => {
             lastName: true,
             avatarUrl: true,
             phone: true,
+            reviewsReceived: {
+              take: 3,
+              orderBy: { createdAt: 'desc' },
+              include: {
+                client: {
+                  select: { firstName: true, lastName: true },
+                },
+              },
+            },
           },
         },
         categories: {
@@ -60,15 +69,6 @@ exports.getProfessionals = async (req, res) => {
         portfolio: {
           take: 3,
           orderBy: { displayOrder: 'asc' },
-        },
-        reviewsReceived: {
-          take: 3,
-          orderBy: { createdAt: 'desc' },
-          include: {
-            client: {
-              select: { firstName: true, lastName: true },
-            },
-          },
         },
       },
       orderBy: { [sortBy]: sortOrder },
@@ -106,6 +106,15 @@ exports.getProfessionalById = async (req, res) => {
             avatarUrl: true,
             phone: true,
             email: true,
+            reviewsReceived: {
+              orderBy: { createdAt: 'desc' },
+              take: 20,
+              include: {
+                client: {
+                  select: { firstName: true, lastName: true, avatarUrl: true },
+                },
+              },
+            },
           },
         },
         categories: {
@@ -122,15 +131,6 @@ exports.getProfessionalById = async (req, res) => {
         },
         availability: {
           orderBy: { dayOfWeek: 'asc' },
-        },
-        reviewsReceived: {
-          orderBy: { createdAt: 'desc' },
-          take: 20,
-          include: {
-            client: {
-              select: { firstName: true, lastName: true, avatarUrl: true },
-            },
-          },
         },
         earnings: {
           orderBy: { createdAt: 'desc' },

@@ -195,7 +195,8 @@ exports.getProfile = async (req, res) => {
 
     const { passwordHash, ...userWithoutPassword } = user;
 
-    res.json({ user: userWithoutPassword });
+    const profile = user.role === 'CLIENT' ? user.clientProfile : user.professionalProfile;
+    res.json({ user: userWithoutPassword, profile });
   } catch (error) {
     console.error('Get profile error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -205,14 +206,15 @@ exports.getProfile = async (req, res) => {
 // Actualizar perfil
 exports.updateProfile = async (req, res) => {
   try {
-    const { firstName, lastName, avatarUrl } = req.body;
+    const { firstName, lastName, phone, avatarUrl, address, city, state, postalCode, country } = req.body;
 
     const updatedUser = await prisma.user.update({
       where: { id: req.user.id },
       data: {
-        firstName,
-        lastName,
-        avatarUrl,
+        ...(firstName !== undefined && { firstName }),
+        ...(lastName !== undefined && { lastName }),
+        ...(phone !== undefined && { phone }),
+        ...(avatarUrl !== undefined && { avatarUrl }),
       },
       select: {
         id: true,
@@ -226,9 +228,27 @@ exports.updateProfile = async (req, res) => {
       },
     });
 
+    if (req.user.role === 'CLIENT') {
+      await prisma.clientProfile.update({
+        where: { userId: req.user.id },
+        data: {
+          ...(address !== undefined && { address }),
+          ...(city !== undefined && { city }),
+          ...(state !== undefined && { state }),
+          ...(postalCode !== undefined && { postalCode }),
+          ...(country !== undefined && { country }),
+        },
+      });
+    }
+
+    const profile = req.user.role === 'CLIENT'
+      ? await prisma.clientProfile.findUnique({ where: { userId: req.user.id } })
+      : await prisma.professionalProfile.findUnique({ where: { userId: req.user.id } });
+
     res.json({
       message: 'Profile updated successfully',
       user: updatedUser,
+      profile,
     });
   } catch (error) {
     console.error('Update profile error:', error);
