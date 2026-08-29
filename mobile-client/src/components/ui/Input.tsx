@@ -1,21 +1,26 @@
 import React from 'react';
-import { View, TextInput, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  type TextInputProps,
+  type StyleProp,
+  type TextStyle,
+  type ViewStyle,
+} from 'react-native';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
 
-interface InputProps {
+interface InputProps extends Omit<TextInputProps, 'style'> {
   label?: string;
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  editable?: boolean;
-  multiline?: boolean;
-  numberOfLines?: number;
   error?: string;
   icon?: React.ReactNode;
-  style?: any;
+  rightIcon?: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -31,7 +36,9 @@ export const Input: React.FC<InputProps> = ({
   numberOfLines = 1,
   error,
   icon,
+  rightIcon,
   style,
+  ...textInputProps
 }) => {
   return (
     <View style={[styles.container, style]}>
@@ -39,10 +46,12 @@ export const Input: React.FC<InputProps> = ({
       <View style={[styles.inputContainer, error && styles.inputError, !editable && styles.inputDisabled]}>
         {icon && <View style={styles.iconContainer}>{icon}</View>}
         <TextInput
+          {...textInputProps}
           style={[
             styles.input,
             multiline && styles.multiline,
-            icon && styles.inputWithIcon,
+            Boolean(icon) && styles.inputWithIcon,
+            Boolean(rightIcon) && styles.inputWithRightIcon,
           ]}
           placeholder={placeholder}
           placeholderTextColor={COLORS.gray400}
@@ -55,6 +64,7 @@ export const Input: React.FC<InputProps> = ({
           multiline={multiline}
           numberOfLines={numberOfLines}
         />
+        {rightIcon && <View style={styles.rightIconContainer}>{rightIcon}</View>}
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
@@ -67,7 +77,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: FONTS.sizes.sm,
-    fontWeight: FONTS.weights.medium,
+    fontWeight: FONTS.weights.medium as TextStyle['fontWeight'],
     color: COLORS.textPrimary,
     marginBottom: SPACING.xs,
   },
@@ -86,7 +96,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.gray100,
   },
   iconContainer: {
-    paddingHorizontal: SPACING.md,
+    paddingLeft: SPACING.md,
+  },
+  rightIconContainer: {
+    paddingRight: SPACING.md,
   },
   input: {
     flex: 1,
@@ -96,7 +109,10 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   inputWithIcon: {
-    paddingLeft: 0,
+    paddingLeft: SPACING.sm,
+  },
+  inputWithRightIcon: {
+    paddingRight: SPACING.sm,
   },
   multiline: {
     textAlignVertical: 'top',

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
+import { useStripe } from '@stripe/stripe-react-native';
 
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
@@ -28,14 +28,14 @@ export const CheckoutScreen: React.FC = () => {
     address: '123 Main St, City, State 12345',
   };
 
-  const platformFee = numericAmount * 0.1;
-  const total = numericAmount + platformFee;
+  const platformFee = numericAmount * 0.15;
+  const total = numericAmount;
 
   const handlePayment = async () => {
     if (paymentMethod === 'CASH') {
       // Handle cash payment
       try {
-        await apiClient.createPaymentIntent(bookingId, total);
+        await apiClient.confirmCashPayment(bookingId);
         Alert.alert('Success', 'Booking confirmed! Pay the professional in cash.');
         router.push(`/booking/${bookingId}`);
       } catch (error) {
@@ -48,13 +48,13 @@ export const CheckoutScreen: React.FC = () => {
     setIsLoading(true);
     try {
       // Fetch payment intent from backend
-      const response = await apiClient.createPaymentIntent(bookingId, total);
+      const response = await apiClient.createPaymentIntent(bookingId);
       
       // Initialize payment sheet
       const { error: initError } = await initPaymentSheet({
         paymentIntentClientSecret: response.clientSecret,
         merchantDisplayName: 'ServicePro',
-        returnURL: 'servicepro://checkout',
+        returnURL: 'homeservices-client://checkout',
       });
 
       if (initError) {
@@ -67,6 +67,8 @@ export const CheckoutScreen: React.FC = () => {
       if (paymentError) {
         throw new Error(paymentError.message);
       }
+
+      await apiClient.confirmPayment(bookingId, response.paymentIntentId);
 
       // Payment successful
       Alert.alert('Success', 'Payment completed! Your booking is confirmed.');
@@ -181,16 +183,16 @@ export const CheckoutScreen: React.FC = () => {
           <View style={styles.priceCard}>
             <View style={styles.priceRow}>
               <Text style={styles.priceLabel}>Service Cost</Text>
-              <Text style={styles.priceValue}>${numericAmount.toFixed(2)}</Text>
+              <Text style={styles.priceValue}>€{numericAmount.toFixed(2)}</Text>
             </View>
             <View style={styles.priceRow}>
-              <Text style={styles.priceLabel}>Platform Fee</Text>
-              <Text style={styles.priceValue}>${platformFee.toFixed(2)}</Text>
+              <Text style={styles.priceLabel}>Platform Fee (included)</Text>
+              <Text style={styles.priceValue}>€{platformFee.toFixed(2)}</Text>
             </View>
             <View style={styles.divider} />
             <View style={[styles.priceRow, styles.totalRow]}>
               <Text style={styles.totalLabel}>Total</Text>
-              <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
+              <Text style={styles.totalValue}>€{total.toFixed(2)}</Text>
             </View>
           </View>
         </View>
@@ -210,7 +212,7 @@ export const CheckoutScreen: React.FC = () => {
       <View style={styles.bottomBar}>
         <View style={styles.totalContainer}>
           <Text style={styles.totalLabelSmall}>Total to pay:</Text>
-          <Text style={styles.totalValueSmall}>${total.toFixed(2)}</Text>
+          <Text style={styles.totalValueSmall}>€{total.toFixed(2)}</Text>
         </View>
         <Button
           title={paymentMethod === 'CARD' ? 'Pay Now' : 'Confirm Booking'}

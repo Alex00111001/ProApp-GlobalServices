@@ -14,12 +14,22 @@ const paymentRoutes = require('./routes/payment.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const favoriteRoutes = require('./routes/favorite.routes');
 const reviewRoutes = require('./routes/review.routes');
+const paymentController = require('./controllers/payment.controller');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares globales
 app.use(cors());
+
+// Stripe necesita el cuerpo binario original para verificar la firma.
+// Esta ruta debe registrarse antes de express.json() y no usa JWT.
+app.post(
+  '/api/payments/webhook',
+  express.raw({ type: 'application/json' }),
+  paymentController.stripeWebhook
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

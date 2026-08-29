@@ -12,6 +12,7 @@ router.get('/client/my-bookings', authorize('CLIENT'), bookingController.getClie
 
 // Rutas para profesionales
 router.get('/professional/my-bookings', authorize('PROFESSIONAL'), bookingController.getProfessionalBookings);
+router.get('/:id', bookingController.getBookingById);
 router.post('/:id/confirm', authorize('PROFESSIONAL'), bookingController.confirmBooking);
 router.post('/:id/complete', authorize('PROFESSIONAL'), bookingController.completeBooking);
 

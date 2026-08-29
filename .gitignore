@@ -6,6 +6,8 @@ node_modules/
 .env
 .env.local
 *.env.*
+!.env.example
+!**/.env.example
 
 # Logs
 *.log
@@ -26,6 +28,8 @@ build/
 
 # Cache directories
 .cache/
+.expo/
+.artifacts/
 .nyc_output/
 coverage/
 htmlcov/
@@ -34,6 +38,14 @@ htmlcov/
 # System files
 .DS_Store
 Thumbs.db
+
+# Local mobile build and signing files
+*.keystore
+*.jks
+mobile-client/android_backup/
+
+# Local emulator/test captures created at repository root
+/*.png
 
 # Python specific
 __pycache__/

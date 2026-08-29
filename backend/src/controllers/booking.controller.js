@@ -19,7 +19,7 @@ exports.createBooking = async (req, res) => {
     // Verificar que el profesional existe y está aprobado
     const professional = await prisma.professionalProfile.findUnique({
       where: { id: professionalId },
-      include: { services: true },
+      include: { services: true, categories: true },
     });
 
     if (!professional || professional.status !== 'APPROVED') {
@@ -28,19 +28,35 @@ exports.createBooking = async (req, res) => {
       });
     }
 
-    // Calcular precios
+    if (!Array.isArray(bookingServices) || bookingServices.length === 0) {
+      return res.status(400).json({ error: 'At least one service is required' });
+    }
+
+    const requestedServiceIds = [...new Set(bookingServices.map((item) => item.serviceId))];
+    const services = await prisma.service.findMany({
+      where: {
+        id: { in: requestedServiceIds },
+        professionalId,
+        categoryId: { in: professional.categories.map((item) => item.categoryId) },
+        isActive: true,
+      },
+    });
+    const servicesById = new Map(services.map((service) => [service.id, service]));
+
+    if (services.length !== requestedServiceIds.length) {
+      return res.status(400).json({
+        error: 'One or more services do not belong to the selected professional or category',
+      });
+    }
+
+    // Calcular precios exclusivamente con servicios del profesional y su categoría.
     let totalPrice = 0;
     const platformFeePercentage = 0.15; // 15% de comisión
 
     for (const serviceItem of bookingServices) {
-      const service = await prisma.service.findUnique({
-        where: { id: serviceItem.serviceId },
-      });
-
-      if (!service || !service.isActive) {
-        return res.status(400).json({ 
-          error: `Service ${serviceItem.serviceId} not found or inactive` 
-        });
+      const service = servicesById.get(serviceItem.serviceId);
+      if (!Number.isInteger(serviceItem.quantity) || serviceItem.quantity < 1) {
+        return res.status(400).json({ error: 'Service quantity must be a positive integer' });
       }
 
       const subtotal = service.basePrice * serviceItem.quantity;
@@ -74,9 +90,7 @@ exports.createBooking = async (req, res) => {
 
       // Crear los servicios de la reserva
       for (const serviceItem of bookingServices) {
-        const service = await tx.service.findUnique({
-          where: { id: serviceItem.serviceId },
-        });
+        const service = servicesById.get(serviceItem.serviceId);
 
         await tx.bookingService.create({
           data: {
@@ -131,6 +145,35 @@ exports.createBooking = async (req, res) => {
     });
   } catch (error) {
     console.error('Create booking error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Obtener una reserva concreta, limitada al cliente o profesional propietario.
+exports.getBookingById = async (req, res) => {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { id: req.params.id },
+      include: {
+        client: { include: { user: true } },
+        professional: { include: { user: true } },
+        bookingServices: {
+          include: { service: { include: { category: true, subcategory: true } } },
+        },
+        payment: true,
+        review: true,
+      },
+    });
+
+    if (!booking) return res.status(404).json({ error: 'Booking not found' });
+
+    const isClient = booking.client?.userId === req.user.id;
+    const isProfessional = booking.professional?.userId === req.user.id;
+    if (!isClient && !isProfessional) return res.status(403).json({ error: 'Forbidden' });
+
+    res.json({ booking });
+  } catch (error) {
+    console.error('Get booking by id error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
