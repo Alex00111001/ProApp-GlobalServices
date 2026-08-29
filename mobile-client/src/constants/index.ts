@@ -53,7 +53,7 @@ export const BOOKING_STATUS_CONFIG = {
   CONFIRMED: {
     label: 'Confirmed',
     color: COLORS.primary,
-    icon: 'check-circle-outline',
+    icon: 'checkmark-circle-outline',
   },
   IN_PROGRESS: {
     label: 'In Progress',

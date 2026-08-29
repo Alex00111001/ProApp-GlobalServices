@@ -1,6 +1,7 @@
 import { Slot } from 'expo-router';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { StatusBar } from 'expo-status-bar';
+import '@/i18n';
 
 // Configura tu clave pública de Stripe desde variables de entorno
 const STRIPE_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';

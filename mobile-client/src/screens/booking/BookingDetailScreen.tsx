@@ -9,6 +9,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 interface BookingService {
   id: string;
@@ -76,6 +77,7 @@ interface Booking {
 
 export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingId: bookingIdProp }) => {
   const router = useRouter();
+  const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const bookingId = bookingIdProp || id;
 
@@ -97,7 +99,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
       setBooking(data);
     } catch (error) {
       console.error('Error loading booking:', error);
-      Alert.alert('Error', 'Failed to load booking details');
+      Alert.alert(t('common.error'), t('booking.loadError'));
     } finally {
       setIsLoading(false);
     }
@@ -105,12 +107,12 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
 
   const handleCancelBooking = () => {
     Alert.alert(
-      'Cancel Booking',
-      'Are you sure you want to cancel this booking?',
+      t('booking.cancel'),
+      t('booking.cancel'),
       [
-        { text: 'No', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Yes, Cancel',
+          text: t('booking.cancel'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -146,15 +148,15 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
   const getStatusText = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return 'Pending Confirmation';
+        return t('booking.pending');
       case 'CONFIRMED':
-        return 'Confirmed';
+        return t('booking.confirmed');
       case 'IN_PROGRESS':
-        return 'In Progress';
+        return t('booking.inProgress');
       case 'COMPLETED':
-        return 'Completed';
+        return t('booking.completed');
       case 'CANCELLED':
-        return 'Cancelled';
+        return t('booking.cancelled');
       default:
         return status;
     }
@@ -173,8 +175,8 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
       <SafeAreaView style={styles.container}>
         <View style={styles.emptyContainer}>
           <Ionicons name="calendar-outline" size={64} color={COLORS.gray400} />
-          <Text style={styles.emptyText}>Booking not found</Text>
-          <Button title="Go Back" onPress={() => router.back()} />
+          <Text style={styles.emptyText}>{t('common.notFound')}</Text>
+          <Button title={t('common.goBack')} onPress={() => router.back()} />
         </View>
       </SafeAreaView>
     );
@@ -201,7 +203,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Booking Details</Text>
+        <Text style={styles.headerTitle}>{t('booking.details')}</Text>
         <TouchableOpacity>
           <Ionicons name="share-outline" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
@@ -219,7 +221,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
         {/* Professional Info */}
         {booking.professional && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Professional</Text>
+            <Text style={styles.sectionTitle}>{t('common.professional')}</Text>
             <TouchableOpacity
               style={styles.professionalCard}
               onPress={() => router.push(`/professional/${booking.professional!.id}`)}
@@ -246,7 +248,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
 
         {/* Services */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Services</Text>
+          <Text style={styles.sectionTitle}>{t('common.services')}</Text>
           {booking.bookingServices.map((bs) => (
             <View key={bs.id} style={styles.serviceItem}>
               <View style={styles.serviceIcon}>
@@ -254,7 +256,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
               </View>
               <View style={styles.serviceInfo}>
                 <Text style={styles.serviceName}>{bs.service.name}</Text>
-                <Text style={styles.serviceQuantity}>Qty: {bs.quantity}</Text>
+                <Text style={styles.serviceQuantity}>{t('common.quantity')}: {bs.quantity}</Text>
               </View>
               <Text style={styles.servicePrice}>€{Number(bs.subtotal).toFixed(2)}</Text>
             </View>
@@ -263,11 +265,11 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
 
         {/* Date & Time */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Date & Time</Text>
+          <Text style={styles.sectionTitle}>{t('common.dateTime')}</Text>
           <View style={styles.infoCard}>
             <Ionicons name="calendar-outline" size={20} color={COLORS.primary} />
             <Text style={styles.infoText}>
-              {new Date(booking.scheduledDate).toLocaleDateString('en-US', {
+              {new Date(booking.scheduledDate).toLocaleDateString(i18n.resolvedLanguage, {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -279,7 +281,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
 
         {/* Location */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Location</Text>
+          <Text style={styles.sectionTitle}>{t('common.location')}</Text>
           <View style={styles.infoCard}>
             <Ionicons name="location-outline" size={20} color={COLORS.primary} />
             <Text style={styles.infoText}>
@@ -290,7 +292,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
           <View style={styles.mapContainer}>
             <View style={styles.mapPlaceholder}>
               <Ionicons name="map-outline" size={48} color={COLORS.gray400} />
-              <Text style={styles.mapPlaceholderText}>Map View</Text>
+              <Text style={styles.mapPlaceholderText}>{t('booking.map')}</Text>
             </View>
           </View>
         </View>
@@ -298,19 +300,19 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
         {/* Payment Info */}
         {booking.payment && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Payment</Text>
+            <Text style={styles.sectionTitle}>{t('common.payment')}</Text>
             <View style={styles.priceCard}>
               <View style={styles.priceRow}>
-                <Text style={styles.priceLabel}>Subtotal</Text>
+                <Text style={styles.priceLabel}>{t('booking.subtotal')}</Text>
                 <Text style={styles.priceValue}>€{(totalPrice - platformFee).toFixed(2)}</Text>
               </View>
               <View style={styles.priceRow}>
-                <Text style={styles.priceLabel}>Platform Fee</Text>
+                <Text style={styles.priceLabel}>{t('booking.platformFee')}</Text>
                 <Text style={styles.priceValue}>€{platformFee.toFixed(2)}</Text>
               </View>
               <View style={styles.divider} />
               <View style={[styles.priceRow, styles.totalRow]}>
-                <Text style={styles.totalLabel}>Total Paid</Text>
+                <Text style={styles.totalLabel}>{t('booking.totalPaid')}</Text>
                 <Text style={styles.totalValue}>€{totalPrice.toFixed(2)}</Text>
               </View>
               <View style={styles.paymentMethod}>
@@ -330,7 +332,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
         {/* Notes */}
         {booking.notes && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Notes</Text>
+            <Text style={styles.sectionTitle}>{t('common.notes')}</Text>
             <View style={styles.notesCard}>
               <Text style={styles.notesText}>{booking.notes}</Text>
             </View>
@@ -344,13 +346,13 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
       {(booking.status === 'CONFIRMED' || booking.status === 'PENDING') && (
         <View style={styles.bottomBar}>
           <Button
-            title="Cancel Booking"
+            title={t('booking.cancel')}
             onPress={handleCancelBooking}
             variant="outline"
             style={styles.cancelButton}
           />
           <Button
-            title="Contact Professional"
+            title={t('booking.contact')}
             onPress={() => {}}
             style={styles.contactButton}
           />

@@ -8,9 +8,11 @@ import { Button, Input } from '@/components/ui';
 import { useAuthStore } from '@/store/authStore';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
 import { LoginCredentials } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 export const LoginScreen: React.FC = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { login, isLoading, error } = useAuthStore();
   
   const [formData, setFormData] = useState<LoginCredentials>({
@@ -24,13 +26,13 @@ export const LoginScreen: React.FC = () => {
     setLocalError('');
     
     if (!formData.email || !formData.password) {
-      setLocalError('Please fill in all fields');
+      setLocalError(t('auth.required'));
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setLocalError('Please enter a valid email');
+      setLocalError(t('auth.invalidEmail'));
       return;
     }
 
@@ -50,15 +52,15 @@ export const LoginScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent as StyleProp<ViewStyle>} keyboardShouldPersistTaps="handled">
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.header}>
-            <Ionicons name="handyman-outline" size={64} color={COLORS.primary} />
+            <Ionicons name="construct-outline" size={64} color={COLORS.primary} />
             <Text style={styles.title}>ServicePro</Text>
-            <Text style={styles.subtitle}>Find trusted professionals for your home</Text>
+            <Text style={styles.subtitle}>{t('auth.tagline')}</Text>
           </View>
 
           <View style={styles.form}>
             <Input
-              label="Email"
-              placeholder="Enter your email"
+              label={t('auth.email')}
+              placeholder={t('auth.emailPlaceholder')}
               value={formData.email}
               onChangeText={(text) => setFormData({ ...formData, email: text })}
               keyboardType="email-address"
@@ -68,8 +70,8 @@ export const LoginScreen: React.FC = () => {
             />
 
             <Input
-              label="Password"
-              placeholder="Enter your password"
+              label={t('auth.password')}
+              placeholder={t('auth.passwordPlaceholder')}
               value={formData.password}
               onChangeText={(text) => setFormData({ ...formData, password: text })}
               secureTextEntry={!showPassword}
@@ -94,11 +96,11 @@ export const LoginScreen: React.FC = () => {
             )}
 
             <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <Text style={styles.forgotPasswordText}>{t('auth.forgot')}</Text>
             </TouchableOpacity>
 
             <Button
-              title="Sign In"
+              title={t('auth.signIn')}
               onPress={handleLogin}
               disabled={isLoading}
               fullWidth
@@ -111,26 +113,26 @@ export const LoginScreen: React.FC = () => {
 
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>OR</Text>
+            <Text style={styles.dividerText}>{t('auth.or')}</Text>
             <View style={styles.dividerLine} />
           </View>
 
           <View style={styles.socialButtons}>
             <TouchableOpacity style={styles.socialButton}>
               <Ionicons name="logo-google" size={24} color={COLORS.error} />
-              <Text style={styles.socialButtonText}>Continue with Google</Text>
+              <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.socialButton}>
               <Ionicons name="logo-apple" size={24} color={COLORS.black} />
-              <Text style={styles.socialButtonText}>Continue with Apple</Text>
+              <Text style={styles.socialButtonText}>{t('auth.apple')}</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Don't have an account? </Text>
+            <Text style={styles.footerText}>{t('auth.noAccount')} </Text>
             <TouchableOpacity onPress={() => router.push('/auth/register')}>
-              <Text style={styles.linkText}>Sign Up</Text>
+              <Text style={styles.linkText}>{t('auth.signUp')}</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>

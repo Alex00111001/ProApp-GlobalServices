@@ -16,9 +16,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Button } from '@/components/ui';
 import { Input } from '@/components/ui';
 import { COLORS, SPACING, FONTS } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -32,17 +34,17 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
     // Validaciones básicas
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-      Alert.alert('Error', 'Por favor completa todos los campos requeridos');
+      Alert.alert(t('common.error'), t('auth.required'));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      Alert.alert('Error', 'Las contraseñas no coinciden');
+      Alert.alert(t('common.error'), t('auth.passwordsMismatch'));
       return;
     }
 
-    if (formData.password.length < 6) {
-      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres');
+    if (formData.password.length < 8) {
+      Alert.alert(t('common.error'), t('auth.passwordLength'));
       return;
     }
 
@@ -52,10 +54,10 @@ export default function RegisterScreen() {
       // TODO: Implementar llamada a API para registro
       // const response = await api.auth.register(formData);
       
-      Alert.alert('Éxito', 'Cuenta creada correctamente. Por favor inicia sesión.');
+      Alert.alert(t('common.success'), t('auth.signIn'));
       router.replace('/auth/login');
     } catch (error) {
-      Alert.alert('Error', 'No se pudo crear la cuenta. Inténtalo de nuevo.');
+      Alert.alert(t('common.error'), t('editProfile.saveError'));
       console.error('Register error:', error);
     } finally {
       setIsLoading(false);
@@ -83,8 +85,8 @@ export default function RegisterScreen() {
             >
               <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
             </TouchableOpacity>
-            <Text style={styles.title}>Crear Cuenta</Text>
-            <Text style={styles.subtitle}>Completa tus datos para registrarte</Text>
+            <Text style={styles.title}>{t('auth.createAccount')}</Text>
+            <Text style={styles.subtitle}>{t('auth.registerSubtitle')}</Text>
           </View>
 
           {/* Formulario */}
@@ -92,7 +94,7 @@ export default function RegisterScreen() {
             <View style={styles.nameRow}>
               <View style={styles.halfInput}>
                 <Input
-                  label="Nombre"
+                  label={t('auth.firstName')}
                   placeholder="Tu nombre"
                   value={formData.firstName}
                   onChangeText={(text) => setFormData({ ...formData, firstName: text })}
@@ -101,7 +103,7 @@ export default function RegisterScreen() {
               </View>
               <View style={styles.halfInput}>
                 <Input
-                  label="Apellido"
+                  label={t('auth.lastName')}
                   placeholder="Tu apellido"
                   value={formData.lastName}
                   onChangeText={(text) => setFormData({ ...formData, lastName: text })}
@@ -111,7 +113,7 @@ export default function RegisterScreen() {
             </View>
 
             <Input
-              label="Email"
+              label={t('auth.email')}
               placeholder="tu@email.com"
               value={formData.email}
               onChangeText={(text) => setFormData({ ...formData, email: text })}
@@ -121,7 +123,7 @@ export default function RegisterScreen() {
             />
 
             <Input
-              label="Teléfono"
+              label={t('auth.phone')}
               placeholder="+34 600 000 000"
               value={formData.phone}
               onChangeText={(text) => setFormData({ ...formData, phone: text })}
@@ -129,7 +131,7 @@ export default function RegisterScreen() {
             />
 
             <Input
-              label="Contraseña"
+              label={t('auth.password')}
               placeholder="••••••••"
               value={formData.password}
               onChangeText={(text) => setFormData({ ...formData, password: text })}
@@ -138,7 +140,7 @@ export default function RegisterScreen() {
             />
 
             <Input
-              label="Confirmar Contraseña"
+              label={t('auth.confirmPassword')}
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
@@ -156,17 +158,17 @@ export default function RegisterScreen() {
             </View>
 
             <Button
-              title="Registrarse"
+              title={t('auth.register')}
               onPress={handleRegister}
               loading={isLoading}
               disabled={isLoading}
             />
 
             <View style={styles.loginContainer}>
-              <Text style={styles.loginText}>¿Ya tienes una cuenta? </Text>
+              <Text style={styles.loginText}>{t('auth.hasAccount')} </Text>
               <Link href="/auth/login" asChild>
                 <TouchableOpacity>
-                  <Text style={styles.loginLink}>Iniciar Sesión</Text>
+                  <Text style={styles.loginLink}>{t('auth.signIn')}</Text>
                 </TouchableOpacity>
               </Link>
             </View>
