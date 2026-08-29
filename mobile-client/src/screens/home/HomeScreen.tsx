@@ -8,9 +8,11 @@ import { ProfessionalCard } from '@/components/ui';
 import { useAppStore } from '@/store/appStore';
 import { COLORS, SPACING, FONTS } from '@/constants/theme';
 import { ProfessionalProfile } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 export const HomeScreen: React.FC = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { categories, professionals, isLoadingCategories, isLoadingProfessionals, fetchCategories, fetchProfessionals } = useAppStore();
 
   useEffect(() => {
@@ -18,17 +20,23 @@ export const HomeScreen: React.FC = () => {
     fetchProfessionals();
   }, []);
 
-  const renderCategory = ({ item }: { item: any }) => (
+  const renderCategory = ({ item }: { item: any }) => {
+    const iconName = item.icon && item.icon in Ionicons.glyphMap
+      ? item.icon as keyof typeof Ionicons.glyphMap
+      : 'construct-outline';
+
+    return (
     <TouchableOpacity
       style={styles.categoryCard}
       onPress={() => router.push(`/professionals?categoryId=${item.id}`)}
     >
       <View style={styles.categoryIcon}>
-        <Ionicons name={item.icon || 'construct-outline'} size={24} color={COLORS.primary} />
+        <Ionicons name={iconName} size={24} color={COLORS.primary} />
       </View>
       <Text style={styles.categoryName}>{item.name}</Text>
     </TouchableOpacity>
-  );
+    );
+  };
 
   const renderProfessional = ({ item }: { item: ProfessionalProfile }) => (
     <ProfessionalCard
@@ -48,8 +56,8 @@ export const HomeScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Find Professionals</Text>
-        <Text style={styles.subtitle}>Book trusted services for your home</Text>
+        <Text style={styles.title}>{t('home.title')}</Text>
+        <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
       </View>
 
       <FlatList
@@ -63,9 +71,9 @@ export const HomeScreen: React.FC = () => {
       />
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Top Professionals</Text>
+        <Text style={styles.sectionTitle}>{t('home.top')}</Text>
         <TouchableOpacity>
-          <Text style={styles.seeAll}>See All</Text>
+          <Text style={styles.seeAll}>{t('home.seeAll')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -77,7 +85,7 @@ export const HomeScreen: React.FC = () => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="people-outline" size={48} color={COLORS.gray400} />
-            <Text style={styles.emptyText}>No professionals found</Text>
+            <Text style={styles.emptyText}>{t('home.empty')}</Text>
           </View>
         }
       />

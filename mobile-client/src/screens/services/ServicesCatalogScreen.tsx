@@ -77,7 +77,9 @@ export const ServicesCatalogScreen: React.FC = () => {
     >
       <View style={[styles.categoryIcon, selectedCategory === item.id && styles.categoryIconSelected]}>
         <Ionicons 
-          name={item.iconUrl ? item.iconUrl.replace('ion-', '') as any : 'construct-outline'} 
+          name={item.iconUrl && item.iconUrl.replace('ion-', '') in Ionicons.glyphMap
+            ? item.iconUrl.replace('ion-', '') as keyof typeof Ionicons.glyphMap
+            : 'construct-outline'}
           size={24} 
           color={selectedCategory === item.id ? COLORS.white : COLORS.primary} 
         />
