@@ -1,11 +1,48 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { AuthResponse } from '@/types';
+import Constants from 'expo-constants';
 
-const API_URL = process.env.API_URL || 'http://localhost:3000/api';
+// Expo requiere el prefijo EXPO_PUBLIC_ para las variables de entorno en el bundle
+// Para desarrollo en Android, 'localhost' no funciona, se debe usar la IP de la máquina o 10.0.2.2
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:3000/api';
 
 class ApiClient {
   private client: AxiosInstance;
+
+  private normalizeCategory(category: any) {
+    return {
+      ...category,
+      icon: category.icon ?? category.iconUrl,
+    };
+  }
+
+  private normalizeProfessional(professional: any) {
+    return {
+      ...professional,
+      hourlyRate:
+        professional.hourlyRate == null
+          ? undefined
+          : Number(professional.hourlyRate),
+      rating: professional.rating ?? professional.averageRating ?? 0,
+      totalJobs: professional.totalJobs ?? professional.totalBookings ?? 0,
+      isVerified: professional.isVerified ?? Boolean(professional.verifiedAt),
+      isApproved:
+        professional.isApproved ?? professional.status === 'APPROVED',
+      user: {
+        ...professional.user,
+        name:
+          professional.user?.name ??
+          [professional.user?.firstName, professional.user?.lastName]
+            .filter(Boolean)
+            .join(' '),
+        avatar: professional.user?.avatar ?? professional.user?.avatarUrl,
+      },
+      categories: (professional.categories ?? []).map((item: any) =>
+        this.normalizeCategory(item.category ?? item)
+      ),
+    };
+  }
 
   constructor() {
     this.client = axios.create({
@@ -91,7 +128,7 @@ class ApiClient {
     return response.data;
   }
 
-  async updateProfile(data: Partial<AuthResponse['profile']>) {
+  async updateProfile(data: Record<string, unknown>) {
     const response = await this.client.put<AuthResponse>('/auth/profile', data);
     await SecureStore.setItemAsync('user_data', JSON.stringify(response.data));
     return response.data;
@@ -113,12 +150,14 @@ class ApiClient {
   // Categories
   async getCategories() {
     const response = await this.client.get('/categories');
-    return response.data;
+    return response.data.categories.map((category: any) =>
+      this.normalizeCategory(category)
+    );
   }
 
   async getCategoryById(id: string) {
     const response = await this.client.get(`/categories/${id}`);
-    return response.data;
+    return this.normalizeCategory(response.data.category);
   }
 
   // Professionals
@@ -131,12 +170,14 @@ class ApiClient {
     limit?: number;
   }) {
     const response = await this.client.get('/professionals', { params });
-    return response.data;
+    return response.data.professionals.map((professional: any) =>
+      this.normalizeProfessional(professional)
+    );
   }
 
   async getProfessionalById(id: string) {
     const response = await this.client.get(`/professionals/${id}`);
-    return response.data;
+    return this.normalizeProfessional(response.data.professional);
   }
 
   // Bookings
@@ -159,7 +200,12 @@ class ApiClient {
 
   async getMyBookings() {
     const response = await this.client.get('/bookings/client/my-bookings');
-    return response.data;
+    return response.data.bookings;
+  }
+
+  async getBookingById(id: string) {
+    const response = await this.client.get(`/bookings/${id}`);
+    return response.data.booking;
   }
 
   async cancelBooking(id: string) {
@@ -181,11 +227,23 @@ class ApiClient {
   }
 
   // Payments
-  async createPaymentIntent(bookingId: string, amount: number) {
+  async createPaymentIntent(bookingId: string) {
     const response = await this.client.post('/payments/create-intent', {
       bookingId,
-      amount,
     });
+    return response.data;
+  }
+
+  async confirmPayment(bookingId: string, paymentIntentId: string) {
+    const response = await this.client.post('/payments/confirm', {
+      bookingId,
+      paymentIntentId,
+    });
+    return response.data;
+  }
+
+  async confirmCashPayment(bookingId: string) {
+    const response = await this.client.post('/payments/cash', { bookingId });
     return response.data;
   }
 

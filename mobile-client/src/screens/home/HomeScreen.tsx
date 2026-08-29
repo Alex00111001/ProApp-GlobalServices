@@ -59,6 +59,7 @@ export const HomeScreen: React.FC = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.categoriesList}
+        style={styles.categoriesScroller}
       />
 
       <View style={styles.sectionHeader}>
@@ -103,6 +104,11 @@ const styles = StyleSheet.create({
     fontWeight: FONTS.weights.bold,
     color: COLORS.textPrimary,
   },
+  categoriesScroller: {
+    flexGrow: 0,
+    flexShrink: 0,
+    minHeight: 112,
+  },
   subtitle: {
     fontSize: FONTS.sizes.md,
     color: COLORS.textSecondary,
@@ -116,9 +122,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: SPACING.lg,
     backgroundColor: COLORS.surface,
-    padding: SPACING.lg,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.md,
     borderRadius: SPACING.lg,
-    minWidth: 80,
+    width: 96,
     ...require('@/constants/theme').SHADOWS.sm,
   },
   categoryIcon: {
@@ -135,6 +142,7 @@ const styles = StyleSheet.create({
     fontWeight: FONTS.weights.medium,
     color: COLORS.textPrimary,
     textAlign: 'center',
+    minHeight: 30,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -155,7 +163,7 @@ const styles = StyleSheet.create({
   },
   professionalsList: {
     paddingHorizontal: SPACING.lg,
-    paddingBottom: SPACING.xxl,
+    paddingBottom: 110,
   },
   emptyContainer: {
     alignItems: 'center',

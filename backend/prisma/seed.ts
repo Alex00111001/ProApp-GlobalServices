@@ -310,6 +310,33 @@ async function main() {
 
   console.log('✓ Created admin user');
 
+  const clientPassword = await bcrypt.hash('cliente123', 10);
+
+  const testClient = await prisma.user.upsert({
+    where: { email: 'cliente.prueba@example.com' },
+    update: {},
+    create: {
+      email: 'cliente.prueba@example.com',
+      passwordHash: clientPassword,
+      firstName: 'Cliente',
+      lastName: 'Prueba',
+      phone: '+34600000000',
+      role: 'CLIENT',
+    },
+  });
+
+  await prisma.clientProfile.upsert({
+    where: { userId: testClient.id },
+    update: {},
+    create: {
+      userId: testClient.id,
+      city: 'Madrid',
+      country: 'España',
+    },
+  });
+
+  console.log('✓ Created test client');
+
   const professionalPassword = await bcrypt.hash('professional123', 10);
   
   const professionalsData = [
@@ -405,11 +432,30 @@ async function main() {
     });
 
     if (category) {
-      await prisma.professionalCategory.create({
-        data: {
+      await prisma.professionalCategory.upsert({
+        where: {
+          professionalId_categoryId: {
+            professionalId: professional.id,
+            categoryId: category.id,
+          },
+        },
+        update: {
+          verified: true,
+        },
+        create: {
           professionalId: professional.id,
           categoryId: category.id,
           verified: true,
+        },
+      });
+
+      await prisma.service.updateMany({
+        where: {
+          categoryId: category.id,
+          professionalId: null,
+        },
+        data: {
+          professionalId: professional.id,
         },
       });
     }
@@ -442,6 +488,7 @@ async function main() {
   console.log('\n✅ Database seeding completed successfully!');
   console.log(`\n   - ${categoriesData.length} categories created`);
   console.log(`   - ${professionalsData.length} sample professionals created`);
+  console.log('   - Test client: cliente.prueba@example.com / cliente123');
   console.log('   - Admin: admin@servicepro.com / admin123');
   console.log('   - Professional password: professional123');
 }
