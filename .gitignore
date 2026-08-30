@@ -1,4 +1,3 @@
-```
 # Dependencies
 node_modules/
 
@@ -59,4 +58,7 @@ __pycache__/
 *.so
 *.egg-info/
 .eggs/
-```
+
+# Local agent skills and installation metadata
+/.agents/
+/skills-lock.json
