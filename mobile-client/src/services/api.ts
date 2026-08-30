@@ -125,18 +125,10 @@ class ApiClient {
     acceptTerms: true;
     acceptPrivacy: true;
     marketingConsent: boolean;
-    termsVersion: '2026-08-30';
-    privacyVersion: '2026-08-30';
+    termsVersion: string;
+    privacyVersion: string;
   }) {
-    const [firstName, ...lastNameParts] = data.name.trim().split(/\s+/);
-    const response = await this.client.post<AuthResponse>('/auth/register', {
-      email: data.email,
-      password: data.password,
-      phone: data.phone,
-      role: data.role,
-      firstName,
-      lastName: lastNameParts.join(' ') || '-',
-    });
+    const response = await this.client.post<AuthResponse>('/auth/register', data);
     await SecureStore.setItemAsync('auth_token', response.data.token);
     await SecureStore.setItemAsync('user_data', JSON.stringify(response.data));
     return response.data;
@@ -237,6 +229,11 @@ class ApiClient {
   async getMyBookings() {
     const response = await this.client.get('/bookings/client/my-bookings');
     return response.data.bookings;
+  }
+
+  async getServiceById(id: string) {
+    const response = await this.client.get(`/categories/services/${id}`);
+    return response.data.service;
   }
 
   async getBookingById(id: string) {

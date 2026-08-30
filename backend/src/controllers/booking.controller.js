@@ -1,5 +1,7 @@
 const prisma = require('../config/prisma');
 const { normalizeBookingPayload } = require('../shared/http/compatibility');
+const { PLATFORM_FEE_PERCENTAGE } = require('../config/business');
+const { createBookingSchema } = require('../validators/auth.validators');
 
 // Crear reserva
 exports.createBooking = async (req, res) => {
@@ -15,7 +17,7 @@ exports.createBooking = async (req, res) => {
       longitude,
       notes,
       services: bookingServices 
-    } = normalizeBookingPayload(req.body);
+    } = createBookingSchema.parse(normalizeBookingPayload(req.body));
 
     // Verificar que el profesional existe y está aprobado
     const professional = await prisma.professionalProfile.findUnique({
@@ -52,7 +54,6 @@ exports.createBooking = async (req, res) => {
 
     // Calcular precios exclusivamente con servicios del profesional y su categoría.
     let totalPrice = 0;
-    const platformFeePercentage = 0.10; // 10% de comisión
 
     for (const serviceItem of bookingServices) {
       const service = servicesById.get(serviceItem.serviceId);
@@ -64,7 +65,7 @@ exports.createBooking = async (req, res) => {
       totalPrice += subtotal;
     }
 
-    const platformFee = totalPrice * platformFeePercentage;
+    const platformFee = totalPrice * PLATFORM_FEE_PERCENTAGE;
     const professionalEarnings = totalPrice - platformFee;
 
     // Crear reserva con transacción
@@ -146,6 +147,9 @@ exports.createBooking = async (req, res) => {
     });
   } catch (error) {
     console.error('Create booking error:', error);
+    if (error.name === 'ZodError') {
+      return res.status(400).json({ error: 'Validation error', details: error.issues });
+    }
     res.status(500).json({ error: 'Internal server error' });
   }
 };

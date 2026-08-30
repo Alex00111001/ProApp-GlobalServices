@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -6,47 +6,36 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
+import { apiClient } from '@/services/api';
+import { PAYMENT_CURRENCY } from '@/constants/config';
+import { useTranslation } from 'react-i18next';
 
 export const ServiceDetailScreen: React.FC = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const [service, setService] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const money = useMemo(() => new Intl.NumberFormat(undefined, { style: 'currency', currency: PAYMENT_CURRENCY }), []);
 
-  // Mock data - will be replaced with API call
-  const service = {
-    id: id || '1',
-    name: 'Complete Electrical Installation',
-    description: 'Professional electrical installation service for residential and commercial properties. Includes wiring, outlets, switches, circuit breakers, and safety inspections.',
-    basePrice: 150,
-    duration: 120,
-    category: 'Electricity',
-    includes: [
-      'Initial consultation and assessment',
-      'Complete wiring installation',
-      'Outlet and switch installation',
-      'Circuit breaker setup',
-      'Safety inspection and testing',
-      'Cleanup after work',
-    ],
-    images: [
-      'https://via.placeholder.com/400x300',
-      'https://via.placeholder.com/400x300',
-      'https://via.placeholder.com/400x300',
-    ],
-  };
+  useEffect(() => {
+    let active = true;
+    apiClient.getServiceById(id)
+      .then((data) => { if (active) setService(data); })
+      .finally(() => { if (active) setIsLoading(false); });
+    return () => { active = false; };
+  }, [id]);
+
+  if (isLoading) return <SafeAreaView style={styles.container}><ActivityIndicator style={{ flex: 1 }} size="large" color={COLORS.primary} /></SafeAreaView>;
+  if (!service) return <SafeAreaView style={styles.container}><View style={styles.content}><Text style={styles.title}>{t('common.notFound')}</Text><Button title={t('common.goBack')} onPress={() => router.back()} /></View></SafeAreaView>;
+  const imageSource = service.imageUrl ? { uri: service.imageUrl } : require('../../../assets/icon.png');
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Image Gallery */}
         <View style={styles.imageGallery}>
-          <Image source={{ uri: service.images[0] }} style={styles.mainImage} />
-          <View style={styles.thumbnailContainer}>
-            {service.images.map((image, index) => (
-              <TouchableOpacity key={index} style={styles.thumbnail}>
-                <Image source={{ uri: image }} style={styles.thumbnailImage} />
-              </TouchableOpacity>
-            ))}
-          </View>
+          <Image source={imageSource} style={styles.mainImage} resizeMode="cover" />
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </TouchableOpacity>
@@ -56,12 +45,12 @@ export const ServiceDetailScreen: React.FC = () => {
         <View style={styles.content}>
           <View style={styles.header}>
             <View>
-              <Text style={styles.category}>{service.category}</Text>
+              <Text style={styles.category}>{service.category?.name}</Text>
               <Text style={styles.title}>{service.name}</Text>
             </View>
             <View style={styles.priceBadge}>
-              <Text style={styles.priceLabel}>From</Text>
-              <Text style={styles.price}>${service.basePrice}</Text>
+              <Text style={styles.priceLabel}>{t('professionalDetail.startingAt')}</Text>
+              <Text style={styles.price}>{money.format(Number(service.basePrice))}</Text>
             </View>
           </View>
 
@@ -79,17 +68,6 @@ export const ServiceDetailScreen: React.FC = () => {
             <Text style={styles.sectionContent}>{service.description}</Text>
           </View>
 
-          {/* What's Included */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>What's Included</Text>
-            {service.includes.map((item, index) => (
-              <View key={index} style={styles.includeItem}>
-                <Ionicons name="checkmark-circle" size={20} color={COLORS.success} />
-                <Text style={styles.includeText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-
           {/* Bottom Spacing */}
           <View style={{ height: 100 }} />
         </View>
@@ -103,7 +81,9 @@ export const ServiceDetailScreen: React.FC = () => {
         </View>
         <Button
           title="Book This Service"
-          onPress={() => router.push(`/booking/new?professionalId=${service.id}&serviceId=${service.id}`)}
+          onPress={() => service.professionalId
+            ? router.push(`/booking/new?professionalId=${service.professionalId}&serviceId=${service.id}`)
+            : router.push(`/search?categoryId=${service.categoryId}`)}
           style={styles.bookButton}
         />
       </View>

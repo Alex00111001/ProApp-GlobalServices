@@ -5,6 +5,7 @@ const { authenticate, authorize } = require('../middleware/auth');
 
 // Rutas públicas
 router.get('/', categoryController.getCategories);
+router.get('/services/:id', categoryController.getServiceById);
 router.get('/:id', categoryController.getCategoryById);
 
 // Rutas protegidas (solo admin)

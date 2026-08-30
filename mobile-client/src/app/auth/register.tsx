@@ -7,12 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { Button, Input } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
 import { useAuthStore } from '@/store/authStore';
+import { LEGAL_DOCUMENT_VERSION } from '@/constants/legal';
 
 type CountryCode = 'ES' | 'BR' | 'CL';
 const COUNTRIES: Array<{ code: CountryCode; flag: string; dialCode: string }> = [
   { code: 'ES', flag: '🇪🇸', dialCode: '+34' }, { code: 'BR', flag: '🇧🇷', dialCode: '+55' }, { code: 'CL', flag: '🇨🇱', dialCode: '+56' },
 ];
-const LEGAL_VERSION = '2026-08-30' as const;
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function RegisterScreen() {
     try {
       await register({ firstName, lastName, email, phone, password: formData.password, role: 'CLIENT', countryCode,
         locale: (['es', 'en', 'pt'].includes(i18n.language) ? i18n.language : 'es') as 'es' | 'en' | 'pt',
-        acceptTerms: true, acceptPrivacy: true, marketingConsent, termsVersion: LEGAL_VERSION, privacyVersion: LEGAL_VERSION });
+        acceptTerms: true, acceptPrivacy: true, marketingConsent, termsVersion: LEGAL_DOCUMENT_VERSION, privacyVersion: LEGAL_DOCUMENT_VERSION });
       router.replace('/(tabs)');
     } catch (error) {
       Alert.alert(t('auth.registrationFailed'), error instanceof Error ? error.message : t('common.error'));

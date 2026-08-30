@@ -18,7 +18,18 @@ const paymentController = require('./controllers/payment.controller');
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || (!env.isProduction && allowedOrigins.length === 0) || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origin not allowed by CORS'));
+  },
+}));
 app.use(requestContext);
 
 // Stripe requires the original bytes for signature verification.
