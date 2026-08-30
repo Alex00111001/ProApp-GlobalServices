@@ -9,11 +9,11 @@ import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/them
 
 export const ServiceDetailScreen: React.FC = () => {
   const router = useRouter();
-  const { serviceId } = useLocalSearchParams<{ serviceId: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
 
   // Mock data - will be replaced with API call
   const service = {
-    id: serviceId || '1',
+    id: id || '1',
     name: 'Complete Electrical Installation',
     description: 'Professional electrical installation service for residential and commercial properties. Includes wiring, outlets, switches, circuit breakers, and safety inspections.',
     basePrice: 150,
@@ -103,7 +103,7 @@ export const ServiceDetailScreen: React.FC = () => {
         </View>
         <Button
           title="Book This Service"
-          onPress={() => router.push(`/booking-flow?professionalId=${service.id}&serviceId=${service.id}`)}
+          onPress={() => router.push(`/booking/new?professionalId=${service.id}&serviceId=${service.id}`)}
           style={styles.bookButton}
         />
       </View>

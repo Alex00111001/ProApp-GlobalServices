@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -26,9 +26,26 @@ export const BookingFlowScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   // Step 1: Service Selection
-  const [selectedServices, setSelectedServices] = useState<ServiceItem[]>([
-    { id: serviceId || '1', name: 'Standard Service', price: 75, duration: 60, quantity: 1 },
-  ]);
+  const [selectedServices, setSelectedServices] = useState<ServiceItem[]>([]);
+
+  useEffect(() => {
+    if (!professionalId) return;
+
+    apiClient.getProfessionalById(professionalId)
+      .then((professional: any) => {
+        const availableServices = (professional.services ?? []).map((service: any) => ({
+          id: service.id,
+          name: service.name,
+          price: Number(service.price ?? service.basePrice ?? 0),
+          duration: Number(service.duration ?? 0),
+          quantity: 1,
+        }));
+        const selected = availableServices.find((service: ServiceItem) => service.id === serviceId)
+          ?? availableServices[0];
+        setSelectedServices(selected ? [selected] : []);
+      })
+      .catch(error => console.error('Error loading professional services:', error));
+  }, [professionalId, serviceId]);
 
   // Step 2: Date & Time
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -67,6 +84,11 @@ export const BookingFlowScreen: React.FC = () => {
   };
 
   const createBooking = async () => {
+    if (!professionalId) {
+      Alert.alert('Error', 'No se ha seleccionado un profesional.');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const bookingData = {

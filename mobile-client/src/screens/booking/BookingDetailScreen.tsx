@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image, Modal, Pressable, ViewStyle } from 'react-native';
 import { SafeAreaView} from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,6 +10,8 @@ import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 import { useTranslation } from 'react-i18next';
+import { shareBookingPdf } from '@/utils/bookingPdf';
+import { BookingReceiptJpegModal } from '@/components/booking/BookingReceiptJpegModal';
 
 interface BookingService {
   id: string;
@@ -83,6 +85,8 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
 
   const [booking, setBooking] = useState<Booking | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showJpegPreview, setShowJpegPreview] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
   useEffect(() => {
     loadBooking();
@@ -193,18 +197,106 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
     ));
   };
 
+  const sharePdf = async () => {
+    if (!booking) return;
+
+    try {
+      await shareBookingPdf(booking, t, i18n.resolvedLanguage || 'es');
+    } catch (error) {
+      console.error('Error sharing booking PDF:', error);
+      Alert.alert(t('common.error'), t('booking.shareError'));
+    }
+  };
+
+  const handleShare = () => setShowShareOptions(true);
+
+  const selectPdf = () => {
+    setShowShareOptions(false);
+    void sharePdf();
+  };
+
+  const selectJpeg = () => {
+    setShowShareOptions(false);
+    setShowJpegPreview(true);
+  };
+
   const totalPrice = Number(booking.totalPrice) || 0;
   const platformFee = Number(booking.platformFee) || 0;
 
   return (
     <SafeAreaView style={styles.container}>
+      <BookingReceiptJpegModal
+        booking={booking}
+        language={i18n.resolvedLanguage || 'es'}
+        t={t}
+        visible={showJpegPreview}
+        onClose={() => setShowJpegPreview(false)}
+      />
+      <Modal
+        visible={showShareOptions}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => setShowShareOptions(false)}
+      >
+        <View style={styles.shareModalRoot}>
+          <Pressable
+            style={styles.shareBackdrop}
+            onPress={() => setShowShareOptions(false)}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.cancel')}
+          />
+          <View style={styles.shareSheet}>
+            <View style={styles.shareHandle} />
+            <View style={styles.shareSheetHeader}>
+              <View style={styles.shareHeaderIcon}>
+                <Ionicons name="share-social-outline" size={22} color={COLORS.primary} />
+              </View>
+              <View style={styles.shareHeaderCopy}>
+                <Text style={styles.shareSheetTitle}>{t('booking.shareFormat')}</Text>
+                <Text style={styles.shareSheetSubtitle}>{t('booking.shareFormatQuestion')}</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.shareCloseButton}
+                onPress={() => setShowShareOptions(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.cancel')}
+              >
+                <Ionicons name="close" size={22} color={COLORS.textSecondary} />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity style={styles.shareOption} onPress={selectPdf} activeOpacity={0.75}>
+              <View style={[styles.shareOptionIcon, styles.pdfIcon]}>
+                <Ionicons name="document-text-outline" size={25} color={COLORS.errorDark} />
+              </View>
+              <View style={styles.shareOptionCopy}>
+                <Text style={styles.shareOptionTitle}>{t('booking.sharePdf')}</Text>
+                <Text style={styles.shareOptionHint}>{t('booking.sharePdfHint')}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.gray400} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.shareOption} onPress={selectJpeg} activeOpacity={0.75}>
+              <View style={[styles.shareOptionIcon, styles.jpegIcon]}>
+                <Ionicons name="image-outline" size={25} color={COLORS.primary} />
+              </View>
+              <View style={styles.shareOptionCopy}>
+                <Text style={styles.shareOptionTitle}>{t('booking.shareJpeg')}</Text>
+                <Text style={styles.shareOptionHint}>{t('booking.shareJpegHint')}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.gray400} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('booking.details')}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleShare} accessibilityRole="button" accessibilityLabel={t('booking.shareTitle')}>
           <Ionicons name="share-outline" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
       </View>
@@ -345,12 +437,18 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
       {/* Action Buttons */}
       {(booking.status === 'CONFIRMED' || booking.status === 'PENDING') && (
         <View style={styles.bottomBar}>
-          <Button
-            title={t('booking.cancel')}
+          <TouchableOpacity
             onPress={handleCancelBooking}
-            variant="outline"
             style={styles.cancelButton}
-          />
+            activeOpacity={0.75}
+            accessibilityRole="button"
+            accessibilityLabel={t('booking.cancel')}
+          >
+            <Ionicons name="close-circle-outline" size={19} color={COLORS.errorDark} />
+            <Text style={styles.cancelButtonText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>
+              {t('booking.cancel')}
+            </Text>
+          </TouchableOpacity>
           <Button
             title={t('booking.contact')}
             onPress={() => {}}
@@ -394,6 +492,107 @@ const styles = StyleSheet.create({
     fontSize: FONTS.sizes.lg,
     fontWeight: FONTS.weights.bold,
     color: COLORS.textPrimary,
+  },
+  shareModalRoot: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  shareBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(15, 23, 42, 0.52)',
+  },
+  shareSheet: {
+    backgroundColor: COLORS.surface,
+    borderTopLeftRadius: BORDER_RADIUS.xxl,
+    borderTopRightRadius: BORDER_RADIUS.xxl,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.sm,
+    paddingBottom: SPACING.xxl,
+    ...SHADOWS.xl,
+  },
+  shareHandle: {
+    width: 42,
+    height: 4,
+    borderRadius: BORDER_RADIUS.full,
+    backgroundColor: COLORS.gray300,
+    alignSelf: 'center',
+    marginBottom: SPACING.lg,
+  },
+  shareSheetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+  },
+  shareHeaderIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.primaryTransparent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: SPACING.md,
+  },
+  shareHeaderCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  shareSheetTitle: {
+    color: COLORS.textPrimary,
+    fontSize: FONTS.sizes.lg,
+    fontWeight: FONTS.weights.bold,
+  },
+  shareSheetSubtitle: {
+    color: COLORS.textSecondary,
+    fontSize: FONTS.sizes.sm,
+    marginTop: SPACING.xxs,
+  },
+  shareCloseButton: {
+    width: 38,
+    height: 38,
+    borderRadius: BORDER_RADIUS.full,
+    backgroundColor: COLORS.gray100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: SPACING.sm,
+  },
+  shareOption: {
+    minHeight: 78,
+    borderRadius: BORDER_RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.gray50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
+  },
+  shareOptionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: BORDER_RADIUS.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: SPACING.md,
+  },
+  pdfIcon: {
+    backgroundColor: COLORS.errorTransparent,
+  },
+  jpegIcon: {
+    backgroundColor: COLORS.primaryTransparent,
+  },
+  shareOptionCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  shareOptionTitle: {
+    color: COLORS.textPrimary,
+    fontSize: FONTS.sizes.md,
+    fontWeight: FONTS.weights.semibold,
+  },
+  shareOptionHint: {
+    color: COLORS.textSecondary,
+    fontSize: FONTS.sizes.xs,
+    marginTop: SPACING.xs,
   },
   statusBanner: {
     flexDirection: 'row',
@@ -604,13 +803,34 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
+    gap: SPACING.md,
   },
   cancelButton: {
-    flex: 1,
-    marginRight: SPACING.md,
+    flex: 0.9,
+    minHeight: 52,
+    minWidth: 0,
+    paddingHorizontal: SPACING.sm,
+    borderRadius: BORDER_RADIUS.md,
+    borderWidth: 1,
+    borderColor: 'rgba(220, 38, 38, 0.35)',
+    backgroundColor: COLORS.errorTransparent,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.xs,
+  },
+  cancelButtonText: {
+    flexShrink: 1,
+    color: COLORS.errorDark,
+    fontSize: FONTS.sizes.sm,
+    fontWeight: FONTS.weights.semibold,
+    textAlign: 'center',
   },
   contactButton: {
-    flex: 2,
+    flex: 1.1,
+    minHeight: 52,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   reviewButton: {
     flex: 1,

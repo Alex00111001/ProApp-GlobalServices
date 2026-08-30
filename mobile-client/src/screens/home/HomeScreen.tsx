@@ -9,6 +9,7 @@ import { useAppStore } from '@/store/appStore';
 import { COLORS, SPACING, FONTS } from '@/constants/theme';
 import { ProfessionalProfile } from '@/types';
 import { useTranslation } from 'react-i18next';
+import { translateCategory } from '@/i18n/entities';
 
 export const HomeScreen: React.FC = () => {
   const router = useRouter();
@@ -28,12 +29,14 @@ export const HomeScreen: React.FC = () => {
     return (
     <TouchableOpacity
       style={styles.categoryCard}
-      onPress={() => router.push(`/professionals?categoryId=${item.id}`)}
+      onPress={() => router.push(`/(tabs)/search?categoryId=${item.id}`)}
     >
       <View style={styles.categoryIcon}>
         <Ionicons name={iconName} size={24} color={COLORS.primary} />
       </View>
-      <Text style={styles.categoryName}>{item.name}</Text>
+      <Text style={styles.categoryName} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.78}>
+        {translateCategory(t, item)}
+      </Text>
     </TouchableOpacity>
     );
   };
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
     borderRadius: SPACING.lg,
-    width: 96,
+    width: 104,
     ...require('@/constants/theme').SHADOWS.sm,
   },
   categoryIcon: {
@@ -150,7 +153,7 @@ const styles = StyleSheet.create({
     fontWeight: FONTS.weights.medium,
     color: COLORS.textPrimary,
     textAlign: 'center',
-    minHeight: 30,
+    minHeight: 34,
   },
   sectionHeader: {
     flexDirection: 'row',
