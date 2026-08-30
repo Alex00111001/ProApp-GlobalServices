@@ -7,6 +7,7 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "build": "echo 'Build completo'",
+    "test": "node --test test/*.test.js",
     "test:connections": "node scripts/test-connections.js",
     "prisma:gen": "prisma generate",
     "prisma:migrate": "prisma migrate dev",

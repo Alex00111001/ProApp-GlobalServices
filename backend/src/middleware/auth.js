@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const prisma = require('../config/prisma');
+const env = require('../config/env');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_SECRET = env.jwtSecret;
+const JWT_EXPIRES_IN = env.jwtExpiresIn;
 
 // Generar token JWT
 const generateToken = (payload) => {
