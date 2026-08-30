@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { normalizeBookingPayload } = require('../shared/http/compatibility');
 
 // Crear reserva
 exports.createBooking = async (req, res) => {
@@ -14,7 +15,7 @@ exports.createBooking = async (req, res) => {
       longitude,
       notes,
       services: bookingServices 
-    } = req.body;
+    } = normalizeBookingPayload(req.body);
 
     // Verificar que el profesional existe y está aprobado
     const professional = await prisma.professionalProfile.findUnique({
