@@ -533,6 +533,28 @@ model OutboxEvent {
   @@index([eventType, createdAt])
 }
 
+model IntegrationEvent {
+  id                  String                 @id @default(uuid())
+  provider            String
+  providerEventId     String
+  eventType           String
+  payload             Json
+  status              IntegrationEventStatus @default(RECEIVED)
+  attempts            Int                    @default(0)
+  correlationId       String?
+  receivedAt          DateTime               @default(now())
+  processingStartedAt DateTime?
+  processedAt         DateTime?
+  lastError           String?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  @@unique([provider, providerEventId])
+  @@index([status, receivedAt])
+  @@index([provider, eventType, receivedAt])
+  @@index([correlationId])
+}
+
 model MarketingEvent {
   id             String               @id @default(uuid())
   eventName      String
@@ -873,6 +895,14 @@ enum IdempotencyStatus {
 
 enum OutboxStatus {
   PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+  DEAD_LETTER
+}
+
+enum IntegrationEventStatus {
+  RECEIVED
   PROCESSING
   PROCESSED
   FAILED
