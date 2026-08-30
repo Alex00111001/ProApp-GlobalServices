@@ -1,10 +1,13 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
+process.env.DATABASE_URL ||= 'postgresql://user:password@localhost:5432/test';
 const { calculateQuote, decimalToMinor } = require('../src/modules/billing/pricing/pricing.service');
 const { evaluateRefund } = require('../src/modules/billing/refunds/refund-policy.service');
 const { assertBalanced, postTransactionInTx } = require('../src/modules/billing/ledger/ledger.service');
 const { normalizeCaptureAmounts, buildCaptureEntries } = require('../src/modules/billing/ledger/payment-capture-journal');
+const { assertProviderAmount, applySuccessfulPayment } = require('../src/modules/billing/payments/payment-capture.service');
+const { receiveEvent, processStripeEvent } = require('../src/modules/billing/payments/stripe-webhook.service');
 
 test('pricing separates customer fee from professional commission', () => {
   assert.deepEqual(calculateQuote({ serviceAmountMinor: 10_000, platformFeeBasisPoints: 800, commissionBasisPoints: 1500, currency: 'EUR' }), {
@@ -139,4 +142,138 @@ test('ledger posting can participate in an existing transaction without nesting'
 
   assert.equal(result, existing);
   assert.equal(createCalled, false);
+});
+
+test('provider amount and currency must match the persisted payment', () => {
+  const payment = { amount: '108.00', currency: 'EUR' };
+  assert.doesNotThrow(() => assertProviderAmount({
+    payment,
+    providerAmountMinor: 10_800,
+    providerCurrency: 'eur',
+  }));
+  assert.throws(() => assertProviderAmount({
+    payment,
+    providerAmountMinor: 10_799,
+    providerCurrency: 'eur',
+  }), /amount does not match/);
+  assert.throws(() => assertProviderAmount({
+    payment,
+    providerAmountMinor: 10_800,
+    providerCurrency: 'usd',
+  }), /currency does not match/);
+});
+
+const createCaptureTx = ({ claimed = 1 } = {}) => {
+  const calls = { outbox: 0, audit: 0, notification: 0, ledger: 0 };
+  const payment = {
+    id: 'payment-1',
+    bookingId: 'booking-1',
+    amount: '108.00',
+    currency: 'EUR',
+    status: claimed ? 'PROCESSING' : 'COMPLETED',
+    transactionId: 'pi_1',
+  };
+  const booking = {
+    id: 'booking-1',
+    serviceAmount: '100.00',
+    platformFee: '8.00',
+    professionalCommission: '15.00',
+    professionalEarnings: '85.00',
+    currency: 'EUR',
+    pricingSnapshot: { version: 1 },
+    payment,
+    professional: { userId: 'professional-user-1' },
+  };
+  const tx = {
+    booking: {
+      findUnique: async () => booking,
+      update: async () => ({ ...booking, status: 'CONFIRMED', payment: { ...payment, status: 'COMPLETED' } }),
+    },
+    payment: { updateMany: async () => ({ count: claimed }) },
+    ledgerAccount: {
+      upsert: async ({ create }) => ({ id: `account-${create.code}`, ...create }),
+    },
+    ledgerTransaction: {
+      findUnique: async () => null,
+      create: async ({ data }) => {
+        calls.ledger += 1;
+        assert.equal(assertBalanced(data.entries.create.map((entry) => ({
+          ...entry,
+          amountMinor: decimalToMinor(entry.amount),
+        }))), true);
+        return { id: 'ledger-1', ...data };
+      },
+    },
+    outboxEvent: { create: async () => { calls.outbox += 1; } },
+    auditLog: { create: async () => { calls.audit += 1; } },
+    notification: { create: async () => { calls.notification += 1; } },
+  };
+  return { tx, calls };
+};
+
+test('successful payment transition posts one balanced ledger transaction atomically', async () => {
+  const { tx, calls } = createCaptureTx();
+  const result = await applySuccessfulPayment({
+    tx,
+    bookingId: 'booking-1',
+    providerTransactionId: 'pi_1',
+    providerAmountMinor: 10_800,
+    providerCurrency: 'eur',
+    source: 'TEST',
+    ledgerEnabled: true,
+  });
+
+  assert.equal(result.duplicate, false);
+  assert.deepEqual(calls, { outbox: 1, audit: 1, notification: 1, ledger: 1 });
+});
+
+test('duplicate successful payment transition creates no repeated side effects', async () => {
+  const { tx, calls } = createCaptureTx({ claimed: 0 });
+  const result = await applySuccessfulPayment({
+    tx,
+    bookingId: 'booking-1',
+    providerTransactionId: 'pi_1',
+    providerAmountMinor: 10_800,
+    providerCurrency: 'EUR',
+    source: 'TEST_REPLAY',
+    ledgerEnabled: true,
+  });
+
+  assert.equal(result.duplicate, true);
+  assert.deepEqual(calls, { outbox: 0, audit: 0, notification: 0, ledger: 0 });
+});
+
+test('Stripe inbox returns the persisted record for a duplicate provider event', async () => {
+  const persisted = { id: 'inbox-1', status: 'PROCESSED' };
+  const client = {
+    integrationEvent: {
+      create: async () => { const error = new Error('duplicate'); error.code = 'P2002'; throw error; },
+      findUnique: async () => persisted,
+    },
+  };
+  const result = await receiveEvent({
+    event: { id: 'evt_1', type: 'payment_intent.succeeded', data: { object: {} } },
+    correlationId: 'correlation-1',
+  }, client);
+
+  assert.equal(result.duplicate, true);
+  assert.equal(result.record, persisted);
+});
+
+test('processed Stripe webhook replay is acknowledged without opening a transaction', async () => {
+  let transactionOpened = false;
+  const client = {
+    integrationEvent: {
+      create: async () => { const error = new Error('duplicate'); error.code = 'P2002'; throw error; },
+      findUnique: async () => ({ id: 'inbox-1', status: 'PROCESSED' }),
+    },
+    $transaction: async () => { transactionOpened = true; },
+  };
+  const result = await processStripeEvent({
+    event: { id: 'evt_1', type: 'payment_intent.succeeded', data: { object: {} } },
+    correlationId: 'correlation-1',
+  }, client);
+
+  assert.deepEqual(result, { duplicate: true, status: 'PROCESSED' });
+  assert.equal(transactionOpened, false);
 });

@@ -24,14 +24,17 @@ Migration `202608310001_integration_event_inbox` adds an immutable-at-ingress in
 - customer total = service amount + customer platform fee;
 - service amount = professional payout + professional commission.
 
-The inbox schema and journal invariants do not activate monetary writes. Connecting Stripe success events to payment completion and ledger posting requires explicit approval, transaction-level integration tests against PostgreSQL and a reviewed deployment rollout.
+Stripe success events are persisted before processing. The webhook and authenticated confirmation endpoint share one conditional payment transition, so a replay cannot create a second notification, outbox event, audit record or ledger transaction. Provider amount, currency, booking metadata and transaction ID must match persisted state. Payment completion, booking confirmation, outbox/audit writes and the optional ledger post run in one database transaction.
+
+The integration is active in application code, but ledger dual-write remains disabled by default. Enabling it in a deployed environment still requires transaction-level integration tests against isolated PostgreSQL and a reviewed rollout.
 
 Operational rollout:
 
 1. Apply the additive migration and confirm inbox indexes exist.
 2. Keep dual-write disabled while comparing journal shadow calculations with legacy projections.
-3. Resolve every mismatch; do not mutate posted ledger entries or reinterpret legacy rows.
-4. Enable dual-write for a controlled environment/market only after replay and concurrency tests pass.
-5. Reconcile payment totals, ledger debits/credits and legacy projections before expanding rollout.
+3. Send signed Stripe test events twice and confirm only one inbox result and one set of payment side effects exists.
+4. Resolve every projection mismatch; do not mutate posted ledger entries or reinterpret legacy rows.
+5. Enable dual-write for a controlled environment/market only after replay and concurrency tests pass.
+6. Reconcile payment totals, ledger debits/credits and legacy projections before expanding rollout.
 
-Rollback is application-first: turn off `FINANCIAL_LEDGER_DUAL_WRITE_ENABLED`. Retain inbox and ledger evidence. Failed or stuck events are retried from persisted inbox records using the provider event ID; corrections use new reversal/adjustment transactions rather than updates or deletes.
+Rollback is application-first: turn off `FINANCIAL_LEDGER_DUAL_WRITE_ENABLED`. Retain inbox and ledger evidence. Failed events remain retryable; a `PROCESSING` lease older than five minutes can be reclaimed by a provider replay. Corrections use new reversal/adjustment transactions rather than updates or deletes.
