@@ -3,7 +3,8 @@ const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const { calculateQuote, decimalToMinor } = require('../src/modules/billing/pricing/pricing.service');
 const { evaluateRefund } = require('../src/modules/billing/refunds/refund-policy.service');
-const { assertBalanced } = require('../src/modules/billing/ledger/ledger.service');
+const { assertBalanced, postTransactionInTx } = require('../src/modules/billing/ledger/ledger.service');
+const { normalizeCaptureAmounts, buildCaptureEntries } = require('../src/modules/billing/ledger/payment-capture-journal');
 
 test('pricing separates customer fee from professional commission', () => {
   assert.deepEqual(calculateQuote({ serviceAmountMinor: 10_000, platformFeeBasisPoints: 800, commissionBasisPoints: 1500, currency: 'EUR' }), {
@@ -52,4 +53,90 @@ test('ledger rejects unbalanced postings', () => {
     { direction: 'DEBIT', amountMinor: 100, currency: 'EUR' },
     { direction: 'CREDIT', amountMinor: 90, currency: 'EUR' },
   ]), /Unbalanced/);
+});
+
+test('payment capture journal balances separated customer fees and professional commissions', () => {
+  const amounts = normalizeCaptureAmounts({
+    booking: {
+      pricingSnapshot: { version: 1 },
+      serviceAmount: '100.00',
+      platformFee: '8.00',
+      professionalCommission: '15.00',
+      professionalEarnings: '85.00',
+      currency: 'EUR',
+    },
+    payment: { amount: '108.00', currency: 'EUR' },
+  });
+  const entries = buildCaptureEntries(amounts, {
+    paymentClearing: 'asset',
+    professionalPayable: 'liability',
+    platformFeeRevenue: 'fee-revenue',
+    commissionRevenue: 'commission-revenue',
+  });
+
+  assert.equal(amounts.pricingMode, 'SEPARATED');
+  assert.equal(amounts.platformFeeMinor, 800);
+  assert.equal(amounts.professionalCommissionMinor, 1500);
+  assert.equal(assertBalanced(entries), true);
+});
+
+test('payment capture journal preserves legacy platformFee commission semantics', () => {
+  const amounts = normalizeCaptureAmounts({
+    booking: {
+      pricingSnapshot: null,
+      serviceAmount: '0.00',
+      platformFee: '15.00',
+      professionalCommission: '0.00',
+      professionalEarnings: '85.00',
+      currency: 'EUR',
+    },
+    payment: { amount: '100.00', currency: 'EUR' },
+  });
+
+  assert.deepEqual(amounts, {
+    currency: 'EUR',
+    customerTotalMinor: 10_000,
+    serviceAmountMinor: 10_000,
+    platformFeeMinor: 0,
+    professionalCommissionMinor: 1_500,
+    professionalPayoutMinor: 8_500,
+    pricingMode: 'LEGACY_COMPATIBILITY',
+  });
+});
+
+test('payment capture journal rejects inconsistent projections', () => {
+  assert.throws(() => normalizeCaptureAmounts({
+    booking: {
+      pricingSnapshot: { version: 1 },
+      serviceAmount: '100.00',
+      platformFee: '8.00',
+      professionalCommission: '15.00',
+      professionalEarnings: '85.00',
+      currency: 'EUR',
+    },
+    payment: { amount: '107.99', currency: 'EUR' },
+  }), /Payment total does not match/);
+});
+
+test('ledger posting can participate in an existing transaction without nesting', async () => {
+  const existing = { id: 'ledger-1', entries: [] };
+  let createCalled = false;
+  const tx = {
+    ledgerTransaction: {
+      findUnique: async () => existing,
+      create: async () => {
+        createCalled = true;
+      },
+    },
+  };
+  const result = await postTransactionInTx({
+    idempotencyKey: 'payment:one:capture',
+    entries: [
+      { accountId: 'asset', entryType: 'SERVICE_CHARGE', direction: 'DEBIT', amountMinor: 100, currency: 'EUR' },
+      { accountId: 'liability', entryType: 'PROFESSIONAL_PAYOUT', direction: 'CREDIT', amountMinor: 100, currency: 'EUR' },
+    ],
+  }, tx);
+
+  assert.equal(result, existing);
+  assert.equal(createCalled, false);
 });

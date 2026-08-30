@@ -12,23 +12,25 @@ const assertBalanced = (entries) => {
   return true;
 };
 
-const postTransaction = async ({ idempotencyKey, bookingId, paymentId, description, entries }, client) => {
+const postTransactionInTx = async ({ idempotencyKey, bookingId, paymentId, description, metadata, entries }, tx) => {
   assertBalanced(entries);
-  const database = client || require('../../../config/prisma');
-  return database.$transaction(async (tx) => {
-    const existing = await tx.ledgerTransaction.findUnique({ where: { idempotencyKey }, include: { entries: true } });
-    if (existing) return existing;
-    return tx.ledgerTransaction.create({
-      data: {
-        idempotencyKey, bookingId, paymentId, description, status: 'POSTED', postedAt: new Date(),
-        entries: { create: entries.map((entry) => ({
-          accountId: entry.accountId, entryType: entry.entryType, direction: entry.direction,
-          amount: (entry.amountMinor / 100).toFixed(2), currency: entry.currency, metadata: entry.metadata,
-        })) },
-      },
-      include: { entries: true },
-    });
+  const existing = await tx.ledgerTransaction.findUnique({ where: { idempotencyKey }, include: { entries: true } });
+  if (existing) return existing;
+  return tx.ledgerTransaction.create({
+    data: {
+      idempotencyKey, bookingId, paymentId, description, metadata, status: 'POSTED', postedAt: new Date(),
+      entries: { create: entries.map((entry) => ({
+        accountId: entry.accountId, entryType: entry.entryType, direction: entry.direction,
+        amount: (entry.amountMinor / 100).toFixed(2), currency: entry.currency, metadata: entry.metadata,
+      })) },
+    },
+    include: { entries: true },
   });
 };
 
-module.exports = { assertBalanced, postTransaction };
+const postTransaction = async (transaction, client) => {
+  const database = client || require('../../../config/prisma');
+  return database.$transaction((tx) => postTransactionInTx(transaction, tx));
+};
+
+module.exports = { assertBalanced, postTransaction, postTransactionInTx };
