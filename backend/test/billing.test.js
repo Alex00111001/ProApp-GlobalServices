@@ -10,6 +10,7 @@ const { assertProviderAmount, applySuccessfulPayment } = require('../src/modules
 const { receiveEvent, processStripeEvent } = require('../src/modules/billing/payments/stripe-webhook.service');
 const { allocateServiceRefund, buildRefundEntries } = require('../src/modules/billing/refunds/refund-journal');
 const { createCancellationRefundRequestInTx } = require('../src/modules/billing/refunds/refund-request.service');
+const { approveRefundInTx, rejectRefundInTx } = require('../src/modules/billing/refunds/refund-approval.service');
 
 test('pricing separates customer fee from professional commission', () => {
   assert.deepEqual(calculateQuote({ serviceAmountMinor: 10_000, platformFeeBasisPoints: 800, commissionBasisPoints: 1500, currency: 'EUR' }), {
@@ -398,4 +399,66 @@ test('cancellation refund request is idempotent by booking', async () => {
   });
 
   assert.deepEqual(result, { outcome: 'EXISTING', refund: existing, duplicate: true });
+});
+
+test('refund approval enforces four-eyes separation', async () => {
+  let updateCalled = false;
+  const tx = {
+    refund: {
+      findUnique: async () => ({
+        id: 'refund-1',
+        status: 'REQUESTED',
+        requestedBy: 'admin-1',
+        totalAmount: '10.00',
+      }),
+      updateMany: async () => { updateCalled = true; },
+    },
+  };
+
+  await assert.rejects(() => approveRefundInTx({
+    tx,
+    refundId: 'refund-1',
+    approverId: 'admin-1',
+  }), /requester cannot approve/);
+  assert.equal(updateCalled, false);
+});
+
+test('refund approval is conditional, audited and emits one outbox event', async () => {
+  const calls = { update: 0, outbox: 0, audit: 0 };
+  const requested = {
+    id: 'refund-1',
+    bookingId: 'booking-1',
+    paymentId: 'payment-1',
+    status: 'REQUESTED',
+    requestedBy: 'admin-1',
+    totalAmount: '10.00',
+  };
+  const approved = { ...requested, status: 'APPROVED', approvedBy: 'admin-2' };
+  let reads = 0;
+  const tx = {
+    refund: {
+      findUnique: async () => (++reads === 1 ? requested : approved),
+      updateMany: async () => { calls.update += 1; return { count: 1 }; },
+    },
+    outboxEvent: { create: async () => { calls.outbox += 1; } },
+    auditLog: { create: async () => { calls.audit += 1; } },
+  };
+  const result = await approveRefundInTx({ tx, refundId: 'refund-1', approverId: 'admin-2' });
+
+  assert.equal(result.duplicate, false);
+  assert.equal(result.refund.status, 'APPROVED');
+  assert.deepEqual(calls, { update: 1, outbox: 1, audit: 1 });
+});
+
+test('refund rejection is idempotent after the first reviewed transition', async () => {
+  const rejected = { id: 'refund-1', status: 'REJECTED' };
+  const tx = { refund: { findUnique: async () => rejected } };
+  const result = await rejectRefundInTx({
+    tx,
+    refundId: 'refund-1',
+    reviewerId: 'admin-2',
+    reason: 'Policy exception denied',
+  });
+
+  assert.deepEqual(result, { refund: rejected, duplicate: true });
 });
