@@ -116,7 +116,15 @@ class ApiClient {
     phone: string;
     role: 'CLIENT' | 'PROFESSIONAL';
   }) {
-    const response = await this.client.post<AuthResponse>('/auth/register', data);
+    const [firstName, ...lastNameParts] = data.name.trim().split(/\s+/);
+    const response = await this.client.post<AuthResponse>('/auth/register', {
+      email: data.email,
+      password: data.password,
+      phone: data.phone,
+      role: data.role,
+      firstName,
+      lastName: lastNameParts.join(' ') || '-',
+    });
     await SecureStore.setItemAsync('auth_token', response.data.token);
     await SecureStore.setItemAsync('user_data', JSON.stringify(response.data));
     return response.data;
@@ -194,8 +202,24 @@ class ApiClient {
     latitude?: number;
     longitude?: number;
   }) {
-    const response = await this.client.post('/bookings', data);
-    return response.data;
+    const scheduledDate = new Date(data.scheduledDate);
+    const [hours, minutes] = data.scheduledTime.split(':').map(Number);
+    if (!Number.isNaN(scheduledDate.getTime()) && Number.isInteger(hours) && Number.isInteger(minutes)) {
+      scheduledDate.setHours(hours, minutes, 0, 0);
+    }
+    const response = await this.client.post('/bookings', {
+      professionalId: data.professionalId,
+      services: data.services,
+      scheduledDate: scheduledDate.toISOString(),
+      address: data.address,
+      city: data.city,
+      state: data.state,
+      postalCode: data.zipCode,
+      notes: data.notes,
+      latitude: data.latitude,
+      longitude: data.longitude,
+    });
+    return response.data.booking;
   }
 
   async getMyBookings() {
