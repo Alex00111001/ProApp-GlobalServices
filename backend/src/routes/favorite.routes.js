@@ -12,6 +12,8 @@ router.get('/', favoriteController.getFavorites);
 // Agregar profesional a favoritos
 router.post('/', favoriteController.addFavorite);
 
+router.post('/toggle', favoriteController.toggleFavorite);
+
 // Remover profesional de favoritos
 router.delete('/:professionalId', favoriteController.removeFavorite);
 

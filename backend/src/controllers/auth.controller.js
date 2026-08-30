@@ -2,12 +2,13 @@ const prisma = require('../config/prisma');
 const { hashPassword, comparePassword } = require('../utils/password');
 const { generateToken } = require('../middleware/auth');
 const { registerSchema, loginSchema } = require('../validators/auth.validators');
+const { normalizeRegistrationPayload } = require('../shared/http/compatibility');
 
 // Registrar usuario
 exports.register = async (req, res) => {
   try {
     // Validar datos de entrada
-    const validatedData = registerSchema.parse(req.body);
+    const validatedData = registerSchema.parse(normalizeRegistrationPayload(req.body));
 
     // Verificar si el email o teléfono ya existen
     const existingUser = await prisma.user.findFirst({

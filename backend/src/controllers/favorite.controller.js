@@ -1,220 +1,118 @@
-const prisma = require('../lib/prisma');
+const prisma = require('../config/prisma');
 
-/**
- * Obtener favoritos del usuario
- */
+const professionalInclude = {
+  user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+  categories: { include: { category: true } },
+  services: { where: { isActive: true } },
+};
+
+const getClient = (req, res) => {
+  if (req.user.clientProfile) return req.user.clientProfile;
+  res.status(403).json({ error: 'Client profile required' });
+  return null;
+};
+
 exports.getFavorites = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { page = 1, limit = 20 } = req.query;
-
-    const favorites = await prisma.favorite.findMany({
-      where: { userId },
-      skip: (page - 1) * limit,
-      take: parseInt(limit),
-      include: {
-        professional: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            profileImage: true,
-            rating: true,
-            reviewCount: true,
-            city: true,
-            services: {
-              select: {
-                id: true,
-                name: true,
-                price: true
-              }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-
-    const total = await prisma.favorite.count({
-      where: { userId }
-    });
-
+    const client = getClient(req, res);
+    if (!client) return;
+    const page = Math.max(Number.parseInt(req.query.page || '1', 10), 1);
+    const limit = Math.min(Math.max(Number.parseInt(req.query.limit || '20', 10), 1), 100);
+    const where = { clientId: client.id };
+    const [favorites, total] = await prisma.$transaction([
+      prisma.favoriteProfessional.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        include: { professional: { include: professionalInclude } },
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.favoriteProfessional.count({ where }),
+    ]);
     res.json({
-      success: true,
-      favorites: favorites.map(fav => fav.professional),
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
+      favorites: favorites.map((favorite) => favorite.professional),
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
     });
-
   } catch (error) {
-    console.error('Error obteniendo favoritos:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error obteniendo favoritos',
-      error: error.message 
-    });
+    console.error('Get favorites error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-/**
- * Agregar profesional a favoritos
- */
 exports.addFavorite = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const client = getClient(req, res);
+    if (!client) return;
     const { professionalId } = req.body;
-
-    if (!professionalId) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'El ID del profesional es requerido' 
-      });
-    }
-
-    // Verificar que el profesional existe
-    const professional = await prisma.professional.findUnique({
-      where: { id: professionalId }
+    if (!professionalId) return res.status(400).json({ error: 'professionalId is required' });
+    const professional = await prisma.professionalProfile.findUnique({
+      where: { id: professionalId },
+      include: professionalInclude,
     });
-
-    if (!professional) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Profesional no encontrado' 
-      });
-    }
-
-    // Verificar si ya está en favoritos
-    const existingFavorite = await prisma.favorite.findUnique({
-      where: {
-        userId_professionalId: {
-          userId,
-          professionalId
-        }
-      }
+    if (!professional) return res.status(404).json({ error: 'Professional not found' });
+    await prisma.favoriteProfessional.upsert({
+      where: { clientId_professionalId: { clientId: client.id, professionalId } },
+      update: {},
+      create: { clientId: client.id, professionalId },
     });
-
-    if (existingFavorite) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'El profesional ya está en favoritos' 
-      });
-    }
-
-    const favorite = await prisma.favorite.create({
-      data: {
-        userId,
-        professionalId
-      },
-      include: {
-        professional: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            profileImage: true,
-            rating: true,
-            reviewCount: true
-          }
-        }
-      }
-    });
-
-    res.json({
-      success: true,
-      message: 'Profesional agregado a favoritos',
-      favorite: favorite.professional
-    });
-
+    return res.status(201).json({ favorite: professional, isFavorite: true });
   } catch (error) {
-    console.error('Error agregando favorito:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error agregando favorito',
-      error: error.message 
-    });
+    console.error('Add favorite error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-/**
- * Remover profesional de favoritos
- */
 exports.removeFavorite = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { professionalId } = req.params;
-
-    const favorite = await prisma.favorite.findUnique({
-      where: {
-        userId_professionalId: {
-          userId,
-          professionalId
-        }
-      }
+    const client = getClient(req, res);
+    if (!client) return;
+    await prisma.favoriteProfessional.deleteMany({
+      where: { clientId: client.id, professionalId: req.params.professionalId },
     });
-
-    if (!favorite) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Favorito no encontrado' 
-      });
-    }
-
-    await prisma.favorite.delete({
-      where: {
-        userId_professionalId: {
-          userId,
-          professionalId
-        }
-      }
-    });
-
-    res.json({
-      success: true,
-      message: 'Profesional removido de favoritos'
-    });
-
+    return res.json({ isFavorite: false });
   } catch (error) {
-    console.error('Error removiendo favorito:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error removiendo favorito',
-      error: error.message 
-    });
+    console.error('Remove favorite error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-/**
- * Verificar si un profesional está en favoritos
- */
 exports.checkFavorite = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { professionalId } = req.params;
-
-    const favorite = await prisma.favorite.findUnique({
+    const client = getClient(req, res);
+    if (!client) return;
+    const favorite = await prisma.favoriteProfessional.findUnique({
       where: {
-        userId_professionalId: {
-          userId,
-          professionalId
-        }
-      }
+        clientId_professionalId: {
+          clientId: client.id,
+          professionalId: req.params.professionalId,
+        },
+      },
     });
-
-    res.json({
-      success: true,
-      isFavorite: !!favorite
-    });
-
+    return res.json({ isFavorite: Boolean(favorite) });
   } catch (error) {
-    console.error('Error verificando favorito:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error verificando favorito',
-      error: error.message 
-    });
+    console.error('Check favorite error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.toggleFavorite = async (req, res) => {
+  try {
+    const client = getClient(req, res);
+    if (!client) return;
+    const { professionalId } = req.body;
+    if (!professionalId) return res.status(400).json({ error: 'professionalId is required' });
+    const key = { clientId_professionalId: { clientId: client.id, professionalId } };
+    const existing = await prisma.favoriteProfessional.findUnique({ where: key });
+    if (existing) {
+      await prisma.favoriteProfessional.delete({ where: { id: existing.id } });
+      return res.json({ isFavorite: false });
+    }
+    const professional = await prisma.professionalProfile.findUnique({ where: { id: professionalId } });
+    if (!professional) return res.status(404).json({ error: 'Professional not found' });
+    await prisma.favoriteProfessional.create({ data: { clientId: client.id, professionalId } });
+    return res.status(201).json({ isFavorite: true });
+  } catch (error) {
+    console.error('Toggle favorite error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
