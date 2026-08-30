@@ -14,3 +14,24 @@ Migration `202608300004_pricing_separation` is strictly additive. It does not re
 Rollback is application-first: disable the new pricing path and continue reading legacy projections. The added columns and enum remain in place because removing them after new bookings exist would discard financial evidence. Corrections are delivered forward; the migration is not reversed by dropping populated columns.
 
 The ledger and refund policy models remain additive foundations. Payment capture posting, reversals and refund execution must use idempotency keys and balanced ledger transactions. No refund policy is treated as universally applicable: unmatched contexts require manual review.
+
+## Payment capture and webhook rollout
+
+Migration `202608310001_integration_event_inbox` adds an immutable-at-ingress integration inbox with a provider event uniqueness key, processing state, attempt count, correlation ID and timestamps. The migration is additive and does not alter existing `Payment`, `Booking` or ledger rows.
+
+`FINANCIAL_LEDGER_DUAL_WRITE_ENABLED` defaults to `false`. The capture journal can shadow-compute both separated pricing and legacy bookings: a booking without `pricingSnapshot` treats the historical `platformFee` as professional commission and never as an added customer fee. Every journal must satisfy both invariants before posting:
+
+- customer total = service amount + customer platform fee;
+- service amount = professional payout + professional commission.
+
+The inbox schema and journal invariants do not activate monetary writes. Connecting Stripe success events to payment completion and ledger posting requires explicit approval, transaction-level integration tests against PostgreSQL and a reviewed deployment rollout.
+
+Operational rollout:
+
+1. Apply the additive migration and confirm inbox indexes exist.
+2. Keep dual-write disabled while comparing journal shadow calculations with legacy projections.
+3. Resolve every mismatch; do not mutate posted ledger entries or reinterpret legacy rows.
+4. Enable dual-write for a controlled environment/market only after replay and concurrency tests pass.
+5. Reconcile payment totals, ledger debits/credits and legacy projections before expanding rollout.
+
+Rollback is application-first: turn off `FINANCIAL_LEDGER_DUAL_WRITE_ENABLED`. Retain inbox and ledger evidence. Failed or stuck events are retried from persisted inbox records using the provider event ID; corrections use new reversal/adjustment transactions rather than updates or deletes.
