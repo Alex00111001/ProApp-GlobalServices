@@ -8,6 +8,14 @@ const percentageOf = (amountMinor, basisPoints) => {
   return Math.round((amountMinor * basisPoints) / 10_000);
 };
 
+const decimalToMinor = (value) => {
+  const text = String(value);
+  if (!/^\d+(\.\d{1,2})?$/.test(text)) throw new TypeError('Money value must have at most two decimal places');
+  const [whole, fraction = ''] = text.split('.');
+  const cents = `${fraction}00`.slice(0, 2);
+  return Number(whole) * 100 + Number(cents);
+};
+
 const calculateQuote = ({ serviceAmountMinor, platformFeeBasisPoints = 0, commissionBasisPoints = 0, currency }) => {
   assertMinorUnits(serviceAmountMinor, 'serviceAmountMinor');
   if (!/^[A-Z]{3}$/.test(currency || '')) throw new TypeError('currency must be an ISO 4217 code');
@@ -25,4 +33,4 @@ const calculateQuote = ({ serviceAmountMinor, platformFeeBasisPoints = 0, commis
   });
 };
 
-module.exports = { calculateQuote, percentageOf };
+module.exports = { calculateQuote, decimalToMinor, percentageOf };
