@@ -168,10 +168,10 @@ model Service {
 }
 
 model Booking {
-  id                   String               @id @default(uuid())
+  id                   String                    @id @default(uuid())
   clientId             String
   professionalId       String?
-  status               BookingStatus        @default(PENDING)
+  status               BookingStatus             @default(PENDING)
   scheduledDate        DateTime
   endDate              DateTime?
   address              String
@@ -181,23 +181,26 @@ model Booking {
   latitude             Float?
   longitude            Float?
   notes                String?
-  totalPrice           Decimal              @db.Decimal(10, 2)
-  platformFee          Decimal              @default(0.00) @db.Decimal(10, 2)
-  professionalEarnings Decimal              @db.Decimal(10, 2)
+  totalPrice           Decimal                   @db.Decimal(10, 2)
+  platformFee          Decimal                   @default(0.00) @db.Decimal(10, 2)
+  professionalEarnings Decimal                   @db.Decimal(10, 2)
   cancelledBy          String?
   cancellationReason   String?
   cancelledAt          DateTime?
   completedAt          DateTime?
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime             @updatedAt
-  client               ClientProfile        @relation(fields: [clientId], references: [id])
-  professional         ProfessionalProfile? @relation(fields: [professionalId], references: [id])
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+  client               ClientProfile             @relation(fields: [clientId], references: [id])
+  professional         ProfessionalProfile?      @relation(fields: [professionalId], references: [id])
   bookingServices      BookingService[]
   notifications        Notification[]
   payment              Payment?
   review               Review?
   marketingEvents      MarketingEvent[]
   errorEvents          ErrorEvent[]
+  ledgerTransactions   LedgerTransaction[]
+  refunds              Refund[]
+  policyAcceptances    BookingPolicyAcceptance[]
 
   @@index([clientId])
   @@index([professionalId])
@@ -221,20 +224,22 @@ model BookingService {
 }
 
 model Payment {
-  id            String        @id @default(uuid())
-  bookingId     String        @unique
-  amount        Decimal       @db.Decimal(10, 2)
-  currency      String        @default("MXN")
-  status        PaymentStatus @default(PENDING)
-  method        PaymentMethod
-  transactionId String?
-  processedAt   DateTime?
-  failedReason  String?
-  refundedAt    DateTime?
-  refundAmount  Decimal?      @db.Decimal(10, 2)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  booking       Booking       @relation(fields: [bookingId], references: [id])
+  id                 String              @id @default(uuid())
+  bookingId          String              @unique
+  amount             Decimal             @db.Decimal(10, 2)
+  currency           String              @default("MXN")
+  status             PaymentStatus       @default(PENDING)
+  method             PaymentMethod
+  transactionId      String?
+  processedAt        DateTime?
+  failedReason       String?
+  refundedAt         DateTime?
+  refundAmount       Decimal?            @db.Decimal(10, 2)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  booking            Booking             @relation(fields: [bookingId], references: [id])
+  ledgerTransactions LedgerTransaction[]
+  refunds            Refund[]
 
   @@index([bookingId])
   @@index([status])
@@ -656,6 +661,135 @@ model ServiceHealthSnapshot {
   @@index([status, checkedAt])
 }
 
+model PricingPolicy {
+  id          String       @id @default(uuid())
+  key         String
+  version     Int
+  country     String?
+  currency    String
+  status      PolicyStatus @default(DRAFT)
+  rules       Json
+  effectiveAt DateTime?
+  retiredAt   DateTime?
+  createdBy   String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([key, version])
+  @@index([country, status, effectiveAt])
+}
+
+model RefundPolicy {
+  id          String                    @id @default(uuid())
+  key         String
+  version     Int
+  country     String?
+  status      PolicyStatus              @default(DRAFT)
+  rules       Json
+  effectiveAt DateTime?
+  retiredAt   DateTime?
+  createdBy   String?
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+  acceptances BookingPolicyAcceptance[]
+  refunds     Refund[]
+
+  @@unique([key, version])
+  @@index([country, status, effectiveAt])
+}
+
+model BookingPolicyAcceptance {
+  id             String       @id @default(uuid())
+  bookingId      String
+  refundPolicyId String
+  policyVersion  Int
+  country        String
+  language       String
+  acceptedAt     DateTime     @default(now())
+  evidence       Json?
+  booking        Booking      @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  refundPolicy   RefundPolicy @relation(fields: [refundPolicyId], references: [id], onDelete: Restrict)
+
+  @@unique([bookingId, refundPolicyId])
+  @@index([refundPolicyId])
+}
+
+model LedgerAccount {
+  id        String            @id @default(uuid())
+  code      String
+  currency  String
+  type      LedgerAccountType
+  name      String
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  entries   LedgerEntry[]
+
+  @@unique([code, currency])
+  @@index([type, currency])
+}
+
+model LedgerTransaction {
+  id             String                  @id @default(uuid())
+  bookingId      String?
+  paymentId      String?
+  idempotencyKey String                  @unique
+  status         LedgerTransactionStatus @default(PENDING)
+  description    String?
+  metadata       Json?
+  createdAt      DateTime                @default(now())
+  postedAt       DateTime?
+  reversedAt     DateTime?
+  booking        Booking?                @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  payment        Payment?                @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  entries        LedgerEntry[]
+
+  @@index([bookingId, createdAt])
+  @@index([paymentId, createdAt])
+  @@index([status, createdAt])
+}
+
+model LedgerEntry {
+  id            String            @id @default(uuid())
+  transactionId String
+  accountId     String
+  entryType     LedgerEntryType
+  direction     LedgerDirection
+  amount        Decimal           @db.Decimal(19, 4)
+  currency      String
+  metadata      Json?
+  createdAt     DateTime          @default(now())
+  transaction   LedgerTransaction @relation(fields: [transactionId], references: [id], onDelete: Restrict)
+  account       LedgerAccount     @relation(fields: [accountId], references: [id], onDelete: Restrict)
+
+  @@index([transactionId])
+  @@index([accountId, createdAt])
+  @@index([entryType, createdAt])
+}
+
+model Refund {
+  id                String       @id @default(uuid())
+  bookingId         String
+  paymentId         String?
+  refundPolicyId    String
+  idempotencyKey    String       @unique
+  status            RefundStatus @default(REQUESTED)
+  serviceAmount     Decimal      @default(0) @db.Decimal(19, 4)
+  platformFeeAmount Decimal      @default(0) @db.Decimal(19, 4)
+  totalAmount       Decimal      @db.Decimal(19, 4)
+  currency          String
+  decision          Json
+  requestedBy       String?
+  requestedAt       DateTime     @default(now())
+  processedAt       DateTime?
+  booking           Booking      @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  payment           Payment?     @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  refundPolicy      RefundPolicy @relation(fields: [refundPolicyId], references: [id], onDelete: Restrict)
+
+  @@index([bookingId, requestedAt])
+  @@index([paymentId])
+  @@index([status, requestedAt])
+}
+
 enum UserRole {
   CLIENT
   PROFESSIONAL
@@ -773,4 +907,53 @@ enum HealthStatus {
   DEGRADED
   OUTAGE
   UNKNOWN
+}
+
+enum PolicyStatus {
+  DRAFT
+  ACTIVE
+  RETIRED
+}
+
+enum LedgerAccountType {
+  ASSET
+  LIABILITY
+  REVENUE
+  EXPENSE
+  EQUITY
+}
+
+enum LedgerTransactionStatus {
+  PENDING
+  POSTED
+  REVERSED
+}
+
+enum LedgerDirection {
+  DEBIT
+  CREDIT
+}
+
+enum LedgerEntryType {
+  SERVICE_CHARGE
+  PLATFORM_FEE
+  PROFESSIONAL_COMMISSION
+  PROFESSIONAL_PAYOUT
+  REFUND
+  PARTIAL_REFUND
+  PROMOTIONAL_CREDIT
+  PAYMENT_PROCESSING_FEE
+  TAX
+  ADJUSTMENT
+  REVERSAL
+}
+
+enum RefundStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
