@@ -47,9 +47,17 @@ export const useAuth = () => {
     register: useCallback(async (data: {
       email: string;
       password: string;
-      name: string;
+      firstName: string;
+      lastName: string;
       phone: string;
       role: 'CLIENT' | 'PROFESSIONAL';
+      countryCode: 'ES' | 'BR' | 'CL';
+      locale: 'es' | 'en' | 'pt';
+      acceptTerms: true;
+      acceptPrivacy: true;
+      marketingConsent: boolean;
+      termsVersion: '2026-08-30';
+      privacyVersion: '2026-08-30';
     }) => {
       try {
         await register(data);

@@ -167,7 +167,10 @@ exports.updateProfessionalProfile = async (req, res) => {
       const professional = await prisma.professionalProfile.findUnique({
         where: { id },
       });
-      
+
+      if (!professional) {
+        return res.status(404).json({ error: 'Professional profile not found' });
+      }
       if (professional.userId !== req.user.id) {
         return res.status(403).json({ error: 'Forbidden' });
       }
