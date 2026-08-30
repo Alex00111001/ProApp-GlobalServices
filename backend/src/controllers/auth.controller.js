@@ -38,6 +38,13 @@ exports.register = async (req, res) => {
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
         role: validatedData.role,
+        countryCode: validatedData.countryCode,
+        registrationLocale: validatedData.locale,
+        termsAcceptedAt: new Date(),
+        termsVersion: validatedData.termsVersion,
+        privacyAcceptedAt: new Date(),
+        privacyVersion: validatedData.privacyVersion,
+        marketingConsentAt: validatedData.marketingConsent ? new Date() : null,
       },
       select: {
         id: true,
@@ -46,6 +53,7 @@ exports.register = async (req, res) => {
         firstName: true,
         lastName: true,
         role: true,
+        countryCode: true,
         createdAt: true,
       },
     });
@@ -53,7 +61,7 @@ exports.register = async (req, res) => {
     // Crear perfil según el rol
     if (validatedData.role === 'CLIENT') {
       await prisma.clientProfile.create({
-        data: { userId: user.id },
+        data: { userId: user.id, country: validatedData.countryCode },
       });
     } else if (validatedData.role === 'PROFESSIONAL') {
       await prisma.professionalProfile.create({
@@ -78,7 +86,7 @@ exports.register = async (req, res) => {
     if (error.name === 'ZodError') {
       return res.status(400).json({ 
         error: 'Validation error', 
-        details: error.errors 
+        details: error.issues
       });
     }
 
@@ -151,7 +159,7 @@ exports.login = async (req, res) => {
     if (error.name === 'ZodError') {
       return res.status(400).json({ 
         error: 'Validation error', 
-        details: error.errors 
+        details: error.issues
       });
     }
 

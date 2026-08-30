@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bookingController = require('../controllers/booking.controller');
-const { authenticate, authorize } = require('../middleware/auth');
+const { authenticate, authorize, requireApprovedProfessional } = require('../middleware/auth');
 
 // Todas las rutas requieren autenticación
 router.use(authenticate);
@@ -13,8 +13,8 @@ router.get('/client/my-bookings', authorize('CLIENT'), bookingController.getClie
 // Rutas para profesionales
 router.get('/professional/my-bookings', authorize('PROFESSIONAL'), bookingController.getProfessionalBookings);
 router.get('/:id', bookingController.getBookingById);
-router.post('/:id/confirm', authorize('PROFESSIONAL'), bookingController.confirmBooking);
-router.post('/:id/complete', authorize('PROFESSIONAL'), bookingController.completeBooking);
+router.post('/:id/confirm', authorize('PROFESSIONAL'), requireApprovedProfessional, bookingController.confirmBooking);
+router.post('/:id/complete', authorize('PROFESSIONAL'), requireApprovedProfessional, bookingController.completeBooking);
 
 // Cancelar reserva (cliente o profesional)
 router.post('/:id/cancel', bookingController.cancelBooking);

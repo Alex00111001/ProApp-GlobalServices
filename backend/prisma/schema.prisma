@@ -20,6 +20,13 @@ model User {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   lastLoginAt         DateTime?
+  countryCode         String               @default("ES")
+  termsAcceptedAt     DateTime?
+  termsVersion        String?
+  privacyAcceptedAt   DateTime?
+  privacyVersion      String?
+  marketingConsentAt  DateTime?
+  registrationLocale  String?
   clientProfile       ClientProfile?
   notifications       Notification[]
   professionalProfile ProfessionalProfile?
