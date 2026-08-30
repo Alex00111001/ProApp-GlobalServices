@@ -1,21 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/admin.controller');
-const { authenticate, authorize } = require('../middleware/auth');
+const { authenticate } = require('../middleware/auth');
+const { requirePermission } = require('../middleware/require-permission');
+const { PERMISSIONS } = require('../modules/identity/permission-catalog');
 
-// Todas las rutas requieren autenticación y rol ADMIN
+// Authentication is common; each operation declares its own permission.
 router.use(authenticate);
-router.use(authorize('ADMIN'));
 
 // Dashboard con KPIs
-router.get('/dashboard', adminController.getDashboard);
+router.get('/dashboard', requirePermission(PERMISSIONS.DASHBOARD_READ), adminController.getDashboard);
 
 // Gestión de documentos
-router.get('/documents/pending', adminController.getPendingDocuments);
-router.post('/documents/:id/approve', adminController.approveDocument);
-router.post('/documents/:id/reject', adminController.rejectDocument);
+router.get('/documents/pending', requirePermission(PERMISSIONS.PROFESSIONALS_REVIEW), adminController.getPendingDocuments);
+router.post('/documents/:id/approve', requirePermission(PERMISSIONS.PROFESSIONALS_REVIEW), adminController.approveDocument);
+router.post('/documents/:id/reject', requirePermission(PERMISSIONS.PROFESSIONALS_REVIEW), adminController.rejectDocument);
 
 // Logs de auditoría
-router.get('/audit-logs', adminController.getAuditLogs);
+router.get('/audit-logs', requirePermission(PERMISSIONS.AUDIT_READ), adminController.getAuditLogs);
 
 module.exports = router;

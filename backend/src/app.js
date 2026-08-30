@@ -14,6 +14,7 @@ const paymentRoutes = require('./routes/payment.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const favoriteRoutes = require('./routes/favorite.routes');
 const reviewRoutes = require('./routes/review.routes');
+const eventRoutes = require('./routes/event.routes');
 const paymentController = require('./controllers/payment.controller');
 
 const app = express();
@@ -72,6 +73,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/events', eventRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

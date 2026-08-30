@@ -14,6 +14,7 @@
     "prisma:studio": "prisma studio",
     "prisma:push": "prisma db push",
     "seed": "tsx prisma/seed.ts",
+    "seed:rbac": "node src/modules/identity/bootstrap-rbac.js",
     "db:reset": "prisma migrate reset && npm run seed"
   },
   "keywords": [
