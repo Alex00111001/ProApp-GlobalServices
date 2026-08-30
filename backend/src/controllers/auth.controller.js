@@ -1,7 +1,7 @@
 const prisma = require('../config/prisma');
 const { hashPassword, comparePassword } = require('../utils/password');
 const { generateToken } = require('../middleware/auth');
-const { registerSchema, loginSchema } = require('../validators/auth.validators');
+const { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema } = require('../validators/auth.validators');
 const { normalizeRegistrationPayload } = require('../shared/http/compatibility');
 
 // Registrar usuario
@@ -215,7 +215,7 @@ exports.getProfile = async (req, res) => {
 // Actualizar perfil
 exports.updateProfile = async (req, res) => {
   try {
-    const { firstName, lastName, phone, avatarUrl, address, city, state, postalCode, country } = req.body;
+    const { firstName, lastName, phone, avatarUrl, address, city, state, postalCode, country } = updateProfileSchema.parse(req.body);
 
     const updatedUser = await prisma.user.update({
       where: { id: req.user.id },
@@ -261,6 +261,9 @@ exports.updateProfile = async (req, res) => {
     });
   } catch (error) {
     console.error('Update profile error:', error);
+    if (error.name === 'ZodError') {
+      return res.status(400).json({ error: 'Validation error', details: error.issues });
+    }
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -268,19 +271,7 @@ exports.updateProfile = async (req, res) => {
 // Cambiar contraseña
 exports.changePassword = async (req, res) => {
   try {
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ 
-        error: 'Current password and new password are required' 
-      });
-    }
-
-    if (newPassword.length < 8) {
-      return res.status(400).json({ 
-        error: 'New password must be at least 8 characters' 
-      });
-    }
+    const { currentPassword, newPassword } = changePasswordSchema.parse(req.body);
 
     // Obtener usuario con passwordHash
     const user = await prisma.user.findUnique({
@@ -311,6 +302,9 @@ exports.changePassword = async (req, res) => {
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
     console.error('Change password error:', error);
+    if (error.name === 'ZodError') {
+      return res.status(400).json({ error: 'Validation error', details: error.issues });
+    }
     res.status(500).json({ error: 'Internal server error' });
   }
 };

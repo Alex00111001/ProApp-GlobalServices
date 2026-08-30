@@ -1,5 +1,29 @@
 const prisma = require('../config/prisma');
 
+exports.getServiceById = async (req, res) => {
+  try {
+    const service = await prisma.service.findFirst({
+      where: {
+        id: req.params.id,
+        isActive: true,
+        OR: [{ professionalId: null }, { professional: { status: 'APPROVED' } }],
+      },
+      include: {
+        category: true,
+        subcategory: true,
+        professional: {
+          include: { user: { select: { firstName: true, lastName: true, avatarUrl: true } } },
+        },
+      },
+    });
+    if (!service) return res.status(404).json({ error: 'Service not found' });
+    res.json({ service });
+  } catch (error) {
+    console.error('Get service error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 // Obtener todas las categorías activas
 exports.getCategories = async (req, res) => {
   try {

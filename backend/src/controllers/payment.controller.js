@@ -1,7 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const prisma = require('../config/prisma');
 
-const STRIPE_CURRENCY = (process.env.STRIPE_CURRENCY || 'eur').toLowerCase();
+const { PAYMENT_CURRENCY: STRIPE_CURRENCY } = require('../config/business');
 
 const getOwnedBooking = async (bookingId, userId) => {
   const booking = await prisma.booking.findUnique({

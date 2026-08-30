@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -8,28 +8,36 @@ import { useStripe } from '@stripe/stripe-react-native';
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
+import { PAYMENT_CURRENCY } from '@/constants/config';
 
 export const CheckoutScreen: React.FC = () => {
   const router = useRouter();
   const { bookingId, amount } = useLocalSearchParams<{ bookingId: string; amount: string }>();
   const numericAmount = parseFloat(amount || '0');
+  const currency = PAYMENT_CURRENCY;
   
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [isLoading, setIsLoading] = useState(false);
+  const [isBookingLoading, setIsBookingLoading] = useState(true);
+  const [booking, setBooking] = useState<any>(null);
   const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'CASH'>('CARD');
 
-  // Mock booking data - in real app, fetch from API
-  const booking = {
-    id: bookingId,
-    professionalName: 'John Martinez',
-    serviceName: 'Electrical Installation',
-    date: new Date().toLocaleDateString(),
-    time: '10:00 AM',
-    address: '123 Main St, City, State 12345',
-  };
+  useEffect(() => {
+    let active = true;
+    apiClient.getBookingById(bookingId)
+      .then((data) => { if (active) setBooking(data); })
+      .catch(() => { if (active) Alert.alert('Error', 'No se pudieron cargar los datos de la reserva.'); })
+      .finally(() => { if (active) setIsBookingLoading(false); });
+    return () => { active = false; };
+  }, [bookingId]);
 
-  const platformFee = numericAmount * 0.10;
-  const total = numericAmount;
+  const money = useMemo(() => new Intl.NumberFormat(undefined, { style: 'currency', currency }), [currency]);
+  const platformFee = Number(booking?.platformFee ?? 0);
+  const total = Number(booking?.totalPrice ?? numericAmount);
+  const professionalName = [booking?.professional?.user?.firstName, booking?.professional?.user?.lastName].filter(Boolean).join(' ');
+  const serviceName = booking?.bookingServices?.map((item: any) => item.service?.name).filter(Boolean).join(', ');
+  const scheduledDate = booking?.scheduledDate ? new Date(booking.scheduledDate).toLocaleString() : '';
+  const bookingAddress = [booking?.address, booking?.city, booking?.state, booking?.postalCode].filter(Boolean).join(', ');
 
   const handlePayment = async () => {
     if (paymentMethod === 'CASH') {
@@ -100,7 +108,7 @@ export const CheckoutScreen: React.FC = () => {
               <Ionicons name="person-outline" size={20} color={COLORS.primary} />
               <View style={styles.summaryInfo}>
                 <Text style={styles.summaryLabel}>Professional</Text>
-                <Text style={styles.summaryValue}>{booking.professionalName}</Text>
+                <Text style={styles.summaryValue}>{professionalName}</Text>
               </View>
             </View>
             <View style={styles.divider} />
@@ -108,7 +116,7 @@ export const CheckoutScreen: React.FC = () => {
               <Ionicons name="construct-outline" size={20} color={COLORS.primary} />
               <View style={styles.summaryInfo}>
                 <Text style={styles.summaryLabel}>Service</Text>
-                <Text style={styles.summaryValue}>{booking.serviceName}</Text>
+                <Text style={styles.summaryValue}>{serviceName}</Text>
               </View>
             </View>
             <View style={styles.divider} />
@@ -116,7 +124,7 @@ export const CheckoutScreen: React.FC = () => {
               <Ionicons name="calendar-outline" size={20} color={COLORS.primary} />
               <View style={styles.summaryInfo}>
                 <Text style={styles.summaryLabel}>Date & Time</Text>
-                <Text style={styles.summaryValue}>{booking.date} at {booking.time}</Text>
+                <Text style={styles.summaryValue}>{scheduledDate}</Text>
               </View>
             </View>
             <View style={styles.divider} />
@@ -124,7 +132,7 @@ export const CheckoutScreen: React.FC = () => {
               <Ionicons name="location-outline" size={20} color={COLORS.primary} />
               <View style={styles.summaryInfo}>
                 <Text style={styles.summaryLabel}>Location</Text>
-                <Text style={styles.summaryValue}>{booking.address}</Text>
+                <Text style={styles.summaryValue}>{bookingAddress}</Text>
               </View>
             </View>
           </View>
@@ -183,16 +191,16 @@ export const CheckoutScreen: React.FC = () => {
           <View style={styles.priceCard}>
             <View style={styles.priceRow}>
               <Text style={styles.priceLabel}>Service Cost</Text>
-              <Text style={styles.priceValue}>€{numericAmount.toFixed(2)}</Text>
+              <Text style={styles.priceValue}>{money.format(total - platformFee)}</Text>
             </View>
             <View style={styles.priceRow}>
               <Text style={styles.priceLabel}>Platform Fee (included)</Text>
-              <Text style={styles.priceValue}>€{platformFee.toFixed(2)}</Text>
+              <Text style={styles.priceValue}>{money.format(platformFee)}</Text>
             </View>
             <View style={styles.divider} />
             <View style={[styles.priceRow, styles.totalRow]}>
               <Text style={styles.totalLabel}>Total</Text>
-              <Text style={styles.totalValue}>€{total.toFixed(2)}</Text>
+              <Text style={styles.totalValue}>{money.format(total)}</Text>
             </View>
           </View>
         </View>
@@ -212,12 +220,12 @@ export const CheckoutScreen: React.FC = () => {
       <View style={styles.bottomBar}>
         <View style={styles.totalContainer}>
           <Text style={styles.totalLabelSmall}>Total to pay:</Text>
-          <Text style={styles.totalValueSmall}>€{total.toFixed(2)}</Text>
+          <Text style={styles.totalValueSmall}>{money.format(total)}</Text>
         </View>
         <Button
           title={paymentMethod === 'CARD' ? 'Pay Now' : 'Confirm Booking'}
           onPress={handlePayment}
-          disabled={isLoading}
+          disabled={isLoading || isBookingLoading || !booking}
           style={styles.payButton}
         />
       </View>

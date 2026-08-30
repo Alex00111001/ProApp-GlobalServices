@@ -35,9 +35,9 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
     <TouchableOpacity style={[styles.card, SHADOWS.md]} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.header}>
         <Image
-          source={{
-            uri: professional.user.avatar || 'https://via.placeholder.com/100',
-          }}
+          source={professional.user.avatar
+            ? { uri: professional.user.avatar }
+            : require('../../../assets/icon.png')}
           style={styles.avatar}
         />
         <View style={styles.info}>

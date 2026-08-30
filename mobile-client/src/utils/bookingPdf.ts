@@ -2,6 +2,7 @@ import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { PAYMENT_CURRENCY } from '@/constants/config';
 
 const escapeHtml = (value: unknown) => String(value ?? '')
   .replace(/&/g, '&amp;')
@@ -10,9 +11,9 @@ const escapeHtml = (value: unknown) => String(value ?? '')
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#039;');
 
-const money = (value: unknown, language: string) => new Intl.NumberFormat(language, {
+const money = (value: unknown, language: string, currency = PAYMENT_CURRENCY) => new Intl.NumberFormat(language, {
   style: 'currency',
-  currency: 'EUR',
+  currency,
 }).format(Number(value) || 0);
 
 const getLogoDataUri = async () => {
@@ -29,6 +30,7 @@ type Translator = (key: string, options?: Record<string, unknown>) => string;
 
 export const buildBookingReceiptHtml = async (booking: any, t: Translator, language = 'es') => {
   const logo = await getLogoDataUri();
+  const currency = booking.currency || PAYMENT_CURRENCY;
   const professionalName = booking.professional?.user?.name || [
     booking.professional?.user?.firstName,
     booking.professional?.user?.lastName,
@@ -49,7 +51,7 @@ export const buildBookingReceiptHtml = async (booking: any, t: Translator, langu
     <tr>
       <td><strong>${escapeHtml(item.service?.name)}</strong><span>${escapeHtml(item.service?.description || '')}</span></td>
       <td class="center">${escapeHtml(item.quantity)}</td>
-      <td class="right">${escapeHtml(money(item.subtotal ?? item.price, language))}</td>
+      <td class="right">${escapeHtml(money(item.subtotal ?? item.price, language, currency))}</td>
     </tr>`).join('');
 
   const html = `<!doctype html><html><head><meta charset="utf-8"><style>
@@ -88,7 +90,7 @@ export const buildBookingReceiptHtml = async (booking: any, t: Translator, langu
       <div class="card" style="grid-column:1/-1"><span class="label">${escapeHtml(t('common.location'))}</span><span class="value">${escapeHtml(address)}</span></div>
     </section>
     <h2>${escapeHtml(t('common.services'))}</h2><table><thead><tr><th>${escapeHtml(t('common.services'))}</th><th class="center">${escapeHtml(t('common.quantity'))}</th><th class="right">${escapeHtml(t('booking.subtotal'))}</th></tr></thead><tbody>${services}</tbody></table>
-    <section class="summary"><div class="row"><span>${escapeHtml(t('booking.subtotal'))}</span><strong>${escapeHtml(money((Number(booking.totalPrice) || 0) - (Number(booking.platformFee) || 0), language))}</strong></div><div class="row"><span>${escapeHtml(t('booking.platformFee'))}</span><strong>${escapeHtml(money(booking.platformFee, language))}</strong></div><div class="row total"><span>${escapeHtml(t('booking.totalPaid'))}</span><span>${escapeHtml(money(booking.totalPrice, language))}</span></div></section>
+    <section class="summary"><div class="row"><span>${escapeHtml(t('booking.subtotal'))}</span><strong>${escapeHtml(money((Number(booking.totalPrice) || 0) - (Number(booking.platformFee) || 0), language, currency))}</strong></div><div class="row"><span>${escapeHtml(t('booking.platformFee'))}</span><strong>${escapeHtml(money(booking.platformFee, language, currency))}</strong></div><div class="row total"><span>${escapeHtml(t('booking.totalPaid'))}</span><span>${escapeHtml(money(booking.totalPrice, language, currency))}</span></div></section>
     ${booking.notes ? `<section class="notes"><span class="label">${escapeHtml(t('common.notes'))}</span><div style="margin-top:7px">${escapeHtml(booking.notes)}</div></section>` : ''}
     <footer><span>${escapeHtml(t('booking.pdfFooter'))}</span><span>ProApp Global Services</span></footer>
   </main></body></html>`;
