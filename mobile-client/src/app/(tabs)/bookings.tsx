@@ -30,6 +30,12 @@ const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ book
     bookingData.professional?.user?.lastName,
   ].filter(Boolean).join(' ') || t('common.professional');
   const statusKey = booking.status.toLowerCase() as 'confirmed'|'pending'|'completed'|'cancelled';
+  const statusStyle = {
+    CONFIRMED: styles.statusconfirmed,
+    PENDING: styles.statuspending,
+    COMPLETED: styles.statuscompleted,
+    CANCELLED: styles.statuscancelled,
+  }[booking.status as 'CONFIRMED' | 'PENDING' | 'COMPLETED' | 'CANCELLED'] ?? styles.statuspending;
 
   return (
   <TouchableOpacity style={styles.bookingCard} onPress={onPress}>
@@ -38,7 +44,7 @@ const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ book
         <Text style={styles.serviceName}>{serviceName}</Text>
         <Text style={styles.professionalName}>{professionalName}</Text>
       </View>
-      <View style={[styles.statusBadge, styles[`status${booking.status.toLowerCase()}` as keyof typeof styles]]}>
+      <View style={[styles.statusBadge, statusStyle]}>
         <Text style={styles.statusText}>{t(`bookings.${statusKey}`, { defaultValue: booking.status })}</Text>
       </View>
     </View>

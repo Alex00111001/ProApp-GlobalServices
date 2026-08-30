@@ -47,6 +47,9 @@ mobile-client/android_backup/
 # Local emulator/test captures created at repository root
 /*.png
 
+# Locally generated document previews and test receipts
+/output/
+
 # Python specific
 __pycache__/
 *.pyc

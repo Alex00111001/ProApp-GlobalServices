@@ -94,7 +94,7 @@ export const FONTS = {
     semibold: '600',
     bold: '700',
   },
-};
+} as const;
 
 export const SHADOWS = {
   sm: {

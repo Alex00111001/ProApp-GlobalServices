@@ -4,6 +4,7 @@ import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/them
 import { ProfessionalProfile } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { translateCategory } from '@/i18n/entities';
 
 interface ProfessionalCardProps {
   professional: ProfessionalProfile;
@@ -42,7 +43,7 @@ export const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.85}>{professional.user.name}</Text>
           <Text style={styles.specialty} numberOfLines={1}>
-            {professional.categories[0]?.name || t('home.defaultProfessional')}
+            {translateCategory(t, professional.categories[0]) || t('home.defaultProfessional')}
           </Text>
           <View style={styles.ratingContainer}>
             <View style={styles.stars}>{renderStars(professional.rating)}</View>
