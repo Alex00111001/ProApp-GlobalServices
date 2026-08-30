@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 
@@ -9,6 +9,9 @@ import { ProfessionalCard } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 import { ProfessionalProfile } from '@/types';
+import { useTranslation } from 'react-i18next';
+import { translateCategory } from '@/i18n/entities';
+import { smartSearchScore } from '@/utils/smartSearch';
 
 interface FilterState {
   category: string;
@@ -19,6 +22,8 @@ interface FilterState {
 
 export const SearchScreen: React.FC = () => {
   const router = useRouter();
+  const { categoryId } = useLocalSearchParams<{ categoryId?: string }>();
+  const { t } = useTranslation();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [professionals, setProfessionals] = useState<ProfessionalProfile[]>([]);
@@ -27,7 +32,7 @@ export const SearchScreen: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   
   const [filters, setFilters] = useState<FilterState>({
-    category: '',
+    category: categoryId || '',
     minRating: 0,
     maxPrice: 500,
     sortBy: 'rating',
@@ -36,6 +41,10 @@ export const SearchScreen: React.FC = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    setFilters(current => ({ ...current, category: categoryId || '' }));
+  }, [categoryId]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -53,17 +62,37 @@ export const SearchScreen: React.FC = () => {
     }
   };
 
-  const filteredProfessionals = professionals.filter(pro => {
-    const matchesSearch = pro.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pro.categories.some(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesCategory = !filters.category || 
-      pro.categories.some(c => c.id === filters.category);
-    
-    const matchesRating = pro.rating >= filters.minRating;
-    
-    return matchesSearch && matchesCategory && matchesRating;
-  }).sort((a, b) => {
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    if (value.trim()) {
+      setFilters(current => current.category ? { ...current, category: '' } : current);
+    }
+  };
+
+  const filteredProfessionals = professionals
+    .map(professional => {
+      const details = professional as ProfessionalProfile & { services?: Array<{ name?: string; description?: string }> };
+      const relevance = smartSearchScore(searchQuery, [
+        professional.user.name,
+        professional.bio,
+        ...professional.categories.flatMap(category => [category.name, translateCategory(t, category)]),
+        ...(details.services ?? []).flatMap(service => [service.name, service.description]),
+      ]);
+      return { professional, relevance };
+    })
+    .filter(({ professional, relevance }) => {
+      const matchesCategory = !filters.category ||
+        professional.categories.some(category => category.id === filters.category);
+      const matchesRating = professional.rating >= filters.minRating;
+      return relevance >= 0 && matchesCategory && matchesRating;
+    })
+    .sort((left, right) => {
+      if (searchQuery.trim() && left.relevance !== right.relevance) {
+        return right.relevance - left.relevance;
+      }
+
+      const a = left.professional;
+      const b = right.professional;
     switch (filters.sortBy) {
       case 'rating':
         return b.rating - a.rating;
@@ -72,7 +101,8 @@ export const SearchScreen: React.FC = () => {
       default:
         return 0;
     }
-  });
+    })
+    .map(({ professional }) => professional);
 
   const renderFilterChip = (label: string, value: any, onPress: () => void) => (
     <TouchableOpacity
@@ -100,7 +130,7 @@ export const SearchScreen: React.FC = () => {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Search</Text>
+        <Text style={styles.headerTitle}>{t('search.title')}</Text>
         <TouchableOpacity 
           style={styles.filterToggleButton}
           onPress={() => setShowFilters(!showFilters)}
@@ -118,9 +148,9 @@ export const SearchScreen: React.FC = () => {
         <Ionicons name="search-outline" size={20} color={COLORS.gray400} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search professionals or services..."
+          placeholder={t('search.placeholder')}
           value={searchQuery}
-          onChangeText={setSearchQuery}
+          onChangeText={handleSearchChange}
           placeholderTextColor={COLORS.gray400}
         />
         {searchQuery.length > 0 && (
@@ -134,14 +164,14 @@ export const SearchScreen: React.FC = () => {
       {showFilters && (
         <View style={styles.filtersPanel}>
           <View style={styles.filterSection}>
-            <Text style={styles.filterSectionTitle}>Category</Text>
+            <Text style={styles.filterSectionTitle}>{t('search.category')}</Text>
             <FlatList
               data={categories}
               horizontal
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => renderFilterChip(
-                item.name,
+                translateCategory(t, item),
                 filters.category === item.id,
                 () => setFilters({ ...filters, category: filters.category === item.id ? '' : item.id })
               )}
@@ -149,10 +179,10 @@ export const SearchScreen: React.FC = () => {
           </View>
 
           <View style={styles.filterSection}>
-            <Text style={styles.filterSectionTitle}>Minimum Rating</Text>
+            <Text style={styles.filterSectionTitle}>{t('search.minimumRating')}</Text>
             <View style={styles.ratingChips}>
               {[0, 3, 4, 4.5].map((rating) => renderFilterChip(
-                rating === 0 ? 'Any' : `${rating}+ ★`,
+                rating === 0 ? t('search.any') : `${rating}+ ★`,
                 filters.minRating === rating,
                 () => setFilters({ ...filters, minRating: filters.minRating === rating ? 0 : rating })
               ))}
@@ -160,10 +190,10 @@ export const SearchScreen: React.FC = () => {
           </View>
 
           <View style={styles.filterSection}>
-            <Text style={styles.filterSectionTitle}>Sort By</Text>
+            <Text style={styles.filterSectionTitle}>{t('search.sortBy')}</Text>
             <View style={styles.sortChips}>
-              {renderFilterChip('Rating', filters.sortBy === 'rating', () => setFilters({ ...filters, sortBy: 'rating' }))}
-              {renderFilterChip('Price', filters.sortBy === 'price', () => setFilters({ ...filters, sortBy: 'price' }))}
+              {renderFilterChip(t('search.rating'), filters.sortBy === 'rating', () => setFilters({ ...filters, sortBy: 'rating' }))}
+              {renderFilterChip(t('search.price'), filters.sortBy === 'price', () => setFilters({ ...filters, sortBy: 'price' }))}
             </View>
           </View>
         </View>
@@ -172,7 +202,9 @@ export const SearchScreen: React.FC = () => {
       {/* Results Count */}
       <View style={styles.resultsHeader}>
         <Text style={styles.resultsCount}>
-          {filteredProfessionals.length} professional{filteredProfessionals.length !== 1 ? 's' : ''} found
+          {t(filteredProfessionals.length === 1 ? 'search.foundOne' : 'search.foundMany', {
+            count: filteredProfessionals.length,
+          })}
         </Text>
       </View>
 
@@ -190,9 +222,9 @@ export const SearchScreen: React.FC = () => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="people-outline" size={64} color={COLORS.gray400} />
-            <Text style={styles.emptyTitle}>No professionals found</Text>
+            <Text style={styles.emptyTitle}>{t('search.empty')}</Text>
             <Text style={styles.emptySubtitle}>
-              Try adjusting your search or filters
+              {t('search.adjust')}
             </Text>
           </View>
         }

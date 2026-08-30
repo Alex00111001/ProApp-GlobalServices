@@ -7,6 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
+import { useTranslation } from 'react-i18next';
+import { translateCategory } from '@/i18n/entities';
 
 interface Service {
   id: string;
@@ -28,6 +30,7 @@ interface Category {
 
 export const ServicesCatalogScreen: React.FC = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { categoryId, categoryName } = useLocalSearchParams<{ categoryId?: string; categoryName?: string }>();
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -91,7 +94,7 @@ export const ServicesCatalogScreen: React.FC = () => {
         ]}
         numberOfLines={1}
       >
-        {item.name}
+        {translateCategory(t, item)}
       </Text>
     </TouchableOpacity>
   );

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Button } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
 import { ProfessionalProfile, Portfolio, Certification } from '@/types';
+import { apiClient } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 interface ProfessionalDetailScreenProps {
   professional: ProfessionalProfile & {
@@ -18,52 +20,42 @@ interface ProfessionalDetailScreenProps {
 
 export const ProfessionalDetailScreen: React.FC = () => {
   const router = useRouter();
-  const params = useLocalSearchParams<{ professionalId?: string; serviceId?: string }>();
-  
-  // Mock data - will be replaced with API call
-  const professional: ProfessionalDetailScreenProps['professional'] = {
-    id: params.professionalId || '1',
-    userId: '1',
-    bio: 'Professional electrician with over 10 years of experience. Specialized in residential and commercial electrical installations, repairs, and maintenance. Licensed and insured.',
-    hourlyRate: 45,
-    yearsOfExperience: 10,
-    serviceRadius: 25,
-    rating: 4.8,
-    totalReviews: 127,
-    totalJobs: 350,
-    isVerified: true,
-    isApproved: true,
-    user: {
-      id: '1',
-      email: 'john@example.com',
-      name: 'John Martinez',
-      phone: '+1234567890',
-      role: 'PROFESSIONAL',
-      avatar: 'https://via.placeholder.com/150',
-      createdAt: '2023-01-01',
-      updatedAt: '2024-01-01',
-    },
-    categories: [
-      { id: '1', name: 'Electricity', description: 'Electrical services', icon: 'flash-outline', isActive: true, subcategories: [] },
-    ],
-    portfolio: [
-      { id: '1', professionalId: '1', imageUrl: 'https://via.placeholder.com/300', caption: 'Kitchen installation', createdAt: '2024-01-01' },
-      { id: '2', professionalId: '1', imageUrl: 'https://via.placeholder.com/300', caption: 'Bathroom renovation', createdAt: '2024-01-02' },
-    ],
-    certifications: [
-      { id: '1', professionalId: '1', name: 'Licensed Electrician', issuingOrganization: 'State Board', issueDate: '2020-01-01', expiryDate: '2025-01-01', certificateUrl: '' },
-    ],
-    availability: [],
-    services: [
-      { id: '1', name: 'Electrical Installation', description: 'Complete electrical installation for homes', price: 150, duration: 120 },
-      { id: '2', name: 'Electrical Repair', description: 'Fix any electrical issues', price: 75, duration: 60 },
-      { id: '3', name: 'Lighting Installation', description: 'Install indoor/outdoor lighting', price: 50, duration: 45 },
-    ],
-    reviews: [
-      { id: '1', clientId: '1', professionalId: '1', rating: 5, comment: 'Excellent work! Very professional and punctual.', createdAt: '2024-01-15' },
-      { id: '2', clientId: '2', professionalId: '1', rating: 4, comment: 'Good service, would recommend.', createdAt: '2024-01-10' },
-    ],
-  };
+  const { t } = useTranslation();
+  const params = useLocalSearchParams<{ id?: string }>();
+  const [professional, setProfessional] = useState<ProfessionalDetailScreenProps['professional'] | null>(null);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    if (!params.id) return;
+
+    setLoadError(false);
+    apiClient.getProfessionalById(params.id)
+      .then((data: any) => setProfessional({
+        ...data,
+        services: (data.services ?? []).map((service: any) => ({
+          ...service,
+          price: Number(service.price ?? service.basePrice ?? 0),
+        })),
+        reviews: data.reviews ?? data.user?.reviewsReceived ?? [],
+        portfolio: data.portfolio ?? [],
+      }))
+      .catch(() => setLoadError(true));
+  }, [params.id]);
+
+  if (!professional) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
+        </TouchableOpacity>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.lg }}>
+          {loadError
+            ? <Text style={styles.sectionContent}>{t('professionalDetail.loadError')}</Text>
+            : <ActivityIndicator size="large" color={COLORS.primary} />}
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -104,7 +96,7 @@ export const ProfessionalDetailScreen: React.FC = () => {
             <View style={styles.ratingContainer}>
               <View style={styles.stars}>{renderStars(professional.rating)}</View>
               <Text style={styles.ratingText}>{professional.rating.toFixed(1)}</Text>
-              <Text style={styles.reviewCount}>({professional.totalReviews} reviews)</Text>
+              <Text style={styles.reviewCount}>({professional.totalReviews} {t('professionalDetail.reviews')})</Text>
             </View>
           </View>
         </View>
@@ -114,34 +106,38 @@ export const ProfessionalDetailScreen: React.FC = () => {
           {professional.isVerified && (
             <View style={[styles.badge, styles.verifiedBadge]}>
               <Ionicons name="checkmark-circle" size={16} color={COLORS.success} />
-              <Text style={[styles.badgeText, styles.verifiedText]}>Verified</Text>
+              <Text style={[styles.badgeText, styles.verifiedText]}>{t('home.verified')}</Text>
             </View>
           )}
           {professional.isApproved && (
             <View style={[styles.badge, styles.approvedBadge]}>
               <Ionicons name="shield-checkmark" size={16} color={COLORS.primary} />
-              <Text style={[styles.badgeText, styles.approvedText]}>Approved</Text>
+              <Text style={[styles.badgeText, styles.approvedText]}>{t('home.approved')}</Text>
             </View>
           )}
           <View style={[styles.badge, styles.experienceBadge]}>
             <Ionicons name="briefcase" size={16} color={COLORS.primary} />
             <Text style={[styles.badgeText, styles.experienceText]}>
-              {professional.yearsOfExperience}+ years
+              {t('professionalDetail.years', { count: professional.yearsOfExperience ?? 0 })}
             </Text>
           </View>
         </View>
 
         {/* About Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
+          <Text style={styles.sectionTitle}>{t('professionalDetail.about')}</Text>
           <Text style={styles.sectionContent}>{professional.bio}</Text>
         </View>
 
         {/* Services Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Services</Text>
+          <Text style={styles.sectionTitle}>{t('professionalDetail.services')}</Text>
           {professional.services?.map((service) => (
-            <TouchableOpacity key={service.id} style={styles.serviceCard}>
+            <TouchableOpacity
+              key={service.id}
+              style={styles.serviceCard}
+              onPress={() => router.push(`/booking/new?professionalId=${professional.id}&serviceId=${service.id}`)}
+            >
               <View style={styles.serviceHeader}>
                 <Text style={styles.serviceName}>{service.name}</Text>
                 <Text style={styles.servicePrice}>${service.price}</Text>
@@ -157,7 +153,7 @@ export const ProfessionalDetailScreen: React.FC = () => {
 
         {/* Portfolio Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Portfolio</Text>
+          <Text style={styles.sectionTitle}>{t('professionalDetail.portfolio')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {professional.portfolio.map((item) => (
               <View key={item.id} style={styles.portfolioItem}>
@@ -174,7 +170,7 @@ export const ProfessionalDetailScreen: React.FC = () => {
 
         {/* Reviews Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Reviews ({professional.totalReviews})</Text>
+          <Text style={styles.sectionTitle}>{t('professionalDetail.reviews')} ({professional.totalReviews})</Text>
           {professional.reviews?.slice(0, 3).map((review) => (
             <View key={review.id} style={styles.reviewCard}>
               <View style={styles.reviewHeader}>
@@ -195,12 +191,15 @@ export const ProfessionalDetailScreen: React.FC = () => {
       {/* Bottom Action Bar */}
       <View style={styles.bottomBar}>
         <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Starting at</Text>
+          <Text style={styles.priceLabel}>{t('professionalDetail.startingAt')}</Text>
           <Text style={styles.priceValue}>${professional.hourlyRate}/hr</Text>
         </View>
         <Button
-          title="Book Now"
-          onPress={() => router.push(`/booking-flow?professionalId=${professional.id}`)}
+          title={t('professionalDetail.bookNow')}
+          onPress={() => {
+            const firstServiceId = professional.services?.[0]?.id;
+            router.push(`/booking/new?professionalId=${professional.id}${firstServiceId ? `&serviceId=${firstServiceId}` : ''}`);
+          }}
           style={styles.bookButton}
         />
       </View>
