@@ -319,7 +319,9 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
               onPress={() => router.push(`/professional/${booking.professional!.id}`)}
             >
               <Image
-                source={{ uri: booking.professional.user.avatar || booking.professional.user.avatarUrl || 'https://via.placeholder.com/100' }}
+                source={(booking.professional.user.avatar || booking.professional.user.avatarUrl)
+                  ? { uri: booking.professional.user.avatar || booking.professional.user.avatarUrl }
+                  : require('../../../assets/icon.png')}
                 style={styles.avatar}
               />
               <View style={styles.professionalInfo}>

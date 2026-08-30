@@ -26,8 +26,8 @@ interface AuthState {
     acceptTerms: true;
     acceptPrivacy: true;
     marketingConsent: boolean;
-    termsVersion: '2026-08-30';
-    privacyVersion: '2026-08-30';
+    termsVersion: string;
+    privacyVersion: string;
   }) => Promise<void>;
   logout: () => Promise<void>;
   loadUser: () => Promise<void>;

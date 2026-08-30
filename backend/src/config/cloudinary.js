@@ -7,11 +7,13 @@ cloudinary.config({
 });
 
 const uploadToCloudinary = async (file, folder = 'services-platform') => {
+  const safeFolder = /^services-platform(?:\/[a-z0-9_-]+)*$/i.test(folder)
+    ? folder
+    : 'services-platform';
   return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(
-      file.path,
+    const stream = cloudinary.uploader.upload_stream(
       {
-        folder,
+        folder: safeFolder,
         resource_type: 'auto',
         transformation: [
           { width: 1920, height: 1920, crop: 'limit', quality: 'auto' },
@@ -24,8 +26,9 @@ const uploadToCloudinary = async (file, folder = 'services-platform') => {
           publicId: result.public_id,
           format: result.format,
         });
-      }
+      },
     );
+    stream.end(file.buffer);
   });
 };
 

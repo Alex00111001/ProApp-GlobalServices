@@ -52,12 +52,6 @@ const authenticate = async (req, res, next) => {
       });
     }
 
-    // Actualizar último login
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() },
-    });
-
     req.user = user;
     next();
   } catch (error) {

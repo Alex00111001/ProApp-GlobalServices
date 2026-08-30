@@ -52,10 +52,11 @@ export const ServicesCatalogScreen: React.FC = () => {
 
       // Load services for selected category
       if (selectedCategory) {
-        // In real app, filter by category
-        const servicesData = await apiClient.getProfessionals({ categoryId: selectedCategory });
-        // Transform to services format
-        setServices([]);
+        const category = await apiClient.getCategoryById(selectedCategory);
+        setServices((category.services ?? []).map((service: Service) => ({
+          ...service,
+          basePrice: Number(service.basePrice),
+        })));
       } else {
         setServices([]);
       }

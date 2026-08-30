@@ -1,27 +1,48 @@
 const { z } = require('zod');
+const { LEGAL_DOCUMENT_VERSION } = require('../config/business');
+const cleanText = (value) => value.replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim();
+const safeText = (min, max) => z.string().transform(cleanText).pipe(z.string().min(min).max(max));
 
 // Schema para registro de usuario
 const registerSchema = z.object({
   email: z.string().trim().toLowerCase().email('Invalid email format'),
   phone: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, 'Phone must use international format'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  firstName: z.string().trim().min(2, 'First name is required').max(80),
-  lastName: z.string().trim().min(2, 'Last name is required').max(120),
+  firstName: safeText(2, 80),
+  lastName: safeText(2, 120),
   role: z.enum(['CLIENT', 'PROFESSIONAL']).default('CLIENT'),
   countryCode: z.enum(['ES', 'BR', 'CL']),
   locale: z.enum(['es', 'en', 'pt']).default('es'),
   acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Terms must be accepted' }) }),
   acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Privacy notice must be acknowledged' }) }),
   marketingConsent: z.boolean().default(false),
-  termsVersion: z.literal('2026-08-30'),
-  privacyVersion: z.literal('2026-08-30'),
+  termsVersion: z.literal(LEGAL_DOCUMENT_VERSION),
+  privacyVersion: z.literal(LEGAL_DOCUMENT_VERSION),
 });
 
 // Schema para login
 const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  email: z.string().trim().toLowerCase().email('Invalid email format'),
   password: z.string().min(1, 'Password is required'),
 });
+
+const optionalText = (max) => z.string().transform(cleanText).pipe(z.string().max(max)).optional();
+const updateProfileSchema = z.object({
+  firstName: optionalText(80),
+  lastName: optionalText(120),
+  phone: z.string().trim().regex(/^\+[1-9]\d{7,14}$/).optional(),
+  avatarUrl: z.string().trim().url().max(2048).optional(),
+  address: optionalText(240),
+  city: optionalText(100),
+  state: optionalText(100),
+  postalCode: optionalText(20),
+  country: optionalText(80),
+}).strict();
+
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1).max(200),
+  newPassword: z.string().min(8).max(200),
+}).strict();
 
 // Schema para perfil de cliente
 const clientProfileSchema = z.object({
@@ -49,18 +70,18 @@ const professionalProfileSchema = z.object({
 const createBookingSchema = z.object({
   professionalId: z.string().uuid('Invalid professional ID'),
   scheduledDate: z.string().datetime('Invalid date format'),
-  address: z.string().min(5, 'Address is required'),
-  city: z.string().min(2, 'City is required'),
-  state: z.string().min(2, 'State is required'),
-  postalCode: z.string().min(5, 'Postal code is required'),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-  notes: z.string().max(500).optional(),
+  address: safeText(5, 240),
+  city: safeText(2, 100),
+  state: safeText(2, 100),
+  postalCode: safeText(3, 20),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  notes: optionalText(500),
   services: z.array(z.object({
     serviceId: z.string().uuid(),
     quantity: z.number().int().positive(),
-  })).min(1, 'At least one service is required'),
-});
+  }).strict()).min(1, 'At least one service is required').max(50),
+}).strict();
 
 // Schema para review
 const reviewSchema = z.object({
@@ -76,4 +97,6 @@ module.exports = {
   professionalProfileSchema,
   createBookingSchema,
   reviewSchema,
+  updateProfileSchema,
+  changePasswordSchema,
 };

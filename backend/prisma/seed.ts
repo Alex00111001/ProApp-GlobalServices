@@ -34,7 +34,15 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEMO_SEED !== 'true') {
+    throw new Error('Demo seed is disabled in production. Set ALLOW_DEMO_SEED=true only for an intentional demo environment.');
+  }
   console.log('🌱 Starting database seeding...');
+  const requiredSeedPassword = (name: string) => {
+    const value = process.env[name];
+    if (!value || value.length < 12) throw new Error(`${name} must contain at least 12 characters`);
+    return value;
+  };
   
   const categoriesData = [
     {
@@ -47,7 +55,7 @@ async function main() {
           name: 'Limpieza del Hogar',
           slug: 'limpieza-hogar',
           services: [
-            { name: 'Limpieza General', description: 'Limpieza completa de rooms, bathrooms y kitchen', basePrice: 50, duration: 120 },
+            { name: 'Limpieza General', description: 'Limpieza completa de habitaciones, baños y cocina', basePrice: 50, duration: 120 },
             { name: 'Limpieza Profunda', description: 'Limpieza detallada incluyendo ventanas y alfombras', basePrice: 80, duration: 180 },
             { name: 'Limpieza Post-Evento', description: 'Limpieza después de fiestas o eventos', basePrice: 60, duration: 90 },
           ],
@@ -293,7 +301,7 @@ async function main() {
     }
   }
 
-  const adminPassword = await bcrypt.hash('admin123', 10);
+  const adminPassword = await bcrypt.hash(requiredSeedPassword('SEED_ADMIN_PASSWORD'), 10);
   
   const admin = await prisma.user.upsert({
     where: { email: 'admin@servicepro.com' },
@@ -310,7 +318,7 @@ async function main() {
 
   console.log('✓ Created admin user');
 
-  const clientPassword = await bcrypt.hash('cliente123', 10);
+  const clientPassword = await bcrypt.hash(requiredSeedPassword('SEED_CLIENT_PASSWORD'), 10);
 
   const testClient = await prisma.user.upsert({
     where: { email: 'cliente.prueba@example.com' },
@@ -337,7 +345,7 @@ async function main() {
 
   console.log('✓ Created test client');
 
-  const professionalPassword = await bcrypt.hash('professional123', 10);
+  const professionalPassword = await bcrypt.hash(requiredSeedPassword('SEED_PROFESSIONAL_PASSWORD'), 10);
   
   const professionalsData = [
     {
@@ -488,9 +496,7 @@ async function main() {
   console.log('\n✅ Database seeding completed successfully!');
   console.log(`\n   - ${categoriesData.length} categories created`);
   console.log(`   - ${professionalsData.length} sample professionals created`);
-  console.log('   - Test client: cliente.prueba@example.com / cliente123');
-  console.log('   - Admin: admin@servicepro.com / admin123');
-  console.log('   - Professional password: professional123');
+  console.log('   - Demo users created. Credentials are controlled through SEED_* environment variables.');
 }
 
 main()

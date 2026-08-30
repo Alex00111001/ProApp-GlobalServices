@@ -74,7 +74,7 @@ export const ProfessionalDetailScreen: React.FC = () => {
         {/* Header Image */}
         <View style={styles.headerImageContainer}>
           <Image
-            source={{ uri: professional.user.avatar || 'https://via.placeholder.com/400x200' }}
+            source={professional.user.avatar ? { uri: professional.user.avatar } : require('../../../assets/icon.png')}
             style={styles.headerImage}
           />
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -88,7 +88,7 @@ export const ProfessionalDetailScreen: React.FC = () => {
         {/* Profile Info */}
         <View style={styles.profileInfo}>
           <Image
-            source={{ uri: professional.user.avatar || 'https://via.placeholder.com/100' }}
+            source={professional.user.avatar ? { uri: professional.user.avatar } : require('../../../assets/icon.png')}
             style={styles.avatar}
           />
           <View style={styles.nameContainer}>
