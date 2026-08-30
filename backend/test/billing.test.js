@@ -3,11 +3,13 @@ const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 process.env.DATABASE_URL ||= 'postgresql://user:password@localhost:5432/test';
 const { calculateQuote, decimalToMinor } = require('../src/modules/billing/pricing/pricing.service');
-const { evaluateRefund } = require('../src/modules/billing/refunds/refund-policy.service');
+const { evaluateRefund, percentageToBasisPoints, applyBasisPoints } = require('../src/modules/billing/refunds/refund-policy.service');
 const { assertBalanced, postTransactionInTx } = require('../src/modules/billing/ledger/ledger.service');
 const { normalizeCaptureAmounts, buildCaptureEntries } = require('../src/modules/billing/ledger/payment-capture-journal');
 const { assertProviderAmount, applySuccessfulPayment } = require('../src/modules/billing/payments/payment-capture.service');
 const { receiveEvent, processStripeEvent } = require('../src/modules/billing/payments/stripe-webhook.service');
+const { allocateServiceRefund, buildRefundEntries } = require('../src/modules/billing/refunds/refund-journal');
+const { createCancellationRefundRequestInTx } = require('../src/modules/billing/refunds/refund-request.service');
 
 test('pricing separates customer fee from professional commission', () => {
   assert.deepEqual(calculateQuote({ serviceAmountMinor: 10_000, platformFeeBasisPoints: 800, commissionBasisPoints: 1500, currency: 'EUR' }), {
@@ -45,6 +47,53 @@ test('refund rules independently decide service and platform fee', () => {
 
 test('refund defaults to manual review when no versioned rule matches', () => {
   assert.equal(evaluateRefund({ rules: [], context: {}, serviceAmountMinor: 100, platformFeeMinor: 10 }).outcome, 'MANUAL_REVIEW');
+});
+
+test('refund percentages use deterministic basis-point arithmetic', () => {
+  assert.equal(percentageToBasisPoints('12.34'), 1234);
+  assert.equal(applyBasisPoints(19_999, 1234), 2468);
+  assert.throws(() => percentageToBasisPoints('100.01'), /cannot exceed/);
+  assert.throws(() => percentageToBasisPoints('12.345'), /at most two/);
+});
+
+test('refund journal reverses captured economics proportionally and remains balanced', () => {
+  const allocation = allocateServiceRefund({
+    serviceRefundMinor: 5_000,
+    serviceAmountMinor: 10_000,
+    professionalCommissionMinor: 1_500,
+  });
+  assert.deepEqual(allocation, { commissionRefundMinor: 750, professionalPayableRefundMinor: 4_250 });
+
+  const entries = buildRefundEntries({
+    refund: { serviceRefundMinor: 5_000, platformFeeRefundMinor: 800 },
+    capture: {
+      customerTotalMinor: 10_800,
+      serviceAmountMinor: 10_000,
+      professionalCommissionMinor: 1_500,
+      currency: 'EUR',
+    },
+    accountIds: {
+      paymentClearing: 'asset',
+      professionalPayable: 'liability',
+      platformFeeRevenue: 'fee-revenue',
+      commissionRevenue: 'commission-revenue',
+    },
+  });
+  assert.equal(assertBalanced(entries), true);
+  assert.equal(entries.at(-1).amountMinor, 5_800);
+});
+
+test('refund journal cannot exceed captured customer or service amounts', () => {
+  assert.throws(() => allocateServiceRefund({
+    serviceRefundMinor: 101,
+    serviceAmountMinor: 100,
+    professionalCommissionMinor: 10,
+  }), /exceeds captured/);
+  assert.throws(() => buildRefundEntries({
+    refund: { serviceRefundMinor: 101, platformFeeRefundMinor: 0 },
+    capture: { customerTotalMinor: 100, serviceAmountMinor: 100, professionalCommissionMinor: 10, currency: 'EUR' },
+    accountIds: {},
+  }), /cannot exceed/);
 });
 
 test('ledger rejects unbalanced postings', () => {
@@ -276,4 +325,77 @@ test('processed Stripe webhook replay is acknowledged without opening a transact
 
   assert.deepEqual(result, { duplicate: true, status: 'PROCESSED' });
   assert.equal(transactionOpened, false);
+});
+
+test('cancellation creates one versioned refund request without executing money movement', async () => {
+  const calls = { refunds: 0, outbox: 0, audit: 0 };
+  const policy = {
+    id: 'policy-1',
+    version: 3,
+    country: 'ES',
+    rules: [{
+      key: 'professional-cancelled',
+      when: { whoCancelled: 'PROFESSIONAL' },
+      serviceRefundPercentage: 100,
+      platformFeeRefundPercentage: 100,
+    }],
+  };
+  const tx = {
+    bookingPolicyAcceptance: { findFirst: async () => null },
+    refundPolicy: { findMany: async () => [policy] },
+    refund: {
+      findUnique: async () => null,
+      aggregate: async () => ({ _sum: { totalAmount: null } }),
+      create: async ({ data }) => {
+        calls.refunds += 1;
+        assert.equal(data.status, 'REQUESTED');
+        assert.equal(data.totalAmount, '108.00');
+        assert.equal(data.decisionRecord.create.policyVersion, 3);
+        return { id: 'refund-1', ...data };
+      },
+    },
+    outboxEvent: { create: async () => { calls.outbox += 1; } },
+    auditLog: { create: async () => { calls.audit += 1; } },
+  };
+  const result = await createCancellationRefundRequestInTx({
+    tx,
+    booking: {
+      id: 'booking-1',
+      status: 'CONFIRMED',
+      scheduledDate: new Date('2026-09-02T12:00:00Z'),
+      serviceAmount: '100.00',
+      platformFee: '8.00',
+      professionalCommission: '15.00',
+      professionalEarnings: '85.00',
+      currency: 'EUR',
+      pricingSnapshot: { version: 1 },
+      client: { country: 'ES' },
+      payment: { id: 'payment-1', status: 'COMPLETED', amount: '108.00', currency: 'EUR' },
+    },
+    requestedBy: 'user-1',
+    whoCancelled: 'PROFESSIONAL',
+    reason: 'Unavailable',
+    cancelledAt: new Date('2026-09-01T12:00:00Z'),
+  });
+
+  assert.equal(result.outcome, 'APPROVED');
+  assert.equal(result.refund.id, 'refund-1');
+  assert.deepEqual(calls, { refunds: 1, outbox: 1, audit: 1 });
+});
+
+test('cancellation refund request is idempotent by booking', async () => {
+  const existing = { id: 'refund-existing', status: 'REQUESTED' };
+  const tx = { refund: { findUnique: async () => existing } };
+  const result = await createCancellationRefundRequestInTx({
+    tx,
+    booking: {
+      id: 'booking-1',
+      payment: { id: 'payment-1', status: 'COMPLETED' },
+    },
+    requestedBy: 'user-1',
+    whoCancelled: 'CLIENT',
+    cancelledAt: new Date(),
+  });
+
+  assert.deepEqual(result, { outcome: 'EXISTING', refund: existing, duplicate: true });
 });
