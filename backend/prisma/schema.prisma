@@ -32,6 +32,9 @@ model User {
   professionalProfile ProfessionalProfile?
   reviewsGiven        Review[]             @relation("ReviewGiven")
   reviewsReceived     Review[]             @relation("ReviewReceived")
+  administrativeRoles UserRoleAssignment[]
+  auditLogs           AuditLog[]           @relation("AuditActor")
+  marketingEvents     MarketingEvent[]
 
   @@index([email])
   @@index([phone])
@@ -87,6 +90,7 @@ model ProfessionalProfile {
   categories        ProfessionalCategory[]
   user              User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
   services          Service[]
+  marketingEvents   MarketingEvent[]
 
   @@index([status])
   @@index([userId])
@@ -189,6 +193,7 @@ model Booking {
   notifications        Notification[]
   payment              Payment?
   review               Review?
+  marketingEvents      MarketingEvent[]
 
   @@index([clientId])
   @@index([professionalId])
@@ -386,6 +391,166 @@ model SystemSetting {
   @@index([key])
 }
 
+model Role {
+  id          String               @id @default(uuid())
+  key         String               @unique
+  name        String
+  description String?
+  isSystem    Boolean              @default(false)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  permissions RolePermission[]
+  assignments UserRoleAssignment[]
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  key         String           @unique
+  description String?
+  createdAt   DateTime         @default(now())
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime   @default(now())
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model UserRoleAssignment {
+  id        String               @id @default(uuid())
+  userId    String
+  roleId    String
+  status    RoleAssignmentStatus @default(ACTIVE)
+  grantedBy String?
+  grantedAt DateTime             @default(now())
+  revokedAt DateTime?
+  role      Role                 @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId, status])
+  @@index([roleId, status])
+}
+
+model FeatureFlag {
+  id          String            @id @default(uuid())
+  key         String            @unique
+  description String?
+  status      FeatureFlagStatus @default(DISABLED)
+  rules       Json?
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([status])
+}
+
+model AuditLog {
+  id            String       @id @default(uuid())
+  actorId       String?
+  action        String
+  resourceType  String
+  resourceId    String?
+  outcome       AuditOutcome @default(SUCCESS)
+  reason        String?
+  before        Json?
+  after         Json?
+  requestId     String?
+  correlationId String?
+  traceId       String?
+  ipAddress     String?
+  userAgent     String?
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+  actor         User?        @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId, createdAt])
+  @@index([resourceType, resourceId, createdAt])
+  @@index([correlationId])
+  @@index([createdAt])
+}
+
+model IdempotencyRecord {
+  id             String            @id @default(uuid())
+  scope          String
+  key            String
+  requestHash    String
+  status         IdempotencyStatus @default(PROCESSING)
+  responseStatus Int?
+  responseBody   Json?
+  lockedAt       DateTime          @default(now())
+  completedAt    DateTime?
+  expiresAt      DateTime
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@unique([scope, key])
+  @@index([status, lockedAt])
+  @@index([expiresAt])
+}
+
+model OutboxEvent {
+  id            String       @id @default(uuid())
+  aggregateType String
+  aggregateId   String
+  eventType     String
+  payload       Json
+  metadata      Json?
+  status        OutboxStatus @default(PENDING)
+  attempts      Int          @default(0)
+  availableAt   DateTime     @default(now())
+  lockedAt      DateTime?
+  processedAt   DateTime?
+  lastError     String?
+  createdAt     DateTime     @default(now())
+
+  @@index([status, availableAt])
+  @@index([aggregateType, aggregateId, createdAt])
+  @@index([eventType, createdAt])
+}
+
+model MarketingEvent {
+  id             String               @id @default(uuid())
+  eventName      String
+  occurredAt     DateTime
+  receivedAt     DateTime             @default(now())
+  userId         String?
+  professionalId String?
+  bookingId      String?
+  sessionId      String?
+  anonymousId    String?
+  source         String?
+  channel        String?
+  campaign       String?
+  utmSource      String?
+  utmMedium      String?
+  utmCampaign    String?
+  utmContent     String?
+  utmTerm        String?
+  device         Json?
+  appVersion     String?
+  geography      Json?
+  metadata       Json?
+  booking        Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  professional   ProfessionalProfile? @relation(fields: [professionalId], references: [id], onDelete: SetNull)
+  user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([eventName, occurredAt])
+  @@index([userId, occurredAt])
+  @@index([professionalId, occurredAt])
+  @@index([bookingId, occurredAt])
+  @@index([sessionId, occurredAt])
+  @@index([anonymousId, occurredAt])
+  @@index([utmCampaign, occurredAt])
+}
+
 enum UserRole {
   CLIENT
   PROFESSIONAL
@@ -434,4 +599,34 @@ enum NotificationType {
   REMINDER
   PROMOTION
   SYSTEM
+}
+
+enum RoleAssignmentStatus {
+  ACTIVE
+  REVOKED
+}
+
+enum FeatureFlagStatus {
+  DISABLED
+  ENABLED
+}
+
+enum AuditOutcome {
+  SUCCESS
+  DENIED
+  FAILURE
+}
+
+enum IdempotencyStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum OutboxStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+  DEAD_LETTER
 }
