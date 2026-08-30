@@ -5,7 +5,11 @@ import Constants from 'expo-constants';
 
 // Expo requiere el prefijo EXPO_PUBLIC_ para las variables de entorno en el bundle
 // Para desarrollo en Android, 'localhost' no funciona, se debe usar la IP de la máquina o 10.0.2.2
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:3000/api';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || (__DEV__ ? 'http://10.0.2.2:3000/api' : '');
+
+if (!API_URL) {
+  throw new Error('EXPO_PUBLIC_API_URL must be configured for production builds');
+}
 
 class ApiClient {
   private client: AxiosInstance;
@@ -112,9 +116,17 @@ class ApiClient {
   async register(data: {
     email: string;
     password: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     phone: string;
     role: 'CLIENT' | 'PROFESSIONAL';
+    countryCode: 'ES' | 'BR' | 'CL';
+    locale: 'es' | 'en' | 'pt';
+    acceptTerms: true;
+    acceptPrivacy: true;
+    marketingConsent: boolean;
+    termsVersion: '2026-08-30';
+    privacyVersion: '2026-08-30';
   }) {
     const [firstName, ...lastNameParts] = data.name.trim().split(/\s+/);
     const response = await this.client.post<AuthResponse>('/auth/register', {

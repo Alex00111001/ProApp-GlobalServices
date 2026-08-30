@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, StyleProp, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -43,6 +43,7 @@ export const LoginScreen: React.FC = () => {
       // Error is handled by the store
     }
   };
+
 
   return (
     <KeyboardAvoidingView
@@ -109,24 +110,6 @@ export const LoginScreen: React.FC = () => {
             {isLoading && (
               <ActivityIndicator size="small" color={COLORS.primary} style={styles.loader} />
             )}
-          </View>
-
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>{t('auth.or')}</Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialButton}>
-              <Ionicons name="logo-google" size={24} color={COLORS.error} />
-              <Text style={styles.socialButtonText}>{t('auth.google')}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.socialButton}>
-              <Ionicons name="logo-apple" size={24} color={COLORS.black} />
-              <Text style={styles.socialButtonText}>{t('auth.apple')}</Text>
-            </TouchableOpacity>
           </View>
 
           <View style={styles.footer}>

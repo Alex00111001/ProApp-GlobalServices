@@ -5,6 +5,10 @@ const env = require('../config/env');
 const JWT_SECRET = env.jwtSecret;
 const JWT_EXPIRES_IN = env.jwtExpiresIn;
 
+if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET must be configured with at least 32 characters');
+}
+
 // Generar token JWT
 const generateToken = (payload) => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
@@ -81,10 +85,21 @@ const authorize = (...roles) => {
   };
 };
 
+const requireApprovedProfessional = (req, res, next) => {
+  if (req.user?.role !== 'PROFESSIONAL') {
+    return res.status(403).json({ error: 'Professional account required.' });
+  }
+  if (req.user.professionalProfile?.status !== 'APPROVED') {
+    return res.status(403).json({ error: 'Professional verification is required for this action.' });
+  }
+  next();
+};
+
 module.exports = {
   generateToken,
   verifyToken,
   authenticate,
   authorize,
+  requireApprovedProfessional,
   JWT_SECRET,
 };

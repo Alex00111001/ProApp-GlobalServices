@@ -1,68 +1,19 @@
 {
   "expo": {
-    "name": "HomeServices Professional",
-    "slug": "home-services-professional",
+    "name": "ProApp Profesionales",
+    "slug": "proapp-professionals",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "userInterfaceStyle": "light",
+    "scheme": "proapp-professional",
+    "plugins": ["expo-router", "expo-secure-store"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.homeservices.professional"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.homeservices.professional",
-      "permissions": [
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "READ_CALENDAR",
-        "WRITE_CALENDAR"
-      ]
+      "package": "com.homeservices.professional"
     },
-    "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro"
-    },
-    "plugins": [
-      "expo-router",
-      "expo-secure-store",
-      "expo-notifications",
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app needs access to your photos to upload portfolio and documents.",
-          "cameraPermission": "The app needs access to your camera to take photos for portfolio."
-        }
-      ],
-      [
-        "expo-calendar",
-        {
-          "calendarPermission": "The app needs access to your calendar to manage availability."
-        }
-      ],
-      [
-        "react-native-maps",
-        {
-          "locationWhenInUsePermission": "The app needs access to your location to navigate to service locations."
-        }
-      ]
-    ],
-    "scheme": "homeservices-professional",
     "experiments": {
       "typedRoutes": true
     }

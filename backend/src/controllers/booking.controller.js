@@ -52,7 +52,7 @@ exports.createBooking = async (req, res) => {
 
     // Calcular precios exclusivamente con servicios del profesional y su categoría.
     let totalPrice = 0;
-    const platformFeePercentage = 0.15; // 15% de comisión
+    const platformFeePercentage = 0.10; // 10% de comisión
 
     for (const serviceItem of bookingServices) {
       const service = servicesById.get(serviceItem.serviceId);

@@ -2,12 +2,19 @@ const { z } = require('zod');
 
 // Schema para registro de usuario
 const registerSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  phone: z.string().min(10, 'Phone must be at least 10 digits'),
+  email: z.string().trim().toLowerCase().email('Invalid email format'),
+  phone: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, 'Phone must use international format'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  firstName: z.string().min(2, 'First name is required'),
-  lastName: z.string().min(2, 'Last name is required'),
+  firstName: z.string().trim().min(2, 'First name is required').max(80),
+  lastName: z.string().trim().min(2, 'Last name is required').max(120),
   role: z.enum(['CLIENT', 'PROFESSIONAL']).default('CLIENT'),
+  countryCode: z.enum(['ES', 'BR', 'CL']),
+  locale: z.enum(['es', 'en', 'pt']).default('es'),
+  acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Terms must be accepted' }) }),
+  acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Privacy notice must be acknowledged' }) }),
+  marketingConsent: z.boolean().default(false),
+  termsVersion: z.literal('2026-08-30'),
+  privacyVersion: z.literal('2026-08-30'),
 });
 
 // Schema para login

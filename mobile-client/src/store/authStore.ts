@@ -17,9 +17,17 @@ interface AuthState {
   register: (data: {
     email: string;
     password: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     phone: string;
     role: 'CLIENT' | 'PROFESSIONAL';
+    countryCode: 'ES' | 'BR' | 'CL';
+    locale: 'es' | 'en' | 'pt';
+    acceptTerms: true;
+    acceptPrivacy: true;
+    marketingConsent: boolean;
+    termsVersion: '2026-08-30';
+    privacyVersion: '2026-08-30';
   }) => Promise<void>;
   logout: () => Promise<void>;
   loadUser: () => Promise<void>;

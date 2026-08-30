@@ -28,7 +28,7 @@ export const CheckoutScreen: React.FC = () => {
     address: '123 Main St, City, State 12345',
   };
 
-  const platformFee = numericAmount * 0.15;
+  const platformFee = numericAmount * 0.10;
   const total = numericAmount;
 
   const handlePayment = async () => {
