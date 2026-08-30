@@ -35,4 +35,9 @@ module.exports = Object.freeze({
     process.env.FINANCIAL_LEDGER_DUAL_WRITE_ENABLED,
     false
   ),
+  financialRefundRequestsEnabled: parseBoolean(
+    'FINANCIAL_REFUND_REQUESTS_ENABLED',
+    process.env.FINANCIAL_REFUND_REQUESTS_ENABLED,
+    false
+  ),
 });

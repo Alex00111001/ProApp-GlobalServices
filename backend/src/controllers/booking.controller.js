@@ -3,6 +3,8 @@ const { normalizeBookingPayload } = require('../shared/http/compatibility');
 const { CLIENT_PLATFORM_FEE_PERCENTAGE, PROFESSIONAL_COMMISSION_PERCENTAGE, PAYMENT_CURRENCY } = require('../config/business');
 const { createBookingSchema } = require('../validators/auth.validators');
 const { calculateQuote, decimalToMinor } = require('../modules/billing/pricing/pricing.service');
+const env = require('../config/env');
+const { createCancellationRefundRequestInTx } = require('../modules/billing/refunds/refund-request.service');
 
 // Crear reserva
 exports.createBooking = async (req, res) => {
@@ -348,9 +350,15 @@ exports.cancelBooking = async (req, res) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
+    const cancellationReason = typeof reason === 'string' ? reason.trim().slice(0, 500) : null;
 
     const booking = await prisma.booking.findUnique({
       where: { id },
+      include: {
+        client: { select: { userId: true, country: true } },
+        professional: { select: { userId: true } },
+        payment: true,
+      },
     });
 
     if (!booking) {
@@ -359,50 +367,97 @@ exports.cancelBooking = async (req, res) => {
 
     // Determinar quién cancela
     let cancelledBy;
-    if (req.user.role === 'CLIENT' && booking.clientId === req.user.clientProfile?.id) {
+    if (req.user.role === 'CLIENT' && booking.client.userId === req.user.id) {
       cancelledBy = 'CLIENT';
-    } else if (req.user.role === 'PROFESSIONAL' && booking.professionalId === req.user.professionalProfile?.id) {
+    } else if (req.user.role === 'PROFESSIONAL' && booking.professional?.userId === req.user.id) {
       cancelledBy = 'PROFESSIONAL';
     } else {
       return res.status(403).json({ error: 'Forbidden' });
     }
+    if (booking.status === 'COMPLETED') {
+      return res.status(409).json({ error: 'Completed bookings cannot be cancelled' });
+    }
 
-    const updated = await prisma.booking.update({
-      where: { id },
-      data: {
-        status: 'CANCELLED',
-        cancelledBy,
-        cancellationReason: reason,
-        cancelledAt: new Date(),
-      },
-    });
+    const cancelledAt = new Date();
+    const result = await prisma.$transaction(async (tx) => {
+      const claimed = await tx.booking.updateMany({
+        where: { id, status: { notIn: ['CANCELLED', 'COMPLETED'] } },
+        data: {
+          status: 'CANCELLED',
+          cancelledBy,
+          cancellationReason,
+          cancelledAt,
+        },
+      });
+      if (claimed.count === 0) {
+        const current = await tx.booking.findUnique({ where: { id } });
+        if (current?.status === 'CANCELLED') return { booking: current, refundRequest: null, duplicate: true };
+        const error = new Error('Booking can no longer be cancelled');
+        error.status = 409;
+        throw error;
+      }
 
-    // Crear notificación
-    const notifyUserId = cancelledBy === 'CLIENT' 
-      ? (await prisma.professionalProfile.findUnique({ 
-          where: { id: booking.professionalId } 
-        })).userId
-      : (await prisma.clientProfile.findUnique({ 
-          where: { id: booking.clientId } 
-        })).userId;
+      const notifyUserId = cancelledBy === 'CLIENT'
+        ? booking.professional?.userId
+        : booking.client.userId;
+      if (notifyUserId) {
+        await tx.notification.create({
+          data: {
+            userId: notifyUserId,
+            bookingId: id,
+            type: 'BOOKING_CANCELLED',
+            title: 'Reserva Cancelada',
+            message: `La reserva ha sido cancelada. Razón: ${cancellationReason || 'Sin especificar'}`,
+          },
+        });
+      }
 
-    await prisma.notification.create({
-      data: {
-        userId: notifyUserId,
-        bookingId: id,
-        type: 'BOOKING_CANCELLED',
-        title: 'Reserva Cancelada',
-        message: `La reserva ha sido cancelada. Razón: ${reason || 'Sin especificar'}`,
-      },
+      const refundRequest = env.financialRefundRequestsEnabled
+        ? await createCancellationRefundRequestInTx({
+          tx,
+          booking,
+          requestedBy: req.user.id,
+          whoCancelled: cancelledBy,
+          reason: cancellationReason,
+          cancelledAt,
+        })
+        : null;
+      await tx.outboxEvent.create({
+        data: {
+          aggregateType: 'Booking',
+          aggregateId: id,
+          eventType: 'booking.cancelled',
+          payload: { bookingId: id, cancelledBy },
+          metadata: { refundRequestsEnabled: env.financialRefundRequestsEnabled },
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorId: req.user.id,
+          action: 'booking.cancelled',
+          resourceType: 'Booking',
+          resourceId: id,
+          outcome: 'SUCCESS',
+          before: { status: booking.status },
+          after: { status: 'CANCELLED', cancelledBy },
+          requestId: req.context?.requestId,
+          correlationId: req.context?.correlationId,
+          traceId: req.context?.traceId,
+        },
+      });
+      const updated = await tx.booking.findUnique({ where: { id } });
+      return { booking: updated, refundRequest, duplicate: false };
     });
 
     res.json({
       message: 'Booking cancelled successfully',
-      booking: updated,
+      booking: result.booking,
+      refundRequest: result.refundRequest,
+      duplicate: result.duplicate,
     });
   } catch (error) {
     console.error('Cancel booking error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(error.status || 500).json({ error: error.status ? error.message : 'Internal server error' });
   }
 };
 

@@ -724,6 +724,7 @@ model RefundPolicy {
   updatedAt   DateTime                  @updatedAt
   acceptances BookingPolicyAcceptance[]
   refunds     Refund[]
+  decisions   RefundDecision[]
 
   @@unique([key, version])
   @@index([country, status, effectiveAt])
@@ -763,6 +764,7 @@ model LedgerTransaction {
   id             String                  @id @default(uuid())
   bookingId      String?
   paymentId      String?
+  refundId       String?
   idempotencyKey String                  @unique
   status         LedgerTransactionStatus @default(PENDING)
   description    String?
@@ -772,10 +774,12 @@ model LedgerTransaction {
   reversedAt     DateTime?
   booking        Booking?                @relation(fields: [bookingId], references: [id], onDelete: Restrict)
   payment        Payment?                @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  refund         Refund?                 @relation(fields: [refundId], references: [id], onDelete: Restrict)
   entries        LedgerEntry[]
 
   @@index([bookingId, createdAt])
   @@index([paymentId, createdAt])
+  @@index([refundId, createdAt])
   @@index([status, createdAt])
 }
 
@@ -798,27 +802,56 @@ model LedgerEntry {
 }
 
 model Refund {
-  id                String       @id @default(uuid())
-  bookingId         String
-  paymentId         String?
-  refundPolicyId    String
-  idempotencyKey    String       @unique
-  status            RefundStatus @default(REQUESTED)
-  serviceAmount     Decimal      @default(0) @db.Decimal(19, 4)
-  platformFeeAmount Decimal      @default(0) @db.Decimal(19, 4)
-  totalAmount       Decimal      @db.Decimal(19, 4)
-  currency          String
-  decision          Json
-  requestedBy       String?
-  requestedAt       DateTime     @default(now())
-  processedAt       DateTime?
-  booking           Booking      @relation(fields: [bookingId], references: [id], onDelete: Restrict)
-  payment           Payment?     @relation(fields: [paymentId], references: [id], onDelete: Restrict)
-  refundPolicy      RefundPolicy @relation(fields: [refundPolicyId], references: [id], onDelete: Restrict)
+  id                  String              @id @default(uuid())
+  bookingId           String
+  paymentId           String?
+  refundPolicyId      String
+  idempotencyKey      String              @unique
+  status              RefundStatus        @default(REQUESTED)
+  serviceAmount       Decimal             @default(0) @db.Decimal(19, 4)
+  platformFeeAmount   Decimal             @default(0) @db.Decimal(19, 4)
+  totalAmount         Decimal             @db.Decimal(19, 4)
+  currency            String
+  decision            Json
+  requestedBy         String?
+  requestedAt         DateTime            @default(now())
+  approvedBy          String?
+  approvedAt          DateTime?
+  providerRefundId    String?             @unique
+  processingStartedAt DateTime?
+  attempts            Int                 @default(0)
+  failureReason       String?
+  processedAt         DateTime?
+  booking             Booking             @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  payment             Payment?            @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  refundPolicy        RefundPolicy        @relation(fields: [refundPolicyId], references: [id], onDelete: Restrict)
+  decisionRecord      RefundDecision?
+  ledgerTransactions  LedgerTransaction[]
 
   @@index([bookingId, requestedAt])
   @@index([paymentId])
   @@index([status, requestedAt])
+}
+
+model RefundDecision {
+  id                      String       @id @default(uuid())
+  refundId                String       @unique
+  refundPolicyId          String
+  policyVersion           Int
+  country                 String
+  context                 Json
+  outcome                 String
+  matchedRule             String?
+  serviceRefundAmount     Decimal      @default(0) @db.Decimal(19, 4)
+  platformFeeRefundAmount Decimal      @default(0) @db.Decimal(19, 4)
+  totalRefundAmount       Decimal      @default(0) @db.Decimal(19, 4)
+  currency                String
+  decidedAt               DateTime     @default(now())
+  refund                  Refund       @relation(fields: [refundId], references: [id], onDelete: Restrict)
+  refundPolicy            RefundPolicy @relation(fields: [refundPolicyId], references: [id], onDelete: Restrict)
+
+  @@index([refundPolicyId, policyVersion])
+  @@index([outcome, decidedAt])
 }
 
 enum UserRole {

@@ -38,3 +38,20 @@ Operational rollout:
 6. Reconcile payment totals, ledger debits/credits and legacy projections before expanding rollout.
 
 Rollback is application-first: turn off `FINANCIAL_LEDGER_DUAL_WRITE_ENABLED`. Retain inbox and ledger evidence. Failed events remain retryable; a `PROCESSING` lease older than five minutes can be reclaimed by a provider replay. Corrections use new reversal/adjustment transactions rather than updates or deletes.
+
+## Refund request rollout
+
+Migration `202608310002_refund_decisions` adds an immutable `RefundDecision`, provider/approval processing fields and an optional ledger link. It is additive: existing refund rows remain valid and no historical amount or status is rewritten.
+
+`FINANCIAL_REFUND_REQUESTS_ENABLED` defaults to `false`. When enabled, the first successful cancellation transition may create one request using the stable key `booking:<bookingId>:cancellation-refund`. A repeated cancellation returns the existing result and does not duplicate notifications, audit records, outbox events or refund requests.
+
+Policy selection prefers the policy recorded in `BookingPolicyAcceptance`; otherwise it selects the newest active policy for the booking country, then a global policy. The decision records the exact policy/version, country, context, matched rule and separated service/platform-fee amounts. Percentages use deterministic basis-point arithmetic and cumulative requests cannot exceed the captured customer amount.
+
+This stage does **not** invoke `stripe.refunds.create` and does not move money. Even a policy outcome of `APPROVED` creates a `REQUESTED` record so a privileged approval/execution workflow can enforce four-eyes controls. Before enabling the flag:
+
+1. Seed and review country-specific policies and policy acceptances.
+2. Shadow-evaluate cancellations and inspect `MANUAL_REVIEW`/missing-policy events.
+3. Confirm every request amount against the captured payment and legacy projection.
+4. Keep provider execution unavailable until approval, retry leases and Stripe idempotency have integration coverage.
+
+Rollback is application-first: disable `FINANCIAL_REFUND_REQUESTS_ENABLED`. Retain decisions and requests as financial evidence; do not delete or rewrite them.
