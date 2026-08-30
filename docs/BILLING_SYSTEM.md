@@ -49,6 +49,8 @@ Policy selection prefers the policy recorded in `BookingPolicyAcceptance`; other
 
 This stage does **not** invoke `stripe.refunds.create` and does not move money. Even a policy outcome of `APPROVED` creates a `REQUESTED` record so a privileged approval/execution workflow can enforce four-eyes controls. Before enabling the flag:
 
+Administrative review is exposed under `/api/admin/refunds` and requires `refunds.manage`. List/detail endpoints expose the stored decision and evidence; approve/reject mutations are transactional, conditional and audited. The requester cannot approve the same refund, and zero-value/manual-review decisions cannot be approved without a later explicit resolution workflow. No execution endpoint is mounted.
+
 1. Seed and review country-specific policies and policy acceptances.
 2. Shadow-evaluate cancellations and inspect `MANUAL_REVIEW`/missing-policy events.
 3. Confirm every request amount against the captured payment and legacy projection.
