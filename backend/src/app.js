@@ -3,6 +3,12 @@ const cors = require('cors');
 const prisma = require('./config/prisma');
 const env = require('./config/env');
 const { requestContext } = require('./middleware/request-context');
+const helmet = require('helmet');
+const { rateLimit } = require('express-rate-limit');
+const { httpLogger } = require('./modules/observability/logger');
+const { reportError } = require('./modules/observability/error.service');
+const { ensureIncidentForError } = require('./modules/observability/incident.service');
+const { getSystemHealth } = require('./modules/observability/health.service');
 
 const authRoutes = require('./routes/auth.routes');
 const categoryRoutes = require('./routes/category.routes');
@@ -15,6 +21,7 @@ const notificationRoutes = require('./routes/notification.routes');
 const favoriteRoutes = require('./routes/favorite.routes');
 const reviewRoutes = require('./routes/review.routes');
 const eventRoutes = require('./routes/event.routes');
+const operationsRoutes = require('./routes/operations.routes');
 const paymentController = require('./controllers/payment.controller');
 
 const app = express();
@@ -32,6 +39,9 @@ app.use(cors({
   },
 }));
 app.use(requestContext);
+app.use(httpLogger);
+app.use(helmet());
+app.use(rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: 'draft-8', legacyHeaders: false }));
 
 // Stripe requires the original bytes for signature verification.
 app.post(
@@ -44,23 +54,12 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 app.get('/health', async (req, res) => {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    res.json({
-      status: 'HEALTHY',
-      timestamp: new Date().toISOString(),
-      service: 'homeservices-core-api',
-      dependencies: { database: 'HEALTHY' },
-      correlationId: req.context.correlationId,
-    });
-  } catch (error) {
-    console.error('Health check database error:', error);
-    res.status(503).json({
-      status: 'OUTAGE',
-      error: { code: 'DATABASE_UNAVAILABLE', message: 'Database unavailable' },
-      correlationId: req.context.correlationId,
-    });
-  }
+  const health = await getSystemHealth(prisma);
+  res.status(health.status === 'OUTAGE' ? 503 : 200).json({
+    ...health,
+    service: 'homeservices-core-api',
+    correlationId: req.context.correlationId,
+  });
 });
 
 app.use('/api/auth', authRoutes);
@@ -74,6 +73,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/admin/operations', operationsRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
@@ -83,8 +83,14 @@ app.use((req, res) => {
   });
 });
 
-app.use((err, req, res, next) => {
-  console.error('Global error handler:', err);
+app.use(async (err, req, res, next) => {
+  req.log?.error({ err, correlationId: req.context?.correlationId }, 'Unhandled request error');
+  try {
+    const errorEvent = await reportError(err, req);
+    await ensureIncidentForError(errorEvent);
+  } catch (reportingError) {
+    req.log?.error({ err: reportingError }, 'Error reporting failed');
+  }
   const correlationId = req.context?.correlationId;
 
   if (err.name === 'ValidationError') {

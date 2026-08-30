@@ -4,6 +4,8 @@ const { PERMISSIONS, roleGrantsPermission } = require('../src/modules/identity/p
 const { inPercentage, matchesRules } = require('../src/modules/configuration/feature-flags.service');
 const { EVENT_NAMES, isKnownEvent } = require('../src/modules/growth/events/event-taxonomy');
 const { sanitizeMetadata, trackEvent } = require('../src/modules/growth/events/event.service');
+const { fingerprintError, normalizeMessage } = require('../src/modules/observability/error.service');
+const { shouldRecommendIncident } = require('../src/modules/observability/incident.service');
 
 test('administrative roles expose least-privilege permission sets', () => {
   assert.equal(roleGrantsPermission('SUPER_ADMIN', PERMISSIONS.ROLES_MANAGE), true);
@@ -43,4 +45,17 @@ test('event ingestion derives identity outside the submitted payload', async () 
   const client = { marketingEvent: { create: async (input) => { created = input.data; return { id: 'event-1' }; } } };
   await trackEvent({ eventName: 'app_opened', userId: 'spoofed', metadata: {} }, { userId: 'trusted' }, client);
   assert.equal(created.userId, 'trusted');
+});
+
+test('error fingerprints group variable identifiers and numbers', () => {
+  const a = fingerprintError({ message: 'Payment 12345 failed for 123e4567-e89b-12d3-a456-426614174000' });
+  const b = fingerprintError({ message: 'Payment 67890 failed for 987e6543-e21b-12d3-a456-426614174999' });
+  assert.equal(a, b);
+  assert.equal(normalizeMessage('order 12345'), 'order :number');
+});
+
+test('incident recommendation requires threshold inside the time window', () => {
+  assert.equal(shouldRecommendIncident({ occurrenceCount: 20, firstSeenAt: new Date() }), true);
+  assert.equal(shouldRecommendIncident({ occurrenceCount: 19, firstSeenAt: new Date() }), false);
+  assert.equal(shouldRecommendIncident({ occurrenceCount: 100, firstSeenAt: new Date(Date.now() - 600_000) }), false);
 });
