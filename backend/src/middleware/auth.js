@@ -62,6 +62,11 @@ const authenticate = async (req, res, next) => {
   }
 };
 
+const authenticateOptional = (req, res, next) => {
+  if (!req.headers.authorization) return next();
+  return authenticate(req, res, next);
+};
+
 // Middleware para verificar roles
 const authorize = (...roles) => {
   return (req, res, next) => {
@@ -93,6 +98,7 @@ module.exports = {
   generateToken,
   verifyToken,
   authenticate,
+  authenticateOptional,
   authorize,
   requireApprovedProfessional,
   JWT_SECRET,
