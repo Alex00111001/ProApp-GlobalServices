@@ -1,7 +1,8 @@
 const prisma = require('../config/prisma');
 const { normalizeBookingPayload } = require('../shared/http/compatibility');
-const { PLATFORM_FEE_PERCENTAGE } = require('../config/business');
+const { CLIENT_PLATFORM_FEE_PERCENTAGE, PROFESSIONAL_COMMISSION_PERCENTAGE, PAYMENT_CURRENCY } = require('../config/business');
 const { createBookingSchema } = require('../validators/auth.validators');
+const { calculateQuote, decimalToMinor } = require('../modules/billing/pricing/pricing.service');
 
 // Crear reserva
 exports.createBooking = async (req, res) => {
@@ -53,7 +54,7 @@ exports.createBooking = async (req, res) => {
     }
 
     // Calcular precios exclusivamente con servicios del profesional y su categoría.
-    let totalPrice = 0;
+    let serviceAmountMinor = 0;
 
     for (const serviceItem of bookingServices) {
       const service = servicesById.get(serviceItem.serviceId);
@@ -61,12 +62,16 @@ exports.createBooking = async (req, res) => {
         return res.status(400).json({ error: 'Service quantity must be a positive integer' });
       }
 
-      const subtotal = service.basePrice * serviceItem.quantity;
-      totalPrice += subtotal;
+      serviceAmountMinor += decimalToMinor(service.basePrice) * serviceItem.quantity;
     }
 
-    const platformFee = totalPrice * PLATFORM_FEE_PERCENTAGE;
-    const professionalEarnings = totalPrice - platformFee;
+    const quote = calculateQuote({
+      serviceAmountMinor,
+      platformFeeBasisPoints: Math.round(CLIENT_PLATFORM_FEE_PERCENTAGE * 10_000),
+      commissionBasisPoints: Math.round(PROFESSIONAL_COMMISSION_PERCENTAGE * 10_000),
+      currency: PAYMENT_CURRENCY.toUpperCase(),
+    });
+    const money = (minor) => (minor / 100).toFixed(2);
 
     // Crear reserva con transacción
     const booking = await prisma.$transaction(async (tx) => {
@@ -83,9 +88,13 @@ exports.createBooking = async (req, res) => {
           latitude,
           longitude,
           notes,
-          totalPrice,
-          platformFee,
-          professionalEarnings,
+          totalPrice: money(quote.customerTotalMinor),
+          serviceAmount: money(quote.serviceAmountMinor),
+          platformFee: money(quote.platformFeeMinor),
+          professionalCommission: money(quote.professionalCommissionMinor),
+          professionalEarnings: money(quote.professionalPayoutMinor),
+          currency: quote.currency,
+          pricingSnapshot: quote,
           status: 'PENDING',
         },
       });
@@ -100,7 +109,7 @@ exports.createBooking = async (req, res) => {
             serviceId: serviceItem.serviceId,
             quantity: serviceItem.quantity,
             price: service.basePrice,
-            subtotal: service.basePrice * serviceItem.quantity,
+            subtotal: money(decimalToMinor(service.basePrice) * serviceItem.quantity),
           },
         });
       }
@@ -110,7 +119,7 @@ exports.createBooking = async (req, res) => {
         where: { id: req.user.clientProfile?.id },
         data: {
           totalBookings: { increment: 1 },
-          totalSpent: { increment: totalPrice },
+          totalSpent: { increment: money(quote.customerTotalMinor) },
         },
       });
 
@@ -436,7 +445,7 @@ exports.completeBooking = async (req, res) => {
           professionalId: booking.professionalId,
           bookingId: id,
           amount: booking.totalPrice,
-          platformFee: booking.platformFee,
+          platformFee: booking.professionalCommission,
           netAmount: booking.professionalEarnings,
           status: 'PENDING',
         },

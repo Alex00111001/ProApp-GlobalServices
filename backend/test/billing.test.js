@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { calculateQuote } = require('../src/modules/billing/pricing/pricing.service');
+const { spawnSync } = require('node:child_process');
+const { calculateQuote, decimalToMinor } = require('../src/modules/billing/pricing/pricing.service');
 const { evaluateRefund } = require('../src/modules/billing/refunds/refund-policy.service');
 const { assertBalanced } = require('../src/modules/billing/ledger/ledger.service');
 
@@ -10,6 +11,23 @@ test('pricing separates customer fee from professional commission', () => {
     professionalGrossMinor: 10_000, professionalCommissionMinor: 1_500,
     professionalPayoutMinor: 8_500, grossPlatformRevenueMinor: 2_300,
   });
+});
+
+test('decimal prices convert to minor units without binary float arithmetic', () => {
+  assert.equal(decimalToMinor('19.99'), 1999);
+  assert.equal(decimalToMinor('20'), 2000);
+  assert.throws(() => decimalToMinor('invalid'));
+  assert.throws(() => decimalToMinor('10.999'));
+});
+
+test('production pricing configuration fails closed when commercial rates are absent', () => {
+  const env = { ...process.env, NODE_ENV: 'production', LEGAL_DOCUMENT_VERSION: 'v1', STRIPE_CURRENCY: 'eur' };
+  delete env.PROFESSIONAL_COMMISSION_PERCENTAGE;
+  delete env.PLATFORM_FEE_PERCENTAGE;
+  delete env.CLIENT_PLATFORM_FEE_PERCENTAGE;
+  const result = spawnSync(process.execPath, ['-e', "require('./src/config/business')"], { cwd: process.cwd(), env });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr.toString(), /PROFESSIONAL_COMMISSION_PERCENTAGE must be configured/);
 });
 
 test('refund rules independently decide service and platform fee', () => {

@@ -168,44 +168,52 @@ model Service {
 }
 
 model Booking {
-  id                   String                    @id @default(uuid())
-  clientId             String
-  professionalId       String?
-  status               BookingStatus             @default(PENDING)
-  scheduledDate        DateTime
-  endDate              DateTime?
-  address              String
-  city                 String
-  state                String
-  postalCode           String
-  latitude             Float?
-  longitude            Float?
-  notes                String?
-  totalPrice           Decimal                   @db.Decimal(10, 2)
-  platformFee          Decimal                   @default(0.00) @db.Decimal(10, 2)
-  professionalEarnings Decimal                   @db.Decimal(10, 2)
-  cancelledBy          String?
-  cancellationReason   String?
-  cancelledAt          DateTime?
-  completedAt          DateTime?
-  createdAt            DateTime                  @default(now())
-  updatedAt            DateTime                  @updatedAt
-  client               ClientProfile             @relation(fields: [clientId], references: [id])
-  professional         ProfessionalProfile?      @relation(fields: [professionalId], references: [id])
-  bookingServices      BookingService[]
-  notifications        Notification[]
-  payment              Payment?
-  review               Review?
-  marketingEvents      MarketingEvent[]
-  errorEvents          ErrorEvent[]
-  ledgerTransactions   LedgerTransaction[]
-  refunds              Refund[]
-  policyAcceptances    BookingPolicyAcceptance[]
+  id                     String                    @id @default(uuid())
+  clientId               String
+  professionalId         String?
+  status                 BookingStatus             @default(PENDING)
+  scheduledDate          DateTime
+  endDate                DateTime?
+  address                String
+  city                   String
+  state                  String
+  postalCode             String
+  latitude               Float?
+  longitude              Float?
+  notes                  String?
+  totalPrice             Decimal                   @db.Decimal(10, 2)
+  serviceAmount          Decimal                   @default(0.00) @db.Decimal(10, 2)
+  platformFee            Decimal                   @default(0.00) @db.Decimal(10, 2)
+  platformFeeState       PlatformFeeState          @default(PENDING)
+  professionalCommission Decimal                   @default(0.00) @db.Decimal(10, 2)
+  professionalEarnings   Decimal                   @db.Decimal(10, 2)
+  currency               String                    @default("EUR")
+  pricingSnapshot        Json?
+  pricingPolicyId        String?
+  cancelledBy            String?
+  cancellationReason     String?
+  cancelledAt            DateTime?
+  completedAt            DateTime?
+  createdAt              DateTime                  @default(now())
+  updatedAt              DateTime                  @updatedAt
+  client                 ClientProfile             @relation(fields: [clientId], references: [id])
+  professional           ProfessionalProfile?      @relation(fields: [professionalId], references: [id])
+  bookingServices        BookingService[]
+  notifications          Notification[]
+  payment                Payment?
+  review                 Review?
+  marketingEvents        MarketingEvent[]
+  errorEvents            ErrorEvent[]
+  ledgerTransactions     LedgerTransaction[]
+  refunds                Refund[]
+  policyAcceptances      BookingPolicyAcceptance[]
+  pricingPolicy          PricingPolicy?            @relation(fields: [pricingPolicyId], references: [id], onDelete: Restrict)
 
   @@index([clientId])
   @@index([professionalId])
   @@index([status])
   @@index([scheduledDate])
+  @@index([pricingPolicyId])
 }
 
 model BookingService {
@@ -674,6 +682,7 @@ model PricingPolicy {
   createdBy   String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  bookings    Booking[]
 
   @@unique([key, version])
   @@index([country, status, effectiveAt])
@@ -956,4 +965,14 @@ enum RefundStatus {
   COMPLETED
   FAILED
   CANCELLED
+}
+
+enum PlatformFeeState {
+  PENDING
+  EARNED
+  REFUNDABLE
+  PARTIALLY_REFUNDABLE
+  NON_REFUNDABLE
+  REFUNDED
+  REVERSED
 }
