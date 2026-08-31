@@ -48,6 +48,8 @@ test('production financial configuration rejects Stripe test credentials', () =>
   const env = {
     ...process.env,
     NODE_ENV: 'production',
+    DATABASE_URL: 'postgresql://user:password@database.example:5432/app',
+    CORS_ORIGINS: 'https://app.example.com',
     JWT_SECRET: 'production-jwt-secret-with-at-least-32-characters',
     STRIPE_API_KEY: 'sk_test_not-allowed-in-production-1234567890',
     STRIPE_WEBHOOK_SECRET: 'whsec_production-placeholder-1234567890',

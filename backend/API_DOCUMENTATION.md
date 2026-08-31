@@ -350,6 +350,18 @@ Logs de auditoría
 
 ## ⚠️ Códigos de Error
 
+Todas las respuestas JSON con estado `4xx` o `5xx` conservan `error` y añaden un código estable y el identificador de correlación:
+
+```json
+{
+  "error": "Invalid credentials",
+  "code": "AUTHENTICATION_REQUIRED",
+  "correlationId": "7a6cbe1d-0ad2-4a90-ae1a-286cf4ea73a2"
+}
+```
+
+Los headers `x-request-id`, `x-correlation-id` y `x-trace-id` también están presentes. En producción, los errores `5xx` nunca incluyen detalles internos o stack traces.
+
 | Código | Significado |
 |--------|-------------|
 | 400 | Bad Request - Datos inválidos |

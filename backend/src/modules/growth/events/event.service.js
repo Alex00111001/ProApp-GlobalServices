@@ -1,6 +1,6 @@
 const { isKnownEvent } = require('./event-taxonomy');
 
-const BLOCKED_KEYS = /password|token|authorization|secret|api[_-]?key|card|cvv/i;
+const BLOCKED_KEYS = /password|token|authorization|secret|api[_-]?key|card|cvv|email|phone|(?:first|last|full)[_-]?name|address|postal|ip[_-]?address|user[_-]?agent/i;
 
 const sanitizeMetadata = (value, depth = 0) => {
   if (depth > 4 || value == null || typeof value !== 'object') return value;
