@@ -1,4 +1,4 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('../config/stripe');
 const prisma = require('../config/prisma');
 
 const { PAYMENT_CURRENCY: STRIPE_CURRENCY } = require('../config/business');
@@ -145,6 +145,9 @@ exports.confirmPayment = async (req, res) => {
       tx,
       bookingId: booking.id,
       providerTransactionId: paymentIntent.id,
+      providerChargeId: typeof paymentIntent.latest_charge === 'string'
+        ? paymentIntent.latest_charge
+        : paymentIntent.latest_charge?.id,
       providerAmountMinor: paymentIntent.amount_received || paymentIntent.amount,
       providerCurrency: paymentIntent.currency,
       source: 'PAYMENT_CONFIRM_API',
@@ -213,7 +216,7 @@ exports.stripeWebhook = async (req, res) => {
     const result = await processStripeEvent({
       event,
       correlationId: req.context?.correlationId,
-    });
+    }, undefined, stripe);
     res.json({ received: true, duplicate: result.duplicate, status: result.status });
   } catch (error) {
     req.log?.error({ err: error, stripeEventId: event.id }, 'Stripe webhook processing failed');

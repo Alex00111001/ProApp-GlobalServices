@@ -2,9 +2,17 @@ const prisma = require('../../../config/prisma');
 const env = require('../../../config/env');
 const { applySuccessfulPayment } = require('./payment-capture.service');
 const { reconcileProviderRefundInTx } = require('../refunds/refund-execution.service');
+const { reconcileProviderDispute } = require('../disputes/dispute.service');
 
 const PROCESSING_LEASE_MS = 5 * 60 * 1000;
 const REFUND_EVENT_TYPES = new Set(['refund.created', 'refund.updated', 'refund.failed']);
+const DISPUTE_EVENT_TYPES = new Set([
+  'charge.dispute.created',
+  'charge.dispute.updated',
+  'charge.dispute.closed',
+  'charge.dispute.funds_withdrawn',
+  'charge.dispute.funds_reinstated',
+]);
 
 const isUniqueConstraintError = (error) => error?.code === 'P2002';
 
@@ -36,7 +44,7 @@ const receiveEvent = async ({ event, correlationId }, client = prisma) => {
   }
 };
 
-const processStripeEvent = async ({ event, correlationId }, client = prisma) => {
+const processStripeEvent = async ({ event, correlationId }, client = prisma, stripeClient) => {
   const received = await receiveEvent({ event, correlationId }, client);
   if (!received.record) throw new Error('Unable to load persisted Stripe event');
   if (received.record.status === 'PROCESSED' || received.record.status === 'DEAD_LETTER') {
@@ -62,6 +70,27 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma) => 
   if (claimed.count === 0) return { duplicate: true, status: 'PROCESSING' };
 
   try {
+    if (DISPUTE_EVENT_TYPES.has(event.type)) {
+      if (env.financialDisputeRecoveryEnabled && !stripeClient) {
+        throw new Error('Stripe client is required for dispute recovery');
+      }
+      const result = await reconcileProviderDispute({
+        providerDispute: event.data.object,
+        eventType: event.type,
+        providerEventAt: event.created ? new Date(event.created * 1000) : new Date(),
+        recoveryEnabled: env.financialDisputeRecoveryEnabled,
+        ledgerEnabled: env.financialLedgerDualWriteEnabled,
+        stripeClient,
+        requestContext: { correlationId },
+        client,
+      });
+      await client.integrationEvent.update({
+        where: { id: received.record.id },
+        data: { status: 'PROCESSED', processedAt: new Date(), lastError: null },
+      });
+      return { duplicate: received.duplicate || Boolean(result?.duplicate), status: 'PROCESSED' };
+    }
+
     const financialResult = await client.$transaction(async (tx) => {
       const providerObject = event.data.object;
       const bookingId = providerObject.metadata?.bookingId;
@@ -72,6 +101,9 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma) => 
           tx,
           bookingId,
           providerTransactionId: providerObject.id,
+          providerChargeId: typeof providerObject.latest_charge === 'string'
+            ? providerObject.latest_charge
+            : providerObject.latest_charge?.id,
           providerAmountMinor: providerObject.amount_received || providerObject.amount,
           providerCurrency: providerObject.currency,
           processedAt: event.created ? new Date(event.created * 1000) : new Date(),
@@ -125,4 +157,11 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma) => 
   }
 };
 
-module.exports = { PROCESSING_LEASE_MS, REFUND_EVENT_TYPES, validateStripeEvent, receiveEvent, processStripeEvent };
+module.exports = {
+  PROCESSING_LEASE_MS,
+  REFUND_EVENT_TYPES,
+  DISPUTE_EVENT_TYPES,
+  validateStripeEvent,
+  receiveEvent,
+  processStripeEvent,
+};

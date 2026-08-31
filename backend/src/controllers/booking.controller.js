@@ -4,6 +4,7 @@ const { CLIENT_PLATFORM_FEE_PERCENTAGE, PROFESSIONAL_COMMISSION_PERCENTAGE, PAYM
 const { createBookingSchema } = require('../validators/auth.validators');
 const { calculateQuote, decimalToMinor } = require('../modules/billing/pricing/pricing.service');
 const env = require('../config/env');
+const { createPayoutRequestForCompletedBookingInTx } = require('../modules/billing/payouts/payout-request.service');
 const { createCancellationRefundRequestInTx } = require('../modules/billing/refunds/refund-request.service');
 
 // Crear reserva
@@ -478,32 +479,47 @@ exports.completeBooking = async (req, res) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    if (booking.status !== 'CONFIRMED' && booking.status !== 'IN_PROGRESS') {
+    if (!['CONFIRMED', 'IN_PROGRESS', 'COMPLETED'].includes(booking.status)) {
       return res.status(400).json({ 
         error: 'Booking cannot be completed from current status' 
       });
     }
 
-    const updated = await prisma.$transaction(async (tx) => {
-      // Actualizar estado de la reserva
-      const updatedBooking = await tx.booking.update({
-        where: { id },
-        data: { 
-          status: 'COMPLETED',
-          completedAt: new Date(),
-        },
+    const result = await prisma.$transaction(async (tx) => {
+      const claimed = await tx.booking.updateMany({
+        where: { id, status: { in: ['CONFIRMED', 'IN_PROGRESS'] } },
+        data: { status: 'COMPLETED', completedAt: new Date() },
       });
+      if (claimed.count === 0) {
+        const current = await tx.booking.findUnique({
+          where: { id },
+          include: { client: true, professional: { include: { user: true } }, payout: true },
+        });
+        if (current?.status === 'COMPLETED') return { booking: current, payout: current.payout, duplicate: true };
+        throw Object.assign(new Error('Booking cannot be completed from current status'), { status: 409 });
+      }
 
       // Actualizar earnings del profesional
-      await tx.earning.create({
+      const earning = await tx.earning.create({
         data: {
           professionalId: booking.professionalId,
           bookingId: id,
-          amount: booking.totalPrice,
-          platformFee: booking.professionalCommission,
+          amount: booking.pricingSnapshot ? booking.serviceAmount : booking.totalPrice,
+          platformFee: booking.pricingSnapshot ? booking.professionalCommission : booking.platformFee,
           netAmount: booking.professionalEarnings,
           status: 'PENDING',
         },
+      });
+
+      const payment = await tx.payment.findUnique({ where: { bookingId: id } });
+      const payoutRequest = await createPayoutRequestForCompletedBookingInTx({
+        tx,
+        booking,
+        payment,
+        earning,
+        requestedBy: req.user.id,
+        enabled: env.financialPayoutRequestsEnabled,
+        requestContext: req.context,
       });
 
       // Actualizar estadísticas del profesional
@@ -515,33 +531,59 @@ exports.completeBooking = async (req, res) => {
         },
       });
 
-      return tx.booking.findUnique({
+      const completedBooking = await tx.booking.findUnique({
         where: { id },
         include: {
           client: { include: { user: true } },
           professional: { include: { user: true } },
+          payout: true,
         },
       });
-    });
 
-    // Crear notificación para el cliente
-    await prisma.notification.create({
-      data: {
-        userId: booking.clientId,
-        bookingId: id,
-        type: 'BOOKING_CONFIRMED',
-        title: 'Servicio Completado',
-        message: 'El servicio ha sido completado. ¡Por favor deja tu reseña!',
-      },
+      await tx.notification.create({
+        data: {
+          userId: completedBooking.client.userId,
+          bookingId: id,
+          type: 'BOOKING_CONFIRMED',
+          title: 'Servicio Completado',
+          message: 'El servicio ha sido completado. ¡Por favor deja tu reseña!',
+        },
+      });
+      await tx.outboxEvent.create({
+        data: {
+          aggregateType: 'Booking',
+          aggregateId: id,
+          eventType: 'booking.completed',
+          payload: { bookingId: id, professionalId: booking.professionalId },
+          metadata: { payoutRequestsEnabled: env.financialPayoutRequestsEnabled },
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorId: req.user.id,
+          action: 'booking.completed',
+          resourceType: 'Booking',
+          resourceId: id,
+          outcome: 'SUCCESS',
+          before: { status: booking.status },
+          after: { status: 'COMPLETED' },
+          requestId: req.context?.requestId,
+          correlationId: req.context?.correlationId,
+          traceId: req.context?.traceId,
+        },
+      });
+      return { booking: completedBooking, payout: payoutRequest.payout, duplicate: false };
     });
 
     res.json({
       message: 'Booking completed successfully',
-      booking: updated,
+      booking: result.booking,
+      payout: result.payout,
+      duplicate: result.duplicate,
     });
   } catch (error) {
     console.error('Complete booking error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(error.status || 500).json({ error: error.status ? error.message : 'Internal server error' });
   }
 };
 

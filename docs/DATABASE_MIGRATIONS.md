@@ -6,6 +6,8 @@ The repository has a versioned additive history beginning with:
 
 - `00000000000000_baseline` reproduces the schema that existed before migration tracking was introduced.
 - `202608300001_foundation` and later migrations add RBAC, observability, billing, pricing separation, legal evidence, Stripe inbox and refund decisions.
+- `202608310003_payout_dispute_reconciliation` adds Stripe Connect payout, dispute and reconciliation evidence plus ledger links. It is additive and enables RLS without public policies on the new financial tables.
+- `202608310003_payout_dispute_reconciliation` adds Stripe Connect payout, dispute and reconciliation evidence plus ledger links. It is additive and enables RLS without public policies on the new financial tables.
 
 ## Existing database
 
@@ -30,6 +32,10 @@ npm run test:integration
 It creates uniquely identified fixtures, tests concurrent inbox/capture/refund behavior and cleans only those fixture IDs.
 
 Any unexpected drift blocks deployment until it has a reviewed reconciliation migration. Never use `prisma db push` for production changes.
+
+The baseline audit treats columns, tables, indexes and constraints introduced by later additive migrations as allowed additions. It still blocks any missing baseline object or any incompatible baseline column type/nullability or enum definition.
+
+The baseline audit treats columns, tables, indexes and constraints introduced by later additive migrations as allowed additions. It still blocks any missing baseline object or any incompatible baseline column type/nullability or enum definition.
 
 ## New database
 

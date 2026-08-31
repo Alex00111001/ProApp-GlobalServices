@@ -65,35 +65,40 @@ model ClientProfile {
 }
 
 model ProfessionalProfile {
-  id                String                     @id @default(uuid())
-  userId            String                     @unique
-  status            ProfessionalStatus         @default(PENDING_REVIEW)
-  bio               String?
-  yearsOfExperience Int?
-  hourlyRate        Decimal?                   @db.Decimal(10, 2)
-  serviceRadius     Int?
-  latitude          Float?
-  longitude         Float?
-  totalBookings     Int                        @default(0)
-  totalEarnings     Decimal                    @default(0.00) @db.Decimal(10, 2)
-  averageRating     Float                      @default(0.0)
-  totalReviews      Int                        @default(0)
-  verifiedAt        DateTime?
-  rejectedReason    String?
-  createdAt         DateTime                   @default(now())
-  updatedAt         DateTime                   @updatedAt
-  bookings          Booking[]
-  certifications    Certification[]
-  documents         Document[]
-  earnings          Earning[]
-  favoriteedBy      FavoriteProfessional[]
-  portfolio         Portfolio[]
-  availability      ProfessionalAvailability[]
-  categories        ProfessionalCategory[]
-  user              User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  services          Service[]
-  marketingEvents   MarketingEvent[]
-  errorEvents       ErrorEvent[]
+  id                     String                     @id @default(uuid())
+  userId                 String                     @unique
+  status                 ProfessionalStatus         @default(PENDING_REVIEW)
+  bio                    String?
+  yearsOfExperience      Int?
+  hourlyRate             Decimal?                   @db.Decimal(10, 2)
+  serviceRadius          Int?
+  latitude               Float?
+  longitude              Float?
+  totalBookings          Int                        @default(0)
+  totalEarnings          Decimal                    @default(0.00) @db.Decimal(10, 2)
+  averageRating          Float                      @default(0.0)
+  totalReviews           Int                        @default(0)
+  verifiedAt             DateTime?
+  rejectedReason         String?
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
+  stripeAccountId        String?                    @unique
+  stripeTransfersStatus  String?
+  stripeAccountUpdatedAt DateTime?
+  bookings               Booking[]
+  certifications         Certification[]
+  documents              Document[]
+  earnings               Earning[]
+  favoriteedBy           FavoriteProfessional[]
+  portfolio              Portfolio[]
+  availability           ProfessionalAvailability[]
+  categories             ProfessionalCategory[]
+  user                   User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services               Service[]
+  marketingEvents        MarketingEvent[]
+  errorEvents            ErrorEvent[]
+  payouts                Payout[]
+  disputes               Dispute[]
 
   @@index([status])
   @@index([userId])
@@ -206,6 +211,9 @@ model Booking {
   errorEvents            ErrorEvent[]
   ledgerTransactions     LedgerTransaction[]
   refunds                Refund[]
+  payout                 Payout?
+  disputes               Dispute[]
+  reconciliationItems    ReconciliationItem[]
   policyAcceptances      BookingPolicyAcceptance[]
   pricingPolicy          PricingPolicy?            @relation(fields: [pricingPolicyId], references: [id], onDelete: Restrict)
 
@@ -239,6 +247,7 @@ model Payment {
   status             PaymentStatus       @default(PENDING)
   method             PaymentMethod
   transactionId      String?
+  providerChargeId   String?             @unique
   processedAt        DateTime?
   failedReason       String?
   refundedAt         DateTime?
@@ -248,6 +257,8 @@ model Payment {
   booking            Booking             @relation(fields: [bookingId], references: [id])
   ledgerTransactions LedgerTransaction[]
   refunds            Refund[]
+  payout             Payout?
+  disputes           Dispute[]
 
   @@index([bookingId])
   @@index([status])
@@ -264,6 +275,7 @@ model Earning {
   payoutDate     DateTime?
   createdAt      DateTime            @default(now())
   professional   ProfessionalProfile @relation(fields: [professionalId], references: [id])
+  payout         Payout?
 
   @@index([professionalId])
   @@index([status])
@@ -765,6 +777,8 @@ model LedgerTransaction {
   bookingId      String?
   paymentId      String?
   refundId       String?
+  payoutId       String?
+  disputeId      String?
   idempotencyKey String                  @unique
   status         LedgerTransactionStatus @default(PENDING)
   description    String?
@@ -775,11 +789,15 @@ model LedgerTransaction {
   booking        Booking?                @relation(fields: [bookingId], references: [id], onDelete: Restrict)
   payment        Payment?                @relation(fields: [paymentId], references: [id], onDelete: Restrict)
   refund         Refund?                 @relation(fields: [refundId], references: [id], onDelete: Restrict)
+  payout         Payout?                 @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  dispute        Dispute?                @relation(fields: [disputeId], references: [id], onDelete: Restrict)
   entries        LedgerEntry[]
 
   @@index([bookingId, createdAt])
   @@index([paymentId, createdAt])
   @@index([refundId, createdAt])
+  @@index([payoutId, createdAt])
+  @@index([disputeId, createdAt])
   @@index([status, createdAt])
 }
 
@@ -852,6 +870,113 @@ model RefundDecision {
 
   @@index([refundPolicyId, policyVersion])
   @@index([outcome, decidedAt])
+}
+
+model Payout {
+  id                  String              @id @default(uuid())
+  bookingId           String              @unique
+  paymentId           String              @unique
+  earningId           String              @unique
+  professionalId      String
+  idempotencyKey      String              @unique
+  status              PayoutStatus        @default(REQUESTED)
+  amount              Decimal             @db.Decimal(19, 4)
+  reversedAmount      Decimal             @default(0) @db.Decimal(19, 4)
+  currency            String
+  connectedAccountId  String?
+  providerTransferId  String?             @unique
+  requestedBy         String?
+  requestedAt         DateTime            @default(now())
+  approvedBy          String?
+  approvedAt          DateTime?
+  processingStartedAt DateTime?
+  attempts            Int                 @default(0)
+  failureReason       String?
+  processedAt         DateTime?
+  reversedAt          DateTime?
+  booking             Booking             @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  payment             Payment             @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  earning             Earning             @relation(fields: [earningId], references: [id], onDelete: Restrict)
+  professional        ProfessionalProfile @relation(fields: [professionalId], references: [id], onDelete: Restrict)
+  disputes            Dispute[]
+  ledgerTransactions  LedgerTransaction[]
+
+  @@index([professionalId, status, requestedAt])
+  @@index([status, requestedAt])
+}
+
+model Dispute {
+  id                         String               @id @default(uuid())
+  bookingId                  String
+  paymentId                  String
+  payoutId                   String?
+  professionalId             String?
+  idempotencyKey             String               @unique
+  providerDisputeId          String               @unique
+  providerChargeId           String
+  providerTransferReversalId String?              @unique
+  status                     DisputeStatus        @default(OPEN)
+  providerStatus             String
+  reason                     String?
+  amount                     Decimal              @db.Decimal(19, 4)
+  recoveredAmount            Decimal              @default(0) @db.Decimal(19, 4)
+  currency                   String
+  evidenceDueBy              DateTime?
+  evidence                   Json?
+  openedAt                   DateTime             @default(now())
+  lastProviderEventAt        DateTime?
+  closedAt                   DateTime?
+  failureReason              String?
+  createdAt                  DateTime             @default(now())
+  updatedAt                  DateTime             @updatedAt
+  booking                    Booking              @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  payment                    Payment              @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  payout                     Payout?              @relation(fields: [payoutId], references: [id], onDelete: Restrict)
+  professional               ProfessionalProfile? @relation(fields: [professionalId], references: [id], onDelete: Restrict)
+  ledgerTransactions         LedgerTransaction[]
+
+  @@index([bookingId, openedAt])
+  @@index([paymentId, openedAt])
+  @@index([payoutId])
+  @@index([professionalId, status, openedAt])
+  @@index([status, openedAt])
+}
+
+model ReconciliationRun {
+  id            String                  @id @default(uuid())
+  status        ReconciliationRunStatus @default(RUNNING)
+  scope         String
+  initiatedBy   String?
+  startedAt     DateTime                @default(now())
+  completedAt   DateTime?
+  matchedCount  Int                     @default(0)
+  mismatchCount Int                     @default(0)
+  errorCount    Int                     @default(0)
+  metadata      Json?
+  items         ReconciliationItem[]
+
+  @@index([status, startedAt])
+  @@index([startedAt])
+}
+
+model ReconciliationItem {
+  id           String                   @id @default(uuid())
+  runId        String
+  bookingId    String?
+  resourceType String
+  resourceId   String
+  category     String
+  status       ReconciliationItemStatus
+  expected     Json?
+  actual       Json?
+  details      Json?
+  createdAt    DateTime                 @default(now())
+  run          ReconciliationRun        @relation(fields: [runId], references: [id], onDelete: Restrict)
+  booking      Booking?                 @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+
+  @@unique([runId, resourceType, resourceId, category])
+  @@index([bookingId, createdAt])
+  @@index([status, createdAt])
 }
 
 enum UserRole {
@@ -1018,6 +1143,8 @@ enum LedgerEntryType {
   TAX
   ADJUSTMENT
   REVERSAL
+  DISPUTE
+  TRANSFER_REVERSAL
 }
 
 enum RefundStatus {
@@ -1028,6 +1155,37 @@ enum RefundStatus {
   COMPLETED
   FAILED
   CANCELLED
+}
+
+enum PayoutStatus {
+  REQUESTED
+  APPROVED
+  PROCESSING
+  COMPLETED
+  FAILED
+  REVERSED
+  CANCELLED
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  WON
+  LOST
+  WARNING_CLOSED
+}
+
+enum ReconciliationRunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum ReconciliationItemStatus {
+  MATCHED
+  MISMATCH
+  MISSING
+  ERROR
 }
 
 enum PlatformFeeState {
