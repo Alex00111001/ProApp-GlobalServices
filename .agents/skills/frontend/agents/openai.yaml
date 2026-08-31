@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend"
+  short_description: "Build mobile and admin user journeys"
+  default_prompt: "Use $frontend to review this HomeServices task."

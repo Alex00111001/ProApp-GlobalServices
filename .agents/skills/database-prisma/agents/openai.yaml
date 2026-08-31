@@ -1,0 +1,4 @@
+interface:
+  display_name: "Database and Prisma"
+  short_description: "Evolve Prisma and PostgreSQL safely"
+  default_prompt: "Use $database-prisma to review this HomeServices task."

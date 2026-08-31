@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Guardian"
+  short_description: "Protect HomeServices architecture and boundaries"
+  default_prompt: "Use $architecture-guardian to review this HomeServices task."

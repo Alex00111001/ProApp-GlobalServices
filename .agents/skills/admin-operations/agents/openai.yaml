@@ -1,0 +1,4 @@
+interface:
+  display_name: "Admin Operations"
+  short_description: "Build permissioned operational controls"
+  default_prompt: "Use $admin-operations to review this HomeServices task."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Booking Engine"
+  short_description: "Implement safe booking state transitions"
+  default_prompt: "Use $booking-engine to review this HomeServices task."

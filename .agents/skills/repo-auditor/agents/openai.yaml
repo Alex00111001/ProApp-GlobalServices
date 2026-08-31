@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repository Auditor"
+  short_description: "Audit architecture-to-code conformance"
+  default_prompt: "Use $repo-auditor to review this HomeServices task."

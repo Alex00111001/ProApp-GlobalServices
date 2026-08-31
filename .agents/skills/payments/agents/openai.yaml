@@ -1,0 +1,4 @@
+interface:
+  display_name: "Payments"
+  short_description: "Protect payment and ledger invariants"
+  default_prompt: "Use $payments to review this HomeServices task."

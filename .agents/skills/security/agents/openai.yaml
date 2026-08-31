@@ -1,0 +1,4 @@
+interface:
+  display_name: "Security"
+  short_description: "Review trust boundaries and access controls"
+  default_prompt: "Use $security to review this HomeServices task."
