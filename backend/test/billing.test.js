@@ -11,6 +11,7 @@ const { receiveEvent, processStripeEvent } = require('../src/modules/billing/pay
 const { allocateServiceRefund, buildRefundEntries } = require('../src/modules/billing/refunds/refund-journal');
 const { createCancellationRefundRequestInTx } = require('../src/modules/billing/refunds/refund-request.service');
 const { approveRefundInTx, rejectRefundInTx } = require('../src/modules/billing/refunds/refund-approval.service');
+const { assertProviderRefundMatches, assertRefundExecutable, finalizeRefundInTx, executeApprovedRefund } = require('../src/modules/billing/refunds/refund-execution.service');
 
 test('pricing separates customer fee from professional commission', () => {
   assert.deepEqual(calculateQuote({ serviceAmountMinor: 10_000, platformFeeBasisPoints: 800, commissionBasisPoints: 1500, currency: 'EUR' }), {
@@ -461,4 +462,181 @@ test('refund rejection is idempotent after the first reviewed transition', async
   });
 
   assert.deepEqual(result, { refund: rejected, duplicate: true });
+});
+
+const executableRefundFixture = (overrides = {}) => ({
+  id: 'refund-1',
+  bookingId: 'booking-1',
+  paymentId: 'payment-1',
+  status: 'APPROVED',
+  requestedBy: 'admin-1',
+  approvedBy: 'admin-2',
+  approvedAt: new Date('2026-08-31T10:00:00Z'),
+  processingStartedAt: null,
+  providerRefundId: null,
+  serviceAmount: '100.00',
+  platformFeeAmount: '8.00',
+  totalAmount: '108.00',
+  currency: 'EUR',
+  booking: {
+    id: 'booking-1',
+    serviceAmount: '100.00',
+    platformFee: '8.00',
+    professionalCommission: '15.00',
+    professionalEarnings: '85.00',
+    pricingSnapshot: { version: 1 },
+    currency: 'EUR',
+    client: { userId: 'client-user-1' },
+  },
+  payment: {
+    id: 'payment-1',
+    amount: '108.00',
+    currency: 'EUR',
+    method: 'STRIPE',
+    transactionId: 'pi_1',
+    status: 'COMPLETED',
+  },
+  decisionRecord: { id: 'decision-1' },
+  ...overrides,
+});
+
+test('refund execution preflight rejects component over-refunds before provider calls', () => {
+  const refund = executableRefundFixture({
+    serviceAmount: '10.00',
+    platformFeeAmount: '0.00',
+    totalAmount: '10.00',
+  });
+  assert.throws(() => assertRefundExecutable({
+    refund,
+    previouslyRefundedMinor: 9_500,
+    previousServiceRefundMinor: 9_500,
+    previousPlatformFeeRefundMinor: 0,
+  }), /service amount exceeds/);
+});
+
+test('provider refund identity must match approved internal evidence', () => {
+  const refund = executableRefundFixture();
+  assert.doesNotThrow(() => assertProviderRefundMatches({
+    providerRefund: {
+      id: 're_1',
+      amount: 10_800,
+      currency: 'eur',
+      payment_intent: 'pi_1',
+      metadata: { refundId: 'refund-1' },
+    },
+    refund,
+    refundMinor: 10_800,
+  }));
+  assert.throws(() => assertProviderRefundMatches({
+    providerRefund: { id: 're_wrong', amount: 10_700, currency: 'eur', payment_intent: 'pi_1' },
+    refund,
+    refundMinor: 10_800,
+  }), /amount does not match/);
+  assert.throws(() => assertProviderRefundMatches({
+    providerRefund: { id: 're_wrong', amount: 10_800, currency: 'eur', payment_intent: 'pi_1', metadata: {} },
+    refund,
+    refundMinor: 10_800,
+  }), /metadata does not match/);
+});
+
+test('completed refund replay never calls Stripe', async () => {
+  let stripeCalled = false;
+  const refund = executableRefundFixture({ status: 'COMPLETED', providerRefundId: 're_1' });
+  const result = await executeApprovedRefund({
+    refundId: refund.id,
+    executorId: 'admin-3',
+    stripeClient: { refunds: { create: async () => { stripeCalled = true; } } },
+    ledgerEnabled: false,
+    client: { refund: { findUnique: async () => refund } },
+  });
+
+  assert.equal(result.duplicate, true);
+  assert.equal(stripeCalled, false);
+});
+
+test('refund execution sends a stable Stripe idempotency key after claiming its lease', async () => {
+  const refund = executableRefundFixture();
+  let stripeRequest = null;
+  const client = {
+    refund: {
+      findUnique: async () => refund,
+      aggregate: async () => ({ _sum: { totalAmount: null, serviceAmount: null, platformFeeAmount: null } }),
+      updateMany: async () => ({ count: 1 }),
+    },
+    $transaction: async () => ({ refund: { ...refund, status: 'COMPLETED' }, duplicate: false }),
+  };
+  const stripeClient = {
+    refunds: {
+      create: async (payload, options) => {
+        stripeRequest = { payload, options };
+        return {
+          id: 're_1',
+          status: 'succeeded',
+          amount: 10_800,
+          currency: 'eur',
+          payment_intent: 'pi_1',
+          metadata: { refundId: 'refund-1' },
+        };
+      },
+    },
+  };
+  const result = await executeApprovedRefund({
+    refundId: refund.id,
+    executorId: 'admin-3',
+    stripeClient,
+    ledgerEnabled: false,
+    client,
+  });
+
+  assert.equal(result.pending, false);
+  assert.equal(stripeRequest.payload.amount, 10_800);
+  assert.equal(stripeRequest.payload.payment_intent, 'pi_1');
+  assert.equal(stripeRequest.options.idempotencyKey, 'refund:refund-1:execute');
+});
+
+test('successful full refund finalization updates projections and posts one reversal', async () => {
+  const refund = executableRefundFixture({ status: 'PROCESSING' });
+  const calls = { ledger: 0, payment: null, booking: 0, outbox: 0, audit: 0, notification: 0 };
+  const tx = {
+    refund: {
+      findUnique: async () => refund,
+      aggregate: async () => ({ _sum: { totalAmount: null, serviceAmount: null, platformFeeAmount: null } }),
+      update: async ({ data }) => ({ ...refund, ...data }),
+    },
+    ledgerTransaction: {
+      findUnique: async ({ where }) => where.idempotencyKey.startsWith('payment:') ? { id: 'capture-ledger' } : null,
+      create: async ({ data }) => {
+        calls.ledger += 1;
+        assert.equal(data.refundId, refund.id);
+        assert.equal(assertBalanced(data.entries.create.map((entry) => ({
+          ...entry,
+          amountMinor: decimalToMinor(entry.amount),
+        }))), true);
+        return { id: 'refund-ledger', ...data };
+      },
+    },
+    ledgerAccount: {
+      upsert: async ({ create }) => ({ id: `account-${create.code}`, ...create }),
+    },
+    payment: { update: async ({ data }) => { calls.payment = data; } },
+    booking: { update: async () => { calls.booking += 1; } },
+    outboxEvent: { create: async () => { calls.outbox += 1; } },
+    auditLog: { create: async () => { calls.audit += 1; } },
+    notification: { create: async () => { calls.notification += 1; } },
+  };
+  const result = await finalizeRefundInTx({
+    tx,
+    refundId: refund.id,
+    providerRefundId: 're_1',
+    executorId: 'admin-3',
+    ledgerEnabled: true,
+  });
+
+  assert.equal(result.duplicate, false);
+  assert.equal(calls.payment.status, 'REFUNDED');
+  assert.equal(calls.payment.refundAmount, '108.00');
+  assert.deepEqual(
+    { ledger: calls.ledger, booking: calls.booking, outbox: calls.outbox, audit: calls.audit, notification: calls.notification },
+    { ledger: 1, booking: 1, outbox: 1, audit: 1, notification: 1 }
+  );
 });

@@ -20,10 +20,11 @@ router.post('/documents/:id/reject', requirePermission(PERMISSIONS.PROFESSIONALS
 // Logs de auditoría
 router.get('/audit-logs', requirePermission(PERMISSIONS.AUDIT_READ), adminController.getAuditLogs);
 
-// Financial refund review. Provider execution is intentionally not exposed yet.
+// Financial refund review and explicitly flagged provider execution.
 router.get('/refunds', requirePermission(PERMISSIONS.REFUNDS_MANAGE), adminRefundController.listRefunds);
 router.get('/refunds/:id', requirePermission(PERMISSIONS.REFUNDS_MANAGE), adminRefundController.getRefund);
 router.post('/refunds/:id/approve', requirePermission(PERMISSIONS.REFUNDS_MANAGE), adminRefundController.approveRefund);
 router.post('/refunds/:id/reject', requirePermission(PERMISSIONS.REFUNDS_MANAGE), adminRefundController.rejectRefund);
+router.post('/refunds/:id/execute', requirePermission(PERMISSIONS.REFUNDS_MANAGE), adminRefundController.executeRefund);
 
 module.exports = router;
