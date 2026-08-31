@@ -120,4 +120,4 @@ const applySuccessfulPayment = async ({
   return { duplicate: false, payment: updatedBooking.payment, booking: updatedBooking, ledgerTransaction };
 };
 
-module.exports = { ACCOUNT_DEFINITIONS, assertProviderAmount, applySuccessfulPayment };
+module.exports = { ACCOUNT_DEFINITIONS, ensureAccounts, assertProviderAmount, applySuccessfulPayment };

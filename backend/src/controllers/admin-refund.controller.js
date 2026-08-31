@@ -1,6 +1,9 @@
 const { z } = require('zod');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const prisma = require('../config/prisma');
+const env = require('../config/env');
 const { approveRefundInTx, rejectRefundInTx } = require('../modules/billing/refunds/refund-approval.service');
+const { executeApprovedRefund } = require('../modules/billing/refunds/refund-execution.service');
 
 const idSchema = z.string().uuid();
 const listSchema = z.object({
@@ -85,6 +88,32 @@ exports.rejectRefund = async (req, res, next) => {
       requestContext: req.context,
     }));
     res.json({ refund: result.refund, duplicate: result.duplicate });
+  } catch (error) {
+    handleError(error, res, next);
+  }
+};
+
+exports.executeRefund = async (req, res, next) => {
+  try {
+    if (!env.financialRefundExecutionEnabled) {
+      return res.status(503).json({
+        error: 'Refund execution is disabled',
+        code: 'REFUND_EXECUTION_DISABLED',
+      });
+    }
+    const refundId = idSchema.parse(req.params.id);
+    const result = await executeApprovedRefund({
+      refundId,
+      executorId: req.user.id,
+      stripeClient: stripe,
+      ledgerEnabled: env.financialLedgerDualWriteEnabled,
+      requestContext: req.context,
+    });
+    res.status(result.pending ? 202 : 200).json({
+      refund: result.refund,
+      duplicate: result.duplicate,
+      pending: result.pending,
+    });
   } catch (error) {
     handleError(error, res, next);
   }

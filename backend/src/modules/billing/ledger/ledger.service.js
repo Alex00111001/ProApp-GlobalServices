@@ -12,13 +12,13 @@ const assertBalanced = (entries) => {
   return true;
 };
 
-const postTransactionInTx = async ({ idempotencyKey, bookingId, paymentId, description, metadata, entries }, tx) => {
+const postTransactionInTx = async ({ idempotencyKey, bookingId, paymentId, refundId, description, metadata, entries }, tx) => {
   assertBalanced(entries);
   const existing = await tx.ledgerTransaction.findUnique({ where: { idempotencyKey }, include: { entries: true } });
   if (existing) return existing;
   return tx.ledgerTransaction.create({
     data: {
-      idempotencyKey, bookingId, paymentId, description, metadata, status: 'POSTED', postedAt: new Date(),
+      idempotencyKey, bookingId, paymentId, refundId, description, metadata, status: 'POSTED', postedAt: new Date(),
       entries: { create: entries.map((entry) => ({
         accountId: entry.accountId, entryType: entry.entryType, direction: entry.direction,
         amount: (entry.amountMinor / 100).toFixed(2), currency: entry.currency, metadata: entry.metadata,
