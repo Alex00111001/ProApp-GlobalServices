@@ -44,10 +44,17 @@ const applySuccessfulPayment = async ({
   source,
   ledgerEnabled,
 }) => {
-  const booking = await tx.booking.findUnique({
-    where: { id: bookingId },
-    include: { payment: true, professional: { select: { userId: true } } },
-  });
+  const bookingRecord = await tx.booking.findUnique({ where: { id: bookingId } });
+  const payment = bookingRecord
+    ? await tx.payment.findUnique({ where: { bookingId } })
+    : null;
+  const professional = bookingRecord?.professionalId
+    ? await tx.professionalProfile.findUnique({
+      where: { id: bookingRecord.professionalId },
+      select: { userId: true },
+    })
+    : null;
+  const booking = bookingRecord ? { ...bookingRecord, payment, professional } : null;
   if (!booking || !booking.payment || booking.payment.transactionId !== providerTransactionId) {
     throw new Error('Payment event does not match a persisted booking payment');
   }
@@ -58,18 +65,18 @@ const applySuccessfulPayment = async ({
     data: { status: 'COMPLETED', processedAt, failedReason: null },
   });
   if (claimed.count === 0) {
-    const currentBooking = await tx.booking.findUnique({
-      where: { id: booking.id },
-      include: { payment: true },
-    });
+    const currentBookingRecord = await tx.booking.findUnique({ where: { id: booking.id } });
+    const currentPayment = await tx.payment.findUnique({ where: { bookingId: booking.id } });
+    const currentBooking = { ...currentBookingRecord, payment: currentPayment };
     return { duplicate: true, payment: currentBooking.payment, booking: currentBooking, ledgerTransaction: null };
   }
 
-  const updatedBooking = await tx.booking.update({
+  const updatedBookingRecord = await tx.booking.update({
     where: { id: booking.id },
     data: { status: 'CONFIRMED' },
-    include: { payment: true },
   });
+  const updatedPayment = await tx.payment.findUnique({ where: { bookingId: booking.id } });
+  const updatedBooking = { ...updatedBookingRecord, payment: updatedPayment };
 
   let ledgerTransaction = null;
   if (ledgerEnabled) {

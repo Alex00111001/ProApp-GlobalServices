@@ -1,4 +1,5 @@
 const prisma = require('../../../config/prisma');
+const { Prisma } = require('@prisma/client');
 const { decimalToMinor } = require('../pricing/pricing.service');
 const { normalizeCaptureAmounts } = require('../ledger/payment-capture-journal');
 const { buildRefundEntries } = require('./refund-journal');
@@ -7,6 +8,27 @@ const { postTransactionInTx } = require('../ledger/ledger.service');
 
 const REFUND_PROCESSING_LEASE_MS = 5 * 60 * 1000;
 const errorWithStatus = (message, status) => Object.assign(new Error(message), { status });
+
+const loadRefundEvidenceInTx = async ({ tx, refundId, includeClient = false }) => {
+  const refund = await tx.refund.findUnique({ where: { id: refundId } });
+  if (!refund) return null;
+  const payment = refund.paymentId && typeof tx.payment?.findUnique === 'function'
+    ? await tx.payment.findUnique({ where: { id: refund.paymentId } })
+    : refund.payment;
+  let booking = typeof tx.booking?.findUnique === 'function'
+    ? await tx.booking.findUnique({ where: { id: refund.bookingId } })
+    : refund.booking;
+  const decisionRecord = typeof tx.refundDecision?.findUnique === 'function'
+    ? await tx.refundDecision.findUnique({ where: { refundId: refund.id } })
+    : refund.decisionRecord;
+  if (booking && includeClient) {
+    const client = typeof tx.clientProfile?.findUnique === 'function'
+      ? await tx.clientProfile.findUnique({ where: { id: booking.clientId }, select: { userId: true } })
+      : booking.client;
+    booking = { ...booking, client };
+  }
+  return { ...refund, payment, booking, decisionRecord };
+};
 
 const assertProviderRefundMatches = ({ providerRefund, refund, refundMinor }) => {
   if (!providerRefund?.id || providerRefund.amount !== refundMinor) {
@@ -102,14 +124,7 @@ const finalizeRefundInTx = async ({
   requestContext = {},
   source = 'ADMIN_REFUND_EXECUTION',
 }) => {
-  const refund = await tx.refund.findUnique({
-    where: { id: refundId },
-    include: {
-      decisionRecord: true,
-      payment: true,
-      booking: { include: { client: { select: { userId: true } } } },
-    },
-  });
+  const refund = await loadRefundEvidenceInTx({ tx, refundId, includeClient: true });
   if (!refund) throw errorWithStatus('Refund not found', 404);
   if (refund.status === 'COMPLETED') return { refund, duplicate: true, ledgerTransaction: null };
   if (refund.status !== 'PROCESSING') throw errorWithStatus('Refund was not claimed for execution', 409);
@@ -245,10 +260,7 @@ const reconcileProviderRefundInTx = async ({
   const refundId = providerRefund?.metadata?.refundId;
   if (!refundId) return { ignored: true, duplicate: false, pending: false };
 
-  const refund = await tx.refund.findUnique({
-    where: { id: refundId },
-    include: { decisionRecord: true, payment: true, booking: true },
-  });
+  const refund = await loadRefundEvidenceInTx({ tx, refundId });
   if (!refund) throw errorWithStatus('Stripe refund references an unknown internal refund', 409);
   if (!refund.approvedBy || !refund.approvedAt || !refund.decisionRecord) {
     throw errorWithStatus('Stripe refund lacks approved immutable internal evidence', 409);
@@ -335,47 +347,45 @@ const reconcileProviderRefundInTx = async ({
   return { refund: processing, ignored: false, duplicate: false, pending: true };
 };
 
-const executeApprovedRefund = async ({
-  refundId,
-  executorId,
-  stripeClient,
-  ledgerEnabled,
-  client = prisma,
-  now = new Date(),
-  requestContext = {},
-}) => {
-  const refund = await client.refund.findUnique({
-    where: { id: refundId },
-    include: { payment: true, booking: true, decisionRecord: true },
+const claimRefundForExecution = async ({ client, refundId, ledgerEnabled, now = new Date() }) => client.$transaction(async (tx) => {
+  const identity = await tx.refund.findUnique({ where: { id: refundId }, select: { paymentId: true } });
+  if (!identity) throw errorWithStatus('Refund not found', 404);
+  if (!identity.paymentId) throw errorWithStatus('Refund requires a captured payment', 409);
+
+  await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Payment" WHERE "id" = ${identity.paymentId} FOR UPDATE`);
+  const refund = await loadRefundEvidenceInTx({ tx, refundId });
+  if (refund?.status === 'COMPLETED') return { refund, duplicate: true, executable: null };
+
+  const otherProcessing = await tx.refund.findFirst({
+    where: { paymentId: refund.paymentId, status: 'PROCESSING', id: { not: refund.id } },
+    select: { id: true },
   });
-  if (refund?.status === 'COMPLETED') return { refund, duplicate: true, pending: false };
-  const previous = refund?.paymentId
-    ? await client.refund.aggregate({
-      where: { paymentId: refund.paymentId, status: 'COMPLETED', id: { not: refund.id } },
-      _sum: { totalAmount: true, serviceAmount: true, platformFeeAmount: true },
-    })
-    : { _sum: { totalAmount: null, serviceAmount: null, platformFeeAmount: null } };
-  const previouslyRefundedMinor = previous._sum.totalAmount ? decimalToMinor(previous._sum.totalAmount) : 0;
-  const previousServiceRefundMinor = previous._sum.serviceAmount ? decimalToMinor(previous._sum.serviceAmount) : 0;
-  const previousPlatformFeeRefundMinor = previous._sum.platformFeeAmount ? decimalToMinor(previous._sum.platformFeeAmount) : 0;
+  if (otherProcessing) {
+    throw errorWithStatus('Another refund for this payment is already in progress', 409);
+  }
+
+  const previous = await tx.refund.aggregate({
+    where: { paymentId: refund.paymentId, status: 'COMPLETED', id: { not: refund.id } },
+    _sum: { totalAmount: true, serviceAmount: true, platformFeeAmount: true },
+  });
   const executable = assertRefundExecutable({
     refund,
-    previouslyRefundedMinor,
-    previousServiceRefundMinor,
-    previousPlatformFeeRefundMinor,
+    previouslyRefundedMinor: previous._sum.totalAmount ? decimalToMinor(previous._sum.totalAmount) : 0,
+    previousServiceRefundMinor: previous._sum.serviceAmount ? decimalToMinor(previous._sum.serviceAmount) : 0,
+    previousPlatformFeeRefundMinor: previous._sum.platformFeeAmount ? decimalToMinor(previous._sum.platformFeeAmount) : 0,
     now,
   });
-  if (executable.duplicate) return { refund, duplicate: true, pending: false };
+  if (executable.duplicate) return { refund, duplicate: true, executable: null };
 
   if (ledgerEnabled) {
-    const captureTransaction = await client.ledgerTransaction.findUnique({
+    const captureTransaction = await tx.ledgerTransaction.findUnique({
       where: { idempotencyKey: `payment:${refund.payment.id}:capture` },
     });
     if (!captureTransaction) throw errorWithStatus('Capture ledger transaction is required before refund execution', 409);
   }
 
   const leaseExpiredBefore = new Date(now.getTime() - REFUND_PROCESSING_LEASE_MS);
-  const claimed = await client.refund.updateMany({
+  const claimed = await tx.refund.updateMany({
     where: {
       id: refund.id,
       approvedBy: { not: null },
@@ -392,21 +402,46 @@ const executeApprovedRefund = async ({
     },
   });
   if (claimed.count === 0) throw errorWithStatus('Refund execution is already in progress', 409);
+  return {
+    refund: { ...refund, status: 'PROCESSING', processingStartedAt: now },
+    duplicate: false,
+    executable,
+  };
+});
+
+const executeApprovedRefund = async ({
+  refundId,
+  executorId,
+  stripeClient,
+  ledgerEnabled,
+  client = prisma,
+  now = new Date(),
+  requestContext = {},
+}) => {
+  const refund = await client.refund.findUnique({
+    where: { id: refundId },
+    include: { payment: true, booking: true, decisionRecord: true },
+  });
+  if (refund?.status === 'COMPLETED') return { refund, duplicate: true, pending: false };
+  const claim = await claimRefundForExecution({ client, refundId, ledgerEnabled, now });
+  if (claim.duplicate) return { refund: claim.refund, duplicate: true, pending: false };
+  const claimedRefund = claim.refund;
+  const executable = claim.executable;
 
   try {
-    const providerRefund = refund.providerRefundId
-      ? await stripeClient.refunds.retrieve(refund.providerRefundId)
+    const providerRefund = claimedRefund.providerRefundId
+      ? await stripeClient.refunds.retrieve(claimedRefund.providerRefundId)
       : await stripeClient.refunds.create({
-        payment_intent: refund.payment.transactionId,
+        payment_intent: claimedRefund.payment.transactionId,
         amount: executable.refundMinor,
         metadata: {
-          refundId: refund.id,
-          bookingId: refund.bookingId,
-          paymentId: refund.paymentId,
+          refundId: claimedRefund.id,
+          bookingId: claimedRefund.bookingId,
+          paymentId: claimedRefund.paymentId,
         },
-      }, { idempotencyKey: `refund:${refund.id}:execute` });
+      }, { idempotencyKey: `refund:${claimedRefund.id}:execute` });
 
-    assertProviderRefundMatches({ providerRefund, refund, refundMinor: executable.refundMinor });
+    assertProviderRefundMatches({ providerRefund, refund: claimedRefund, refundMinor: executable.refundMinor });
 
     const result = await client.$transaction((tx) => reconcileProviderRefundInTx({
       tx,
@@ -421,7 +456,7 @@ const executeApprovedRefund = async ({
     return { ...result, pending: Boolean(result.pending) };
   } catch (error) {
     await client.refund.updateMany({
-      where: { id: refund.id, status: 'PROCESSING' },
+      where: { id: claimedRefund.id, status: 'PROCESSING' },
       data: { failureReason: String(error.message || error).slice(0, 1000) },
     }).catch(() => {});
     throw error;
@@ -434,5 +469,6 @@ module.exports = {
   assertRefundExecutable,
   finalizeRefundInTx,
   reconcileProviderRefundInTx,
+  claimRefundForExecution,
   executeApprovedRefund,
 };
