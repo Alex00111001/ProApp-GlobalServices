@@ -11,6 +11,7 @@ const { applySuccessfulPayment } = require('../../src/modules/billing/payments/p
 const { executeApprovedRefund } = require('../../src/modules/billing/refunds/refund-execution.service');
 const { executeApprovedPayout } = require('../../src/modules/billing/payouts/payout-execution.service');
 const { decimalToMinor } = require('../../src/modules/billing/pricing/pricing.service');
+const { claimOutboxBatch, markOutboxProcessed } = require('../../src/modules/events/outbox.service');
 
 if (process.env.RUN_DATABASE_INTEGRATION_TESTS !== 'true') {
   throw new Error('Set RUN_DATABASE_INTEGRATION_TESTS=true to run database integration tests deliberately.');
@@ -73,7 +74,11 @@ const cleanup = async () => {
   await prisma.refundPolicy.deleteMany({ where: { id: ids.policy } }).catch(() => {});
   await prisma.notification.deleteMany({ where: { bookingId: ids.booking } }).catch(() => {});
   await prisma.outboxEvent.deleteMany({
-    where: { OR: [{ aggregateId: ids.payment }, { aggregateId: { in: [ids.refundA, ids.refundB, ids.payout] } }] },
+    where: { OR: [
+      { aggregateId: ids.payment },
+      { aggregateId: { in: [ids.refundA, ids.refundB, ids.payout] } },
+      { aggregateId: `outbox:${runId}` },
+    ] },
   }).catch(() => {});
   await prisma.auditLog.deleteMany({
     where: { resourceId: { in: [ids.payment, ids.refundA, ids.refundB, ids.payout] } },
@@ -93,6 +98,34 @@ const cleanup = async () => {
 test.after(async () => {
   await cleanup();
   await prisma.$disconnect();
+});
+
+test('Supabase outbox claiming partitions work safely across concurrent workers', async () => {
+  await prisma.outboxEvent.createMany({
+    data: Array.from({ length: 4 }, (_, index) => ({
+      aggregateType: 'IntegrationTest',
+      aggregateId: `outbox:${runId}`,
+      eventType: `integration.outbox.${index}`,
+      payload: { runId, index },
+      availableAt: new Date('2000-01-01T00:00:00.000Z'),
+    })),
+  });
+  const insertedOutbox = await prisma.outboxEvent.findMany({ where: { aggregateId: `outbox:${runId}` } });
+  assert.equal(insertedOutbox.length, 4, JSON.stringify(insertedOutbox));
+
+  const claimed = await usingClients(2, (clients) => Promise.all([
+    claimOutboxBatch({ batchSize: 2, aggregateId: `outbox:${runId}` }, clients[0]),
+    claimOutboxBatch({ batchSize: 2, aggregateId: `outbox:${runId}` }, clients[1]),
+  ]));
+  const events = claimed.flat().filter((event) => event.aggregateId === `outbox:${runId}`);
+  assert.equal(events.length, 4, JSON.stringify(claimed));
+  assert.equal(new Set(events.map((event) => event.id)).size, 4);
+  assert.equal(events.every((event) => event.status === 'PROCESSING' && event.attempts === 1), true);
+
+  await Promise.all(events.map((event) => markOutboxProcessed({ id: event.id, lockedAt: event.lockedAt }, prisma)));
+  assert.equal(await prisma.outboxEvent.count({
+    where: { aggregateId: `outbox:${runId}`, status: 'PROCESSED' },
+  }), 4);
 });
 
 test('Supabase enforces inbox, capture, payout and refund concurrency invariants', async () => {

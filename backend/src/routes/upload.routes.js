@@ -4,6 +4,8 @@ const { uploadToCloudinary, deleteFromCloudinary } = require('../config/cloudina
 const upload = require('../middleware/upload');
 const prisma = require('../config/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
+const { requirePermission } = require('../middleware/require-permission');
+const { PERMISSIONS } = require('../modules/identity/permission-catalog');
 
 // Subir archivo a Cloudinary
 router.post('/upload', authenticate, upload.single('file'), async (req, res) => {
@@ -152,7 +154,7 @@ router.post('/professional/portfolio', authenticate, authorize('PROFESSIONAL'), 
 });
 
 // Eliminar archivo de Cloudinary
-router.delete('/delete/:publicId', authenticate, authorize('ADMIN'), async (req, res) => {
+router.delete('/delete/:publicId', authenticate, requirePermission(PERMISSIONS.SETTINGS_MANAGE), async (req, res) => {
   try {
     const { publicId } = req.params;
 

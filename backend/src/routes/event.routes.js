@@ -17,12 +17,12 @@ const eventSchema = z.object({
     source: z.string().max(128).optional(), medium: z.string().max(128).optional(),
     campaign: z.string().max(128).optional(), content: z.string().max(128).optional(),
     term: z.string().max(128).optional(),
-  }).optional(),
+  }).strict().optional(),
   device: z.record(z.string(), z.unknown()).optional(),
   appVersion: z.string().max(64).optional(),
   geography: z.record(z.string(), z.unknown()).optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
-});
+}).strict();
 
 router.post('/', authenticateOptional, async (req, res, next) => {
   try {
@@ -34,7 +34,11 @@ router.post('/', authenticateOptional, async (req, res, next) => {
     res.status(202).json({ id: event.id, accepted: true });
   } catch (error) {
     if (error.name === 'ZodError' || error.code === 'UNKNOWN_EVENT' || error.code === 'METADATA_TOO_LARGE') {
-      return res.status(400).json({ error: error.message, code: error.code || 'VALIDATION_ERROR' });
+      return res.status(400).json({
+        error: error.name === 'ZodError' ? 'Validation error' : error.message,
+        code: error.code || 'VALIDATION_ERROR',
+        details: error.name === 'ZodError' ? error.issues : undefined,
+      });
     }
     return next(error);
   }
