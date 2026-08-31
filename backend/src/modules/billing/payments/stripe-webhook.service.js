@@ -1,8 +1,10 @@
 const prisma = require('../../../config/prisma');
 const env = require('../../../config/env');
 const { applySuccessfulPayment } = require('./payment-capture.service');
+const { reconcileProviderRefundInTx } = require('../refunds/refund-execution.service');
 
 const PROCESSING_LEASE_MS = 5 * 60 * 1000;
+const REFUND_EVENT_TYPES = new Set(['refund.created', 'refund.updated', 'refund.failed']);
 
 const isUniqueConstraintError = (error) => error?.code === 'P2002';
 
@@ -60,30 +62,30 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma) => 
   if (claimed.count === 0) return { duplicate: true, status: 'PROCESSING' };
 
   try {
-    const paymentResult = await client.$transaction(async (tx) => {
-      const intent = event.data.object;
-      const bookingId = intent.metadata?.bookingId;
+    const financialResult = await client.$transaction(async (tx) => {
+      const providerObject = event.data.object;
+      const bookingId = providerObject.metadata?.bookingId;
       let result = null;
 
       if (bookingId && event.type === 'payment_intent.succeeded') {
         result = await applySuccessfulPayment({
           tx,
           bookingId,
-          providerTransactionId: intent.id,
-          providerAmountMinor: intent.amount_received || intent.amount,
-          providerCurrency: intent.currency,
+          providerTransactionId: providerObject.id,
+          providerAmountMinor: providerObject.amount_received || providerObject.amount,
+          providerCurrency: providerObject.currency,
           processedAt: event.created ? new Date(event.created * 1000) : new Date(),
           source: 'STRIPE_WEBHOOK',
           ledgerEnabled: env.financialLedgerDualWriteEnabled,
         });
       } else if (bookingId && event.type === 'payment_intent.payment_failed') {
         const payment = await tx.payment.findUnique({ where: { bookingId } });
-        if (payment?.transactionId === intent.id && payment.status !== 'COMPLETED') {
+        if (payment?.transactionId === providerObject.id && payment.status !== 'COMPLETED') {
           await tx.payment.update({
             where: { id: payment.id },
             data: {
               status: 'FAILED',
-              failedReason: intent.last_payment_error?.message || 'Pago rechazado',
+              failedReason: providerObject.last_payment_error?.message || 'Pago rechazado',
             },
           });
           await tx.outboxEvent.create({
@@ -92,10 +94,19 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma) => 
               aggregateId: payment.id,
               eventType: 'payment.failed',
               payload: { bookingId, paymentId: payment.id, source: 'STRIPE_WEBHOOK' },
-              metadata: { providerTransactionId: intent.id },
+              metadata: { providerTransactionId: providerObject.id },
             },
           });
         }
+      } else if (REFUND_EVENT_TYPES.has(event.type)) {
+        result = await reconcileProviderRefundInTx({
+          tx,
+          providerRefund: providerObject,
+          ledgerEnabled: env.financialLedgerDualWriteEnabled,
+          processedAt: event.created ? new Date(event.created * 1000) : new Date(),
+          requestContext: { correlationId },
+          source: 'STRIPE_WEBHOOK',
+        });
       }
 
       await tx.integrationEvent.update({
@@ -104,7 +115,7 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma) => 
       });
       return result;
     });
-    return { duplicate: received.duplicate || Boolean(paymentResult?.duplicate), status: 'PROCESSED' };
+    return { duplicate: received.duplicate || Boolean(financialResult?.duplicate), status: 'PROCESSED' };
   } catch (error) {
     await client.integrationEvent.update({
       where: { id: received.record.id },
@@ -114,4 +125,4 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma) => 
   }
 };
 
-module.exports = { PROCESSING_LEASE_MS, validateStripeEvent, receiveEvent, processStripeEvent };
+module.exports = { PROCESSING_LEASE_MS, REFUND_EVENT_TYPES, validateStripeEvent, receiveEvent, processStripeEvent };
