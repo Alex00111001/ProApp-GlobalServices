@@ -19,10 +19,10 @@ const postTransactionInTx = async ({ idempotencyKey, bookingId, paymentId, refun
   return tx.ledgerTransaction.create({
     data: {
       idempotencyKey, bookingId, paymentId, refundId, description, metadata, status: 'POSTED', postedAt: new Date(),
-      entries: { create: entries.map((entry) => ({
+      entries: { createMany: { data: entries.map((entry) => ({
         accountId: entry.accountId, entryType: entry.entryType, direction: entry.direction,
         amount: (entry.amountMinor / 100).toFixed(2), currency: entry.currency, metadata: entry.metadata,
-      })) },
+      })) } },
     },
     include: { entries: true },
   });

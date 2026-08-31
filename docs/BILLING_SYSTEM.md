@@ -26,7 +26,7 @@ Migration `202608310001_integration_event_inbox` adds an immutable-at-ingress in
 
 Stripe success events are persisted before processing. The webhook and authenticated confirmation endpoint share one conditional payment transition, so a replay cannot create a second notification, outbox event, audit record or ledger transaction. Provider amount, currency, booking metadata and transaction ID must match persisted state. Payment completion, booking confirmation, outbox/audit writes and the optional ledger post run in one database transaction.
 
-The integration is active in application code, but ledger dual-write remains disabled by default. Enabling it in a deployed environment still requires transaction-level integration tests against isolated PostgreSQL and a reviewed rollout.
+The integration is active in application code, but ledger dual-write remains disabled by default. The Supabase test gate proves concurrent inbox uniqueness, a single payment transition and one balanced capture transaction across independent connections. Enabling it in a deployed environment still requires a reviewed rollout and reconciliation against provider data.
 
 Operational rollout:
 
@@ -55,7 +55,7 @@ Administrative review is exposed under `/api/admin/refunds` and requires `refund
 
 `POST /api/admin/refunds/:id/execute` also requires `refunds.manage` and is unavailable unless `FINANCIAL_REFUND_EXECUTION_ENABLED=true`. The flag defaults to `false`. Execution accepts only a previously approved request with requester/approver separation, a captured Stripe payment and separated amounts that remain within the captured total, service amount and customer platform fee.
 
-Each request uses the stable Stripe idempotency key `refund:<refundId>:execute`. A conditional five-minute processing lease prevents concurrent execution of the same request; a retry retrieves a previously stored provider refund instead of creating another. Stripe amount, currency, payment intent and internal refund metadata are checked against the approved evidence before internal finalization.
+Each request uses the stable Stripe idempotency key `refund:<refundId>:execute`. A conditional five-minute processing lease prevents concurrent execution of the same request; a retry retrieves a previously stored provider refund instead of creating another. Execution also locks the associated `Payment` row while claiming a request, serializing competing refunds and rechecking cumulative total/service/platform-fee limits before any provider call. Stripe amount, currency, payment intent and internal refund metadata are checked against the approved evidence before internal finalization.
 
 A succeeded provider refund is finalized in one database transaction: the refund becomes `COMPLETED`, the payment refund projection is updated, the platform-fee state is adjusted when appropriate, and the outbox, audit and customer notification records are created. When `FINANCIAL_LEDGER_DUAL_WRITE_ENABLED=true`, finalization additionally requires the original capture ledger transaction and posts one balanced, idempotent reversal linked to the refund. Posted ledger evidence is never edited or deleted.
 
@@ -69,7 +69,7 @@ Before enabling either refund flag in a deployed environment:
 2. Shadow-evaluate cancellations and inspect `MANUAL_REVIEW`/missing-policy events.
 3. Confirm every request amount against the captured payment and legacy projection.
 4. Replay the same approved execution and confirm Stripe receives one operation and internal finalization occurs once.
-5. Validate concurrent requests for one payment against isolated PostgreSQL and prove cumulative total/component limits under contention.
+5. Run `npm run test:integration` against the isolated Supabase test environment and retain the result as evidence; the gate proves cumulative limits and a single provider call under contention.
 6. Verify pending, failed and succeeded provider responses, including recovery after the processing lease.
 7. Enable execution only in a controlled test environment while reconciling Stripe, payment projections and ledger debits/credits.
 
