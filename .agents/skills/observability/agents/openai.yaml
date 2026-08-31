@@ -1,0 +1,4 @@
+interface:
+  display_name: "Observability"
+  short_description: "Trace, redact, and operate production signals"
+  default_prompt: "Use $observability to review this HomeServices task."
