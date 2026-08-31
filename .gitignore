@@ -59,6 +59,23 @@ __pycache__/
 *.egg-info/
 .eggs/
 
-# Local agent skills and installation metadata
-/.agents/
+# Local agent skills and installation metadata. Keep unknown/local skills
+# ignored, but version the first-party HomeServices Skill Pack.
+/.agents/*
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/architecture-guardian/
+!/.agents/skills/backend-fastapi/
+!/.agents/skills/database-prisma/
+!/.agents/skills/frontend/
+!/.agents/skills/payments/
+!/.agents/skills/booking-engine/
+!/.agents/skills/professional-system/
+!/.agents/skills/admin-operations/
+!/.agents/skills/observability/
+!/.agents/skills/testing/
+!/.agents/skills/security/
+!/.agents/skills/legal-compliance/
+!/.agents/skills/release/
+!/.agents/skills/repo-auditor/
 /skills-lock.json

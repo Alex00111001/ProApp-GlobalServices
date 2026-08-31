@@ -1,0 +1,4 @@
+interface:
+  display_name: "Legal Compliance"
+  short_description: "Engineer versioned privacy and legal evidence"
+  default_prompt: "Use $legal-compliance to review this HomeServices task."

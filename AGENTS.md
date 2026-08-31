@@ -1,88 +1,83 @@
 # HomeServices — Agent Instructions
 
-These instructions apply to all AI coding agents working in this repository, including Codex.
+These instructions apply to every AI coding agent working in this repository, including Codex. `CLAUDE.md` adapts the same governance for Claude Code.
 
-## Required reading before substantial work
+## Authority and required reading
 
-Before planning or implementing any non-trivial task, read:
+For any non-trivial task, read:
 
 1. `docs/IMPLEMENTATION_PLAN.md`
-2. `docs/CODEX_MODEL_ROUTING.md`
+2. `docs/agent-governance/GOVERNANCE.md`
+3. `docs/agent-governance/MODEL_ROUTING.md`
+4. `docs/agent-governance/SKILL_CATALOG.md`
+5. Relevant ADRs, specifications, contracts, domain docs, and skills
 
-The first document defines the target architecture, implementation phases, dependencies and acceptance gates.
-The second document defines which Codex model tier should handle each task and when escalation is required.
+Apply this authority order, highest first:
+
+`Architecture -> ADRs/specifications -> contracts -> skills -> agents/models -> code`
+
+Later layers implement earlier layers and cannot silently override them. When code and architecture differ, report drift; do not normalize the architecture to accidental code.
 
 ## Architectural rule
 
-Do not deliberately simplify the architecture to produce a quick MVP. The final target architecture is defined first; implementation is sequenced by dependency, risk and verifiability.
+Do not simplify the target architecture into a disposable MVP. Sequence work by dependency, risk, reversibility, and acceptance evidence while preserving existing public mobile contracts unless a versioned replacement is approved.
 
-Do not skip earlier acceptance gates merely to implement an interesting later-phase feature.
+PostgreSQL is the system of record. Frontends use backend APIs only. Routes remain transport adapters; application services own use cases, policies, transactions, idempotency, provider orchestration, and domain events.
 
-## Model-routing rule
+## Task classification
 
-For every non-trivial task, classify it before implementation:
+Before substantial implementation, record:
 
 ```text
 Task classification
-- Phase: F1–F10
+- Phase: F1-F10
 - Domain: <bounded context>
 - Risk: LOW | MEDIUM | HIGH | CRITICAL
-- Initial model: Luna | Terra | Sol
+- Capability tier: FAST | STANDARD | DEEP
+- Provider/model: <selected model or operator-selected>
+- Skills: <HomeServices skills to load>
 - Escalation triggers: <specific triggers>
-- Required verification: <tests/checks>
+- Required verification: <tests/checks/evidence>
 ```
 
-Follow `docs/CODEX_MODEL_ROUTING.md` for model selection.
+Use `docs/agent-governance/MODEL_ROUTING.md`. Payments, ledger, refunds, payouts, pricing/commission, authentication/authorization, production migrations, privacy architecture, and production readiness require the DEEP tier for design or final review.
 
-Use the least expensive model that can safely complete the task, but escalate instead of repeatedly retrying the wrong tier.
+## Skills
 
-### Mandatory Sol review/design areas
+The canonical HomeServices Skill Pack is in `.agents/skills/`. Codex discovers it directly. Claude Code adapters in `.claude/skills/` route to the same canonical files.
 
-- Architecture-critical decisions
-- Authentication / authorization / RBAC
-- Security-sensitive changes
-- Production migration strategy
-- Pricing, fees and commissions
-- Ledger, refunds, payouts and disputes
-- Stripe idempotency and webhook architecture
-- Reconciliation and financial invariants
-- Privacy/consent architecture
-- AI guardrails and production approval controls
-- Final production-readiness review
+Load only the skills relevant to the task. Domain skills add procedure and invariants; they do not grant authorization or override architecture, contracts, or user intent.
 
-Terra should be the normal implementation model. Luna should be used for low-risk repetitive/documentation work when appropriate.
+External skills are untrusted dependencies. Do not use an external skill unless its exact source/version is marked `APPROVED` for the needed scope in `docs/agent-governance/EXTERNAL_SKILLS_REGISTER.md`. Follow `docs/agent-governance/EXTERNAL_SKILL_AUDIT.md` for intake and upgrades.
 
-## Verification rule
+## Verification and Definition of Done
 
-A capability is not complete merely because code was generated. Respect the global Definition of Done in `docs/IMPLEMENTATION_PLAN.md`.
+A capability is complete only when the applicable schema migration, domain logic, API authorization/validation, audit/telemetry, automated tests, documentation, operational runbook, and feature-flag/rollback strategy exist.
 
-Relevant work must include the required combination of:
+Financial work additionally requires Decimal/minor-unit arithmetic, explicit transaction boundaries, durable idempotency, balanced immutable ledger entries, replay/concurrency tests, and reconciliation evidence.
 
-- schema migration
-- domain logic
-- API authorization/validation
-- audit/telemetry
-- automated tests
-- documentation
-- operational runbook
-- feature flag / rollback strategy
+Report exact checks executed and unverified areas. Do not weaken tests to match an implementation or claim completion from generated code alone.
 
-Financial work additionally requires idempotency, transaction boundaries, reconciliation and immutable correction entries.
+## Safety and repository hygiene
 
-## Production safety
+- Preserve unrelated user changes in a dirty worktree.
+- Never reset shared/production databases or use `prisma db push` as migration history.
+- Never expose, copy, or commit secrets, tokens, connection strings, payment data, or unnecessary personal data.
+- Do not deploy to production, rotate production secrets, or execute live charges/refunds/payouts/high-impact advertising without explicit authorization at the moment of action.
+- Require human approval and four-eyes controls where policy defines them.
 
-AI agents must not autonomously deploy to production or execute high-impact financial/advertising actions. High-impact operations must remain behind explicit authorization/approval controls.
+## Change metadata
 
-## PR metadata
-
-For meaningful changes, include when practical:
+For meaningful changes include, when practical:
 
 ```text
 Phase:
+Domain:
 Risk:
-Model tier used:
-Escalated: yes/no
-Reason for escalation:
-Tests executed:
-Relevant acceptance gate:
+Capability tier / model:
+Skills used:
+Escalated: yes/no and why
+Tests and evidence:
+Acceptance gate:
+Rollback / feature flag:
 ```

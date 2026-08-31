@@ -1,0 +1,4 @@
+interface:
+  display_name: "Testing"
+  short_description: "Design risk-based verification coverage"
+  default_prompt: "Use $testing to review this HomeServices task."

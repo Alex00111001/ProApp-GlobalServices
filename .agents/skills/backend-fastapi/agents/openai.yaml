@@ -1,0 +1,4 @@
+interface:
+  display_name: "Backend and FastAPI"
+  short_description: "Implement APIs without unapproved rewrites"
+  default_prompt: "Use $backend-fastapi to review this HomeServices task."

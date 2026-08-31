@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release"
+  short_description: "Prepare reversible, evidenced releases"
+  default_prompt: "Use $release to review this HomeServices task."
