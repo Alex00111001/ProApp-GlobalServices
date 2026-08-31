@@ -1,4 +1,5 @@
 require('dotenv').config();
+process.env.DATABASE_URL ||= process.env.DIRECT_URL;
 
 const assert = require('node:assert/strict');
 const { randomUUID } = require('node:crypto');
@@ -8,6 +9,7 @@ const { PrismaPg } = require('@prisma/adapter-pg');
 const { receiveEvent } = require('../../src/modules/billing/payments/stripe-webhook.service');
 const { applySuccessfulPayment } = require('../../src/modules/billing/payments/payment-capture.service');
 const { executeApprovedRefund } = require('../../src/modules/billing/refunds/refund-execution.service');
+const { executeApprovedPayout } = require('../../src/modules/billing/payouts/payout-execution.service');
 const { decimalToMinor } = require('../../src/modules/billing/pricing/pricing.service');
 
 if (process.env.RUN_DATABASE_INTEGRATION_TESTS !== 'true') {
@@ -39,9 +41,14 @@ const ids = {
   user: randomUUID(),
   requester: randomUUID(),
   approver: randomUUID(),
+  executor: randomUUID(),
+  professionalUser: randomUUID(),
+  professional: randomUUID(),
   client: randomUUID(),
   booking: randomUUID(),
   payment: randomUUID(),
+  earning: randomUUID(),
+  payout: randomUUID(),
   policy: randomUUID(),
   refundA: randomUUID(),
   refundB: randomUUID(),
@@ -58,20 +65,26 @@ const cleanup = async () => {
     await prisma.ledgerEntry.deleteMany({ where: { transactionId: { in: ledgerTransactionIds } } });
     await prisma.ledgerTransaction.deleteMany({ where: { id: { in: ledgerTransactionIds } } });
   }
+  await prisma.dispute.deleteMany({ where: { bookingId: ids.booking } }).catch(() => {});
+  await prisma.payout.deleteMany({ where: { id: ids.payout } }).catch(() => {});
+  await prisma.earning.deleteMany({ where: { id: ids.earning } }).catch(() => {});
   await prisma.refundDecision.deleteMany({ where: { refundId: { in: [ids.refundA, ids.refundB] } } }).catch(() => {});
   await prisma.refund.deleteMany({ where: { id: { in: [ids.refundA, ids.refundB] } } }).catch(() => {});
   await prisma.refundPolicy.deleteMany({ where: { id: ids.policy } }).catch(() => {});
   await prisma.notification.deleteMany({ where: { bookingId: ids.booking } }).catch(() => {});
   await prisma.outboxEvent.deleteMany({
-    where: { OR: [{ aggregateId: ids.payment }, { aggregateId: { in: [ids.refundA, ids.refundB] } }] },
+    where: { OR: [{ aggregateId: ids.payment }, { aggregateId: { in: [ids.refundA, ids.refundB, ids.payout] } }] },
   }).catch(() => {});
   await prisma.auditLog.deleteMany({
-    where: { resourceId: { in: [ids.payment, ids.refundA, ids.refundB] } },
+    where: { resourceId: { in: [ids.payment, ids.refundA, ids.refundB, ids.payout] } },
   }).catch(() => {});
   await prisma.payment.deleteMany({ where: { id: ids.payment } }).catch(() => {});
   await prisma.booking.deleteMany({ where: { id: ids.booking } }).catch(() => {});
   await prisma.clientProfile.deleteMany({ where: { id: ids.client } }).catch(() => {});
-  await prisma.user.deleteMany({ where: { id: { in: [ids.user, ids.requester, ids.approver] } } }).catch(() => {});
+  await prisma.professionalProfile.deleteMany({ where: { id: ids.professional } }).catch(() => {});
+  await prisma.user.deleteMany({
+    where: { id: { in: [ids.user, ids.requester, ids.approver, ids.executor, ids.professionalUser] } },
+  }).catch(() => {});
   await prisma.integrationEvent.deleteMany({
     where: { provider: 'STRIPE_TEST', providerEventId: ids.inboxEvent },
   }).catch(() => {});
@@ -82,7 +95,7 @@ test.after(async () => {
   await prisma.$disconnect();
 });
 
-test('Supabase enforces inbox, capture and refund concurrency invariants', async () => {
+test('Supabase enforces inbox, capture, payout and refund concurrency invariants', async () => {
   await cleanup();
   const existingAccounts = new Set((await prisma.ledgerAccount.findMany({
     where: { currency: 'EUR' },
@@ -140,15 +153,44 @@ test('Supabase enforces inbox, capture and refund concurrency invariants', async
           lastName: 'Approver',
           role: 'ADMIN',
         },
+        {
+          id: ids.executor,
+          email: `integration-executor-${runId}@example.invalid`,
+          phone: `+3494${runId.replace(/-/g, '').slice(0, 7)}`,
+          passwordHash: 'integration-only',
+          firstName: 'Integration',
+          lastName: 'Executor',
+          role: 'ADMIN',
+        },
+        {
+          id: ids.professionalUser,
+          email: `integration-professional-${runId}@example.invalid`,
+          phone: `+3495${runId.replace(/-/g, '').slice(0, 7)}`,
+          passwordHash: 'integration-only',
+          firstName: 'Integration',
+          lastName: 'Professional',
+          role: 'PROFESSIONAL',
+        },
       ],
     });
     await prisma.clientProfile.create({
       data: { id: ids.client, userId: ids.user, country: 'ES', paymentMethods: [] },
     });
+    await prisma.professionalProfile.create({
+      data: {
+        id: ids.professional,
+        userId: ids.professionalUser,
+        status: 'APPROVED',
+        stripeAccountId: `acct_integration_${runId}`,
+        stripeTransfersStatus: 'active',
+        stripeAccountUpdatedAt: new Date(),
+      },
+    });
     await prisma.booking.create({
       data: {
         id: ids.booking,
         clientId: ids.client,
+        professionalId: ids.professional,
         status: 'PENDING',
         scheduledDate: new Date(Date.now() + 86_400_000),
         address: 'Integration test only',
@@ -173,6 +215,7 @@ test('Supabase enforces inbox, capture and refund concurrency invariants', async
         status: 'PROCESSING',
         method: 'STRIPE',
         transactionId: `pi_integration_${runId}`,
+        providerChargeId: `ch_integration_${runId}`,
       },
     });
 
@@ -180,6 +223,7 @@ test('Supabase enforces inbox, capture and refund concurrency invariants', async
       tx,
       bookingId: ids.booking,
       providerTransactionId: `pi_integration_${runId}`,
+      providerChargeId: `ch_integration_${runId}`,
       providerAmountMinor: 10_800,
       providerCurrency: 'eur',
       source: 'POSTGRES_INTEGRATION_TEST',
@@ -203,6 +247,84 @@ test('Supabase enforces inbox, capture and refund concurrency invariants', async
       .reduce((sum, entry) => sum + decimalToMinor(entry.amount), 0);
     assert.equal(captureDebit, captureCredit);
     assert.equal(captureDebit, 10_800);
+
+    await prisma.booking.update({ where: { id: ids.booking }, data: { status: 'COMPLETED', completedAt: new Date() } });
+    await prisma.earning.create({
+      data: {
+        id: ids.earning,
+        professionalId: ids.professional,
+        bookingId: ids.booking,
+        amount: '100.00',
+        platformFee: '15.00',
+        netAmount: '85.00',
+        status: 'PENDING',
+      },
+    });
+    await prisma.payout.create({
+      data: {
+        id: ids.payout,
+        bookingId: ids.booking,
+        paymentId: ids.payment,
+        earningId: ids.earning,
+        professionalId: ids.professional,
+        idempotencyKey: `integration-payout:${runId}`,
+        status: 'APPROVED',
+        amount: '85.00',
+        currency: 'EUR',
+        connectedAccountId: `acct_integration_${runId}`,
+        requestedBy: ids.professionalUser,
+        approvedBy: ids.approver,
+        approvedAt: new Date(),
+      },
+    });
+
+    let stripeTransferCalls = 0;
+    const payoutStripeClient = {
+      v2: { core: { accounts: { retrieve: async () => ({
+        id: `acct_integration_${runId}`,
+        configuration: { recipient: { capabilities: { stripe_balance: { stripe_transfers: { status: 'active' } } } } },
+      }) } } },
+      paymentIntents: { retrieve: async () => ({
+        id: `pi_integration_${runId}`,
+        status: 'succeeded',
+        latest_charge: `ch_integration_${runId}`,
+        metadata: { bookingId: ids.booking },
+      }) },
+      transfers: { create: async (payload) => {
+        stripeTransferCalls += 1;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        return { id: `tr_integration_${runId}`, ...payload };
+      } },
+    };
+    const executePayout = (client) => executeApprovedPayout({
+      payoutId: ids.payout,
+      executorId: ids.executor,
+      stripeClient: payoutStripeClient,
+      ledgerEnabled: true,
+      client,
+      requestContext: { correlationId: `integration-${runId}` },
+    });
+    const concurrentPayouts = await usingClients(2, (clients) => Promise.allSettled(clients.map(executePayout)));
+    assert.equal(concurrentPayouts.filter((result) => result.status === 'fulfilled').length, 1);
+    assert.equal(concurrentPayouts.filter((result) => result.status === 'rejected').length, 1);
+    assert.equal(stripeTransferCalls, 1);
+    assert.equal((await prisma.payout.findUnique({ where: { id: ids.payout } })).status, 'COMPLETED');
+    assert.equal((await prisma.earning.findUnique({ where: { id: ids.earning } })).status, 'PAID');
+    assert.equal(await prisma.ledgerTransaction.count({ where: { payoutId: ids.payout } }), 1);
+    assert.equal(await prisma.outboxEvent.count({ where: { aggregateId: ids.payout, eventType: 'payout.completed' } }), 1);
+    assert.equal(await prisma.auditLog.count({ where: { resourceId: ids.payout, action: 'payout.completed' } }), 1);
+    const payoutReplay = await executePayout(prisma);
+    assert.equal(payoutReplay.duplicate, true);
+    assert.equal(stripeTransferCalls, 1);
+
+    const payoutLedger = await prisma.ledgerTransaction.findMany({
+      where: { payoutId: ids.payout },
+      select: { id: true },
+    });
+    await prisma.ledgerEntry.deleteMany({ where: { transactionId: { in: payoutLedger.map((item) => item.id) } } });
+    await prisma.ledgerTransaction.deleteMany({ where: { id: { in: payoutLedger.map((item) => item.id) } } });
+    await prisma.payout.delete({ where: { id: ids.payout } });
+    await prisma.earning.delete({ where: { id: ids.earning } });
 
     await prisma.refundPolicy.create({
       data: {

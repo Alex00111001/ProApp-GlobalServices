@@ -1,3 +1,5 @@
+require('dotenv').config();
+process.env.DATABASE_URL ||= process.env.DIRECT_URL;
 const prisma = require('../../config/prisma');
 const { PERMISSIONS, ROLE_PERMISSIONS } = require('./permission-catalog');
 

@@ -1,5 +1,5 @@
 const { z } = require('zod');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('../config/stripe');
 const prisma = require('../config/prisma');
 const env = require('../config/env');
 const { approveRefundInTx, rejectRefundInTx } = require('../modules/billing/refunds/refund-approval.service');

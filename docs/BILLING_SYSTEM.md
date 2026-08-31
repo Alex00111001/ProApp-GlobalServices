@@ -74,3 +74,75 @@ Before enabling either refund flag in a deployed environment:
 7. Enable execution only in a controlled test environment while reconciling Stripe, payment projections and ledger debits/credits.
 
 Rollback is application-first: disable `FINANCIAL_REFUND_EXECUTION_ENABLED`, then disable `FINANCIAL_REFUND_REQUESTS_ENABLED` if new requests must also stop. Retain provider identifiers, decisions, requests, inbox events and ledger entries as financial evidence; do not delete or rewrite them. Disabling a flag does not cancel an operation already accepted by Stripe, so pending provider refunds must still be reconciled operationally.
+
+## Professional payout rollout
+
+[ADR 0001](adr/0001-stripe-connect-separate-charges-transfers.md) selects Stripe Connect separate charges and transfers. Migration `202608310003_payout_dispute_reconciliation` adds connected-account evidence, provider charge IDs, payouts, disputes, reconciliation runs/items, and immutable ledger links without rewriting prior financial rows.
+
+`FINANCIAL_PAYOUT_REQUESTS_ENABLED` and `FINANCIAL_PAYOUT_EXECUTION_ENABLED` default to `false`. When request creation is enabled, the first successful transition of a Stripe-paid booking to `COMPLETED` creates one payout with key `booking:<bookingId>:professional-payout` inside the same transaction as the earning, booking event, audit record, statistics, and customer notification. A replay returns the completed booking and existing payout without repeating side effects.
+
+Payout approval and execution require `payouts.manage`. The professional requester cannot approve or execute the payout, and the approver cannot execute it. Execution locks the payment and payout, blocks active disputes and completed refunds, verifies the earning amount/currency, retrieves the connected account with recipient configuration included, and requires `stripe_balance.stripe_transfers=active`.
+
+The transfer uses the captured charge as `source_transaction`, the stored connected account as destination, and the payout idempotency key. Provider amount, currency, source charge, destination and metadata must match before finalization. A completed transfer marks the earning `PAID`, writes outbox/audit/notification evidence, and—when ledger dual-write is enabled—posts debit Professional Payable and credit Payment Clearing.
+
+If Stripe accepts a transfer but database finalization fails, retry the same endpoint after the five-minute processing lease. The same provider idempotency key returns the original transfer and internal finalization converges. Never create a replacement payout or edit a posted transaction.
+
+## Dispute recovery
+
+Signed `charge.dispute.created`, `updated`, `closed`, `funds_withdrawn`, and `funds_reinstated` events enter the persistent Stripe inbox. The processor resolves them through the stored charge or PaymentIntent, validates amount/currency, rejects conflicting identities, ignores older provider state, and stores only a bounded evidence summary.
+
+An open dispute blocks payout execution. `FINANCIAL_DISPUTE_RECOVERY_ENABLED` defaults to `false`; recording and surfacing disputes continues while recovery is disabled. When enabled and a related transfer has already completed, the service reverses at most the remaining payout amount with key `dispute:<disputeId>:transfer-reversal`. Finalization records the provider reversal, recovered amount, payout status, outbox/audit evidence and a balanced compensating ledger transaction. Provider failures retain a sanitized reason for replay and operations review.
+
+Dispute outcome accounting beyond transfer recovery is intentionally not inferred from status alone. Stripe balance transactions must be reconciled before posting provider fee, loss, or reinstatement journals; corrections use new immutable entries.
+
+## Reconciliation and operations
+
+Finance administrators can list payouts and disputes and run bounded payout reconciliation through `/api/admin`. `FINANCIAL_RECONCILIATION_ENABLED` defaults to `false`. A run retrieves existing Stripe transfers without moving money and compares amount, reversed amount, currency, destination, source charge, metadata, earning projection, and ledger balance. Each resource receives `MATCHED`, `MISMATCH`, `MISSING`, or `ERROR` evidence; the run stores counts, initiator, timestamps, and audit context.
+
+Safe rollout order:
+
+1. Keep all F3 flags disabled and apply the additive migration.
+2. Synchronize RBAC and verify `payouts.manage`, `disputes.read`, and `reconciliation.run` grants.
+3. Enable payout requests only in the test environment; verify one request per completed booking.
+4. Enable reconciliation and resolve every mismatch.
+5. Configure Stripe test connected accounts and verify recipient transfer capability.
+6. Enable payout execution for a controlled test cohort and replay concurrent requests.
+7. Enable dispute recovery only after a test transfer reversal converges through webhook replay.
+
+Abort on any duplicate provider command, unbalanced ledger transaction, provider/internal identity mismatch, reconciliation mismatch, unexpected permission denial, or processing lease that cannot converge. Roll back by disabling the corresponding flag; retain all evidence and reconcile accepted provider operations.
+
+## Professional payout rollout
+
+[ADR 0001](adr/0001-stripe-connect-separate-charges-transfers.md) selects Stripe Connect separate charges and transfers. Migration `202608310003_payout_dispute_reconciliation` adds connected-account evidence, provider charge IDs, payouts, disputes, reconciliation runs/items, and immutable ledger links without rewriting prior financial rows.
+
+`FINANCIAL_PAYOUT_REQUESTS_ENABLED` and `FINANCIAL_PAYOUT_EXECUTION_ENABLED` default to `false`. When request creation is enabled, the first successful transition of a Stripe-paid booking to `COMPLETED` creates one payout with key `booking:<bookingId>:professional-payout` inside the same transaction as the earning, booking event, audit record, statistics, and customer notification. A replay returns the completed booking and existing payout without repeating side effects.
+
+Payout approval and execution require `payouts.manage`. The professional requester cannot approve or execute the payout, and the approver cannot execute it. Execution locks the payment and payout, blocks active disputes and completed refunds, verifies the earning amount/currency, retrieves the connected account with recipient configuration included, and requires `stripe_balance.stripe_transfers=active`.
+
+The transfer uses the captured charge as `source_transaction`, the stored connected account as destination, and the payout idempotency key. Provider amount, currency, source charge, destination and metadata must match before finalization. A completed transfer marks the earning `PAID`, writes outbox/audit/notification evidence, and—when ledger dual-write is enabled—posts debit Professional Payable and credit Payment Clearing.
+
+If Stripe accepts a transfer but database finalization fails, retry the same endpoint after the five-minute processing lease. The same provider idempotency key returns the original transfer and internal finalization converges. Never create a replacement payout or edit a posted transaction.
+
+## Dispute recovery
+
+Signed `charge.dispute.created`, `updated`, `closed`, `funds_withdrawn`, and `funds_reinstated` events enter the persistent Stripe inbox. The processor resolves them through the stored charge or PaymentIntent, validates amount/currency, rejects conflicting identities, ignores older provider state, and stores only a bounded evidence summary.
+
+An open dispute blocks payout execution. `FINANCIAL_DISPUTE_RECOVERY_ENABLED` defaults to `false`; recording and surfacing disputes continues while recovery is disabled. When enabled and a related transfer has already completed, the service reverses at most the remaining payout amount with key `dispute:<disputeId>:transfer-reversal`. Finalization records the provider reversal, recovered amount, payout status, outbox/audit evidence and a balanced compensating ledger transaction. Provider failures retain a sanitized reason for replay and operations review.
+
+Dispute outcome accounting beyond transfer recovery is intentionally not inferred from status alone. Stripe balance transactions must be reconciled before posting provider fee, loss, or reinstatement journals; corrections use new immutable entries.
+
+## Reconciliation and operations
+
+Finance administrators can list payouts and disputes and run bounded payout reconciliation through `/api/admin`. `FINANCIAL_RECONCILIATION_ENABLED` defaults to `false`. A run retrieves existing Stripe transfers without moving money and compares amount, reversed amount, currency, destination, source charge, metadata, earning projection, and ledger balance. Each resource receives `MATCHED`, `MISMATCH`, `MISSING`, or `ERROR` evidence; the run stores counts, initiator, timestamps, and audit context.
+
+Safe rollout order:
+
+1. Keep all F3 flags disabled and apply the additive migration.
+2. Synchronize RBAC and verify `payouts.manage`, `disputes.read`, and `reconciliation.run` grants.
+3. Enable payout requests only in the test environment; verify one request per completed booking.
+4. Enable reconciliation and resolve every mismatch.
+5. Configure Stripe test connected accounts and verify recipient transfer capability.
+6. Enable payout execution for a controlled test cohort and replay concurrent requests.
+7. Enable dispute recovery only after a test transfer reversal converges through webhook replay.
+
+Abort on any duplicate provider command, unbalanced ledger transaction, provider/internal identity mismatch, reconciliation mismatch, unexpected permission denial, or processing lease that cannot converge. Roll back by disabling the corresponding flag; retain all evidence and reconcile accepted provider operations.
