@@ -226,6 +226,7 @@ const createCaptureTx = ({ claimed = 1 } = {}) => {
   };
   const booking = {
     id: 'booking-1',
+    professionalId: 'professional-1',
     serviceAmount: '100.00',
     platformFee: '8.00',
     professionalCommission: '15.00',
@@ -235,12 +236,20 @@ const createCaptureTx = ({ claimed = 1 } = {}) => {
     payment,
     professional: { userId: 'professional-user-1' },
   };
+  let paymentStatus = payment.status;
   const tx = {
     booking: {
       findUnique: async () => booking,
-      update: async () => ({ ...booking, status: 'CONFIRMED', payment: { ...payment, status: 'COMPLETED' } }),
+      update: async () => ({ ...booking, status: 'CONFIRMED' }),
     },
-    payment: { updateMany: async () => ({ count: claimed }) },
+    payment: {
+      findUnique: async () => ({ ...payment, status: paymentStatus }),
+      updateMany: async () => {
+        if (claimed) paymentStatus = 'COMPLETED';
+        return { count: claimed };
+      },
+    },
+    professionalProfile: { findUnique: async () => ({ userId: 'professional-user-1' }) },
     ledgerAccount: {
       upsert: async ({ create }) => ({ id: `account-${create.code}`, ...create }),
     },
@@ -248,7 +257,7 @@ const createCaptureTx = ({ claimed = 1 } = {}) => {
       findUnique: async () => null,
       create: async ({ data }) => {
         calls.ledger += 1;
-        assert.equal(assertBalanced(data.entries.create.map((entry) => ({
+        assert.equal(assertBalanced(data.entries.createMany.data.map((entry) => ({
           ...entry,
           amountMinor: decimalToMinor(entry.amount),
         }))), true);
@@ -651,13 +660,20 @@ test('completed refund replay never calls Stripe', async () => {
 test('refund execution sends a stable Stripe idempotency key after claiming its lease', async () => {
   const refund = executableRefundFixture();
   let stripeRequest = null;
+  let transactionCalls = 0;
   const client = {
     refund: {
       findUnique: async () => refund,
       aggregate: async () => ({ _sum: { totalAmount: null, serviceAmount: null, platformFeeAmount: null } }),
+      findFirst: async () => null,
       updateMany: async () => ({ count: 1 }),
     },
-    $transaction: async () => ({ refund: { ...refund, status: 'COMPLETED' }, duplicate: false }),
+    $queryRaw: async () => [{ id: refund.paymentId }],
+    $transaction: async (callback) => {
+      transactionCalls += 1;
+      if (transactionCalls === 1) return callback(client);
+      return { refund: { ...refund, status: 'COMPLETED' }, duplicate: false };
+    },
   };
   const stripeClient = {
     refunds: {
@@ -702,7 +718,7 @@ test('successful full refund finalization updates projections and posts one reve
       create: async ({ data }) => {
         calls.ledger += 1;
         assert.equal(data.refundId, refund.id);
-        assert.equal(assertBalanced(data.entries.create.map((entry) => ({
+        assert.equal(assertBalanced(data.entries.createMany.data.map((entry) => ({
           ...entry,
           amountMinor: decimalToMinor(entry.amount),
         }))), true);

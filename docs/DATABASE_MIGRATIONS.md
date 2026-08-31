@@ -1,27 +1,39 @@
 # Database migration procedure
 
-The repository now has a two-step Prisma history:
+Prisma CLI uses `DIRECT_URL` when configured and falls back to `DATABASE_URL`. Keep the pooled runtime URL in `DATABASE_URL`; reserve the direct connection for migrations, baseline audits and integration gates.
+
+The repository has a versioned additive history beginning with:
 
 - `00000000000000_baseline` reproduces the schema that existed before migration tracking was introduced.
-- `202608300001_foundation` adds RBAC, feature flags, generalized audit, idempotency, outbox and marketing events.
+- `202608300001_foundation` and later migrations add RBAC, observability, billing, pricing separation, legal evidence, Stripe inbox and refund decisions.
 
 ## Existing database
 
 Do not reset it and do not execute the baseline SQL against populated tables. Before deployment:
 
 1. Back up the database and capture a schema-only dump.
-2. Run `prisma migrate diff --from-url <database> --to-schema prisma/schema.prisma --script` in a protected environment and review drift.
-3. Confirm the existing database matches the baseline schema.
+2. Configure `DIRECT_URL` without committing it.
+3. Run `npm run db:audit-baseline`. The command is read-only and fails if any baseline table, column/type/nullability, enum, index or constraint is missing or incompatible. Additional Supabase-managed objects such as `public.profiles` are reported but not modified.
 4. Mark only the baseline as applied with `prisma migrate resolve --applied 00000000000000_baseline`.
-5. Run `prisma migrate deploy`; this applies Foundation.
+5. Scan pending SQL for destructive statements and run `prisma migrate deploy`; never execute the generated baseline SQL over existing tables.
 6. Run `npm run seed:rbac` to synchronize system roles and permissions.
-7. Run smoke tests and verify the migration and audit tables before enabling new flags.
+7. Run `prisma migrate status`, the unit suite and the explicit PostgreSQL integration gate before enabling new flags.
+
+The database integration gate is deliberate and refuses production mode:
+
+```powershell
+$env:RUN_DATABASE_INTEGRATION_TESTS='true'
+$env:NODE_ENV='test'
+npm run test:integration
+```
+
+It creates uniquely identified fixtures, tests concurrent inbox/capture/refund behavior and cleans only those fixture IDs.
 
 Any unexpected drift blocks deployment until it has a reviewed reconciliation migration. Never use `prisma db push` for production changes.
 
 ## New database
 
-Run `prisma migrate deploy`, then the application seed and `npm run seed:rbac`. Both migrations apply in order.
+Run `prisma migrate deploy`, then the application seed and `npm run seed:rbac`. All migrations apply in order.
 
 ## Rollback stance
 
