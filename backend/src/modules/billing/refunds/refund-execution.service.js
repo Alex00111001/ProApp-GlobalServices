@@ -18,7 +18,7 @@ const assertProviderRefundMatches = ({ providerRefund, refund, refundMinor }) =>
   const paymentIntentId = typeof providerRefund.payment_intent === 'string'
     ? providerRefund.payment_intent
     : providerRefund.payment_intent?.id;
-  if (!paymentIntentId || paymentIntentId !== refund.payment.transactionId) {
+  if (!paymentIntentId || !refund.payment?.transactionId || paymentIntentId !== refund.payment.transactionId) {
     throw errorWithStatus('Stripe refund belongs to a different payment intent', 409);
   }
   if (providerRefund.metadata?.refundId !== refund.id) {
@@ -100,6 +100,7 @@ const finalizeRefundInTx = async ({
   ledgerEnabled,
   processedAt = new Date(),
   requestContext = {},
+  source = 'ADMIN_REFUND_EXECUTION',
 }) => {
   const refund = await tx.refund.findUnique({
     where: { id: refundId },
@@ -200,7 +201,7 @@ const finalizeRefundInTx = async ({
       aggregateId: refund.id,
       eventType: 'refund.completed',
       payload: { refundId: refund.id, bookingId: refund.bookingId, paymentId: refund.paymentId },
-      metadata: { providerRefundId },
+      metadata: { providerRefundId, source },
     },
   });
   await tx.auditLog.create({
@@ -212,7 +213,7 @@ const finalizeRefundInTx = async ({
       outcome: 'SUCCESS',
       before: { status: refund.status },
       after: { status: 'COMPLETED', providerRefundId },
-      metadata: { ledgerDualWrite: ledgerEnabled },
+      metadata: { ledgerDualWrite: ledgerEnabled, source },
       requestId: requestContext.requestId,
       correlationId: requestContext.correlationId,
       traceId: requestContext.traceId,
@@ -230,6 +231,108 @@ const finalizeRefundInTx = async ({
     });
   }
   return { refund: completed, duplicate: false, ledgerTransaction };
+};
+
+const reconcileProviderRefundInTx = async ({
+  tx,
+  providerRefund,
+  ledgerEnabled,
+  processedAt = new Date(),
+  requestContext = {},
+  source = 'STRIPE_WEBHOOK',
+  executorId = null,
+}) => {
+  const refundId = providerRefund?.metadata?.refundId;
+  if (!refundId) return { ignored: true, duplicate: false, pending: false };
+
+  const refund = await tx.refund.findUnique({
+    where: { id: refundId },
+    include: { decisionRecord: true, payment: true, booking: true },
+  });
+  if (!refund) throw errorWithStatus('Stripe refund references an unknown internal refund', 409);
+  if (!refund.approvedBy || !refund.approvedAt || !refund.decisionRecord) {
+    throw errorWithStatus('Stripe refund lacks approved immutable internal evidence', 409);
+  }
+  if (refund.requestedBy && refund.requestedBy === refund.approvedBy) {
+    throw errorWithStatus('Stripe refund violates requester/approver separation', 409);
+  }
+  assertProviderRefundMatches({
+    providerRefund,
+    refund,
+    refundMinor: decimalToMinor(refund.totalAmount),
+  });
+  if (refund.providerRefundId && refund.providerRefundId !== providerRefund.id) {
+    throw errorWithStatus('Internal refund is linked to a different Stripe refund', 409);
+  }
+  if (refund.status === 'COMPLETED') {
+    if (providerRefund.status !== 'succeeded') {
+      throw errorWithStatus('Stripe reported a non-success state for a completed refund', 409);
+    }
+    return { refund, ignored: false, duplicate: true, pending: false };
+  }
+  if (refund.status === 'FAILED' && ['failed', 'canceled'].includes(providerRefund.status)) {
+    return { refund, ignored: false, duplicate: true, pending: false };
+  }
+  if (refund.status !== 'PROCESSING') {
+    throw errorWithStatus('Stripe refund event is not linked to an executing refund', 409);
+  }
+
+  if (['failed', 'canceled'].includes(providerRefund.status)) {
+    const failed = await tx.refund.update({
+      where: { id: refund.id },
+      data: {
+        status: 'FAILED',
+        providerRefundId: providerRefund.id,
+        processedAt,
+        failureReason: providerRefund.failure_reason || `Stripe refund ${providerRefund.status}`,
+      },
+    });
+    await tx.outboxEvent.create({
+      data: {
+        aggregateType: 'Refund',
+        aggregateId: refund.id,
+        eventType: 'refund.failed',
+        payload: { refundId: refund.id, bookingId: refund.bookingId, paymentId: refund.paymentId },
+        metadata: { providerRefundId: providerRefund.id, source },
+      },
+    });
+    await tx.auditLog.create({
+      data: {
+        actorId: executorId,
+        action: 'refund.failed',
+        resourceType: 'Refund',
+        resourceId: refund.id,
+        outcome: 'FAILURE',
+        before: { status: refund.status },
+        after: { status: 'FAILED', providerRefundId: providerRefund.id },
+        metadata: { source, failureReason: failed.failureReason },
+        requestId: requestContext.requestId,
+        correlationId: requestContext.correlationId,
+        traceId: requestContext.traceId,
+      },
+    });
+    return { refund: failed, ignored: false, duplicate: false, pending: false };
+  }
+
+  if (providerRefund.status === 'succeeded') {
+    const result = await finalizeRefundInTx({
+      tx,
+      refundId: refund.id,
+      providerRefundId: providerRefund.id,
+      executorId,
+      ledgerEnabled,
+      processedAt,
+      requestContext,
+      source,
+    });
+    return { ...result, ignored: false, pending: false };
+  }
+
+  const processing = await tx.refund.update({
+    where: { id: refund.id },
+    data: { providerRefundId: providerRefund.id, status: 'PROCESSING', failureReason: null },
+  });
+  return { refund: processing, ignored: false, duplicate: false, pending: true };
 };
 
 const executeApprovedRefund = async ({
@@ -305,35 +408,17 @@ const executeApprovedRefund = async ({
 
     assertProviderRefundMatches({ providerRefund, refund, refundMinor: executable.refundMinor });
 
-    if (['failed', 'canceled'].includes(providerRefund.status)) {
-      await client.refund.update({
-        where: { id: refund.id },
-        data: {
-          status: 'FAILED',
-          providerRefundId: providerRefund.id,
-          failureReason: providerRefund.failure_reason || `Stripe refund ${providerRefund.status}`,
-        },
-      });
-      throw errorWithStatus('Stripe rejected the refund', 502);
-    }
-    if (providerRefund.status !== 'succeeded') {
-      const processing = await client.refund.update({
-        where: { id: refund.id },
-        data: { providerRefundId: providerRefund.id, status: 'PROCESSING' },
-      });
-      return { refund: processing, duplicate: false, pending: true };
-    }
-
-    const result = await client.$transaction((tx) => finalizeRefundInTx({
+    const result = await client.$transaction((tx) => reconcileProviderRefundInTx({
       tx,
-      refundId: refund.id,
-      providerRefundId: providerRefund.id,
+      providerRefund,
       executorId,
       ledgerEnabled,
       processedAt: now,
       requestContext,
+      source: 'ADMIN_REFUND_EXECUTION',
     }));
-    return { ...result, pending: false };
+    if (result.refund?.status === 'FAILED') throw errorWithStatus('Stripe rejected the refund', 502);
+    return { ...result, pending: Boolean(result.pending) };
   } catch (error) {
     await client.refund.updateMany({
       where: { id: refund.id, status: 'PROCESSING' },
@@ -348,5 +433,6 @@ module.exports = {
   assertProviderRefundMatches,
   assertRefundExecutable,
   finalizeRefundInTx,
+  reconcileProviderRefundInTx,
   executeApprovedRefund,
 };

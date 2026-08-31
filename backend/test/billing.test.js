@@ -11,7 +11,7 @@ const { receiveEvent, processStripeEvent } = require('../src/modules/billing/pay
 const { allocateServiceRefund, buildRefundEntries } = require('../src/modules/billing/refunds/refund-journal');
 const { createCancellationRefundRequestInTx } = require('../src/modules/billing/refunds/refund-request.service');
 const { approveRefundInTx, rejectRefundInTx } = require('../src/modules/billing/refunds/refund-approval.service');
-const { assertProviderRefundMatches, assertRefundExecutable, finalizeRefundInTx, executeApprovedRefund } = require('../src/modules/billing/refunds/refund-execution.service');
+const { assertProviderRefundMatches, assertRefundExecutable, finalizeRefundInTx, reconcileProviderRefundInTx, executeApprovedRefund } = require('../src/modules/billing/refunds/refund-execution.service');
 
 test('pricing separates customer fee from professional commission', () => {
   assert.deepEqual(calculateQuote({ serviceAmountMinor: 10_000, platformFeeBasisPoints: 800, commissionBasisPoints: 1500, currency: 'EUR' }), {
@@ -329,6 +329,59 @@ test('processed Stripe webhook replay is acknowledged without opening a transact
   assert.equal(transactionOpened, false);
 });
 
+test('Stripe refund webhook is persisted and links a pending provider refund once', async () => {
+  let linkedProviderRefundId = null;
+  const refund = {
+    id: 'refund-1',
+    status: 'PROCESSING',
+    providerRefundId: null,
+    requestedBy: 'admin-1',
+    approvedBy: 'admin-2',
+    approvedAt: new Date('2026-08-31T10:00:00Z'),
+    decisionRecord: { id: 'decision-1' },
+    totalAmount: '108.00',
+    currency: 'EUR',
+    payment: { transactionId: 'pi_1' },
+  };
+  const tx = {
+    refund: {
+      findUnique: async () => refund,
+      update: async ({ data }) => {
+        linkedProviderRefundId = data.providerRefundId;
+        return { ...refund, ...data };
+      },
+    },
+    integrationEvent: { update: async () => {} },
+  };
+  const client = {
+    integrationEvent: {
+      create: async () => ({ id: 'inbox-refund-1', status: 'RECEIVED' }),
+      updateMany: async () => ({ count: 1 }),
+      update: async () => {},
+    },
+    $transaction: async (callback) => callback(tx),
+  };
+  const result = await processStripeEvent({
+    event: {
+      id: 'evt_refund_1',
+      type: 'refund.updated',
+      created: 1_788_134_400,
+      data: { object: {
+        id: 're_pending',
+        status: 'pending',
+        amount: 10_800,
+        currency: 'eur',
+        payment_intent: 'pi_1',
+        metadata: { refundId: 'refund-1' },
+      } },
+    },
+    correlationId: 'correlation-refund-1',
+  }, client);
+
+  assert.deepEqual(result, { duplicate: false, status: 'PROCESSED' });
+  assert.equal(linkedProviderRefundId, 're_pending');
+});
+
 test('cancellation creates one versioned refund request without executing money movement', async () => {
   const calls = { refunds: 0, outbox: 0, audit: 0 };
   const policy = {
@@ -537,6 +590,47 @@ test('provider refund identity must match approved internal evidence', () => {
     refund,
     refundMinor: 10_800,
   }), /metadata does not match/);
+});
+
+test('failed Stripe refund event preserves provider evidence and emits operational records', async () => {
+  const refund = executableRefundFixture({ status: 'PROCESSING' });
+  const calls = { outbox: 0, audit: 0 };
+  const tx = {
+    refund: {
+      findUnique: async () => refund,
+      update: async ({ data }) => ({ ...refund, ...data }),
+    },
+    outboxEvent: {
+      create: async ({ data }) => {
+        calls.outbox += 1;
+        assert.equal(data.eventType, 'refund.failed');
+      },
+    },
+    auditLog: {
+      create: async ({ data }) => {
+        calls.audit += 1;
+        assert.equal(data.metadata.source, 'STRIPE_WEBHOOK');
+      },
+    },
+  };
+  const result = await reconcileProviderRefundInTx({
+    tx,
+    providerRefund: {
+      id: 're_failed',
+      status: 'failed',
+      failure_reason: 'lost_or_stolen_card',
+      amount: 10_800,
+      currency: 'eur',
+      payment_intent: 'pi_1',
+      metadata: { refundId: 'refund-1' },
+    },
+    ledgerEnabled: false,
+  });
+
+  assert.equal(result.refund.status, 'FAILED');
+  assert.equal(result.refund.providerRefundId, 're_failed');
+  assert.equal(result.refund.failureReason, 'lost_or_stolen_card');
+  assert.deepEqual(calls, { outbox: 1, audit: 1 });
 });
 
 test('completed refund replay never calls Stripe', async () => {
