@@ -11,6 +11,10 @@ test('administrative roles expose least-privilege permission sets', () => {
   assert.equal(roleGrantsPermission('SUPER_ADMIN', PERMISSIONS.ROLES_MANAGE), true);
   assert.equal(roleGrantsPermission('MARKETING_ADMIN', PERMISSIONS.MARKETING_MANAGE), true);
   assert.equal(roleGrantsPermission('MARKETING_ADMIN', PERMISSIONS.PAYOUTS_MANAGE), false);
+  assert.equal(roleGrantsPermission('FINANCE_ADMIN', PERMISSIONS.PAYOUTS_MANAGE), true);
+  assert.equal(roleGrantsPermission('FINANCE_ADMIN', PERMISSIONS.DISPUTES_READ), true);
+  assert.equal(roleGrantsPermission('FINANCE_ADMIN', PERMISSIONS.RECONCILIATION_RUN), true);
+  assert.equal(roleGrantsPermission('OPERATIONS_ADMIN', PERMISSIONS.RECONCILIATION_RUN), false);
 });
 
 test('feature percentage assignment is deterministic', () => {

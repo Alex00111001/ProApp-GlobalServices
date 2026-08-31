@@ -11,7 +11,13 @@ const { receiveEvent, processStripeEvent } = require('../src/modules/billing/pay
 const { allocateServiceRefund, buildRefundEntries } = require('../src/modules/billing/refunds/refund-journal');
 const { createCancellationRefundRequestInTx } = require('../src/modules/billing/refunds/refund-request.service');
 const { approveRefundInTx, rejectRefundInTx } = require('../src/modules/billing/refunds/refund-approval.service');
-const { assertProviderRefundMatches, assertRefundExecutable, finalizeRefundInTx, reconcileProviderRefundInTx, executeApprovedRefund } = require('../src/modules/billing/refunds/refund-execution.service');
+const { assertProviderRefundMatches, assertRefundExecutable, finalizeRefundInTx, reconcileProviderRefundInTx, claimRefundForExecution, executeApprovedRefund } = require('../src/modules/billing/refunds/refund-execution.service');
+const { buildPayoutEntries } = require('../src/modules/billing/payouts/payout-journal');
+const { approvePayoutInTx } = require('../src/modules/billing/payouts/payout-approval.service');
+const { assertPayoutExecutable, executeApprovedPayout } = require('../src/modules/billing/payouts/payout-execution.service');
+const { buildTransferReversalEntries } = require('../src/modules/billing/disputes/dispute-journal');
+const { mapDisputeStatus, validateProviderDispute, finalizeTransferReversalInTx } = require('../src/modules/billing/disputes/dispute.service');
+const { comparePayoutTransfer } = require('../src/modules/billing/reconciliation/payout-reconciliation.service');
 
 test('pricing separates customer fee from professional commission', () => {
   assert.deepEqual(calculateQuote({ serviceAmountMinor: 10_000, platformFeeBasisPoints: 800, commissionBasisPoints: 1500, currency: 'EUR' }), {
@@ -36,6 +42,19 @@ test('production pricing configuration fails closed when commercial rates are ab
   const result = spawnSync(process.execPath, ['-e', "require('./src/config/business')"], { cwd: process.cwd(), env });
   assert.notEqual(result.status, 0);
   assert.match(result.stderr.toString(), /PROFESSIONAL_COMMISSION_PERCENTAGE must be configured/);
+});
+
+test('production financial configuration rejects Stripe test credentials', () => {
+  const env = {
+    ...process.env,
+    NODE_ENV: 'production',
+    JWT_SECRET: 'production-jwt-secret-with-at-least-32-characters',
+    STRIPE_API_KEY: 'sk_test_not-allowed-in-production-1234567890',
+    STRIPE_WEBHOOK_SECRET: 'whsec_production-placeholder-1234567890',
+  };
+  const result = spawnSync(process.execPath, ['-e', "require('./src/config/env')"], { cwd: process.cwd(), env });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr.toString(), /live secret or restricted key/);
 });
 
 test('refund rules independently decide service and platform fee', () => {
@@ -657,6 +676,21 @@ test('completed refund replay never calls Stripe', async () => {
   assert.equal(stripeCalled, false);
 });
 
+test('refund execution is blocked after a professional payout until explicit recovery', async () => {
+  const refund = executableRefundFixture();
+  const client = {
+    refund: { findUnique: async () => refund },
+    payout: { findUnique: async () => ({ id: 'payout-1', status: 'COMPLETED' }) },
+    $queryRaw: async () => [{ id: refund.paymentId }],
+    $transaction: async (callback) => callback(client),
+  };
+  await assert.rejects(() => claimRefundForExecution({
+    client,
+    refundId: refund.id,
+    ledgerEnabled: false,
+  }), /payout adjustment or recovery/);
+});
+
 test('refund execution sends a stable Stripe idempotency key after claiming its lease', async () => {
   const refund = executableRefundFixture();
   let stripeRequest = null;
@@ -748,5 +782,193 @@ test('successful full refund finalization updates projections and posts one reve
   assert.deepEqual(
     { ledger: calls.ledger, booking: calls.booking, outbox: calls.outbox, audit: calls.audit, notification: calls.notification },
     { ledger: 1, booking: 1, outbox: 1, audit: 1, notification: 1 }
+  );
+});
+
+test('payout and transfer-reversal journals remain balanced in minor units', () => {
+  const accountIds = { professionalPayable: 'payable', paymentClearing: 'clearing' };
+  const payout = buildPayoutEntries({ amountMinor: 8_500, currency: 'EUR', accountIds });
+  const reversal = buildTransferReversalEntries({ amountMinor: 5_000, currency: 'EUR', accountIds });
+  assert.equal(assertBalanced(payout), true);
+  assert.equal(assertBalanced(reversal), true);
+  assert.throws(() => buildPayoutEntries({ amountMinor: 0, currency: 'EUR', accountIds }), /positive/);
+});
+
+test('payout approval enforces four-eyes and writes one audited transition', async () => {
+  const requested = {
+    id: 'payout-1',
+    bookingId: 'booking-1',
+    professionalId: 'professional-1',
+    status: 'REQUESTED',
+    requestedBy: 'professional-user-1',
+    booking: { status: 'COMPLETED' },
+    payment: { status: 'COMPLETED' },
+    earning: { status: 'PENDING' },
+    professional: { stripeAccountId: 'acct_1' },
+  };
+  let reads = 0;
+  const calls = { update: 0, outbox: 0, audit: 0 };
+  const tx = {
+    payout: {
+      findUnique: async () => (++reads === 1 ? requested : { ...requested, status: 'APPROVED', approvedBy: 'admin-1' }),
+      updateMany: async () => { calls.update += 1; return { count: 1 }; },
+    },
+    outboxEvent: { create: async () => { calls.outbox += 1; } },
+    auditLog: { create: async () => { calls.audit += 1; } },
+  };
+  const result = await approvePayoutInTx({ tx, payoutId: requested.id, approverId: 'admin-1' });
+  assert.equal(result.payout.status, 'APPROVED');
+  assert.deepEqual(calls, { update: 1, outbox: 1, audit: 1 });
+
+  await assert.rejects(() => approvePayoutInTx({
+    tx: { payout: { findUnique: async () => requested } },
+    payoutId: requested.id,
+    approverId: requested.requestedBy,
+  }), /requester cannot approve/);
+});
+
+const executablePayoutFixture = (overrides = {}) => ({
+  id: 'payout-1',
+  bookingId: 'booking-1',
+  paymentId: 'payment-1',
+  earningId: 'earning-1',
+  professionalId: 'professional-1',
+  idempotencyKey: 'booking:booking-1:professional-payout',
+  status: 'APPROVED',
+  amount: '85.00',
+  reversedAmount: '0.00',
+  currency: 'EUR',
+  connectedAccountId: 'acct_1',
+  requestedBy: 'professional-user-1',
+  approvedBy: 'admin-1',
+  approvedAt: new Date('2026-08-31T12:00:00Z'),
+  booking: { id: 'booking-1', status: 'COMPLETED' },
+  payment: { id: 'payment-1', status: 'COMPLETED', transactionId: 'pi_1', providerChargeId: 'ch_1' },
+  earning: { id: 'earning-1', status: 'PENDING', netAmount: '85.00' },
+  professional: { id: 'professional-1', stripeAccountId: 'acct_1', user: { id: 'professional-user-1' } },
+  ...overrides,
+});
+
+test('payout execution requires distinct requester, approver and executor identities', () => {
+  const payout = executablePayoutFixture();
+  assert.throws(() => assertPayoutExecutable({ payout, executorId: payout.approvedBy }), /approver cannot execute/);
+  assert.doesNotThrow(() => assertPayoutExecutable({ payout, executorId: 'admin-2' }));
+});
+
+test('payout execution verifies Connect capability and sends one stable transfer command', async () => {
+  const payout = executablePayoutFixture();
+  let transferRequest;
+  let accountInclude;
+  let transactionCalls = 0;
+  const client = {
+    payout: {
+      findUnique: async () => payout,
+      updateMany: async () => ({ count: 1 }),
+    },
+    booking: { findUnique: async () => payout.booking },
+    payment: { findUnique: async () => payout.payment },
+    earning: { findUnique: async () => payout.earning },
+    professionalProfile: { findUnique: async () => payout.professional },
+    dispute: { findFirst: async () => null },
+    refund: { count: async () => 0 },
+    $queryRaw: async () => [{ id: payout.id }],
+    $transaction: async (callback) => {
+      transactionCalls += 1;
+      if (transactionCalls === 1) return callback(client);
+      return { payout: { ...payout, status: 'COMPLETED', providerTransferId: 'tr_1' }, duplicate: false };
+    },
+  };
+  const stripeClient = {
+    v2: { core: { accounts: { retrieve: async (_id, params) => {
+      accountInclude = params.include;
+      return { id: 'acct_1', configuration: { recipient: { capabilities: { stripe_balance: { stripe_transfers: { status: 'active' } } } } } };
+    } } } },
+    paymentIntents: { retrieve: async () => ({ id: 'pi_1', status: 'succeeded', latest_charge: 'ch_1', metadata: { bookingId: 'booking-1' } }) },
+    transfers: { create: async (payload, options) => {
+      transferRequest = { payload, options };
+      return { id: 'tr_1', ...payload };
+    } },
+  };
+  const result = await executeApprovedPayout({
+    payoutId: payout.id,
+    executorId: 'admin-2',
+    stripeClient,
+    ledgerEnabled: false,
+    client,
+  });
+  assert.equal(result.payout.status, 'COMPLETED');
+  assert.deepEqual(accountInclude, ['configuration.recipient']);
+  assert.equal(transferRequest.payload.amount, 8_500);
+  assert.equal(transferRequest.payload.source_transaction, 'ch_1');
+  assert.equal(transferRequest.options.idempotencyKey, payout.idempotencyKey);
+});
+
+test('Stripe dispute evidence maps to bounded internal states', () => {
+  assert.equal(mapDisputeStatus('needs_response'), 'OPEN');
+  assert.equal(mapDisputeStatus('under_review'), 'UNDER_REVIEW');
+  assert.equal(mapDisputeStatus('won'), 'WON');
+  assert.equal(mapDisputeStatus('lost'), 'LOST');
+  assert.deepEqual(validateProviderDispute({
+    id: 'dp_1', charge: 'ch_1', payment_intent: 'pi_1', amount: 5_000, currency: 'eur', status: 'needs_response',
+  }), { chargeId: 'ch_1', paymentIntentId: 'pi_1', amountMinor: 5_000, currency: 'EUR' });
+  assert.throws(() => validateProviderDispute({ id: 'dp_1', amount: 0 }), /canonical/);
+});
+
+test('dispute recovery finalization records one balanced immutable transfer reversal', async () => {
+  const payout = executablePayoutFixture({ status: 'COMPLETED', providerTransferId: 'tr_1' });
+  const dispute = {
+    id: 'dispute-1', bookingId: 'booking-1', paymentId: 'payment-1', payoutId: payout.id,
+    providerTransferReversalId: null, recoveredAmount: '0.00', amount: '50.00', currency: 'EUR', payout,
+  };
+  const calls = { ledger: 0, outbox: 0, audit: 0 };
+  const tx = {
+    $queryRaw: async () => [{ id: dispute.id }],
+    dispute: {
+      findUnique: async () => dispute,
+      update: async ({ data }) => ({ ...dispute, ...data }),
+    },
+    payout: { update: async ({ data }) => ({ ...payout, ...data }) },
+    ledgerAccount: { upsert: async ({ create }) => ({ id: `account-${create.code}`, ...create }) },
+    ledgerTransaction: {
+      findUnique: async () => null,
+      create: async ({ data }) => {
+        calls.ledger += 1;
+        const entries = data.entries.createMany.data.map((entry) => ({ ...entry, amountMinor: decimalToMinor(entry.amount) }));
+        assert.equal(assertBalanced(entries), true);
+        return { id: 'ledger-reversal-1', ...data };
+      },
+    },
+    outboxEvent: { create: async () => { calls.outbox += 1; } },
+    auditLog: { create: async () => { calls.audit += 1; } },
+  };
+  const result = await finalizeTransferReversalInTx({
+    tx,
+    disputeId: dispute.id,
+    providerReversal: { id: 'trr_1', amount: 5_000, transfer: 'tr_1', metadata: { disputeId: dispute.id, payoutId: payout.id } },
+    amountMinor: 5_000,
+    ledgerEnabled: true,
+  });
+  assert.equal(result.dispute.providerTransferReversalId, 'trr_1');
+  assert.equal(result.payout.reversedAmount, '50.00');
+  assert.deepEqual(calls, { ledger: 1, outbox: 1, audit: 1 });
+});
+
+test('payout reconciliation detects provider, earning and ledger drift', () => {
+  const payout = executablePayoutFixture({
+    status: 'COMPLETED',
+    providerTransferId: 'tr_1',
+    ledgerTransactions: [{ entries: [
+      { direction: 'DEBIT', amount: '85.00' },
+      { direction: 'CREDIT', amount: '85.00' },
+    ] }],
+  });
+  const transfer = {
+    id: 'tr_1', amount: 8_500, amount_reversed: 0, currency: 'eur', destination: 'acct_1', source_transaction: 'ch_1',
+    metadata: { payoutId: 'payout-1', bookingId: 'booking-1' },
+  };
+  assert.equal(comparePayoutTransfer({ payout, transfer, requireLedger: true }).status, 'MATCHED');
+  assert.deepEqual(
+    comparePayoutTransfer({ payout, transfer: { ...transfer, amount: 8_400 }, requireLedger: true }).details.mismatches,
+    ['amountMinor']
   );
 });

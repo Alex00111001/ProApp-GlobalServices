@@ -24,6 +24,37 @@ const requireProductionSecret = (name, value) => {
 
 requireProductionSecret('JWT_SECRET', process.env.JWT_SECRET);
 
+const stripeApiKey = process.env.STRIPE_API_KEY || process.env.STRIPE_SECRET_KEY;
+if (environment === 'production') {
+  if (!stripeApiKey || !/^(?:sk|rk)_live_[A-Za-z0-9]+$/.test(stripeApiKey)) {
+    throw new Error('STRIPE_API_KEY must be a live secret or restricted key in production.');
+  }
+  if (!/^whsec_[A-Za-z0-9]+$/.test(process.env.STRIPE_WEBHOOK_SECRET_CURRENT || process.env.STRIPE_WEBHOOK_SECRET || '')) {
+    throw new Error('STRIPE_WEBHOOK_SECRET must be configured in production.');
+  }
+}
+
+const financialPayoutRequestsEnabled = parseBoolean(
+  'FINANCIAL_PAYOUT_REQUESTS_ENABLED',
+  process.env.FINANCIAL_PAYOUT_REQUESTS_ENABLED,
+  false
+);
+const financialPayoutExecutionEnabled = parseBoolean(
+  'FINANCIAL_PAYOUT_EXECUTION_ENABLED',
+  process.env.FINANCIAL_PAYOUT_EXECUTION_ENABLED,
+  false
+);
+const financialDisputeRecoveryEnabled = parseBoolean(
+  'FINANCIAL_DISPUTE_RECOVERY_ENABLED',
+  process.env.FINANCIAL_DISPUTE_RECOVERY_ENABLED,
+  false
+);
+const financialReconciliationEnabled = parseBoolean(
+  'FINANCIAL_RECONCILIATION_ENABLED',
+  process.env.FINANCIAL_RECONCILIATION_ENABLED,
+  false
+);
+
 module.exports = Object.freeze({
   environment,
   isProduction: environment === 'production',
@@ -45,4 +76,8 @@ module.exports = Object.freeze({
     process.env.FINANCIAL_REFUND_EXECUTION_ENABLED,
     false
   ),
+  financialPayoutRequestsEnabled,
+  financialPayoutExecutionEnabled,
+  financialDisputeRecoveryEnabled,
+  financialReconciliationEnabled,
 });

@@ -38,6 +38,7 @@ const applySuccessfulPayment = async ({
   tx,
   bookingId,
   providerTransactionId,
+  providerChargeId,
   providerAmountMinor,
   providerCurrency,
   processedAt = new Date(),
@@ -59,10 +60,19 @@ const applySuccessfulPayment = async ({
     throw new Error('Payment event does not match a persisted booking payment');
   }
   assertProviderAmount({ payment: booking.payment, providerAmountMinor, providerCurrency });
+  if (providerChargeId && booking.payment.providerChargeId && booking.payment.providerChargeId !== providerChargeId) {
+    throw new Error('Provider charge does not match the persisted payment');
+  }
+  if (providerChargeId && !booking.payment.providerChargeId) {
+    await tx.payment.updateMany({
+      where: { id: booking.payment.id, providerChargeId: null },
+      data: { providerChargeId },
+    });
+  }
 
   const claimed = await tx.payment.updateMany({
     where: { id: booking.payment.id, status: { not: 'COMPLETED' } },
-    data: { status: 'COMPLETED', processedAt, failedReason: null },
+    data: { status: 'COMPLETED', processedAt, failedReason: null, ...(providerChargeId ? { providerChargeId } : {}) },
   });
   if (claimed.count === 0) {
     const currentBookingRecord = await tx.booking.findUnique({ where: { id: booking.id } });
@@ -87,7 +97,7 @@ const applySuccessfulPayment = async ({
       bookingId: booking.id,
       paymentId: booking.payment.id,
       description: `Payment captured via ${source}`,
-      metadata: { source, providerTransactionId, pricingMode: amounts.pricingMode },
+      metadata: { source, providerTransactionId, providerChargeId, pricingMode: amounts.pricingMode },
       entries: buildCaptureEntries(amounts, accountIds),
     }, tx);
   }
@@ -98,7 +108,7 @@ const applySuccessfulPayment = async ({
       aggregateId: booking.payment.id,
       eventType: 'payment.completed',
       payload: { bookingId: booking.id, paymentId: booking.payment.id, source },
-      metadata: { providerTransactionId },
+      metadata: { providerTransactionId, providerChargeId },
     },
   });
   await tx.auditLog.create({
@@ -109,7 +119,7 @@ const applySuccessfulPayment = async ({
       outcome: 'SUCCESS',
       before: { status: booking.payment.status },
       after: { status: 'COMPLETED' },
-      metadata: { source, providerTransactionId, ledgerDualWrite: ledgerEnabled },
+      metadata: { source, providerTransactionId, providerChargeId, ledgerDualWrite: ledgerEnabled },
     },
   });
   if (booking.professional?.userId) {

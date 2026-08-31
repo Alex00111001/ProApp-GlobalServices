@@ -356,6 +356,13 @@ const claimRefundForExecution = async ({ client, refundId, ledgerEnabled, now = 
   const refund = await loadRefundEvidenceInTx({ tx, refundId });
   if (refund?.status === 'COMPLETED') return { refund, duplicate: true, executable: null };
 
+  const payout = typeof tx.payout?.findUnique === 'function'
+    ? await tx.payout.findUnique({ where: { paymentId: refund.paymentId } })
+    : null;
+  if (payout && payout.status !== 'CANCELLED') {
+    throw errorWithStatus('Refund requires an explicit payout adjustment or recovery before execution', 409);
+  }
+
   const otherProcessing = await tx.refund.findFirst({
     where: { paymentId: refund.paymentId, status: 'PROCESSING', id: { not: refund.id } },
     select: { id: true },

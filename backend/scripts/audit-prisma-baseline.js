@@ -112,6 +112,7 @@ const main = async () => {
     const missingTables = [];
     const extraTables = [...actualTables.keys()].filter((name) => !baseline.tables.has(name)).sort();
     const columnMismatches = [];
+    const extraColumns = [];
     for (const [tableName, expectedColumns] of baseline.tables) {
       const actualColumns = actualTables.get(tableName);
       if (!actualColumns) {
@@ -120,7 +121,7 @@ const main = async () => {
       }
       const names = compareSets(new Set(expectedColumns.keys()), new Set(actualColumns.keys()));
       for (const name of names.missing) columnMismatches.push({ table: tableName, column: name, issue: 'missing' });
-      for (const name of names.extra) columnMismatches.push({ table: tableName, column: name, issue: 'extra' });
+      for (const name of names.extra) extraColumns.push({ table: tableName, column: name });
       for (const [columnName, expected] of expectedColumns) {
         const actual = actualColumns.get(columnName);
         if (!actual) continue;
@@ -165,6 +166,7 @@ const main = async () => {
       blockers,
       allowedAdditionalObjects: {
         tables: extraTables,
+        columns: extraColumns,
         indexes: indexes.extra.filter((name) => !baseline.constraints.has(name)),
         constraints: constraints.extra,
       },
