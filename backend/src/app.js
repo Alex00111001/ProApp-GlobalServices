@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const prisma = require('./config/prisma');
 const env = require('./config/env');
+const prisma = require('./config/prisma');
 const { requestContext } = require('./middleware/request-context');
+const { errorContract } = require('./shared/http/error-contract');
 const helmet = require('helmet');
 const { rateLimit } = require('express-rate-limit');
 const { httpLogger } = require('./modules/observability/logger');
@@ -26,22 +27,28 @@ const paymentController = require('./controllers/payment.controller');
 
 const app = express();
 
-const allowedOrigins = (process.env.CORS_ORIGINS || '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+app.use(requestContext);
+app.use(errorContract);
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || (!env.isProduction && allowedOrigins.length === 0) || allowedOrigins.includes(origin)) {
+    if (!origin || (!env.isProduction && env.corsOrigins.length === 0) || env.corsOrigins.includes(origin)) {
       return callback(null, true);
     }
-    return callback(new Error('Origin not allowed by CORS'));
+    return callback(Object.assign(new Error('Origin not allowed by CORS'), {
+      code: 'CORS_ORIGIN_DENIED',
+      statusCode: 403,
+    }));
   },
 }));
-app.use(requestContext);
 app.use(httpLogger);
 app.use(helmet());
-app.use(rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: 'draft-8', legacyHeaders: false }));
+app.use(rateLimit({
+  windowMs: 60_000,
+  limit: 300,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  handler: (req, res) => res.status(429).json({ error: 'Too many requests', code: 'RATE_LIMITED' }),
+}));
 
 // Stripe requires the original bytes for signature verification.
 app.post(
@@ -85,18 +92,27 @@ app.use((req, res) => {
 
 app.use(async (err, req, res, next) => {
   req.log?.error({ err, correlationId: req.context?.correlationId }, 'Unhandled request error');
-  try {
-    const errorEvent = await reportError(err, req);
-    await ensureIncidentForError(errorEvent);
-  } catch (reportingError) {
-    req.log?.error({ err: reportingError }, 'Error reporting failed');
-  }
   const correlationId = req.context?.correlationId;
+  const explicitStatus = Number(err.statusCode || err.status);
+  const statusCode = Number.isInteger(explicitStatus) && explicitStatus >= 400 && explicitStatus <= 599
+    ? explicitStatus
+    : err.name === 'ValidationError' || err.name === 'ZodError'
+      ? 400
+      : 500;
 
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({
+  if (statusCode >= 500) {
+    try {
+      const errorEvent = await reportError(err, req);
+      await ensureIncidentForError(errorEvent);
+    } catch (reportingError) {
+      req.log?.error({ err: reportingError }, 'Error reporting failed');
+    }
+  }
+
+  if (statusCode < 500) {
+    return res.status(statusCode).json({
       error: err.message,
-      code: 'VALIDATION_ERROR',
+      code: err.code || (statusCode === 400 ? 'VALIDATION_ERROR' : undefined),
       correlationId,
     });
   }

@@ -1,4 +1,14 @@
 const { createHash } = require('node:crypto');
+const { z } = require('zod');
+
+const boundedValues = z.array(z.string().trim().min(1).max(128)).max(100);
+const featureFlagRulesSchema = z.object({
+  environments: boundedValues.optional(),
+  countries: z.array(z.string().regex(/^[A-Z]{2}$/)).max(100).optional(),
+  cities: boundedValues.optional(),
+  cohorts: boundedValues.optional(),
+  percentage: z.number().int().min(0).max(100).optional(),
+}).strict();
 
 const inPercentage = (flagKey, subjectId, percentage) => {
   if (percentage >= 100) return true;
@@ -8,11 +18,14 @@ const inPercentage = (flagKey, subjectId, percentage) => {
 };
 
 const matchesRules = (key, rules = {}, context = {}) => {
-  if (rules.environments?.length && !rules.environments.includes(context.environment)) return false;
-  if (rules.countries?.length && !rules.countries.includes(context.country)) return false;
-  if (rules.cities?.length && !rules.cities.includes(context.city)) return false;
-  if (rules.cohorts?.length && !rules.cohorts.includes(context.cohort)) return false;
-  return inPercentage(key, context.subjectId, rules.percentage ?? 100);
+  const parsed = featureFlagRulesSchema.safeParse(rules || {});
+  if (!parsed.success) return false;
+  const validated = parsed.data;
+  if (validated.environments?.length && !validated.environments.includes(context.environment)) return false;
+  if (validated.countries?.length && !validated.countries.includes(context.country)) return false;
+  if (validated.cities?.length && !validated.cities.includes(context.city)) return false;
+  if (validated.cohorts?.length && !validated.cohorts.includes(context.cohort)) return false;
+  return inPercentage(key, context.subjectId, validated.percentage ?? 100);
 };
 
 const isFeatureEnabled = async (key, context = {}, client) => {
@@ -21,4 +34,4 @@ const isFeatureEnabled = async (key, context = {}, client) => {
   return Boolean(flag && flag.status === 'ENABLED' && matchesRules(key, flag.rules || {}, context));
 };
 
-module.exports = { inPercentage, isFeatureEnabled, matchesRules };
+module.exports = { featureFlagRulesSchema, inPercentage, isFeatureEnabled, matchesRules };
