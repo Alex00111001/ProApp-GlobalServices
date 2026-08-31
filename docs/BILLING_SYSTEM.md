@@ -47,13 +47,28 @@ Migration `202608310002_refund_decisions` adds an immutable `RefundDecision`, pr
 
 Policy selection prefers the policy recorded in `BookingPolicyAcceptance`; otherwise it selects the newest active policy for the booking country, then a global policy. The decision records the exact policy/version, country, context, matched rule and separated service/platform-fee amounts. Percentages use deterministic basis-point arithmetic and cumulative requests cannot exceed the captured customer amount.
 
-This stage does **not** invoke `stripe.refunds.create` and does not move money. Even a policy outcome of `APPROVED` creates a `REQUESTED` record so a privileged approval/execution workflow can enforce four-eyes controls. Before enabling the flag:
+Creating a request does **not** invoke `stripe.refunds.create` or move money. Even a policy outcome of `APPROVED` creates a `REQUESTED` record so the privileged review workflow can enforce four-eyes controls.
 
-Administrative review is exposed under `/api/admin/refunds` and requires `refunds.manage`. List/detail endpoints expose the stored decision and evidence; approve/reject mutations are transactional, conditional and audited. The requester cannot approve the same refund, and zero-value/manual-review decisions cannot be approved without a later explicit resolution workflow. No execution endpoint is mounted.
+Administrative review is exposed under `/api/admin/refunds` and requires `refunds.manage`. List/detail endpoints expose the stored decision and evidence; approve/reject mutations are transactional, conditional and audited. The requester cannot approve the same refund, and zero-value/manual-review decisions cannot be approved without a later explicit resolution workflow.
+
+## Stripe refund execution rollout
+
+`POST /api/admin/refunds/:id/execute` also requires `refunds.manage` and is unavailable unless `FINANCIAL_REFUND_EXECUTION_ENABLED=true`. The flag defaults to `false`. Execution accepts only a previously approved request with requester/approver separation, a captured Stripe payment and separated amounts that remain within the captured total, service amount and customer platform fee.
+
+Each request uses the stable Stripe idempotency key `refund:<refundId>:execute`. A conditional five-minute processing lease prevents concurrent execution of the same request; a retry retrieves a previously stored provider refund instead of creating another. Stripe amount, currency, payment intent and internal refund metadata are checked against the approved evidence before internal finalization.
+
+A succeeded provider refund is finalized in one database transaction: the refund becomes `COMPLETED`, the payment refund projection is updated, the platform-fee state is adjusted when appropriate, and the outbox, audit and customer notification records are created. When `FINANCIAL_LEDGER_DUAL_WRITE_ENABLED=true`, finalization additionally requires the original capture ledger transaction and posts one balanced, idempotent reversal linked to the refund. Posted ledger evidence is never edited or deleted.
+
+Stripe responses that are not yet final return HTTP `202` and retain `PROCESSING`; retry the same endpoint after the five-minute lease to retrieve and reconcile the same provider refund. A provider refund reported as failed/canceled leaves the internal request `FAILED` with its provider identifier and reason. Do not clear that identifier or reuse the record for a different provider operation; investigate and create a separately approved corrective request if another financial attempt is required.
+
+Before enabling either refund flag in a deployed environment:
 
 1. Seed and review country-specific policies and policy acceptances.
 2. Shadow-evaluate cancellations and inspect `MANUAL_REVIEW`/missing-policy events.
 3. Confirm every request amount against the captured payment and legacy projection.
-4. Keep provider execution unavailable until approval, retry leases and Stripe idempotency have integration coverage.
+4. Replay the same approved execution and confirm Stripe receives one operation and internal finalization occurs once.
+5. Validate concurrent requests for one payment against isolated PostgreSQL and prove cumulative total/component limits under contention.
+6. Verify pending, failed and succeeded provider responses, including recovery after the processing lease.
+7. Enable execution only in a controlled test environment while reconciling Stripe, payment projections and ledger debits/credits.
 
-Rollback is application-first: disable `FINANCIAL_REFUND_REQUESTS_ENABLED`. Retain decisions and requests as financial evidence; do not delete or rewrite them.
+Rollback is application-first: disable `FINANCIAL_REFUND_EXECUTION_ENABLED`, then disable `FINANCIAL_REFUND_REQUESTS_ENABLED` if new requests must also stop. Retain provider identifiers, decisions, requests, inbox events and ledger entries as financial evidence; do not delete or rewrite them. Disabling a flag does not cancel an operation already accepted by Stripe, so pending provider refunds must still be reconciled operationally.

@@ -40,4 +40,9 @@ module.exports = Object.freeze({
     process.env.FINANCIAL_REFUND_REQUESTS_ENABLED,
     false
   ),
+  financialRefundExecutionEnabled: parseBoolean(
+    'FINANCIAL_REFUND_EXECUTION_ENABLED',
+    process.env.FINANCIAL_REFUND_EXECUTION_ENABLED,
+    false
+  ),
 });
