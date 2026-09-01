@@ -16,7 +16,10 @@ const { ensureIncidentForError } = require('../../src/modules/observability/inci
 const { transitionIncident } = require('../../src/modules/observability/incident-lifecycle.service');
 const { getReadiness } = require('../../src/modules/observability/health.service');
 
-const runId = `observability-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+// Dot-separated bounded segments survive telemetry redaction while remaining unique
+// between runs. A long opaque token is intentionally redacted and would collapse
+// independent test runs into the same production fingerprint.
+const runId = `observability.${Date.now().toString(36)}.${Math.random().toString(36).slice(2, 10)}`;
 let groupId;
 let incidentId;
 

@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { PrismaPg } = require('@prisma/adapter-pg');
+const env = require('./env');
 const { logger } = require('../modules/observability/logger');
 
 if (!process.env.DATABASE_URL) {
@@ -9,6 +10,10 @@ if (!process.env.DATABASE_URL) {
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({
   adapter,
+  transactionOptions: {
+    maxWait: env.databaseTransactionMaxWaitMs,
+    timeout: env.databaseTransactionTimeoutMs,
+  },
   log: [
     { emit: 'event', level: 'error' },
     { emit: 'event', level: 'warn' },

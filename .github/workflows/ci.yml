@@ -1,0 +1,121 @@
+name: Platform verification
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "feature/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: platform-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Build, unit and contract gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout immutable revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Use Node.js 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
+            admin-web/package-lock.json
+            mobile-client/package-lock.json
+            mobile-professional/package-lock.json
+      - name: Install locked dependencies
+        run: |
+          npm ci
+          npm --prefix backend ci
+          npm --prefix admin-web ci
+          npm --prefix mobile-client ci
+          npm --prefix mobile-professional ci
+      - name: Verify every workspace
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/homeservices_ci
+          JWT_SECRET: ci-only-jwt-secret-with-at-least-32-characters
+          ADMIN_SESSION_PEPPER: ci-only-admin-session-pepper-at-least-32-characters
+        run: npm run verify
+      - name: Reject high or critical dependency advisories
+        run: |
+          npm audit --audit-level=high
+          npm --prefix backend audit --audit-level=high
+          npm --prefix admin-web audit --audit-level=high
+          npm --prefix mobile-client audit --audit-level=high
+          npm --prefix mobile-professional audit --audit-level=high
+
+  postgres:
+    name: PostgreSQL migrations and integration gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: homeservices
+          POSTGRES_PASSWORD: homeservices_ci_password
+          POSTGRES_DB: homeservices_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U homeservices -d homeservices_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://homeservices:homeservices_ci_password@127.0.0.1:5432/homeservices_ci
+      DIRECT_URL: postgresql://homeservices:homeservices_ci_password@127.0.0.1:5432/homeservices_ci
+      RUN_DATABASE_INTEGRATION_TESTS: "true"
+      JWT_SECRET: ci-only-jwt-secret-with-at-least-32-characters
+      ADMIN_SESSION_PEPPER: ci-only-admin-session-pepper-at-least-32-characters
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout immutable revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Use Node.js 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install locked backend dependencies
+        run: npm ci
+      - name: Apply reviewed migration history
+        run: npx prisma migrate deploy
+      - name: Synchronize RBAC catalog
+        run: npm run seed:rbac
+      - name: Verify migration status and baseline compatibility
+        run: |
+          npx prisma migrate status
+          npm run db:audit-baseline
+      - name: Run PostgreSQL integration and concurrency suite
+        run: npm run test:integration
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - name: Scan committed history
+        uses: gitleaks/gitleaks-action@dcedce43c6f43de0b836d1fe38946645c9c638dc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -34,7 +34,8 @@
     "node": ">=22.13.0"
   },
   "overrides": {
-    "deepmerge-ts": "8.0.2"
+    "deepmerge-ts": "8.0.2",
+    "mysql2": "3.24.2"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.1",
