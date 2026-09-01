@@ -4,6 +4,8 @@ const { CLIENT_PLATFORM_FEE_PERCENTAGE, PROFESSIONAL_COMMISSION_PERCENTAGE, PAYM
 const { createBookingSchema } = require('../validators/auth.validators');
 const { calculateQuote, decimalToMinor } = require('../modules/billing/pricing/pricing.service');
 const env = require('../config/env');
+const { telemetryMetadata } = require('../modules/observability/context');
+const { logError } = require('../modules/observability/safe-log');
 const { createPayoutRequestForCompletedBookingInTx } = require('../modules/billing/payouts/payout-request.service');
 const { createCancellationRefundRequestInTx } = require('../modules/billing/refunds/refund-request.service');
 
@@ -158,7 +160,7 @@ exports.createBooking = async (req, res) => {
       booking,
     });
   } catch (error) {
-    console.error('Create booking error:', error);
+    logError(req, error, 'Booking creation failed');
     if (error.name === 'ZodError') {
       return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
@@ -190,7 +192,7 @@ exports.getBookingById = async (req, res) => {
 
     res.json({ booking });
   } catch (error) {
-    console.error('Get booking by id error:', error);
+    logError(req, error, 'Booking lookup failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -239,7 +241,7 @@ exports.getClientBookings = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get client bookings error:', error);
+    logError(req, error, 'Client booking query failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -288,7 +290,7 @@ exports.getProfessionalBookings = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get professional bookings error:', error);
+    logError(req, error, 'Professional booking query failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -341,7 +343,7 @@ exports.confirmBooking = async (req, res) => {
       booking: updated,
     });
   } catch (error) {
-    console.error('Confirm booking error:', error);
+    logError(req, error, 'Booking confirmation failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -421,6 +423,7 @@ exports.cancelBooking = async (req, res) => {
           whoCancelled: cancelledBy,
           reason: cancellationReason,
           cancelledAt,
+          requestContext: req.context,
         })
         : null;
       await tx.outboxEvent.create({
@@ -429,7 +432,7 @@ exports.cancelBooking = async (req, res) => {
           aggregateId: id,
           eventType: 'booking.cancelled',
           payload: { bookingId: id, cancelledBy },
-          metadata: { refundRequestsEnabled: env.financialRefundRequestsEnabled },
+          metadata: telemetryMetadata(req.context, { refundRequestsEnabled: env.financialRefundRequestsEnabled }),
         },
       });
       await tx.auditLog.create({
@@ -457,7 +460,7 @@ exports.cancelBooking = async (req, res) => {
       duplicate: result.duplicate,
     });
   } catch (error) {
-    console.error('Cancel booking error:', error);
+    logError(req, error, 'Booking cancellation failed');
     res.status(error.status || 500).json({ error: error.status ? error.message : 'Internal server error' });
   }
 };
@@ -555,7 +558,7 @@ exports.completeBooking = async (req, res) => {
           aggregateId: id,
           eventType: 'booking.completed',
           payload: { bookingId: id, professionalId: booking.professionalId },
-          metadata: { payoutRequestsEnabled: env.financialPayoutRequestsEnabled },
+          metadata: telemetryMetadata(req.context, { payoutRequestsEnabled: env.financialPayoutRequestsEnabled }),
         },
       });
       await tx.auditLog.create({
@@ -582,7 +585,7 @@ exports.completeBooking = async (req, res) => {
       duplicate: result.duplicate,
     });
   } catch (error) {
-    console.error('Complete booking error:', error);
+    logError(req, error, 'Booking completion failed');
     res.status(error.status || 500).json({ error: error.status ? error.message : 'Internal server error' });
   }
 };

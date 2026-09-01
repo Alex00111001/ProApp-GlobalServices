@@ -19,6 +19,52 @@ const parsePort = (value) => {
   return port;
 };
 
+const parseInteger = (name, value, fallback, minimum, maximum) => {
+  const parsed = Number(value ?? fallback);
+  if (!Number.isInteger(parsed) || parsed < minimum || parsed > maximum) {
+    throw new Error(`${name} must be an integer between ${minimum} and ${maximum}.`);
+  }
+  return parsed;
+};
+
+const parseRatio = (name, value, fallback) => {
+  const parsed = Number(value ?? fallback);
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 1) {
+    throw new Error(`${name} must be a number between 0 and 1.`);
+  }
+  return parsed;
+};
+
+const parseChoice = (name, value, fallback, allowed) => {
+  const parsed = value || fallback;
+  if (!allowed.includes(parsed)) throw new Error(`${name} must be one of: ${allowed.join(', ')}.`);
+  return parsed;
+};
+
+const parseIdentifier = (name, value, fallback) => {
+  const parsed = value || fallback;
+  if (!/^[A-Za-z0-9._:-]{1,80}$/.test(parsed)) {
+    throw new Error(`${name} must be a bounded operational identifier.`);
+  }
+  return parsed;
+};
+
+const parseHttpUrl = (name, value, required = false) => {
+  if (!value) {
+    if (required) throw new Error(`${name} must be configured.`);
+    return undefined;
+  }
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error(`${name} must be a valid HTTP(S) URL.`);
+  }
+  if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error(`${name} must be a valid HTTP(S) URL.`);
+  if (parsed.username || parsed.password) throw new Error(`${name} must not contain embedded credentials.`);
+  return parsed.toString().replace(/\/$/, '');
+};
+
 const parseCorsOrigins = (value) => {
   const origins = String(value || '')
     .split(',')
@@ -58,6 +104,28 @@ const validateEnvironment = (source = process.env) => {
   const jwtSecret = source.JWT_SECRET || 'your-secret-key-change-in-production';
   const stripeApiKey = source.STRIPE_API_KEY || source.STRIPE_SECRET_KEY;
   const stripeWebhookSecret = source.STRIPE_WEBHOOK_SECRET_CURRENT || source.STRIPE_WEBHOOK_SECRET;
+  const otelEnabled = parseBoolean('OTEL_ENABLED', source.OTEL_ENABLED, false);
+  const logTransport = parseChoice('LOG_TRANSPORT', source.LOG_TRANSPORT, 'stdout', ['stdout', 'file']);
+  const logLevel = parseChoice('LOG_LEVEL', source.LOG_LEVEL, environment === 'production' ? 'info' : 'debug', [
+    'trace', 'debug', 'info', 'warn', 'error', 'fatal',
+  ]);
+  const otelExporterEndpoint = parseHttpUrl(
+    'OTEL_EXPORTER_OTLP_ENDPOINT',
+    source.OTEL_EXPORTER_OTLP_ENDPOINT,
+    otelEnabled
+  );
+  const alertWebhookHighUrl = parseHttpUrl(
+    'OBSERVABILITY_ALERT_WEBHOOK_HIGH_URL',
+    source.OBSERVABILITY_ALERT_WEBHOOK_HIGH_URL,
+    false
+  );
+  const alertWebhookCriticalUrl = parseHttpUrl(
+    'OBSERVABILITY_ALERT_WEBHOOK_CRITICAL_URL',
+    source.OBSERVABILITY_ALERT_WEBHOOK_CRITICAL_URL,
+    false
+  );
+  const alertRouteHigh = parseIdentifier('OBSERVABILITY_ALERT_ROUTE_HIGH', source.OBSERVABILITY_ALERT_ROUTE_HIGH, 'operations-on-call');
+  const alertRouteCritical = parseIdentifier('OBSERVABILITY_ALERT_ROUTE_CRITICAL', source.OBSERVABILITY_ALERT_ROUTE_CRITICAL, 'operations-critical');
 
   requireProductionSecret(environment, 'JWT_SECRET', jwtSecret);
 
@@ -74,6 +142,20 @@ const validateEnvironment = (source = process.env) => {
     if (!/^whsec_[A-Za-z0-9]+$/.test(stripeWebhookSecret || '')) {
       throw new Error('STRIPE_WEBHOOK_SECRET must be configured in production.');
     }
+    if (!otelEnabled) throw new Error('OTEL_ENABLED must be true in production.');
+    if (!otelExporterEndpoint) throw new Error('OTEL_EXPORTER_OTLP_ENDPOINT must be configured.');
+    if (!otelExporterEndpoint.startsWith('https://')) throw new Error('OTEL_EXPORTER_OTLP_ENDPOINT must use HTTPS in production.');
+    if (!alertWebhookHighUrl || !alertWebhookCriticalUrl) {
+      throw new Error('Observability alert webhooks must be configured in production.');
+    }
+    if (alertRouteHigh === alertRouteCritical) throw new Error('High and critical alert routes must be distinct in production.');
+    if (!alertWebhookHighUrl.startsWith('https://') || !alertWebhookCriticalUrl.startsWith('https://')) {
+      throw new Error('Observability alert webhooks must use HTTPS in production.');
+    }
+    requireProductionSecret(environment, 'OBSERVABILITY_ALERT_SIGNING_SECRET', source.OBSERVABILITY_ALERT_SIGNING_SECRET);
+  }
+  if (logTransport === 'file' && !source.LOG_FILE_PATH) {
+    throw new Error('LOG_FILE_PATH must be configured when LOG_TRANSPORT=file.');
   }
 
   return {
@@ -83,6 +165,24 @@ const validateEnvironment = (source = process.env) => {
     corsOrigins,
     jwtSecret,
     jwtExpiresIn: source.JWT_EXPIRES_IN || '7d',
+    logLevel,
+    logTransport,
+    logFilePath: source.LOG_FILE_PATH,
+    otelEnabled,
+    otelExporterEndpoint,
+    otelTraceSampleRatio: parseRatio('OTEL_TRACE_SAMPLE_RATIO', source.OTEL_TRACE_SAMPLE_RATIO, environment === 'production' ? 0.1 : 1),
+    observabilityErrorWindowMinutes: parseInteger('OBSERVABILITY_ERROR_WINDOW_MINUTES', source.OBSERVABILITY_ERROR_WINDOW_MINUTES, 5, 1, 60),
+    observabilityIncidentThreshold: parseInteger('OBSERVABILITY_INCIDENT_THRESHOLD', source.OBSERVABILITY_INCIDENT_THRESHOLD, 20, 1, 10_000),
+    observabilityAlertMinSeverity: parseChoice('OBSERVABILITY_ALERT_MIN_SEVERITY', source.OBSERVABILITY_ALERT_MIN_SEVERITY, 'HIGH', ['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
+    observabilityAlertRouteHigh: alertRouteHigh,
+    observabilityAlertRouteCritical: alertRouteCritical,
+    observabilityAlertWebhookHighUrl: alertWebhookHighUrl,
+    observabilityAlertWebhookCriticalUrl: alertWebhookCriticalUrl,
+    observabilityAlertSigningSecret: source.OBSERVABILITY_ALERT_SIGNING_SECRET,
+    observabilityHealthTimeoutMs: parseInteger('OBSERVABILITY_HEALTH_TIMEOUT_MS', source.OBSERVABILITY_HEALTH_TIMEOUT_MS, 2_000, 100, 30_000),
+    observabilityRetentionDays: parseInteger('OBSERVABILITY_RETENTION_DAYS', source.OBSERVABILITY_RETENTION_DAYS, 30, 1, 365),
+    observabilityAuditRetentionDays: parseInteger('OBSERVABILITY_AUDIT_RETENTION_DAYS', source.OBSERVABILITY_AUDIT_RETENTION_DAYS, 365, 30, 2_555),
+    observabilityWorkerPollMs: parseInteger('OBSERVABILITY_WORKER_POLL_MS', source.OBSERVABILITY_WORKER_POLL_MS, 1_000, 100, 60_000),
     financialLedgerDualWriteEnabled: parseBoolean('FINANCIAL_LEDGER_DUAL_WRITE_ENABLED', source.FINANCIAL_LEDGER_DUAL_WRITE_ENABLED, false),
     financialRefundRequestsEnabled: parseBoolean('FINANCIAL_REFUND_REQUESTS_ENABLED', source.FINANCIAL_REFUND_REQUESTS_ENABLED, false),
     financialRefundExecutionEnabled: parseBoolean('FINANCIAL_REFUND_EXECUTION_ENABLED', source.FINANCIAL_REFUND_EXECUTION_ENABLED, false),
@@ -96,7 +196,12 @@ const validateEnvironment = (source = process.env) => {
 module.exports = Object.freeze({
   ...validateEnvironment(process.env),
   parseBoolean,
+  parseChoice,
   parseCorsOrigins,
+  parseHttpUrl,
+  parseInteger,
+  parseIdentifier,
   parsePort,
+  parseRatio,
   validateEnvironment,
 });

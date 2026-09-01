@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { logError } = require('../modules/observability/safe-log');
 
 // Obtener dashboard con KPIs generales (solo admin)
 exports.getDashboard = async (req, res) => {
@@ -88,7 +89,7 @@ exports.getDashboard = async (req, res) => {
       recentBookings,
     });
   } catch (error) {
-    console.error('Get dashboard error:', error);
+    logError(req, error, 'Admin dashboard query failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -128,7 +129,7 @@ exports.getPendingDocuments = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get pending documents error:', error);
+    logError(req, error, 'Pending document query failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -178,7 +179,7 @@ exports.approveDocument = async (req, res) => {
       document,
     });
   } catch (error) {
-    console.error('Approve document error:', error);
+    logError(req, error, 'Document approval failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -230,7 +231,7 @@ exports.rejectDocument = async (req, res) => {
       document,
     });
   } catch (error) {
-    console.error('Reject document error:', error);
+    logError(req, error, 'Document rejection failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -263,7 +264,7 @@ exports.getAuditLogs = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get audit logs error:', error);
+    logError(req, error, 'Audit log query failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };

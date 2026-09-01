@@ -1,4 +1,5 @@
 const errorWithStatus = (message, status) => Object.assign(new Error(message), { status });
+const { telemetryMetadata } = require('../../observability/context');
 
 const approvePayoutInTx = async ({ tx, payoutId, approverId, requestContext = {} }) => {
   const payout = await tx.payout.findUnique({
@@ -43,7 +44,7 @@ const approvePayoutInTx = async ({ tx, payoutId, approverId, requestContext = {}
       aggregateId: payout.id,
       eventType: 'payout.approved',
       payload: { payoutId: payout.id, bookingId: payout.bookingId, professionalId: payout.professionalId },
-      metadata: { connectedAccountId: payout.professional.stripeAccountId },
+      metadata: telemetryMetadata(requestContext, { connectedAccountId: payout.professional.stripeAccountId }),
     },
   });
   await tx.auditLog.create({

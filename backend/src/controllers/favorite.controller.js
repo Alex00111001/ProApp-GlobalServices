@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { logError } = require('../modules/observability/safe-log');
 
 const professionalInclude = {
   user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
@@ -34,7 +35,7 @@ exports.getFavorites = async (req, res) => {
       pagination: { page, limit, total, pages: Math.ceil(total / limit) },
     });
   } catch (error) {
-    console.error('Get favorites error:', error);
+    logError(req, error, 'Favorite list query failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -57,7 +58,7 @@ exports.addFavorite = async (req, res) => {
     });
     return res.status(201).json({ favorite: professional, isFavorite: true });
   } catch (error) {
-    console.error('Add favorite error:', error);
+    logError(req, error, 'Favorite creation failed');
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -71,7 +72,7 @@ exports.removeFavorite = async (req, res) => {
     });
     return res.json({ isFavorite: false });
   } catch (error) {
-    console.error('Remove favorite error:', error);
+    logError(req, error, 'Favorite deletion failed');
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -90,7 +91,7 @@ exports.checkFavorite = async (req, res) => {
     });
     return res.json({ isFavorite: Boolean(favorite) });
   } catch (error) {
-    console.error('Check favorite error:', error);
+    logError(req, error, 'Favorite status query failed');
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -112,7 +113,7 @@ exports.toggleFavorite = async (req, res) => {
     await prisma.favoriteProfessional.create({ data: { clientId: client.id, professionalId } });
     return res.status(201).json({ isFavorite: true });
   } catch (error) {
-    console.error('Toggle favorite error:', error);
+    logError(req, error, 'Favorite toggle failed');
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

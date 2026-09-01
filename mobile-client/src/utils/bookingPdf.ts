@@ -1,5 +1,5 @@
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { PAYMENT_CURRENCY } from '@/constants/config';
@@ -20,9 +20,7 @@ const getLogoDataUri = async () => {
   const logo = Asset.fromModule(require('../../assets/icon.png'));
   await logo.downloadAsync();
   if (!logo.localUri) return '';
-  const base64 = await FileSystem.readAsStringAsync(logo.localUri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
+  const base64 = await new File(logo.localUri).base64();
   return `data:image/png;base64,${base64}`;
 };
 
@@ -102,12 +100,12 @@ export const shareBookingPdf = async (booking: any, t: Translator, language = 'e
   const html = await buildBookingReceiptHtml(booking, t, language);
   const { uri } = await Print.printToFileAsync({ html });
   const shortReference = String(booking.id).split('-')[0] || 'reserva';
-  const shareUri = `${FileSystem.cacheDirectory}comprobante-reserva-${shortReference}.pdf`;
-  const existing = await FileSystem.getInfoAsync(shareUri);
-  if (existing.exists) await FileSystem.deleteAsync(shareUri, { idempotent: true });
-  await FileSystem.moveAsync({ from: uri, to: shareUri });
+  const sourceFile = new File(uri);
+  const shareFile = new File(Paths.cache, `comprobante-reserva-${shortReference}.pdf`);
+  if (shareFile.exists) shareFile.delete();
+  await sourceFile.move(shareFile, { overwrite: true });
   if (!await Sharing.isAvailableAsync()) throw new Error('Sharing is not available');
-  await Sharing.shareAsync(shareUri, {
+  await Sharing.shareAsync(shareFile.uri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
     dialogTitle: t('booking.shareTitle'),

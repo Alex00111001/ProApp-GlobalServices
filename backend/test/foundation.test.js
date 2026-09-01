@@ -96,6 +96,11 @@ test('production configuration fails closed and accepts an explicit complete con
     JWT_SECRET: 'a-secure-production-secret-with-32-characters',
     STRIPE_API_KEY: `rk_live_${'a'.repeat(32)}`,
     STRIPE_WEBHOOK_SECRET: `whsec_${'b'.repeat(32)}`,
+    OTEL_ENABLED: 'true',
+    OTEL_EXPORTER_OTLP_ENDPOINT: 'https://otel.example.com',
+    OBSERVABILITY_ALERT_WEBHOOK_HIGH_URL: 'https://alerts.example.com/high',
+    OBSERVABILITY_ALERT_WEBHOOK_CRITICAL_URL: 'https://alerts.example.com/critical',
+    OBSERVABILITY_ALERT_SIGNING_SECRET: 'observability-alert-signing-secret-123456',
   };
   assert.equal(validateEnvironment(valid).corsOrigins.length, 2);
   assert.throws(() => validateEnvironment({ ...valid, CORS_ORIGINS: '*' }), /explicit HTTP/);
@@ -156,7 +161,8 @@ test('error fingerprints group variable identifiers and numbers', () => {
 });
 
 test('incident recommendation requires threshold inside the time window', () => {
-  assert.equal(shouldRecommendIncident({ occurrenceCount: 20, firstSeenAt: new Date() }), true);
-  assert.equal(shouldRecommendIncident({ occurrenceCount: 19, firstSeenAt: new Date() }), false);
-  assert.equal(shouldRecommendIncident({ occurrenceCount: 100, firstSeenAt: new Date(Date.now() - 600_000) }), false);
+  assert.equal(shouldRecommendIncident({ severity: 'ERROR', occurrenceCount: 20, firstSeenAt: new Date() }), true);
+  assert.equal(shouldRecommendIncident({ severity: 'ERROR', occurrenceCount: 19, firstSeenAt: new Date() }), false);
+  assert.equal(shouldRecommendIncident({ severity: 'ERROR', occurrenceCount: 100, firstSeenAt: new Date(Date.now() - 600_000) }), false);
+  assert.equal(shouldRecommendIncident({ severity: 'INFO', occurrenceCount: 10_000, firstSeenAt: new Date() }), false);
 });

@@ -1,6 +1,7 @@
 const { normalizeCaptureAmounts } = require('../ledger/payment-capture-journal');
 const { decimalToMinor } = require('../pricing/pricing.service');
 const { evaluateRefund } = require('./refund-policy.service');
+const { telemetryMetadata } = require('../../observability/context');
 
 const minorToDecimal = (amountMinor) => (amountMinor / 100).toFixed(2);
 
@@ -37,6 +38,7 @@ const createCancellationRefundRequestInTx = async ({
   whoCancelled,
   reason,
   cancelledAt,
+  requestContext = {},
 }) => {
   if (!booking.payment || booking.payment.status !== 'COMPLETED') {
     return { outcome: 'NOT_CAPTURED', refund: null, duplicate: false };
@@ -60,6 +62,7 @@ const createCancellationRefundRequestInTx = async ({
         aggregateId: booking.id,
         eventType: 'refund.policy_missing',
         payload: { bookingId: booking.id, paymentId: booking.payment.id, country },
+        metadata: telemetryMetadata(requestContext),
       },
     });
     return { outcome: 'NO_POLICY', refund: null, duplicate: false };
@@ -137,7 +140,7 @@ const createCancellationRefundRequestInTx = async ({
       aggregateId: refund.id,
       eventType: status === 'REJECTED' ? 'refund.rejected' : 'refund.requested',
       payload: { bookingId: booking.id, paymentId: booking.payment.id, refundId: refund.id },
-      metadata: { policyId: policy.id, policyVersion: policy.version, matchedRule: decision.matchedRule },
+      metadata: telemetryMetadata(requestContext, { policyId: policy.id, policyVersion: policy.version, matchedRule: decision.matchedRule }),
     },
   });
   await tx.auditLog.create({
@@ -149,6 +152,9 @@ const createCancellationRefundRequestInTx = async ({
       outcome: 'SUCCESS',
       after: { status, totalAmount: minorToDecimal(decision.totalRefundMinor), currency: capture.currency },
       metadata: { policyId: policy.id, policyVersion: policy.version, decisionOutcome: decision.outcome },
+      requestId: requestContext.requestId,
+      correlationId: requestContext.correlationId,
+      traceId: requestContext.traceId,
     },
   });
   return { outcome: decision.outcome, refund, duplicate: false };

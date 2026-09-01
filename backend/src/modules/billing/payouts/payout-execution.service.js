@@ -4,6 +4,7 @@ const { decimalToMinor } = require('../pricing/pricing.service');
 const { postTransactionInTx } = require('../ledger/ledger.service');
 const { ensureAccounts } = require('../payments/payment-capture.service');
 const { buildPayoutEntries } = require('./payout-journal');
+const { telemetryMetadata } = require('../../observability/context');
 
 const PROCESSING_LEASE_MS = 5 * 60 * 1000;
 const errorWithStatus = (message, status) => Object.assign(new Error(message), { status });
@@ -185,7 +186,7 @@ const finalizePayoutInTx = async ({
       aggregateId: payout.id,
       eventType: 'payout.completed',
       payload: { payoutId: payout.id, bookingId: payout.bookingId, professionalId: payout.professionalId },
-      metadata: { providerTransferId: providerTransfer.id, providerChargeId, ledgerDualWrite: ledgerEnabled },
+      metadata: telemetryMetadata(requestContext, { providerTransferId: providerTransfer.id, providerChargeId, ledgerDualWrite: ledgerEnabled }),
     },
   });
   await tx.auditLog.create({

@@ -1,4 +1,5 @@
-const prisma = require('../lib/prisma');
+const prisma = require('../config/prisma');
+const { logError } = require('../modules/observability/safe-log');
 
 /**
  * Obtener notificaciones del usuario
@@ -53,7 +54,7 @@ exports.getNotifications = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error obteniendo notificaciones:', error);
+    logError(req, error, 'Notification query failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error obteniendo notificaciones',
@@ -100,7 +101,7 @@ exports.markAsRead = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error marcando notificación como leída:', error);
+    logError(req, error, 'Notification update failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error actualizando notificación',
@@ -130,7 +131,7 @@ exports.markAllAsRead = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error marcando todas las notificaciones como leídas:', error);
+    logError(req, error, 'Bulk notification update failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error actualizando notificaciones',
@@ -175,7 +176,7 @@ exports.deleteNotification = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error eliminando notificación:', error);
+    logError(req, error, 'Notification deletion failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error eliminando notificación',
@@ -211,7 +212,7 @@ exports.createNotification = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error creando notificación:', error);
+    logError(req, error, 'Notification creation failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error creando notificación',

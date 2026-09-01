@@ -602,63 +602,99 @@ model MarketingEvent {
   @@index([utmCampaign, occurredAt])
 }
 
-model ErrorEvent {
-  id              String               @id @default(uuid())
-  fingerprint     String               @unique
-  severity        ErrorSeverity        @default(ERROR)
-  environment     String
-  service         String
-  module          String?
-  operation       String?
-  errorCode       String?
-  message         String
-  stackTrace      String?
-  httpStatus      Int?
-  endpoint        String?
-  method          String?
-  userId          String?
-  professionalId  String?
-  bookingId       String?
-  requestId       String?
-  correlationId   String?
-  traceId         String?
-  appVersion      String?
-  device          Json?
-  metadata        Json?
-  firstSeenAt     DateTime             @default(now())
-  lastSeenAt      DateTime             @default(now())
-  occurrenceCount Int                  @default(1)
-  status          ErrorStatus          @default(OPEN)
-  user            User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
-  professional    ProfessionalProfile? @relation(fields: [professionalId], references: [id], onDelete: SetNull)
-  booking         Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
-  incidentEvents  IncidentEvent[]
+model ErrorGroup {
+  id                    String        @id @default(uuid())
+  fingerprint           String        @unique
+  severity              ErrorSeverity @default(ERROR)
+  environment           String
+  service               String
+  module                String?
+  operation             String?
+  errorCode             String?
+  normalizedMessage     String
+  status                ErrorStatus   @default(OPEN)
+  firstSeenAt           DateTime      @default(now())
+  lastSeenAt            DateTime      @default(now())
+  occurrenceCount       Int           @default(1)
+  windowStartedAt       DateTime      @default(now())
+  windowOccurrenceCount Int           @default(1)
+  events                ErrorEvent[]
+  incidents             Incident[]
 
   @@index([severity, status, lastSeenAt])
   @@index([service, lastSeenAt])
+  @@index([severity, status, windowStartedAt])
+}
+
+model ErrorEvent {
+  id                    String               @id @default(uuid())
+  errorGroupId          String
+  fingerprint           String
+  severity              ErrorSeverity        @default(ERROR)
+  environment           String
+  service               String
+  module                String?
+  operation             String?
+  errorCode             String?
+  message               String
+  stackTrace            String?
+  httpStatus            Int?
+  endpoint              String?
+  method                String?
+  userId                String?
+  professionalId        String?
+  bookingId             String?
+  requestId             String?
+  correlationId         String?
+  traceId               String?
+  appVersion            String?
+  device                Json?
+  metadata              Json?
+  occurredAt            DateTime             @default(now())
+  legacyFirstSeenAt     DateTime             @default(now()) @map("firstSeenAt")
+  legacyLastSeenAt      DateTime             @default(now()) @map("lastSeenAt")
+  legacyOccurrenceCount Int                  @default(1) @map("occurrenceCount")
+  legacyStatus          ErrorStatus          @default(OPEN) @map("status")
+  errorGroup            ErrorGroup           @relation(fields: [errorGroupId], references: [id], onDelete: Restrict)
+  user                  User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  professional          ProfessionalProfile? @relation(fields: [professionalId], references: [id], onDelete: SetNull)
+  booking               Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  incidentEvents        IncidentEvent[]
+
+  @@index([errorGroupId, occurredAt])
+  @@index([fingerprint, occurredAt])
+  @@index([severity, occurredAt])
+  @@index([service, occurredAt])
+  @@index([severity, legacyStatus, legacyLastSeenAt], map: "ErrorEvent_severity_status_lastSeenAt_idx")
+  @@index([service, legacyLastSeenAt], map: "ErrorEvent_service_lastSeenAt_idx")
   @@index([correlationId])
-  @@index([bookingId, lastSeenAt])
+  @@index([bookingId, occurredAt])
+  @@index([bookingId, legacyLastSeenAt], map: "ErrorEvent_bookingId_lastSeenAt_idx")
 }
 
 model Incident {
-  id             String            @id @default(uuid())
-  title          String
-  description    String?
-  status         IncidentStatus    @default(OPEN)
-  severity       IncidentSeverity  @default(MEDIUM)
-  service        String?
-  assigneeId     String?
-  detectedAt     DateTime          @default(now())
-  acknowledgedAt DateTime?
-  resolvedAt     DateTime?
-  closedAt       DateTime?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  events         IncidentEvent[]
-  comments       IncidentComment[]
+  id               String            @id @default(uuid())
+  errorGroupId     String?
+  deduplicationKey String?           @unique
+  title            String
+  description      String?
+  status           IncidentStatus    @default(OPEN)
+  severity         IncidentSeverity  @default(MEDIUM)
+  service          String?
+  assigneeId       String?
+  detectedAt       DateTime          @default(now())
+  acknowledgedAt   DateTime?
+  resolvedAt       DateTime?
+  closedAt         DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  errorGroup       ErrorGroup?       @relation(fields: [errorGroupId], references: [id], onDelete: SetNull)
+  events           IncidentEvent[]
+  comments         IncidentComment[]
 
   @@index([status, severity, detectedAt])
   @@index([service, status])
+  @@index([errorGroupId, detectedAt])
 }
 
 model IncidentEvent {
