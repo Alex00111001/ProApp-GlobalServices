@@ -1,4 +1,15 @@
-const descriptions: Record<string, string> = { marketplace: 'Cities, categories, supply, demand and market readiness.', users: 'Customer accounts, status and lifecycle.', professionals: 'Verification, availability, performance and coverage.', bookings: 'Booking lifecycle, matching and support context.', revenue: 'Transactions, fees, commissions, refunds, payouts and ledger.', marketing: 'Campaigns, attribution, audiences, referrals and automation.', operations: 'Errors, incidents, health, integrations, jobs and alerts.', support: 'Disputes and customer/professional cases.', analytics: 'Marketplace, growth, revenue and operations KPIs.', audit: 'Sensitive administrative activity and traceability.', settings: 'Markets, policies, feature flags, roles and permissions.' }
-export function ModulePage({ module }: { module: string }) {
-  return <div className="page"><div className="page-title"><div><p className="eyebrow">Control Center</p><h1>{module[0].toUpperCase() + module.slice(1)}</h1><p>{descriptions[module]}</p></div></div><article className="panel coming"><span>Module boundary ready</span><h2>API integration in progress</h2><p>Esta sección ya forma parte de la navegación independiente y se conectará a su dominio backend correspondiente.</p></article></div>
+import { useParams } from 'react-router-dom'
+import { PageHeader } from '../components/PagePrimitives'
+
+const modules: Record<string, { title: string; phase: string; description: string }> = {
+  revenue: { title: 'Revenue', phase: 'F5', description: 'Supervisión financiera sobre las APIs F3 ya protegidas.' },
+  operations: { title: 'Operaciones', phase: 'F5', description: 'Errores, incidentes, health, integraciones, jobs y alertas.' },
+  marketing: { title: 'Marketing', phase: 'F6–F9', description: 'Campañas, attribution, audiences, referrals y automatización.' },
+  analytics: { title: 'Analytics', phase: 'F6+', description: 'KPIs de marketplace, growth, revenue y operaciones.' },
+}
+export function ModulePage() {
+  const key = useParams().module || ''
+  const module = modules[key]
+  if (!module) return <div className="page"><article className="panel denied"><h1>Módulo no disponible</h1></article></div>
+  return <div className="page"><PageHeader eyebrow={`Dependencia ${module.phase}`} title={module.title} description={module.description} /><article className="panel phase-boundary"><span>Frontera publicada</span><h2>La activación funcional corresponde a {module.phase}</h2><p>F4 sólo expone esta navegación cuando el administrador posee el permiso correspondiente. No se presentan datos simulados ni acciones provisionales.</p></article></div>
 }

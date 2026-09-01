@@ -128,6 +128,7 @@ const validateEnvironment = (source = process.env) => {
   const alertRouteCritical = parseIdentifier('OBSERVABILITY_ALERT_ROUTE_CRITICAL', source.OBSERVABILITY_ALERT_ROUTE_CRITICAL, 'operations-critical');
 
   requireProductionSecret(environment, 'JWT_SECRET', jwtSecret);
+  requireProductionSecret(environment, 'ADMIN_SESSION_PEPPER', source.ADMIN_SESSION_PEPPER);
 
   if (environment === 'production') {
     if (!/^postgres(?:ql)?:\/\//.test(source.DATABASE_URL || '')) {
@@ -162,6 +163,7 @@ const validateEnvironment = (source = process.env) => {
     environment,
     isProduction: environment === 'production',
     port: parsePort(source.PORT),
+    trustProxyHops: parseInteger('TRUST_PROXY_HOPS', source.TRUST_PROXY_HOPS, 0, 0, 5),
     corsOrigins,
     jwtSecret,
     jwtExpiresIn: source.JWT_EXPIRES_IN || '7d',
@@ -179,6 +181,10 @@ const validateEnvironment = (source = process.env) => {
       1_000,
       60_000
     ),
+    adminAccessTokenMinutes: parseInteger('ADMIN_ACCESS_TOKEN_MINUTES', source.ADMIN_ACCESS_TOKEN_MINUTES, 15, 5, 30),
+    adminSessionHours: parseInteger('ADMIN_SESSION_HOURS', source.ADMIN_SESSION_HOURS, 12, 1, 168),
+    adminSessionPepper: source.ADMIN_SESSION_PEPPER || jwtSecret,
+    adminRoleChangesEnabled: parseBoolean('ADMIN_ROLE_CHANGES_ENABLED', source.ADMIN_ROLE_CHANGES_ENABLED, false),
     logLevel,
     logTransport,
     logFilePath: source.LOG_FILE_PATH,

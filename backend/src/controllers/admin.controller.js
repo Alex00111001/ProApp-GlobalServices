@@ -1,5 +1,6 @@
 const prisma = require('../config/prisma');
 const { logError } = require('../modules/observability/safe-log');
+const { writeAuditLog } = require('../modules/audit/audit.service');
 
 // Obtener dashboard con KPIs generales (solo admin)
 exports.getDashboard = async (req, res) => {
@@ -62,9 +63,16 @@ exports.getDashboard = async (req, res) => {
     const recentBookings = await prisma.booking.findMany({
       take: 10,
       orderBy: { createdAt: 'desc' },
-      include: {
-        client: { include: { user: true } },
-        professional: { include: { user: true } },
+      select: {
+        id: true,
+        status: true,
+        scheduledDate: true,
+        city: true,
+        totalPrice: true,
+        currency: true,
+        createdAt: true,
+        client: { select: { user: { select: { id: true, firstName: true, lastName: true } } } },
+        professional: { select: { user: { select: { id: true, firstName: true, lastName: true } } } },
       },
     });
 
@@ -120,6 +128,13 @@ exports.getPendingDocuments = async (req, res) => {
       where: { status: 'PENDING_REVIEW' },
     });
 
+    await writeAuditLog({
+      req,
+      action: 'ADMIN_DOCUMENT_QUEUE_READ',
+      resourceType: 'DOCUMENT',
+      metadata: { page: parseInt(page), returnedItems: documents.length },
+    });
+
     res.json({
       documents,
       pagination: {
@@ -139,39 +154,23 @@ exports.approveDocument = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const document = await prisma.document.update({
-      where: { id },
-      data: {
-        status: 'APPROVED',
-        reviewedBy: req.user.id,
-        reviewedAt: new Date(),
-      },
-      include: {
-        professional: {
-          include: { user: true },
-        },
-      },
-    });
-
-    // Crear notificación
-    await prisma.notification.create({
-      data: {
-        userId: document.professional.userId,
-        type: 'SYSTEM',
-        title: 'Documento Aprobado',
-        message: `Tu documento ${document.type} ha sido aprobado.`,
-      },
-    });
-
-    // Registrar en audit log
-    await prisma.adminAuditLog.create({
-      data: {
-        adminId: req.user.id,
-        action: 'DOCUMENT_APPROVED',
-        entityType: 'DOCUMENT',
-        entityId: document.id,
-        newValue: { status: 'APPROVED' },
-      },
+    const document = await prisma.$transaction(async (tx) => {
+      const before = await tx.document.findUnique({
+        where: { id },
+        select: { id: true, type: true, status: true, professionalId: true, professional: { select: { userId: true } } },
+      });
+      if (!before) throw Object.assign(new Error('Document was not found.'), { statusCode: 404, code: 'DOCUMENT_NOT_FOUND' });
+      if (before.status !== 'PENDING_REVIEW') throw Object.assign(new Error('Document has already been reviewed.'), { statusCode: 409, code: 'DOCUMENT_ALREADY_REVIEWED' });
+      const updated = await tx.document.update({
+        where: { id },
+        data: { status: 'APPROVED', reviewedBy: req.user.id, reviewedAt: new Date(), rejectionReason: null },
+        select: { id: true, type: true, status: true, professionalId: true, reviewedAt: true },
+      });
+      await tx.notification.create({
+        data: { userId: before.professional.userId, type: 'SYSTEM', title: 'Documento Aprobado', message: `Tu documento ${before.type} ha sido aprobado.` },
+      });
+      await writeAuditLog({ req, action: 'DOCUMENT_APPROVED', resourceType: 'DOCUMENT', resourceId: id, before: { status: before.status }, after: { status: updated.status } }, tx);
+      return updated;
     });
 
     res.json({
@@ -180,7 +179,11 @@ exports.approveDocument = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Document approval failed');
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(error.statusCode || 500).json({
+      error: error.statusCode ? error.message : 'Internal server error',
+      code: error.code,
+      correlationId: req.context?.correlationId,
+    });
   }
 };
 
@@ -190,40 +193,26 @@ exports.rejectDocument = async (req, res) => {
     const { id } = req.params;
     const { reason } = req.body;
 
-    const document = await prisma.document.update({
-      where: { id },
-      data: {
-        status: 'REJECTED',
-        reviewedBy: req.user.id,
-        reviewedAt: new Date(),
-        rejectionReason: reason || 'No cumple con los requisitos',
-      },
-      include: {
-        professional: {
-          include: { user: true },
-        },
-      },
-    });
-
-    // Crear notificación
-    await prisma.notification.create({
-      data: {
-        userId: document.professional.userId,
-        type: 'SYSTEM',
-        title: 'Documento Rechazado',
-        message: `Tu documento ${document.type} ha sido rechazado. Razón: ${reason || 'No cumple con los requisitos'}`,
-      },
-    });
-
-    // Registrar en audit log
-    await prisma.adminAuditLog.create({
-      data: {
-        adminId: req.user.id,
-        action: 'DOCUMENT_REJECTED',
-        entityType: 'DOCUMENT',
-        entityId: document.id,
-        newValue: { status: 'REJECTED', reason },
-      },
+    if (!reason || String(reason).trim().length < 10) {
+      return res.status(400).json({ error: 'A rejection reason of at least 10 characters is required.', code: 'REJECTION_REASON_REQUIRED' });
+    }
+    const document = await prisma.$transaction(async (tx) => {
+      const before = await tx.document.findUnique({
+        where: { id },
+        select: { id: true, type: true, status: true, professionalId: true, professional: { select: { userId: true } } },
+      });
+      if (!before) throw Object.assign(new Error('Document was not found.'), { statusCode: 404, code: 'DOCUMENT_NOT_FOUND' });
+      if (before.status !== 'PENDING_REVIEW') throw Object.assign(new Error('Document has already been reviewed.'), { statusCode: 409, code: 'DOCUMENT_ALREADY_REVIEWED' });
+      const updated = await tx.document.update({
+        where: { id },
+        data: { status: 'REJECTED', reviewedBy: req.user.id, reviewedAt: new Date(), rejectionReason: reason.trim() },
+        select: { id: true, type: true, status: true, professionalId: true, reviewedAt: true, rejectionReason: true },
+      });
+      await tx.notification.create({
+        data: { userId: before.professional.userId, type: 'SYSTEM', title: 'Documento Rechazado', message: `Tu documento ${before.type} ha sido rechazado. Razón: ${reason.trim()}` },
+      });
+      await writeAuditLog({ req, action: 'DOCUMENT_REJECTED', resourceType: 'DOCUMENT', resourceId: id, reason, before: { status: before.status }, after: { status: updated.status } }, tx);
+      return updated;
     });
 
     res.json({
@@ -232,7 +221,11 @@ exports.rejectDocument = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Document rejection failed');
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(error.statusCode || 500).json({
+      error: error.statusCode ? error.message : 'Internal server error',
+      code: error.code,
+      correlationId: req.context?.correlationId,
+    });
   }
 };
 

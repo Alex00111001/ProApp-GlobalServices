@@ -232,6 +232,8 @@ Deliver independent authenticated `admin-web`, RBAC navigation/API enforcement, 
 
 Acceptance: no direct DB access; unauthorized permissions receive 403; sensitive mutations audit actor/context/before/after; dashboard metrics have definitions and freshness markers.
 
+Status: **completed in the Supabase test environment on 2026-09-01**. Architecture, security, migrations, verification and activation/rollback evidence are recorded in [the F4 release record](releases/2026-09-01-f4-admin-foundation.md). Production remains unactivated and role mutations remain disabled by default.
+
 ### Phases 5–10
 
 Build operations control, growth data, consent/attribution, referrals/automation, experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.

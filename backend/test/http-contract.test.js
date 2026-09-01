@@ -73,3 +73,25 @@ test('operational telemetry endpoints remain permission protected', async () => 
   assert.equal(response.status, 401);
   assert.equal(body.correlationId, 'ops-auth-1');
 });
+
+test('versioned admin APIs require the dedicated administrative session contract', async () => {
+  const response = await fetch(`${baseUrl}/api/v1/admin/users`, {
+    headers: { 'x-correlation-id': 'admin-auth-1' },
+  });
+  const body = await response.json();
+  assert.equal(response.status, 401);
+  assert.equal(body.code, 'ADMIN_AUTHENTICATION_REQUIRED');
+  assert.equal(body.correlationId, 'admin-auth-1');
+});
+
+test('admin refresh fails safely without cookie and CSRF verifier', async () => {
+  const response = await fetch(`${baseUrl}/api/v1/admin/auth/refresh`, {
+    method: 'POST',
+    headers: { 'x-correlation-id': 'admin-refresh-1' },
+  });
+  const body = await response.json();
+  assert.equal(response.status, 401);
+  assert.equal(body.code, 'ADMIN_REFRESH_REQUIRED');
+  assert.equal(body.correlationId, 'admin-refresh-1');
+  assert.match(response.headers.get('set-cookie'), /HttpOnly/);
+});

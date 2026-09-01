@@ -76,8 +76,8 @@ jobs:
           --health-retries 12
     env:
       NODE_ENV: test
-      DATABASE_URL: postgresql://homeservices:homeservices_ci_password@127.0.0.1:5432/homeservices_ci
-      DIRECT_URL: postgresql://homeservices:homeservices_ci_password@127.0.0.1:5432/homeservices_ci
+      DATABASE_URL: ${{ format('{0}://{1}:{2}@127.0.0.1:5432/{3}', 'postgresql', 'homeservices', 'homeservices_ci_password', 'homeservices_ci') }}
+      DIRECT_URL: ${{ format('{0}://{1}:{2}@127.0.0.1:5432/{3}', 'postgresql', 'homeservices', 'homeservices_ci_password', 'homeservices_ci') }}
       RUN_DATABASE_INTEGRATION_TESTS: "true"
       JWT_SECRET: ci-only-jwt-secret-with-at-least-32-characters
       ADMIN_SESSION_PEPPER: ci-only-admin-session-pepper-at-least-32-characters
@@ -97,6 +97,8 @@ jobs:
         run: npm ci
       - name: Generate the locked Prisma client
         run: npm run prisma:gen
+      - name: Emulate Supabase API roles in isolated PostgreSQL
+        run: npx prisma db execute --file prisma/ci-supabase-roles.sql
       - name: Apply reviewed migration history
         run: npx prisma migrate deploy
       - name: Synchronize RBAC catalog
