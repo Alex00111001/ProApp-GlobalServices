@@ -1,8 +1,10 @@
 const { roleGrantsPermission } = require('./permission-catalog');
 
-const getPermissionKeys = async (user, client) => {
+const getPermissionKeys = async (user, client, options = {}) => {
+  if (!user) return new Set();
+  const { allowLegacyAdmin = true } = options;
   // Compatibility bridge until every legacy ADMIN has explicit assignments.
-  if (user.role === 'ADMIN') return new Set(['*']);
+  if (allowLegacyAdmin && user.role === 'ADMIN') return new Set(['*']);
 
   const database = client || require('../../config/prisma');
   const assignments = await database.userRoleAssignment.findMany({
@@ -17,9 +19,9 @@ const getPermissionKeys = async (user, client) => {
   return keys;
 };
 
-const hasPermission = async (user, permission, client) => {
+const hasPermission = async (user, permission, client, options) => {
   if (!user) return false;
-  const keys = await getPermissionKeys(user, client);
+  const keys = await getPermissionKeys(user, client, options);
   return keys.has('*') || keys.has(permission);
 };
 

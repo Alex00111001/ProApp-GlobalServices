@@ -94,6 +94,7 @@ test('production configuration fails closed and accepts an explicit complete con
     DATABASE_URL: 'postgresql://user:password@database.example:5432/app',
     CORS_ORIGINS: 'https://app.example.com,https://admin.example.com',
     JWT_SECRET: 'a-secure-production-secret-with-32-characters',
+    ADMIN_SESSION_PEPPER: 'a-separate-admin-session-pepper-with-32-characters',
     STRIPE_API_KEY: `rk_live_${'a'.repeat(32)}`,
     STRIPE_WEBHOOK_SECRET: `whsec_${'b'.repeat(32)}`,
     OTEL_ENABLED: 'true',
@@ -106,11 +107,14 @@ test('production configuration fails closed and accepts an explicit complete con
   assert.equal(parsed.corsOrigins.length, 2);
   assert.equal(parsed.databaseTransactionMaxWaitMs, 10_000);
   assert.equal(parsed.databaseTransactionTimeoutMs, 10_000);
+  assert.equal(parsed.trustProxyHops, 0);
   assert.equal(validateEnvironment({ ...valid, DATABASE_TRANSACTION_MAX_WAIT_MS: '15000' }).databaseTransactionMaxWaitMs, 15_000);
   assert.throws(() => validateEnvironment({ ...valid, DATABASE_TRANSACTION_TIMEOUT_MS: '0' }), /between 1000 and 60000/);
+  assert.throws(() => validateEnvironment({ ...valid, TRUST_PROXY_HOPS: '6' }), /between 0 and 5/);
   assert.throws(() => validateEnvironment({ ...valid, CORS_ORIGINS: '*' }), /explicit HTTP/);
   assert.throws(() => validateEnvironment({ ...valid, DATABASE_URL: '' }), /DATABASE_URL/);
   assert.throws(() => validateEnvironment({ ...valid, JWT_SECRET: 'short' }), /JWT_SECRET/);
+  assert.throws(() => validateEnvironment({ ...valid, ADMIN_SESSION_PEPPER: 'short' }), /ADMIN_SESSION_PEPPER/);
   assert.throws(() => validateEnvironment({ ...valid, FINANCIAL_PAYOUT_EXECUTION_ENABLED: 'yes' }), /either true or false/);
 });
 

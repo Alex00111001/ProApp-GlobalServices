@@ -1,10 +1,15 @@
 const { hasPermission } = require('../modules/identity/authorization.service');
 const { writeAuditLog } = require('../modules/audit/audit.service');
 
-const requirePermission = (permission) => async (req, res, next) => {
+const createRequirePermission = (permission, dependencies = {}) => async (req, res, next) => {
+  const permissionCheck = dependencies.hasPermission || hasPermission;
+  const audit = dependencies.writeAuditLog || writeAuditLog;
   try {
-    if (await hasPermission(req.user, permission)) return next();
-    await writeAuditLog({
+    const preloaded = req.permissions instanceof Set
+      ? req.permissions.has('*') || req.permissions.has(permission)
+      : null;
+    if (preloaded === true || (preloaded === null && await permissionCheck(req.user, permission))) return next();
+    await audit({
       req,
       action: 'AUTHORIZATION_DENIED',
       resourceType: 'PERMISSION',
@@ -21,4 +26,6 @@ const requirePermission = (permission) => async (req, res, next) => {
   }
 };
 
-module.exports = { requirePermission };
+const requirePermission = (permission) => createRequirePermission(permission);
+
+module.exports = { createRequirePermission, requirePermission };

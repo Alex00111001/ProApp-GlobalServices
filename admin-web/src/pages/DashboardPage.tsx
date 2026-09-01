@@ -1,16 +1,30 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
+import { dashboardSchema } from '../lib/contracts'
+import { PageHeader, QueryState, StatusBadge } from '../components/PagePrimitives'
+import { dateTime, moneyValue } from '../lib/format'
 
-type Dashboard = { kpis: Record<string, number>; recentBookings: unknown[] }
-const cards = [['totalUsers', 'Usuarios'], ['totalProfessionals', 'Profesionales'], ['totalBookings', 'Reservas'], ['completedBookings', 'Completados'], ['totalRevenue', 'GMV procesado'], ['pendingProfessionals', 'Verificaciones']]
+const metricOrder = ['activeUsers', 'activeProfessionals', 'requests', 'bookings', 'completedServices', 'gmv', 'grossPlatformRevenue', 'netPlatformRevenue', 'platformFees', 'professionalCommissions', 'refunds', 'takeRate']
 
 export function DashboardPage() {
-  const [data, setData] = useState<Dashboard | null>(null)
-  const [error, setError] = useState('')
-  useEffect(() => { api<Dashboard>('/admin/dashboard').then(setData).catch((reason) => setError(reason.message)) }, [])
-  return <div className="page"><div className="page-title"><div><p className="eyebrow">Vista general</p><h1>Dashboard</h1><p>Indicadores del marketplace y actividad reciente.</p></div><button onClick={() => location.reload()}>Actualizar</button></div>
-    {error && <div className="error">{error}</div>}
-    <section className="metric-grid">{cards.map(([key, label]) => <article className="metric" key={key}><span>{label}</span><strong>{data ? (data.kpis[key] ?? 0).toLocaleString('es-ES') : '—'}</strong><small>Datos del Core API</small></article>)}</section>
-    <section className="panel-grid"><article className="panel wide"><header><div><p className="eyebrow">Marketplace pulse</p><h2>Actividad</h2></div><span className="pill">Live API</span></header><div className="empty-chart"><div className="bars">{[42,65,48,82,62,91,76,88,69,96,84,100].map((height, index) => <i key={index} style={{height: `${height}%`}} />)}</div><p>La serie temporal se activará con las proyecciones analíticas.</p></div></article><article className="panel"><header><div><p className="eyebrow">Operations</p><h2>Estado</h2></div></header><ul className="health-list"><li><i />Core API <b>Monitored</b></li><li><i />Database <b>Health endpoint</b></li><li><em />Payments <b>Integration</b></li><li><em />Workers <b>Pending</b></li></ul></article></section>
+  const query = useQuery({ queryKey: ['admin-dashboard'], queryFn: () => api('/v1/admin/dashboard?currency=EUR&timezone=Europe%2FMadrid', { schema: dashboardSchema }) })
+  const data = query.data
+  return <div className="page">
+    <PageHeader eyebrow="Vista general" title="Dashboard" description="Definiciones, periodo, moneda y frescura acompañan cada indicador." actions={<button onClick={() => void query.refetch()}>Actualizar</button>} />
+    <QueryState loading={query.isLoading} error={query.error} empty={!data}>
+      {data && <>
+        <div className="freshness"><strong>{data.range.currency} · {data.range.timezone}</strong><span>Periodo: {dateTime(data.range.from)} — {dateTime(data.range.to)}</span><span>Generado: {dateTime(data.generatedAt)}</span>{data.freshness.partialData && <b>Datos parciales</b>}</div>
+        <section className="metric-grid">{metricOrder.map((key) => {
+          const definition = data.definitions[key]
+          const value = data.metrics[key] ?? 0
+          const formatted = definition.unit === 'money' ? moneyValue(value, data.range.currency) : definition.unit === 'percentage' ? `${value}%` : Number(value).toLocaleString('es-ES')
+          return <article className="metric" key={key} title={`${definition.description} Fuente: ${definition.source}`}><span>{definition.label}</span><strong>{formatted}</strong><small>{definition.source}</small></article>
+        })}</section>
+        <section className="panel-grid">
+          <article className="panel"><header><div><p className="eyebrow">Distribución</p><h2>Reservas por estado</h2></div></header><ul className="status-summary">{data.bookingsByStatus.map((item) => <li key={item.status}><StatusBadge value={item.status} /><strong>{item.count}</strong></li>)}</ul></article>
+          <article className="panel wide"><header><div><p className="eyebrow">Actividad reciente</p><h2>Últimas reservas</h2></div></header><div className="table-scroll"><table><thead><tr><th>Reserva</th><th>Cliente</th><th>Profesional</th><th>Estado</th><th>Importe</th><th>Creada</th></tr></thead><tbody>{data.recentBookings.map((booking) => <tr key={booking.id}><td><code>{booking.id.slice(0, 8)}</code></td><td>{booking.clientName}</td><td>{booking.professionalName || 'Sin asignar'}</td><td><StatusBadge value={booking.status} /></td><td>{moneyValue(booking.totalPrice, booking.currency)}</td><td>{dateTime(booking.createdAt)}</td></tr>)}</tbody></table></div></article>
+        </section>
+      </>}
+    </QueryState>
   </div>
 }
