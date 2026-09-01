@@ -6,6 +6,7 @@ const prisma = require('../config/prisma');
 const { authenticate, authorize } = require('../middleware/auth');
 const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
+const { logError } = require('../modules/observability/safe-log');
 
 // Subir archivo a Cloudinary
 router.post('/upload', authenticate, upload.single('file'), async (req, res) => {
@@ -25,7 +26,7 @@ router.post('/upload', authenticate, upload.single('file'), async (req, res) => 
       format: result.format,
     });
   } catch (error) {
-    console.error('Upload error:', error);
+    logError(req, error, 'File upload failed');
     res.status(500).json({ error: 'Failed to upload file' });
   }
 });
@@ -50,7 +51,7 @@ router.post('/upload-multiple', authenticate, upload.array('files', 10), async (
       files: results,
     });
   } catch (error) {
-    console.error('Upload multiple error:', error);
+    logError(req, error, 'Multi-file upload failed');
     res.status(500).json({ error: 'Failed to upload files' });
   }
 });
@@ -100,7 +101,7 @@ router.post('/professional/document', authenticate, authorize('PROFESSIONAL'), u
       },
     });
   } catch (error) {
-    console.error('Upload document error:', error);
+    logError(req, error, 'Document upload failed');
     res.status(500).json({ error: 'Failed to upload document' });
   }
 });
@@ -148,7 +149,7 @@ router.post('/professional/portfolio', authenticate, authorize('PROFESSIONAL'), 
       },
     });
   } catch (error) {
-    console.error('Upload portfolio error:', error);
+    logError(req, error, 'Portfolio upload failed');
     res.status(500).json({ error: 'Failed to upload portfolio image' });
   }
 });
@@ -166,7 +167,7 @@ router.delete('/delete/:publicId', authenticate, requirePermission(PERMISSIONS.S
       res.status(400).json({ error: 'Failed to delete file' });
     }
   } catch (error) {
-    console.error('Delete file error:', error);
+    logError(req, error, 'File deletion failed');
     res.status(500).json({ error: 'Failed to delete file' });
   }
 });

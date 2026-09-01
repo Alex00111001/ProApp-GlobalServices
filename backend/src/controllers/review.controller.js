@@ -1,4 +1,5 @@
-const prisma = require('../lib/prisma');
+const prisma = require('../config/prisma');
+const { logError } = require('../modules/observability/safe-log');
 
 /**
  * Obtener reviews de un profesional
@@ -61,7 +62,7 @@ exports.getProfessionalReviews = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error obteniendo reviews:', error);
+    logError(req, error, 'Review query failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error obteniendo reviews',
@@ -182,7 +183,7 @@ exports.createReview = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error creando review:', error);
+    logError(req, error, 'Review creation failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error creando review',
@@ -249,7 +250,7 @@ exports.respondToReview = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error respondiendo review:', error);
+    logError(req, error, 'Review response failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error respondiendo review',
@@ -313,7 +314,7 @@ exports.getMyReviews = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error obteniendo mis reviews:', error);
+    logError(req, error, 'Owned review query failed');
     res.status(500).json({ 
       success: false, 
       message: 'Error obteniendo reviews',

@@ -35,8 +35,12 @@ export default {
     plugins: [
       "expo-router",
       "expo-asset",
+      "expo-localization",
       "expo-secure-store",
       "expo-notifications",
+      "expo-sharing",
+      "expo-splash-screen",
+      "expo-status-bar",
       [
         "expo-image-picker",
         {
@@ -55,7 +59,6 @@ export default {
         "@stripe/stripe-react-native",
         {
           merchantIdentifier: "merchant.com.homeservices.client",
-          publishableKey: process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY,
         },
       ],
       "@react-native-community/datetimepicker",

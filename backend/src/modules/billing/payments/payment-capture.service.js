@@ -1,6 +1,7 @@
 const { decimalToMinor } = require('../pricing/pricing.service');
 const { postTransactionInTx } = require('../ledger/ledger.service');
 const { normalizeCaptureAmounts, buildCaptureEntries } = require('../ledger/payment-capture-journal');
+const { telemetryMetadata } = require('../../observability/context');
 
 const ACCOUNT_DEFINITIONS = Object.freeze({
   paymentClearing: { code: 'PAYMENT_CLEARING', type: 'ASSET', name: 'Payment clearing' },
@@ -44,6 +45,7 @@ const applySuccessfulPayment = async ({
   processedAt = new Date(),
   source,
   ledgerEnabled,
+  requestContext = {},
 }) => {
   const bookingRecord = await tx.booking.findUnique({ where: { id: bookingId } });
   const payment = bookingRecord
@@ -108,7 +110,7 @@ const applySuccessfulPayment = async ({
       aggregateId: booking.payment.id,
       eventType: 'payment.completed',
       payload: { bookingId: booking.id, paymentId: booking.payment.id, source },
-      metadata: { providerTransactionId, providerChargeId },
+      metadata: telemetryMetadata(requestContext, { providerTransactionId, providerChargeId }),
     },
   });
   await tx.auditLog.create({
@@ -120,6 +122,9 @@ const applySuccessfulPayment = async ({
       before: { status: booking.payment.status },
       after: { status: 'COMPLETED' },
       metadata: { source, providerTransactionId, providerChargeId, ledgerDualWrite: ledgerEnabled },
+      requestId: requestContext.requestId,
+      correlationId: requestContext.correlationId,
+      traceId: requestContext.traceId,
     },
   });
   if (booking.professional?.userId) {

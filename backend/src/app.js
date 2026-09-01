@@ -9,7 +9,8 @@ const { rateLimit } = require('express-rate-limit');
 const { httpLogger } = require('./modules/observability/logger');
 const { reportError } = require('./modules/observability/error.service');
 const { ensureIncidentForError } = require('./modules/observability/incident.service');
-const { getSystemHealth } = require('./modules/observability/health.service');
+const { getLiveness, getReadiness } = require('./modules/observability/health.service');
+const { metricsMiddleware } = require('./modules/observability/metrics');
 
 const authRoutes = require('./routes/auth.routes');
 const categoryRoutes = require('./routes/category.routes');
@@ -41,10 +42,12 @@ app.use(cors({
   },
 }));
 app.use(httpLogger);
+app.use(metricsMiddleware);
 app.use(helmet());
 app.use(rateLimit({
   windowMs: 60_000,
   limit: 300,
+  skip: (req) => req.path === '/health' || req.path.startsWith('/health/'),
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   handler: (req, res) => res.status(429).json({ error: 'Too many requests', code: 'RATE_LIMITED' }),
@@ -60,11 +63,15 @@ app.post(
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-app.get('/health', async (req, res) => {
-  const health = await getSystemHealth(prisma);
+app.get('/health/live', (req, res) => res.status(200).json({
+  ...getLiveness(),
+  correlationId: req.context.correlationId,
+}));
+
+app.get(['/health', '/health/ready'], async (req, res) => {
+  const health = await getReadiness(prisma);
   res.status(health.status === 'OUTAGE' ? 503 : 200).json({
     ...health,
-    service: 'homeservices-core-api',
     correlationId: req.context.correlationId,
   });
 });
@@ -102,8 +109,8 @@ app.use(async (err, req, res, next) => {
 
   if (statusCode >= 500) {
     try {
-      const errorEvent = await reportError(err, req);
-      await ensureIncidentForError(errorEvent);
+      const errorReport = await reportError(err, req);
+      await ensureIncidentForError(errorReport);
     } catch (reportingError) {
       req.log?.error({ err: reportingError }, 'Error reporting failed');
     }

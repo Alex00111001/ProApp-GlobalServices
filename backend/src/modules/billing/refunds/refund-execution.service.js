@@ -5,6 +5,7 @@ const { normalizeCaptureAmounts } = require('../ledger/payment-capture-journal')
 const { buildRefundEntries } = require('./refund-journal');
 const { ensureAccounts } = require('../payments/payment-capture.service');
 const { postTransactionInTx } = require('../ledger/ledger.service');
+const { telemetryMetadata } = require('../../observability/context');
 
 const REFUND_PROCESSING_LEASE_MS = 5 * 60 * 1000;
 const errorWithStatus = (message, status) => Object.assign(new Error(message), { status });
@@ -216,7 +217,7 @@ const finalizeRefundInTx = async ({
       aggregateId: refund.id,
       eventType: 'refund.completed',
       payload: { refundId: refund.id, bookingId: refund.bookingId, paymentId: refund.paymentId },
-      metadata: { providerRefundId, source },
+      metadata: telemetryMetadata(requestContext, { providerRefundId, source }),
     },
   });
   await tx.auditLog.create({
@@ -305,7 +306,7 @@ const reconcileProviderRefundInTx = async ({
         aggregateId: refund.id,
         eventType: 'refund.failed',
         payload: { refundId: refund.id, bookingId: refund.bookingId, paymentId: refund.paymentId },
-        metadata: { providerRefundId: providerRefund.id, source },
+        metadata: telemetryMetadata(requestContext, { providerRefundId: providerRefund.id, source }),
       },
     });
     await tx.auditLog.create({

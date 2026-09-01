@@ -2,6 +2,7 @@ require('dotenv').config();
 process.env.DATABASE_URL ||= process.env.DIRECT_URL;
 const prisma = require('../../config/prisma');
 const { PERMISSIONS, ROLE_PERMISSIONS } = require('./permission-catalog');
+const { logger } = require('../observability/logger');
 
 const bootstrapRbac = async (client = prisma) => {
   const permissions = {};
@@ -32,7 +33,7 @@ const bootstrapRbac = async (client = prisma) => {
 
 if (require.main === module) {
   bootstrapRbac()
-    .then(() => console.log('RBAC catalog synchronized.'))
+    .then(() => logger.info('RBAC catalog synchronized'))
     .finally(() => prisma.$disconnect());
 }
 

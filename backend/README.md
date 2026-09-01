@@ -4,7 +4,7 @@ API RESTful construida con Node.js, Express y Prisma para una plataforma global 
 
 ## 📋 Requisitos Previos
 
-- Node.js >= 18.x
+- Node.js >= 22.13 (Node 24 LTS recomendado)
 - PostgreSQL (Supabase)
 - npm o yarn
 
@@ -22,8 +22,9 @@ cp .env.example .env
 # Generar cliente de Prisma
 npm run prisma:gen
 
-# Sincronizar schema con la base de datos
-npm run prisma:push
+# Validar y aplicar migraciones revisadas (nunca db push en entornos compartidos)
+npx prisma validate
+npx prisma migrate deploy
 
 # Iniciar servidor en modo desarrollo
 npm run dev
@@ -51,7 +52,11 @@ backend/
 ## 🔑 Endpoints de la API
 
 ### Estado del servicio
-- `GET /health` - Comprueba que la API y la base de datos están disponibles.
+- `GET /health/live` - Liveness del proceso, sin dependencias.
+- `GET /health/ready` - Readiness segura de PostgreSQL y outbox (`/health` es alias compatible).
+- `GET /api/admin/operations/*` - Health persistido, métricas, grupos de error, incidentes y auditoría bajo RBAC.
+
+El worker de alertas/retención se ejecuta como proceso independiente con `npm run start:observability-worker`. Producción requiere OTLP y destinos webhook HTTPS firmados; consulta [la arquitectura de observabilidad](../docs/OBSERVABILITY.md) y sus runbooks antes del despliegue.
 
 ### Autenticación (`/api/auth`)
 - `POST /register` - Registrar nuevo usuario

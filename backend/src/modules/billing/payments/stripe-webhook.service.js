@@ -3,6 +3,8 @@ const env = require('../../../config/env');
 const { applySuccessfulPayment } = require('./payment-capture.service');
 const { reconcileProviderRefundInTx } = require('../refunds/refund-execution.service');
 const { reconcileProviderDispute } = require('../disputes/dispute.service');
+const { telemetryMetadata } = require('../../observability/context');
+const { observeExternalOperation } = require('../../observability/metrics');
 
 const PROCESSING_LEASE_MS = 5 * 60 * 1000;
 const REFUND_EVENT_TYPES = new Set(['refund.created', 'refund.updated', 'refund.failed']);
@@ -22,7 +24,7 @@ const validateStripeEvent = (event) => {
   }
 };
 
-const receiveEvent = async ({ event, correlationId }, client = prisma) => {
+const receiveEvent = async ({ event, requestContext = {}, correlationId = requestContext.correlationId }, client = prisma) => {
   validateStripeEvent(event);
   try {
     const record = await client.integrationEvent.create({
@@ -44,8 +46,8 @@ const receiveEvent = async ({ event, correlationId }, client = prisma) => {
   }
 };
 
-const processStripeEvent = async ({ event, correlationId }, client = prisma, stripeClient) => {
-  const received = await receiveEvent({ event, correlationId }, client);
+const processStripeEvent = async ({ event, requestContext = {}, correlationId = requestContext.correlationId }, client = prisma, stripeClient) => {
+  const received = await receiveEvent({ event, requestContext, correlationId }, client);
   if (!received.record) throw new Error('Unable to load persisted Stripe event');
   if (received.record.status === 'PROCESSED' || received.record.status === 'DEAD_LETTER') {
     return { duplicate: true, status: received.record.status };
@@ -81,13 +83,14 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma, str
         recoveryEnabled: env.financialDisputeRecoveryEnabled,
         ledgerEnabled: env.financialLedgerDualWriteEnabled,
         stripeClient,
-        requestContext: { correlationId },
+        requestContext: { ...requestContext, correlationId },
         client,
       });
       await client.integrationEvent.update({
         where: { id: received.record.id },
         data: { status: 'PROCESSED', processedAt: new Date(), lastError: null },
       });
+      observeExternalOperation({ provider: 'stripe', operation: event.type, outcome: result?.duplicate ? 'duplicate' : 'success' });
       return { duplicate: received.duplicate || Boolean(result?.duplicate), status: 'PROCESSED' };
     }
 
@@ -109,6 +112,7 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma, str
           processedAt: event.created ? new Date(event.created * 1000) : new Date(),
           source: 'STRIPE_WEBHOOK',
           ledgerEnabled: env.financialLedgerDualWriteEnabled,
+          requestContext: { ...requestContext, correlationId },
         });
       } else if (bookingId && event.type === 'payment_intent.payment_failed') {
         const payment = await tx.payment.findUnique({ where: { bookingId } });
@@ -126,7 +130,7 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma, str
               aggregateId: payment.id,
               eventType: 'payment.failed',
               payload: { bookingId, paymentId: payment.id, source: 'STRIPE_WEBHOOK' },
-              metadata: { providerTransactionId: providerObject.id },
+              metadata: telemetryMetadata(requestContext, { providerTransactionId: providerObject.id }),
             },
           });
         }
@@ -136,7 +140,7 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma, str
           providerRefund: providerObject,
           ledgerEnabled: env.financialLedgerDualWriteEnabled,
           processedAt: event.created ? new Date(event.created * 1000) : new Date(),
-          requestContext: { correlationId },
+          requestContext: { ...requestContext, correlationId },
           source: 'STRIPE_WEBHOOK',
         });
       }
@@ -147,8 +151,10 @@ const processStripeEvent = async ({ event, correlationId }, client = prisma, str
       });
       return result;
     });
+    observeExternalOperation({ provider: 'stripe', operation: event.type, outcome: financialResult?.duplicate ? 'duplicate' : 'success' });
     return { duplicate: received.duplicate || Boolean(financialResult?.duplicate), status: 'PROCESSED' };
   } catch (error) {
+    observeExternalOperation({ provider: 'stripe', operation: event.type, outcome: 'failure' });
     await client.integrationEvent.update({
       where: { id: received.record.id },
       data: { status: 'FAILED', lastError: String(error.message || error).slice(0, 1000) },

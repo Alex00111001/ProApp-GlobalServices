@@ -49,3 +49,27 @@ test('rejected CORS requests still return the global error and trace contract', 
   assert.equal(body.correlationId, 'cors-contract-1');
   assert.equal(response.headers.get('x-correlation-id'), 'cors-contract-1');
 });
+
+test('liveness remains independent while readiness fails closed on unavailable dependencies', async () => {
+  const live = await fetch(`${baseUrl}/health/live`, { headers: { 'x-correlation-id': 'health-live-1' } });
+  const liveBody = await live.json();
+  assert.equal(live.status, 200);
+  assert.equal(liveBody.status, 'HEALTHY');
+  assert.equal(liveBody.correlationId, 'health-live-1');
+
+  const ready = await fetch(`${baseUrl}/health/ready`, { headers: { 'x-correlation-id': 'health-ready-1' } });
+  const readyBody = await ready.json();
+  assert.equal(ready.status, 503);
+  assert.equal(readyBody.status, 'OUTAGE');
+  assert.equal(readyBody.correlationId, 'health-ready-1');
+  assert.doesNotMatch(JSON.stringify(readyBody), /postgres(?:ql)?:\/\/|password|localhost:5432/i);
+});
+
+test('operational telemetry endpoints remain permission protected', async () => {
+  const response = await fetch(`${baseUrl}/api/admin/operations/metrics`, {
+    headers: { 'x-correlation-id': 'ops-auth-1' },
+  });
+  const body = await response.json();
+  assert.equal(response.status, 401);
+  assert.equal(body.correlationId, 'ops-auth-1');
+});

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { logError } = require('../modules/observability/safe-log');
 const prisma = require('../config/prisma');
 const env = require('../config/env');
 
@@ -55,7 +56,7 @@ const authenticate = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.error('Authentication error:', error);
+    logError(req, error, 'Authentication failed');
     return res.status(401).json({ 
       error: 'Invalid or expired token.' 
     });

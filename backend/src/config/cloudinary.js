@@ -1,4 +1,5 @@
 const cloudinary = require('cloudinary').v2;
+const { logger } = require('../modules/observability/logger');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -37,7 +38,7 @@ const deleteFromCloudinary = async (publicId) => {
     const result = await cloudinary.uploader.destroy(publicId);
     return result.result === 'ok';
   } catch (error) {
-    console.error('Error deleting from Cloudinary:', error);
+    logger.error({ err: error }, 'Cloudinary deletion failed');
     return false;
   }
 };
