@@ -72,6 +72,8 @@ Alerts below `OBSERVABILITY_ALERT_MIN_SEVERITY` are suppressed. High and critica
 
 Checks are bounded by `OBSERVABILITY_HEALTH_TIMEOUT_MS`. Responses expose only dependency names, status, latency and a generic message. Database URLs, hosts, provider payloads and exception text are never returned.
 
+Interactive database transactions use bounded acquisition and execution windows configured by `DATABASE_TRANSACTION_MAX_WAIT_MS` and `DATABASE_TRANSACTION_TIMEOUT_MS` (10 seconds by default). The acquisition window absorbs bounded bursts that temporarily consume the PostgreSQL pool, while the execution timeout still fails closed instead of allowing indefinitely open transactions.
+
 ## Protected operations API
 
 All endpoints require authentication and database-backed permission checks.
