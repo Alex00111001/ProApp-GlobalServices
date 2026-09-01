@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { logError } = require('../modules/observability/safe-log');
 
 // Obtener profesionales con filtros y búsqueda
 exports.getProfessionals = async (req, res) => {
@@ -86,7 +87,7 @@ exports.getProfessionals = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get professionals error:', error);
+    logError(req, error, 'Professional list query failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -152,7 +153,7 @@ exports.getProfessionalById = async (req, res) => {
 
     res.json({ professional });
   } catch (error) {
-    console.error('Get professional error:', error);
+    logError(req, error, 'Professional lookup failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -211,7 +212,7 @@ exports.updateProfessionalProfile = async (req, res) => {
       professional: updated,
     });
   } catch (error) {
-    console.error('Update professional error:', error);
+    logError(req, error, 'Professional update failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -253,7 +254,7 @@ exports.approveProfessional = async (req, res) => {
       professional,
     });
   } catch (error) {
-    console.error('Approve professional error:', error);
+    logError(req, error, 'Professional approval failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -287,7 +288,7 @@ exports.rejectProfessional = async (req, res) => {
       professional,
     });
   } catch (error) {
-    console.error('Reject professional error:', error);
+    logError(req, error, 'Professional rejection failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };

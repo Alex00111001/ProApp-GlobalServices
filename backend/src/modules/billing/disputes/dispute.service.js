@@ -4,6 +4,7 @@ const { decimalToMinor } = require('../pricing/pricing.service');
 const { ensureAccounts } = require('../payments/payment-capture.service');
 const { postTransactionInTx } = require('../ledger/ledger.service');
 const { buildTransferReversalEntries } = require('./dispute-journal');
+const { telemetryMetadata } = require('../../observability/context');
 
 const errorWithStatus = (message, status) => Object.assign(new Error(message), { status });
 const activeProviderStatuses = new Set([
@@ -129,7 +130,7 @@ const recordProviderDisputeInTx = async ({
         aggregateId: dispute.id,
         eventType: `dispute.${dispute.status.toLowerCase()}`,
         payload: { disputeId: dispute.id, bookingId: dispute.bookingId, paymentId: dispute.paymentId },
-        metadata: { providerDisputeId: dispute.providerDisputeId, providerStatus: dispute.providerStatus, source: eventType },
+        metadata: telemetryMetadata(requestContext, { providerDisputeId: dispute.providerDisputeId, providerStatus: dispute.providerStatus, source: eventType }),
       },
     });
     await tx.auditLog.create({
@@ -224,7 +225,7 @@ const finalizeTransferReversalInTx = async ({
       aggregateId: dispute.id,
       eventType: 'dispute.transfer_reversed',
       payload: { disputeId: dispute.id, payoutId: payout.id, bookingId: dispute.bookingId },
-      metadata: { amountMinor, currency: dispute.currency, providerTransferReversalId: providerReversal.id },
+      metadata: telemetryMetadata(requestContext, { amountMinor, currency: dispute.currency, providerTransferReversalId: providerReversal.id }),
     },
   });
   await tx.auditLog.create({

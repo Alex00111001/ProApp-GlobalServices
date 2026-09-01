@@ -16,6 +16,8 @@ The default branch contains three top-level products:
 
 There is no `admin-web/`, monorepo workspace configuration, CI configuration, container definition, deployment manifest, `AGENTS.md`, automated backend test suite, or committed Prisma migration history. Root dependencies are TypeScript tooling only. Backend runtime integrations are Stripe, Cloudinary and PostgreSQL/Supabase. Both mobile manifests declare partially divergent dependency generations; the professional manifest combines Expo 57 with React Native 0.73 and older Expo modules and must be normalized before implementation.
 
+Current platform baseline after the 2026-09-01 F2 closure: Node >=22.13 across workspaces; backend Prisma 7.10 and TypeScript 7; admin React 19/Vite 8/TypeScript 7; both mobile applications on Expo 57.0.18, React Native 0.86.3, React 19.2.3 and TypeScript 6. The customer native projects use Continuous Native Generation from `app.config.js`. Root verification scripts replace the previously unused root TypeScript tooling. See [the F2 release record](releases/2026-09-01-f2-observability.md) for reproducible evidence. The preceding paragraphs remain the historical pre-implementation audit baseline.
+
 The backend has 27 source files and approximately 2,863 lines. It follows route/controller/config folders, but business rules and persistence orchestration mostly live in controllers. Routes exist for authentication, categories, professionals, bookings, uploads, admin, payments, notifications, favorites and reviews.
 
 ## 3. Current architecture and reusable capabilities
@@ -215,6 +217,8 @@ Acceptance: production fails closed on invalid config; each request has request/
 Deliver structured redacted logging, error persistence/grouping, health registry, traces, incidents and audit service.
 
 Acceptance: a request can be followed across logs using correlation IDs; repeated errors group deterministically; health exposes dependency state without secrets; incident lifecycle and audit history are permission protected.
+
+Status: **completed for the F2 observability scope on 2026-09-01**. The implementation, migration, verification and rollback evidence is recorded in [the F2 release record](releases/2026-09-01-f2-observability.md). This closes the observability capability; it does not authorize production activation or waive unrelated product release gates.
 
 ### Phase 3 — Financial foundation
 

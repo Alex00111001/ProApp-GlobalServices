@@ -1,4 +1,5 @@
 const { decimalToMinor } = require('../pricing/pricing.service');
+const { telemetryMetadata } = require('../../observability/context');
 
 const createPayoutRequestForCompletedBookingInTx = async ({
   tx,
@@ -37,7 +38,7 @@ const createPayoutRequestForCompletedBookingInTx = async ({
       aggregateId: payout.id,
       eventType: 'payout.requested',
       payload: { payoutId: payout.id, bookingId: booking.id, professionalId: booking.professionalId },
-      metadata: { amountMinor, currency: payout.currency, source: 'BOOKING_COMPLETION' },
+      metadata: telemetryMetadata(requestContext, { amountMinor, currency: payout.currency, source: 'BOOKING_COMPLETION' }),
     },
   });
   await tx.auditLog.create({

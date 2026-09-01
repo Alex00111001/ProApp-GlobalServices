@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
-import ViewShot, { captureRef } from 'react-native-view-shot';
-import * as FileSystem from 'expo-file-system';
+import ViewShot, { captureRef, type ViewShotRef } from 'react-native-view-shot';
+import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 import { COLORS, SPACING } from '@/constants/theme';
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const BookingReceiptJpegModal: React.FC<Props> = ({ booking, language, t, visible, onClose }) => {
-  const receiptRef = useRef<ViewShot>(null);
+  const receiptRef = useRef<ViewShotRef>(null);
   const [html, setHtml] = useState('');
   const [isReady, setIsReady] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
@@ -41,15 +41,14 @@ export const BookingReceiptJpegModal: React.FC<Props> = ({ booking, language, t,
         format: 'jpg', quality: 0.96, result: 'tmpfile', width: 1240, height: 1754,
       });
       const shortReference = String(booking.id).split('-')[0] || 'reserva';
-      const shareUri = `${FileSystem.cacheDirectory}comprobante-reserva-${shortReference}.jpg`;
-      const existing = await FileSystem.getInfoAsync(shareUri);
-      if (existing.exists) await FileSystem.deleteAsync(shareUri, { idempotent: true });
-      await FileSystem.moveAsync({ from: temporaryUri, to: shareUri });
-      await Sharing.shareAsync(shareUri, {
+      const sourceFile = new File(temporaryUri);
+      const shareFile = new File(Paths.cache, `comprobante-reserva-${shortReference}.jpg`);
+      if (shareFile.exists) shareFile.delete();
+      await sourceFile.move(shareFile, { overwrite: true });
+      await Sharing.shareAsync(shareFile.uri, {
         mimeType: 'image/jpeg', UTI: 'public.jpeg', dialogTitle: t('booking.shareJpeg'),
       });
-    } catch (error) {
-      console.error('Error sharing booking JPEG:', error);
+    } catch {
       Alert.alert(t('common.error'), t('booking.shareError'));
     } finally {
       setIsSharing(false);

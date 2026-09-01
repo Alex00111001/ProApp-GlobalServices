@@ -1,4 +1,5 @@
 const env = require('../../config/env');
+const { sanitizeTelemetry } = require('../../modules/observability/redaction');
 
 const STATUS_CODES = Object.freeze({
   400: 'BAD_REQUEST',
@@ -19,7 +20,7 @@ const normalizeErrorBody = ({ body, statusCode, correlationId, isProduction = en
     ? body
     : { error: typeof body === 'string' ? body : undefined };
   const normalized = {
-    ...source,
+    ...sanitizeTelemetry(source),
     error: source.error || (statusCode >= 500 ? 'Internal server error' : 'Request failed'),
     code: source.code || codeForStatus(statusCode),
     correlationId,

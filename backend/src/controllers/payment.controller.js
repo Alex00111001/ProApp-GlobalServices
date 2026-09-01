@@ -6,6 +6,7 @@ const env = require('../config/env');
 const { decimalToMinor } = require('../modules/billing/pricing/pricing.service');
 const { applySuccessfulPayment } = require('../modules/billing/payments/payment-capture.service');
 const { processStripeEvent } = require('../modules/billing/payments/stripe-webhook.service');
+const { logError } = require('../modules/observability/safe-log');
 
 const getOwnedBooking = async (bookingId, userId) => {
   const booking = await prisma.booking.findUnique({
@@ -110,7 +111,7 @@ exports.createPaymentIntent = async (req, res) => {
       currency: paymentIntent.currency,
     });
   } catch (error) {
-    console.error('Error creando PaymentIntent:', error);
+    logError(req, error, 'Payment intent creation failed');
     res.status(error.status || 500).json({
       success: false,
       message: error.status ? error.message : 'Error procesando el pago',
@@ -152,6 +153,7 @@ exports.confirmPayment = async (req, res) => {
       providerCurrency: paymentIntent.currency,
       source: 'PAYMENT_CONFIRM_API',
       ledgerEnabled: env.financialLedgerDualWriteEnabled,
+      requestContext: req.context,
     }));
 
     res.json({
@@ -162,7 +164,7 @@ exports.confirmPayment = async (req, res) => {
       message: 'Pago confirmado exitosamente',
     });
   } catch (error) {
-    console.error('Error confirmando pago:', error);
+    logError(req, error, 'Payment confirmation failed');
     res.status(error.status || 500).json({
       success: false,
       message: error.status ? error.message : 'Error confirmando el pago',
@@ -188,7 +190,7 @@ exports.confirmCashPayment = async (req, res) => {
     ]);
     res.json({ success: true, payment, booking: updatedBooking });
   } catch (error) {
-    console.error('Error confirmando pago en efectivo:', error);
+    logError(req, error, 'Cash payment confirmation failed');
     res.status(error.status || 500).json({
       success: false,
       message: error.status ? error.message : 'Error confirmando pago en efectivo',
@@ -208,14 +210,14 @@ exports.stripeWebhook = async (req, res) => {
   try {
     event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
   } catch (error) {
-    console.error('Error verificando webhook:', error.message);
+    logError(req, error, 'Stripe webhook signature verification failed');
     return res.status(400).send('Firma de webhook no válida');
   }
 
   try {
     const result = await processStripeEvent({
       event,
-      correlationId: req.context?.correlationId,
+      requestContext: req.context,
     }, undefined, stripe);
     res.json({ received: true, duplicate: result.duplicate, status: result.status });
   } catch (error) {
@@ -252,7 +254,7 @@ exports.getPaymentHistory = async (req, res) => {
       pagination: { page: parsedPage, limit: parsedLimit, total, pages: Math.ceil(total / parsedLimit) },
     });
   } catch (error) {
-    console.error('Error obteniendo historial de pagos:', error);
+    logError(req, error, 'Payment history query failed');
     res.status(500).json({ success: false, message: 'Error obteniendo historial de pagos' });
   }
 };

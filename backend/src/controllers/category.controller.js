@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { logError } = require('../modules/observability/safe-log');
 
 exports.getServiceById = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ exports.getServiceById = async (req, res) => {
     if (!service) return res.status(404).json({ error: 'Service not found' });
     res.json({ service });
   } catch (error) {
-    console.error('Get service error:', error);
+    logError(req, error, 'Service lookup failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -42,7 +43,7 @@ exports.getCategories = async (req, res) => {
 
     res.json({ categories });
   } catch (error) {
-    console.error('Get categories error:', error);
+    logError(req, error, 'Category list query failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -87,7 +88,7 @@ exports.getCategoryById = async (req, res) => {
 
     res.json({ category });
   } catch (error) {
-    console.error('Get category error:', error);
+    logError(req, error, 'Category lookup failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -111,7 +112,7 @@ exports.createCategory = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.error('Create category error:', error);
+    logError(req, error, 'Category creation failed');
     
     if (error.code === 'P2002') {
       return res.status(400).json({ 
@@ -145,7 +146,7 @@ exports.updateCategory = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.error('Update category error:', error);
+    logError(req, error, 'Category update failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -162,7 +163,7 @@ exports.deleteCategory = async (req, res) => {
 
     res.json({ message: 'Category deactivated successfully' });
   } catch (error) {
-    console.error('Delete category error:', error);
+    logError(req, error, 'Category deletion failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };

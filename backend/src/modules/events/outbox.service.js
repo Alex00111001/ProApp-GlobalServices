@@ -16,16 +16,22 @@ const sanitizeOutboxError = (error) => String(error?.message || error || 'Unknow
   .replace(/(?:bearer\s+)?[A-Za-z0-9_-]{24,}/gi, '[REDACTED]')
   .slice(0, 2_000);
 
-const claimOutboxBatch = async ({ batchSize = 50, leaseMs = DEFAULT_LEASE_MS, aggregateId } = {}, client) => {
+const claimOutboxBatch = async ({ batchSize = 50, leaseMs = DEFAULT_LEASE_MS, aggregateId, eventType } = {}, client) => {
   boundedInteger('batchSize', batchSize, 1, 200);
   boundedInteger('leaseMs', leaseMs, 1_000, 15 * 60_000);
   if (aggregateId !== undefined && (typeof aggregateId !== 'string' || aggregateId.length > 200)) {
     throw new Error('aggregateId must be a string of at most 200 characters');
   }
+  if (eventType !== undefined && (typeof eventType !== 'string' || eventType.length > 200)) {
+    throw new Error('eventType must be a string of at most 200 characters');
+  }
   const database = client || require('../../config/prisma');
   const aggregateFilter = aggregateId === undefined
     ? Prisma.sql``
     : Prisma.sql`AND "aggregateId" = ${aggregateId}`;
+  const eventTypeFilter = eventType === undefined
+    ? Prisma.sql``
+    : Prisma.sql`AND "eventType" = ${eventType}`;
 
   return database.$transaction((tx) => tx.$queryRaw(Prisma.sql`
     WITH candidates AS (
@@ -38,6 +44,7 @@ const claimOutboxBatch = async ({ batchSize = 50, leaseMs = DEFAULT_LEASE_MS, ag
           AND "lockedAt" <= CURRENT_TIMESTAMP - (${leaseMs} * INTERVAL '1 millisecond'))
       )
       ${aggregateFilter}
+      ${eventTypeFilter}
       ORDER BY "availableAt" ASC, "createdAt" ASC
       FOR UPDATE SKIP LOCKED
       LIMIT ${batchSize}
@@ -63,14 +70,14 @@ const markOutboxProcessed = async ({ id, lockedAt }, client) => {
 };
 
 const rescheduleOutboxEvent = async (
-  { id, lockedAt, attempts, error, maxAttempts = DEFAULT_MAX_ATTEMPTS },
+  { id, lockedAt, attempts, error, maxAttempts = DEFAULT_MAX_ATTEMPTS, retryable = true },
   client
 ) => {
   if (!id || !(lockedAt instanceof Date)) throw new Error('A claimed outbox id and lockedAt are required');
   boundedInteger('attempts', attempts, 1, Number.MAX_SAFE_INTEGER);
   boundedInteger('maxAttempts', maxAttempts, 1, 100);
   const database = client || require('../../config/prisma');
-  const exhausted = attempts >= maxAttempts;
+  const exhausted = retryable === false || attempts >= maxAttempts;
   return database.outboxEvent.updateMany({
     where: { id, status: 'PROCESSING', lockedAt },
     data: {

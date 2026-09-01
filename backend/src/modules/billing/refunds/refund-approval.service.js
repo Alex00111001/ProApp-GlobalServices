@@ -1,4 +1,5 @@
 const { decimalToMinor } = require('../pricing/pricing.service');
+const { telemetryMetadata } = require('../../observability/context');
 
 const errorWithStatus = (message, status) => Object.assign(new Error(message), { status });
 
@@ -36,7 +37,7 @@ const approveRefundInTx = async ({ tx, refundId, approverId, requestContext = {}
       aggregateId: refundId,
       eventType: 'refund.approved',
       payload: { refundId, bookingId: approved.bookingId, paymentId: approved.paymentId },
-      metadata: { approvedBy: approverId },
+      metadata: telemetryMetadata(requestContext, { approvedBy: approverId }),
     },
   });
   await tx.auditLog.create({
@@ -77,7 +78,7 @@ const rejectRefundInTx = async ({ tx, refundId, reviewerId, reason, requestConte
       aggregateId: refundId,
       eventType: 'refund.rejected',
       payload: { refundId, bookingId: refund.bookingId, paymentId: refund.paymentId },
-      metadata: { reviewedBy: reviewerId, reason },
+      metadata: telemetryMetadata(requestContext, { reviewedBy: reviewerId, reason }),
     },
   });
   await tx.auditLog.create({

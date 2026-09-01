@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { logError } = require('../modules/observability/safe-log');
 const { hashPassword, comparePassword } = require('../utils/password');
 const { generateToken } = require('../middleware/auth');
 const { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema } = require('../validators/auth.validators');
@@ -81,7 +82,7 @@ exports.register = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.error('Register error:', error);
+    logError(req, error, 'Registration failed');
     
     if (error.name === 'ZodError') {
       return res.status(400).json({ 
@@ -154,7 +155,7 @@ exports.login = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logError(req, error, 'Login failed');
     
     if (error.name === 'ZodError') {
       return res.status(400).json({ 
@@ -207,7 +208,7 @@ exports.getProfile = async (req, res) => {
     const profile = user.role === 'CLIENT' ? user.clientProfile : user.professionalProfile;
     res.json({ user: userWithoutPassword, profile });
   } catch (error) {
-    console.error('Get profile error:', error);
+    logError(req, error, 'Profile lookup failed');
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -260,7 +261,7 @@ exports.updateProfile = async (req, res) => {
       profile,
     });
   } catch (error) {
-    console.error('Update profile error:', error);
+    logError(req, error, 'Profile update failed');
     if (error.name === 'ZodError') {
       return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
@@ -301,7 +302,7 @@ exports.changePassword = async (req, res) => {
 
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
-    console.error('Change password error:', error);
+    logError(req, error, 'Password change failed');
     if (error.name === 'ZodError') {
       return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
