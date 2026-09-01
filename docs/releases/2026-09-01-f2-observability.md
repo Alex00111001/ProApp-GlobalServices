@@ -39,10 +39,13 @@ The first test deployment exposed two migration defects: an index was implicitly
 
 ## Verification evidence
 
-- `npm ci` in `backend`: passed; 488 packages installed and audit clean.
+- GitHub Actions now executes immutable, cancel-safe quality, PostgreSQL integration and full-history secret-scan jobs for pushes and pull requests. Action dependencies are pinned by commit SHA, locked installs use `npm ci`, and no production credentials are injected.
+- The PostgreSQL job deploys the complete migration history into an isolated PostgreSQL 17 service, synchronizes RBAC, validates migration/baseline compatibility and runs the concurrency suite.
+- `npm ci` in `backend`: passed; 486 packages audited and 0 vulnerabilities reported. Prisma's optional MySQL driver is constrained to patched `mysql2` 3.24.2 to eliminate GHSA-3f6p-5ww8-9rcr even though the platform datasource is PostgreSQL.
 - `npm run build` in `backend`: passed with Prisma 7.10; Prisma client generated and JavaScript syntax validated for 90 files.
 - `npm test` in `backend`: 72/72 passed.
-- `RUN_DATABASE_INTEGRATION_TESTS=true npm run test:integration` in `backend`: 4/4 passed, including F1 billing/outbox regression, concurrent error grouping, incident deduplication, lifecycle and live readiness against Supabase test.
+- `RUN_DATABASE_INTEGRATION_TESTS=true npm run test:integration` in `backend`: 4/4 passed twice consecutively, including F1 billing/outbox regression, concurrent error grouping, incident deduplication, lifecycle and live readiness against Supabase test.
+- Interactive transactions now have configurable bounded acquisition/execution windows. This closes the pool-contention failure reproduced by 20 concurrent observability writes while retaining a fail-closed timeout.
 - `npx prisma format`, `npx prisma validate`, `npx prisma generate`, `npm run db:audit-baseline` and `npx prisma migrate status`: passed.
 - `npx --yes @secretlint/quick-start "**/*"`: passed with no findings.
 - Runtime source scan found no remaining `console.*` logging of errors, bodies or headers.

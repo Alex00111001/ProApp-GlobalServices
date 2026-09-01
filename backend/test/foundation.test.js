@@ -102,7 +102,12 @@ test('production configuration fails closed and accepts an explicit complete con
     OBSERVABILITY_ALERT_WEBHOOK_CRITICAL_URL: 'https://alerts.example.com/critical',
     OBSERVABILITY_ALERT_SIGNING_SECRET: 'observability-alert-signing-secret-123456',
   };
-  assert.equal(validateEnvironment(valid).corsOrigins.length, 2);
+  const parsed = validateEnvironment(valid);
+  assert.equal(parsed.corsOrigins.length, 2);
+  assert.equal(parsed.databaseTransactionMaxWaitMs, 10_000);
+  assert.equal(parsed.databaseTransactionTimeoutMs, 10_000);
+  assert.equal(validateEnvironment({ ...valid, DATABASE_TRANSACTION_MAX_WAIT_MS: '15000' }).databaseTransactionMaxWaitMs, 15_000);
+  assert.throws(() => validateEnvironment({ ...valid, DATABASE_TRANSACTION_TIMEOUT_MS: '0' }), /between 1000 and 60000/);
   assert.throws(() => validateEnvironment({ ...valid, CORS_ORIGINS: '*' }), /explicit HTTP/);
   assert.throws(() => validateEnvironment({ ...valid, DATABASE_URL: '' }), /DATABASE_URL/);
   assert.throws(() => validateEnvironment({ ...valid, JWT_SECRET: 'short' }), /JWT_SECRET/);

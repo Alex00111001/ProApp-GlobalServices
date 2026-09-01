@@ -165,6 +165,20 @@ const validateEnvironment = (source = process.env) => {
     corsOrigins,
     jwtSecret,
     jwtExpiresIn: source.JWT_EXPIRES_IN || '7d',
+    databaseTransactionMaxWaitMs: parseInteger(
+      'DATABASE_TRANSACTION_MAX_WAIT_MS',
+      source.DATABASE_TRANSACTION_MAX_WAIT_MS,
+      10_000,
+      1_000,
+      60_000
+    ),
+    databaseTransactionTimeoutMs: parseInteger(
+      'DATABASE_TRANSACTION_TIMEOUT_MS',
+      source.DATABASE_TRANSACTION_TIMEOUT_MS,
+      10_000,
+      1_000,
+      60_000
+    ),
     logLevel,
     logTransport,
     logFilePath: source.LOG_FILE_PATH,
