@@ -6,7 +6,7 @@
   },
   "scripts": {
     "verify:backend": "npm --prefix backend run build && npm --prefix backend test",
-    "verify:admin": "npm --prefix admin-web run lint && npm --prefix admin-web run build",
+    "verify:admin": "npm --prefix admin-web run lint && npm --prefix admin-web run test && npm --prefix admin-web run build",
     "verify:mobile-client": "npm --prefix mobile-client run typecheck && npm --prefix mobile-client run test:ci",
     "verify:mobile-professional": "npm --prefix mobile-professional run typecheck",
     "verify": "npm run verify:backend && npm run verify:admin && npm run verify:mobile-client && npm run verify:mobile-professional"

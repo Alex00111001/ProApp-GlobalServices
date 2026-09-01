@@ -1,16 +1,36 @@
+import type { ZodType } from 'zod'
+import { API_URL } from './config'
 import { session } from '../state/session'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+export class ApiError extends Error {
+  readonly status: number
+  readonly code?: string
+  readonly correlationId?: string
+  constructor(message: string, status: number, code?: string, correlationId?: string) {
+    super(message); this.status = status; this.code = code; this.correlationId = correlationId
+  }
+}
+type ApiOptions<T> = RequestInit & { schema?: ZodType<T>; retryAuth?: boolean }
 
-export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function api<T = unknown>(path: string, options: ApiOptions<T> = {}): Promise<T> {
+  const { schema, retryAuth = true, ...init } = options
+  const accessToken = session.getSnapshot().accessToken
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
-    headers: { 'Content-Type': 'application/json', ...(session.token ? { Authorization: `Bearer ${session.token}` } : {}), ...init.headers },
+    credentials: 'include',
+    headers: {
+      ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      'x-correlation-id': crypto.randomUUID(),
+      ...init.headers,
+    },
   })
-  const body = await response.json().catch(() => ({}))
+  if (response.status === 401 && retryAuth && await session.refresh()) return api(path, { ...options, retryAuth: false })
+  if (response.status === 204) return undefined as T
+  const body: unknown = await response.json().catch(() => ({}))
   if (!response.ok) {
-    if (response.status === 401) session.clear()
-    throw new Error(body.error || body.message || `Request failed (${response.status})`)
+    const error = body as { error?: string; message?: string; code?: string; correlationId?: string }
+    throw new ApiError(error.error || error.message || `Request failed (${response.status})`, response.status, error.code, error.correlationId)
   }
-  return body as T
+  return schema ? schema.parse(body) : body as T
 }

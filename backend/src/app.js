@@ -24,13 +24,16 @@ const favoriteRoutes = require('./routes/favorite.routes');
 const reviewRoutes = require('./routes/review.routes');
 const eventRoutes = require('./routes/event.routes');
 const operationsRoutes = require('./routes/operations.routes');
+const adminV1Routes = require('./routes/admin-v1.routes');
 const paymentController = require('./controllers/payment.controller');
 
 const app = express();
 
+app.set('trust proxy', env.trustProxyHops);
 app.use(requestContext);
 app.use(errorContract);
 app.use(cors({
+  credentials: true,
   origin(origin, callback) {
     if (!origin || (!env.isProduction && env.corsOrigins.length === 0) || env.corsOrigins.includes(origin)) {
       return callback(null, true);
@@ -82,6 +85,7 @@ app.use('/api/professionals', professionalRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/v1/admin', adminV1Routes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/favorites', favoriteRoutes);
