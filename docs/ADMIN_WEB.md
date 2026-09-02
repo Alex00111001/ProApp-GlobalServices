@@ -33,7 +33,7 @@ Navigation and route boundaries derive from the effective permission set returne
 - Audit: server-side filters for action, actor, resource, outcome and correlation evidence.
 - Access: current sessions, role catalog, searchable user target selection and four-eyes grant/revoke workflow.
 
-F5/F6 destinations are visible only as explicit phase boundaries for authorized roles; they do not present fabricated data.
+F5 Operations and Support are real permission-derived surfaces backed by `/api/v1/admin/operations/*`. Operations presents Error Explorer, Incident Center, readiness/history, jobs, integrations, alerts and read-only financial monitoring. Support provides durable cases, assignment, strict lifecycle and internal comments. F6+ destinations remain explicit phase boundaries and do not present fabricated data.
 
 ## Deployment configuration
 
@@ -44,7 +44,7 @@ Backend production requirements:
 - explicit `CORS_ORIGINS` containing the admin origin;
 - HTTPS termination and exact `TRUST_PROXY_HOPS`;
 - separate 32+ character `JWT_SECRET` and `ADMIN_SESSION_PEPPER`;
-- 14 reviewed migrations applied and the RBAC catalog synchronized;
+- 15 reviewed migrations applied and the RBAC catalog synchronized;
 - shared ingress/WAF authentication rate limits in addition to the in-process limiter;
 - observability exporters and alert routes configured as required by F2.
 

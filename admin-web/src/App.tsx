@@ -6,6 +6,8 @@ import { BookingsPage } from './pages/BookingsPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { LoginPage } from './pages/LoginPage'
 import { ModulePage } from './pages/ModulePage'
+import { OperationsPage } from './pages/OperationsPage'
+import { SupportPage } from './pages/SupportPage'
 import { ProfessionalsPage } from './pages/ProfessionalsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { UsersPage } from './pages/UsersPage'
@@ -33,6 +35,8 @@ export default function App() {
       <Route path="/professionals" element={<RequirePermission permission="professionals.read"><ProfessionalsPage /></RequirePermission>} />
       <Route path="/bookings" element={<RequirePermission permission="bookings.read"><BookingsPage /></RequirePermission>} />
       <Route path="/audit" element={<RequirePermission permission="audit.read"><AuditPage /></RequirePermission>} />
+      <Route path="/operations" element={<RequirePermission permission="operations.read"><OperationsPage /></RequirePermission>} />
+      <Route path="/support" element={<RequirePermission permission="support.read"><SupportPage /></RequirePermission>} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/:module" element={<ModulePage />} />
     </Route>

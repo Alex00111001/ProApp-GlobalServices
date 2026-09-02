@@ -8,39 +8,44 @@ datasource db {
 }
 
 model User {
-  id                  String                   @id @default(uuid())
-  email               String                   @unique
-  phone               String                   @unique
-  passwordHash        String
-  firstName           String
-  lastName            String
-  avatarUrl           String?
-  role                UserRole                 @default(CLIENT)
-  isActive            Boolean                  @default(true)
-  createdAt           DateTime                 @default(now())
-  updatedAt           DateTime                 @updatedAt
-  lastLoginAt         DateTime?
-  countryCode         String                   @default("ES")
-  termsAcceptedAt     DateTime?
-  termsVersion        String?
-  privacyAcceptedAt   DateTime?
-  privacyVersion      String?
-  marketingConsentAt  DateTime?
-  registrationLocale  String?
-  clientProfile       ClientProfile?
-  notifications       Notification[]
-  professionalProfile ProfessionalProfile?
-  reviewsGiven        Review[]                 @relation("ReviewGiven")
-  reviewsReceived     Review[]                 @relation("ReviewReceived")
-  administrativeRoles UserRoleAssignment[]
-  auditLogs           AuditLog[]               @relation("AuditActor")
-  marketingEvents     MarketingEvent[]
-  errorEvents         ErrorEvent[]
-  incidentComments    IncidentComment[]
-  adminSessions       AdminSession[]
-  adminRoleTargets    AdminRoleChangeRequest[] @relation("AdminRoleTarget")
-  adminRoleRequests   AdminRoleChangeRequest[] @relation("AdminRoleRequester")
-  adminRoleReviews    AdminRoleChangeRequest[] @relation("AdminRoleReviewer")
+  id                    String                   @id @default(uuid())
+  email                 String                   @unique
+  phone                 String                   @unique
+  passwordHash          String
+  firstName             String
+  lastName              String
+  avatarUrl             String?
+  role                  UserRole                 @default(CLIENT)
+  isActive              Boolean                  @default(true)
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+  lastLoginAt           DateTime?
+  countryCode           String                   @default("ES")
+  termsAcceptedAt       DateTime?
+  termsVersion          String?
+  privacyAcceptedAt     DateTime?
+  privacyVersion        String?
+  marketingConsentAt    DateTime?
+  registrationLocale    String?
+  clientProfile         ClientProfile?
+  notifications         Notification[]
+  professionalProfile   ProfessionalProfile?
+  reviewsGiven          Review[]                 @relation("ReviewGiven")
+  reviewsReceived       Review[]                 @relation("ReviewReceived")
+  administrativeRoles   UserRoleAssignment[]
+  auditLogs             AuditLog[]               @relation("AuditActor")
+  marketingEvents       MarketingEvent[]
+  errorEvents           ErrorEvent[]
+  incidentComments      IncidentComment[]
+  adminSessions         AdminSession[]
+  adminRoleTargets      AdminRoleChangeRequest[] @relation("AdminRoleTarget")
+  adminRoleRequests     AdminRoleChangeRequest[] @relation("AdminRoleRequester")
+  adminRoleReviews      AdminRoleChangeRequest[] @relation("AdminRoleReviewer")
+  supportCasesRequested SupportCase[]            @relation("SupportRequester")
+  supportCasesAssigned  SupportCase[]            @relation("SupportAssignee")
+  supportCasesCreated   SupportCase[]            @relation("SupportCreator")
+  supportCaseComments   SupportCaseComment[]
+  supportCaseEvents     SupportCaseEvent[]
 
   @@index([email])
   @@index([phone])
@@ -219,6 +224,7 @@ model Booking {
   disputes               Dispute[]
   reconciliationItems    ReconciliationItem[]
   policyAcceptances      BookingPolicyAcceptance[]
+  supportCases           SupportCase[]
   pricingPolicy          PricingPolicy?            @relation(fields: [pricingPolicyId], references: [id], onDelete: Restrict)
 
   @@index([clientId])
@@ -777,6 +783,66 @@ model IncidentComment {
   @@index([authorId])
 }
 
+model SupportCase {
+  id              String               @id @default(uuid())
+  caseKey         String               @unique
+  subject         String
+  description     String
+  category        SupportCaseCategory
+  priority        SupportCasePriority  @default(MEDIUM)
+  status          SupportCaseStatus    @default(OPEN)
+  requesterUserId String?
+  bookingId       String?
+  assignedToId    String?
+  createdById     String
+  resolvedAt      DateTime?
+  closedAt        DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  requester       User?                @relation("SupportRequester", fields: [requesterUserId], references: [id], onDelete: SetNull)
+  booking         Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  assignedTo      User?                @relation("SupportAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdBy       User                 @relation("SupportCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  comments        SupportCaseComment[]
+  events          SupportCaseEvent[]
+
+  @@index([status, priority, updatedAt])
+  @@index([requesterUserId, createdAt])
+  @@index([bookingId, createdAt])
+  @@index([assignedToId, status, updatedAt])
+}
+
+model SupportCaseComment {
+  id        String      @id @default(uuid())
+  caseId    String
+  authorId  String
+  body      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  case      SupportCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  author    User        @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([caseId, createdAt])
+  @@index([authorId, createdAt])
+}
+
+model SupportCaseEvent {
+  id         String             @id @default(uuid())
+  caseId     String
+  actorId    String?
+  eventType  String
+  fromStatus SupportCaseStatus?
+  toStatus   SupportCaseStatus?
+  message    String?
+  metadata   Json?
+  createdAt  DateTime           @default(now())
+  case       SupportCase        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  actor      User?              @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([caseId, createdAt])
+  @@index([actorId, createdAt])
+}
+
 model ServiceHealthSnapshot {
   id        String       @id @default(uuid())
   service   String
@@ -1209,6 +1275,31 @@ enum HealthStatus {
   DEGRADED
   OUTAGE
   UNKNOWN
+}
+
+enum SupportCaseStatus {
+  OPEN
+  TRIAGED
+  IN_PROGRESS
+  WAITING_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+enum SupportCasePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum SupportCaseCategory {
+  ACCOUNT
+  BOOKING
+  PAYMENT
+  PROFESSIONAL
+  SAFETY
+  OTHER
 }
 
 enum PolicyStatus {

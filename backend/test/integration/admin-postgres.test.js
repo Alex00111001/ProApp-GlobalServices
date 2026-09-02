@@ -19,6 +19,7 @@ const { getDashboard } = require('../../src/modules/admin/admin-read.service');
 const runId = `admin.${Date.now().toString(36)}.${Math.random().toString(36).slice(2, 10)}`;
 const userIds = [];
 let changeId;
+let supportCaseId;
 let passwordHash;
 const requestContext = (userId, suffix) => ({
   user: { id: userId }, ip: '127.0.0.1', get: () => 'admin-integration-test',
@@ -32,6 +33,12 @@ test.before(async () => {
 
 test.after(async () => {
   if (changeId) await prisma.adminRoleChangeRequest.deleteMany({ where: { id: changeId } });
+  if (supportCaseId) {
+    await prisma.outboxEvent.deleteMany({ where: { aggregateType: 'SupportCase', aggregateId: supportCaseId } });
+    await prisma.supportCaseComment.deleteMany({ where: { caseId: supportCaseId } });
+    await prisma.supportCaseEvent.deleteMany({ where: { caseId: supportCaseId } });
+    await prisma.supportCase.deleteMany({ where: { id: supportCaseId } });
+  }
   await prisma.adminSession.deleteMany({ where: { userId: { in: userIds } } });
   await prisma.auditLog.deleteMany({ where: { OR: [{ actorId: { in: userIds } }, { correlationId: runId }] } });
   await prisma.userRoleAssignment.deleteMany({ where: { userId: { in: userIds } } });
@@ -128,8 +135,47 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     });
     assert.equal(allowed.status, 200);
     assert.equal(Array.isArray((await allowed.json()).items), true);
+
+    const operations = await fetch(`${baseUrl}/operations/overview`, {
+      headers: { authorization: `Bearer ${session.accessToken}`, 'x-correlation-id': `${runId}-http-operations` },
+    });
+    assert.equal(operations.status, 200);
+    const operationsBody = await operations.json();
+    assert.equal(typeof operationsBody.errors, 'object');
+    assert.equal(operationsBody.financialAttention.latestReconciliation === null || typeof operationsBody.financialAttention.latestReconciliation.id === 'string', true);
+
+    const deniedJobs = await fetch(`${baseUrl}/operations/jobs?page=1&limit=5`, {
+      headers: { authorization: `Bearer ${session.accessToken}`, 'x-correlation-id': `${runId}-http-jobs-denied` },
+    });
+    assert.equal(deniedJobs.status, 403);
+    assert.equal((await deniedJobs.json()).code, 'INSUFFICIENT_PERMISSION');
+
+    const createdCaseResponse = await fetch(`${baseUrl}/operations/support/cases`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${session.accessToken}`, 'content-type': 'application/json', 'x-correlation-id': `${runId}-support-create` },
+      body: JSON.stringify({ subject: 'Integration support case', description: 'Validate the complete support lifecycle safely.', category: 'OTHER', priority: 'HIGH' }),
+    });
+    assert.equal(createdCaseResponse.status, 201);
+    const createdCase = (await createdCaseResponse.json()).supportCase;
+    supportCaseId = createdCase.id;
+    assert.match(createdCase.caseKey, /^SUP-[A-F0-9]{8}$/);
+
+    const triaged = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}/status`, {
+      method: 'PATCH',
+      headers: { authorization: `Bearer ${session.accessToken}`, 'content-type': 'application/json', 'x-correlation-id': `${runId}-support-triage` },
+      body: JSON.stringify({ status: 'TRIAGED', reason: 'Validated and accepted by integration support' }),
+    });
+    assert.equal(triaged.status, 200);
+    assert.equal((await triaged.json()).supportCase.status, 'TRIAGED');
     assert.equal(await prisma.auditLog.count({
       where: { actorId: support.id, action: 'AUTHORIZATION_DENIED', resourceId: 'roles.read', outcome: 'DENIED' },
+    }), 1);
+    assert.equal(await prisma.auditLog.count({ where: { resourceId: supportCaseId, action: { in: ['support.case_created', 'support.status_changed'] } } }), 2);
+    assert.equal(await prisma.outboxEvent.count({
+      where: { aggregateType: 'SupportCase', aggregateId: supportCaseId },
+    }), 2);
+    assert.equal(await prisma.auditLog.count({
+      where: { actorId: support.id, action: 'AUTHORIZATION_DENIED', resourceId: 'jobs.read', outcome: 'DENIED' },
     }), 1);
   } finally {
     await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
