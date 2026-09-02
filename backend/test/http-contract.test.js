@@ -94,6 +94,16 @@ test('versioned operations APIs cannot fall back to the legacy administrative JW
   assert.equal(body.correlationId, 'operations-admin-auth-1');
 });
 
+test('versioned growth APIs require the dedicated administrative session contract', async () => {
+  const response = await fetch(`${baseUrl}/api/v1/admin/growth/overview`, {
+    headers: { 'x-correlation-id': 'growth-admin-auth-1' },
+  });
+  const body = await response.json();
+  assert.equal(response.status, 401);
+  assert.equal(body.code, 'ADMIN_AUTHENTICATION_REQUIRED');
+  assert.equal(body.correlationId, 'growth-admin-auth-1');
+});
+
 test('admin refresh fails safely without cookie and CSRF verifier', async () => {
   const response = await fetch(`${baseUrl}/api/v1/admin/auth/refresh`, {
     method: 'POST',

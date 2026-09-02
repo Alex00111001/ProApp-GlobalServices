@@ -116,3 +116,30 @@ export const supportCaseDetailSchema = z.object({ supportCase: z.object({
   events: z.array(z.object({ id: z.string(), eventType: z.string(), fromStatus: z.string().nullable(), toStatus: z.string().nullable(), message: z.string().nullable(), createdAt: z.string(), actor: supportPersonSchema.nullable() })),
 }) })
 export const supportOperatorsSchema = z.object({ operators: z.array(supportPersonSchema) })
+
+const growthRangeSchema = z.object({ from: z.string(), to: z.string(), timezone: z.string(), campaignId: z.string().nullable(), countryCode: z.string().nullable() })
+const growthDefinitionSchema = z.object({ label: z.string(), unit: z.literal('count'), source: z.string(), description: z.string() })
+export const growthOverviewSchema = z.object({
+  range: growthRangeSchema, generatedAt: z.string(),
+  freshness: z.object({ latestEventReceivedAt: z.string().nullable(), partialData: z.boolean() }),
+  metrics: z.object({ events: z.number(), leads: z.number(), conversions: z.number(), activeCampaigns: z.number() }),
+  conversions: z.record(z.string(), z.number()), definitions: z.record(z.string(), growthDefinitionSchema),
+})
+export type GrowthOverview = z.infer<typeof growthOverviewSchema>
+export const growthFunnelSchema = z.object({
+  range: growthRangeSchema, generatedAt: z.string(), definition: z.string(),
+  stages: z.array(z.object({ eventName: z.string(), key: z.string(), label: z.string(), occurrences: z.number(), subjects: z.number(), rateFromFirst: z.string(), rateFromPrevious: z.string() })),
+})
+export const campaignSchema = z.object({
+  id: z.string(), key: z.string(), name: z.string(), status: z.string(), source: z.string(), medium: z.string().nullable(), channel: z.string().nullable(), countryCode: z.string().nullable(), startsAt: z.string().nullable(), endsAt: z.string().nullable(), createdAt: z.string(), updatedAt: z.string(),
+  _count: z.object({ events: z.number(), leads: z.number(), conversions: z.number() }),
+})
+export const campaignListSchema = z.object({ items: z.array(campaignSchema), pagination: paginationSchema })
+export const leadListSchema = z.object({
+  items: z.array(z.object({ id: z.string(), subjectType: z.string(), status: z.string(), source: z.string().nullable(), channel: z.string().nullable(), countryCode: z.string().nullable(), firstSeenAt: z.string(), lastSeenAt: z.string(), convertedAt: z.string().nullable(), identified: z.boolean(), campaign: z.object({ id: z.string(), key: z.string(), name: z.string() }).nullable(), _count: z.object({ events: z.number(), conversions: z.number() }) })),
+  pagination: paginationSchema,
+})
+export const conversionListSchema = z.object({
+  items: z.array(z.object({ id: z.string(), type: z.string(), occurredAt: z.string(), createdAt: z.string(), campaign: z.object({ id: z.string(), key: z.string(), name: z.string() }).nullable(), event: z.object({ id: z.string(), eventName: z.string(), correlationId: z.string().nullable() }), lead: z.object({ subjectType: z.string() }).nullable() })),
+  pagination: paginationSchema,
+})

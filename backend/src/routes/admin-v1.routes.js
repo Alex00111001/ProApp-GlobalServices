@@ -3,6 +3,7 @@ const { rateLimit } = require('express-rate-limit');
 const controller = require('../controllers/admin-v1.controller');
 const authController = require('../controllers/admin-auth.controller');
 const operationsController = require('../controllers/admin-operations.controller');
+const growthController = require('../controllers/admin-growth.controller');
 const { authenticateAdmin } = require('../middleware/authenticate-admin');
 const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
@@ -52,6 +53,15 @@ router.get(
   requirePermission(PERMISSIONS.USERS_PII_READ),
   controller.booking
 );
+
+router.get('/growth/overview', requirePermission(PERMISSIONS.MARKETING_READ), growthController.overview);
+router.get('/growth/funnel', requirePermission(PERMISSIONS.MARKETING_READ), growthController.funnel);
+router.get('/growth/campaigns', requirePermission(PERMISSIONS.MARKETING_READ), growthController.campaigns);
+router.post('/growth/campaigns', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.createCampaign);
+router.patch('/growth/campaigns/:id', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.updateCampaign);
+router.patch('/growth/campaigns/:id/status', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.setCampaignStatus);
+router.get('/growth/leads', requirePermission(PERMISSIONS.MARKETING_READ), growthController.leads);
+router.get('/growth/conversions', requirePermission(PERMISSIONS.MARKETING_READ), growthController.conversions);
 
 router.get('/audit', requirePermission(PERMISSIONS.AUDIT_READ), controller.auditLogs);
 router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), controller.roles);
