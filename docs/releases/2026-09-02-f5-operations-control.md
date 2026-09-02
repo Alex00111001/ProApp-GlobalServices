@@ -29,7 +29,7 @@
 - Secret scan: passed with no findings.
 - Dependency audits: root, backend and Admin Web have zero findings; mobile workspaces have no high/critical findings and retain documented moderate Expo transitive advisories whose automatic fixes require breaking downgrades.
 - RBAC catalog bootstrap was converted from sequential per-row upserts to bounded bulk synchronization after the Supabase pooler exposed the prior latency risk.
-- Remote CI: pending publication gate.
+- Remote CI: [Platform verification 33612091154](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/33612091154) passed all three jobs for implementation commit `78536bd`.
 
 ## Rollback
 

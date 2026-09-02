@@ -240,7 +240,7 @@ Deliver the versioned administrative plane for errors, incidents, health, jobs, 
 
 Acceptance: dedicated admin sessions and narrow permissions protect every endpoint; lists are bounded and redact provider/worker payloads; incident and support lifecycles are strict, concurrent-safe and auditable; health degradation and financial attention are actionable without executing money; runbooks and rollback preserve evidence.
 
-Status: **implementation complete in Supabase test; remote CI closure pending on 2026-09-02**. See [the F5 release candidate record](releases/2026-09-02-f5-operations-control.md). Production remains inactive and dead-letter replay is deliberately unavailable pending its own idempotency/approval contract.
+Status: **complete in Supabase test on 2026-09-02**. Implementation commit `78536bd` and [Platform verification run 33612091154](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/33612091154) passed all build, unit/contract, PostgreSQL migration/integration and secret-scan jobs. See [the F5 release record](releases/2026-09-02-f5-operations-control.md). Production remains inactive and dead-letter replay is deliberately unavailable pending its own idempotency/approval contract.
 
 ### Phases 6–10
 
