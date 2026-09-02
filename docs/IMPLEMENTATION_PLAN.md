@@ -242,9 +242,27 @@ Acceptance: dedicated admin sessions and narrow permissions protect every endpoi
 
 Status: **complete in Supabase test on 2026-09-02**. Implementation commit `78536bd` and [Platform verification run 33612091154](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/33612091154) passed all build, unit/contract, PostgreSQL migration/integration and secret-scan jobs. See [the F5 release record](releases/2026-09-02-f5-operations-control.md). Production remains inactive and dead-letter replay is deliberately unavailable pending its own idempotency/approval contract.
 
-### Phases 6–10
+### Phase 6 — Growth data
 
-Build growth data, consent/attribution, referrals/automation, experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
+Deliver reliable first-party growth event ingestion, campaign records and lifecycle, pseudonymous leads, idempotent conversion projections, reproducible acquisition funnels and the versioned administrative Growth surface.
+
+Acceptance: repeated client event keys cannot duplicate events/leads/conversions; submitted identity cannot override authenticated identity; administrative responses and telemetry omit raw anonymous identifiers and PII; campaign transitions are strict and audited; funnels report event counts and unique subjects with explicit definitions, range, timezone, freshness and partial-data state; `marketing.read` and `marketing.manage` are enforced independently; PostgreSQL/Supabase integration, migration RLS/default-deny, Admin Web, regression, secret scan and CI pass. Production and external advertising providers remain inactive.
+
+Scope boundary: F6 records observational campaign association only. Channel consent, touchpoints and causal/multi-touch attribution remain F7; referrals/automation remain F8; experiments/content/SEO remain F9. Growth never duplicates Billing as a financial source of truth.
+
+Implementation slices:
+
+1. Additive `Campaign`, `Lead` and `Conversion` persistence plus compatible `MarketingEvent` idempotency, pseudonymous subject and correlation fields.
+2. Transactional ingestion/projection with bounded validation, trusted identity, campaign association, outbox context and duplicate protection.
+3. Versioned Growth APIs and read models for overview, funnel, campaigns, leads and conversions with narrow RBAC and audit evidence.
+4. Real Admin Web Growth experience with loading/error/empty states and no simulated data.
+5. Migration/test environment, unit/integration/contract/security gates, documentation, runbook, release record and remote CI closure.
+
+Status: **in progress in Supabase test on 2026-09-02**. The detailed execution plan and live evidence are tracked in the F6 Notion phase page. Production remains inactive.
+
+### Phases 7–10
+
+Build consent/attribution, referrals/automation, experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
 
 ## 16. Immediate delivery slices
 

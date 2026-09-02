@@ -129,6 +129,7 @@ const validateEnvironment = (source = process.env) => {
 
   requireProductionSecret(environment, 'JWT_SECRET', jwtSecret);
   requireProductionSecret(environment, 'ADMIN_SESSION_PEPPER', source.ADMIN_SESSION_PEPPER);
+  requireProductionSecret(environment, 'GROWTH_PSEUDONYM_SECRET', source.GROWTH_PSEUDONYM_SECRET);
 
   if (environment === 'production') {
     if (!/^postgres(?:ql)?:\/\//.test(source.DATABASE_URL || '')) {
@@ -185,6 +186,8 @@ const validateEnvironment = (source = process.env) => {
     adminSessionHours: parseInteger('ADMIN_SESSION_HOURS', source.ADMIN_SESSION_HOURS, 12, 1, 168),
     adminSessionPepper: source.ADMIN_SESSION_PEPPER || jwtSecret,
     adminRoleChangesEnabled: parseBoolean('ADMIN_ROLE_CHANGES_ENABLED', source.ADMIN_ROLE_CHANGES_ENABLED, false),
+    growthDataEnabled: parseBoolean('GROWTH_DATA_ENABLED', source.GROWTH_DATA_ENABLED, environment !== 'production'),
+    growthPseudonymSecret: source.GROWTH_PSEUDONYM_SECRET || 'development-only-growth-pseudonym-secret',
     logLevel,
     logTransport,
     logFilePath: source.LOG_FILE_PATH,

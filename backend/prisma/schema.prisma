@@ -46,6 +46,9 @@ model User {
   supportCasesCreated   SupportCase[]            @relation("SupportCreator")
   supportCaseComments   SupportCaseComment[]
   supportCaseEvents     SupportCaseEvent[]
+  growthLeads           Lead[]                   @relation("GrowthLeadUser")
+  growthConversions     Conversion[]             @relation("GrowthConversionUser")
+  campaignsCreated      Campaign[]               @relation("CampaignCreator")
 
   @@index([email])
   @@index([phone])
@@ -108,6 +111,8 @@ model ProfessionalProfile {
   errorEvents            ErrorEvent[]
   payouts                Payout[]
   disputes               Dispute[]
+  growthLeads            Lead[]                     @relation("GrowthLeadProfessional")
+  growthConversions      Conversion[]               @relation("GrowthConversionProfessional")
 
   @@index([status])
   @@index([userId])
@@ -225,6 +230,7 @@ model Booking {
   reconciliationItems    ReconciliationItem[]
   policyAcceptances      BookingPolicyAcceptance[]
   supportCases           SupportCase[]
+  growthConversions      Conversion[]
   pricingPolicy          PricingPolicy?            @relation(fields: [pricingPolicyId], references: [id], onDelete: Restrict)
 
   @@index([clientId])
@@ -646,9 +652,20 @@ model MarketingEvent {
   appVersion     String?
   geography      Json?
   metadata       Json?
+  clientEventId  String?              @unique
+  subjectKey     String?
+  campaignId     String?
+  leadId         String?
+  countryCode    String?
+  requestId      String?
+  correlationId  String?
+  traceId        String?
   booking        Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  campaignRecord Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  lead           Lead?                @relation(fields: [leadId], references: [id], onDelete: SetNull)
   professional   ProfessionalProfile? @relation(fields: [professionalId], references: [id], onDelete: SetNull)
   user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  conversion     Conversion?
 
   @@index([eventName, occurredAt])
   @@index([userId, occurredAt])
@@ -657,6 +674,89 @@ model MarketingEvent {
   @@index([sessionId, occurredAt])
   @@index([anonymousId, occurredAt])
   @@index([utmCampaign, occurredAt])
+  @@index([campaignId, occurredAt])
+  @@index([leadId, eventName, occurredAt])
+  @@index([countryCode, occurredAt])
+  @@index([correlationId])
+}
+
+model Campaign {
+  id          String           @id @default(uuid())
+  key         String           @unique
+  name        String
+  status      CampaignStatus   @default(DRAFT)
+  source      String
+  medium      String?
+  channel     String?
+  countryCode String?
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdById String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  createdBy   User             @relation("CampaignCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  events      MarketingEvent[]
+  leads       Lead[]
+  conversions Conversion[]
+
+  @@index([status, startsAt, endsAt])
+  @@index([source, medium, createdAt])
+  @@index([countryCode, status])
+  @@index([createdById])
+}
+
+model Lead {
+  id             String               @id @default(uuid())
+  subjectKey     String               @unique
+  subjectType    LeadSubjectType
+  status         LeadStatus           @default(NEW)
+  userId         String?
+  professionalId String?
+  campaignId     String?
+  source         String?
+  channel        String?
+  countryCode    String?
+  firstSeenAt    DateTime
+  lastSeenAt     DateTime
+  convertedAt    DateTime?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  user           User?                @relation("GrowthLeadUser", fields: [userId], references: [id], onDelete: SetNull)
+  professional   ProfessionalProfile? @relation("GrowthLeadProfessional", fields: [professionalId], references: [id], onDelete: SetNull)
+  campaign       Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  events         MarketingEvent[]
+  conversions    Conversion[]
+
+  @@index([status, lastSeenAt])
+  @@index([campaignId, status, lastSeenAt])
+  @@index([userId, lastSeenAt])
+  @@index([professionalId, lastSeenAt])
+  @@index([countryCode, firstSeenAt])
+}
+
+model Conversion {
+  id             String               @id @default(uuid())
+  conversionKey  String               @unique
+  type           ConversionType
+  eventId        String               @unique
+  leadId         String?
+  campaignId     String?
+  userId         String?
+  professionalId String?
+  bookingId      String?
+  occurredAt     DateTime
+  createdAt      DateTime             @default(now())
+  event          MarketingEvent       @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  lead           Lead?                @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  campaign       Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  user           User?                @relation("GrowthConversionUser", fields: [userId], references: [id], onDelete: SetNull)
+  professional   ProfessionalProfile? @relation("GrowthConversionProfessional", fields: [professionalId], references: [id], onDelete: SetNull)
+  booking        Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+
+  @@index([type, occurredAt])
+  @@index([campaignId, type, occurredAt])
+  @@index([leadId, occurredAt])
+  @@index([bookingId, occurredAt])
 }
 
 model ErrorGroup {
@@ -1300,6 +1400,35 @@ enum SupportCaseCategory {
   PROFESSIONAL
   SAFETY
   OTHER
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum LeadSubjectType {
+  USER
+  PROFESSIONAL
+  ANONYMOUS
+  SESSION
+}
+
+enum LeadStatus {
+  NEW
+  ENGAGED
+  CONVERTED
+  DISQUALIFIED
+}
+
+enum ConversionType {
+  SIGNUP
+  REQUEST
+  BOOKING
+  PAYMENT
+  JOB_COMPLETED
 }
 
 enum PolicyStatus {
