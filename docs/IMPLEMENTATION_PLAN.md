@@ -258,7 +258,7 @@ Implementation slices:
 4. Real Admin Web Growth experience with loading/error/empty states and no simulated data.
 5. Migration/test environment, unit/integration/contract/security gates, documentation, runbook, release record and remote CI closure.
 
-Status: **in progress in Supabase test on 2026-09-02**. The detailed execution plan and live evidence are tracked in the F6 Notion phase page. Production remains inactive.
+Status: **completed in Supabase test on 2026-09-02**. Implementation commit `60d6091` passed [Platform verification run 33637424333](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/33637424333), including build/unit/contract, PostgreSQL migration/integration and secret-scan jobs. See [the F6 release record](releases/2026-09-02-f6-growth-data.md). Production, privacy-dependent collection and external advertising remain inactive.
 
 ### Phases 7–10
 

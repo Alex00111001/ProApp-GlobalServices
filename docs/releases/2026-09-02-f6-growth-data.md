@@ -38,7 +38,8 @@ Applied successfully to the configured Supabase test project on 2026-09-02 after
 - Baseline audit: passed (no missing/incompatible baseline tables, columns, enums, indexes or constraints).
 - `npm run verify`: passed across backend, Admin Web, customer mobile and professional mobile.
 - `npm audit --audit-level=high`: zero high/critical vulnerabilities in all five workspaces (mobile transitive dependency trees retain moderate advisories requiring upstream/breaking changes).
-- Secret scan and remote CI: pending final closure commit.
+- Gitleaks 8.30.1 scanned the implementation commit with no leaks.
+- [Platform verification run 33637424333](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/33637424333): all three jobs passed (build/unit/contract, PostgreSQL migration/integration, secret scan).
 
 ## Rollout and rollback
 
@@ -55,5 +56,5 @@ Rollback is application-first: disable the flag and restore previous application
 ## Publication
 
 - Branch: `feature/growth-data-phase-6`
-- Commit: pending
-- Remote CI: pending
+- Implementation commit: `60d60913c46ac8fc02ff64ca4004defac1fdf58c`
+- Remote CI: [33637424333](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/33637424333), passed
