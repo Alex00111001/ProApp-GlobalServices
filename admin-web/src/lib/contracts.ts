@@ -52,3 +52,67 @@ export const roleChangeRequestsSchema = z.object({ requests: z.array(z.object({
   requestedBy: z.object({ id: z.string(), firstName: z.string(), lastName: z.string() }),
   reviewedBy: z.object({ id: z.string(), firstName: z.string(), lastName: z.string() }).nullable(),
 })) })
+
+const healthDependencySchema = z.object({ service: z.string(), status: z.string(), latencyMs: z.number(), message: z.string().optional() })
+export const operationsOverviewSchema = z.object({
+  generatedAt: z.string(),
+  health: z.object({ status: z.string(), checkedAt: z.string(), service: z.string(), dependencies: z.record(z.string(), healthDependencySchema) }),
+  errors: z.record(z.string(), z.number()), incidents: z.record(z.string(), z.number()), jobs: z.record(z.string(), z.number()), integrations: z.record(z.string(), z.number()), support: z.record(z.string(), z.number()),
+  financialAttention: z.object({
+    failedRefunds: z.number(), failedPayouts: z.number(), activeDisputes: z.number(),
+    latestReconciliation: z.object({ id: z.string(), status: z.string(), scope: z.string(), startedAt: z.string(), completedAt: z.string().nullable(), matchedCount: z.number(), mismatchCount: z.number(), errorCount: z.number() }).nullable(),
+  }),
+  freshness: z.object({ latestErrorAt: z.string().nullable(), latestIncidentAt: z.string().nullable(), partialData: z.boolean() }),
+})
+export type OperationsOverview = z.infer<typeof operationsOverviewSchema>
+
+export const errorGroupListSchema = z.object({
+  items: z.array(z.object({
+    id: z.string(), fingerprint: z.string(), severity: z.string(), environment: z.string(), service: z.string(), module: z.string().nullable(), operation: z.string().nullable(), errorCode: z.string().nullable(), normalizedMessage: z.string(), status: z.string(), firstSeenAt: z.string(), lastSeenAt: z.string(), occurrenceCount: z.number(), windowStartedAt: z.string(), windowOccurrenceCount: z.number(), _count: z.object({ events: z.number(), incidents: z.number() }),
+  })), pagination: paginationSchema,
+})
+export type ErrorGroupList = z.infer<typeof errorGroupListSchema>
+export const errorGroupDetailSchema = z.object({ errorGroup: z.object({
+  id: z.string(), fingerprint: z.string(), severity: z.string(), environment: z.string(), service: z.string(), module: z.string().nullable(), operation: z.string().nullable(), errorCode: z.string().nullable(), normalizedMessage: z.string(), status: z.string(), firstSeenAt: z.string(), lastSeenAt: z.string(), occurrenceCount: z.number(), windowStartedAt: z.string(), windowOccurrenceCount: z.number(),
+  events: z.array(z.object({ id: z.string(), severity: z.string(), httpStatus: z.number().nullable(), endpoint: z.string().nullable(), method: z.string().nullable(), requestId: z.string().nullable(), correlationId: z.string().nullable(), traceId: z.string().nullable(), appVersion: z.string().nullable(), occurredAt: z.string() })),
+  incidents: z.array(z.object({ id: z.string(), title: z.string(), status: z.string(), severity: z.string(), detectedAt: z.string(), resolvedAt: z.string().nullable() })),
+}) })
+
+export const incidentListSchema = z.object({
+  items: z.array(z.object({
+    id: z.string(), title: z.string(), description: z.string().nullable(), status: z.string(), severity: z.string(), service: z.string().nullable(), detectedAt: z.string(), acknowledgedAt: z.string().nullable(), resolvedAt: z.string().nullable(), closedAt: z.string().nullable(), updatedAt: z.string(),
+    errorGroup: z.object({ id: z.string(), fingerprint: z.string(), errorCode: z.string().nullable(), occurrenceCount: z.number() }).nullable(), _count: z.object({ events: z.number(), comments: z.number() }),
+  })), pagination: paginationSchema,
+})
+export type IncidentList = z.infer<typeof incidentListSchema>
+export const incidentDetailSchema = z.object({ incident: z.object({
+  id: z.string(), title: z.string(), description: z.string().nullable(), status: z.string(), severity: z.string(), service: z.string().nullable(), detectedAt: z.string(), acknowledgedAt: z.string().nullable(), resolvedAt: z.string().nullable(), closedAt: z.string().nullable(), createdAt: z.string(), updatedAt: z.string(),
+  errorGroup: z.object({ id: z.string(), fingerprint: z.string(), severity: z.string(), status: z.string(), errorCode: z.string().nullable(), normalizedMessage: z.string(), occurrenceCount: z.number(), lastSeenAt: z.string() }).nullable(),
+  events: z.array(z.object({ id: z.string(), eventType: z.string(), message: z.string().nullable(), createdAt: z.string(), errorEventId: z.string().nullable() })),
+  comments: z.array(z.object({ id: z.string(), body: z.string(), createdAt: z.string(), updatedAt: z.string(), author: z.object({ id: z.string(), firstName: z.string(), lastName: z.string() }).nullable() })),
+}) })
+
+export const healthSchema = z.object({ status: z.string(), checkedAt: z.string(), service: z.string(), dependencies: z.record(z.string(), healthDependencySchema) })
+export const healthSnapshotsSchema = z.object({ items: z.array(z.object({ id: z.string(), service: z.string(), status: z.string(), latencyMs: z.number().nullable(), message: z.string().nullable(), checkedAt: z.string() })), pagination: paginationSchema })
+const operationalItemBase = { id: z.string(), status: z.string(), attempts: z.number(), createdAt: z.string(), hasError: z.boolean() }
+export const jobsSchema = z.object({ items: z.array(z.object({ ...operationalItemBase, aggregateType: z.string(), eventType: z.string(), availableAt: z.string(), lockedAt: z.string().nullable(), processedAt: z.string().nullable() })), pagination: paginationSchema })
+export const integrationsSchema = z.object({ items: z.array(z.object({ ...operationalItemBase, provider: z.string(), eventType: z.string(), correlationId: z.string().nullable(), receivedAt: z.string(), processingStartedAt: z.string().nullable(), processedAt: z.string().nullable(), updatedAt: z.string() })), pagination: paginationSchema })
+export const alertsSchema = z.object({ items: z.array(z.object({ ...operationalItemBase, aggregateId: z.string(), eventType: z.string(), route: z.string().nullable(), severity: z.string().nullable(), availableAt: z.string(), processedAt: z.string().nullable() })), pagination: paginationSchema })
+const financialGroupSchema = z.object({ status: z.string(), currency: z.string(), count: z.number(), amount: z.string() })
+export const financialMonitoringSchema = z.object({
+  generatedAt: z.string(), readOnly: z.literal(true), refunds: z.array(financialGroupSchema), payouts: z.array(financialGroupSchema),
+  disputes: z.array(financialGroupSchema.extend({ recoveredAmount: z.string() })),
+  reconciliationRuns: z.array(z.object({ id: z.string(), status: z.string(), scope: z.string(), startedAt: z.string(), completedAt: z.string().nullable(), matchedCount: z.number(), mismatchCount: z.number(), errorCount: z.number() })),
+})
+
+const supportPersonSchema = z.object({ id: z.string(), firstName: z.string(), lastName: z.string() })
+export const supportCaseListSchema = z.object({
+  items: z.array(z.object({ id: z.string(), caseKey: z.string(), subject: z.string(), category: z.string(), priority: z.string(), status: z.string(), requesterUserId: z.string().nullable(), bookingId: z.string().nullable(), assignedTo: supportPersonSchema.nullable(), createdAt: z.string(), updatedAt: z.string(), _count: z.object({ comments: z.number(), events: z.number() }) })),
+  pagination: paginationSchema,
+})
+export const supportCaseDetailSchema = z.object({ supportCase: z.object({
+  id: z.string(), caseKey: z.string(), subject: z.string(), description: z.string(), category: z.string(), priority: z.string(), status: z.string(), requesterUserId: z.string().nullable(), bookingId: z.string().nullable(), resolvedAt: z.string().nullable(), closedAt: z.string().nullable(), createdAt: z.string(), updatedAt: z.string(), requester: supportPersonSchema.extend({ isActive: z.boolean() }).nullable(), assignedTo: supportPersonSchema.nullable(), createdBy: supportPersonSchema,
+  comments: z.array(z.object({ id: z.string(), body: z.string(), createdAt: z.string(), updatedAt: z.string(), author: supportPersonSchema })),
+  events: z.array(z.object({ id: z.string(), eventType: z.string(), fromStatus: z.string().nullable(), toStatus: z.string().nullable(), message: z.string().nullable(), createdAt: z.string(), actor: supportPersonSchema.nullable() })),
+}) })
+export const supportOperatorsSchema = z.object({ operators: z.array(supportPersonSchema) })

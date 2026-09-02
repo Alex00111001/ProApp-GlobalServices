@@ -234,9 +234,17 @@ Acceptance: no direct DB access; unauthorized permissions receive 403; sensitive
 
 Status: **completed in the Supabase test environment on 2026-09-01**. Architecture, security, migrations, verification and activation/rollback evidence are recorded in [the F4 release record](releases/2026-09-01-f4-admin-foundation.md). Production remains unactivated and role mutations remain disabled by default.
 
-### Phases 5–10
+### Phase 5 — Operations control
 
-Build operations control, growth data, consent/attribution, referrals/automation, experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
+Deliver the versioned administrative plane for errors, incidents, health, jobs, integrations, alerts, financial monitoring and support cases.
+
+Acceptance: dedicated admin sessions and narrow permissions protect every endpoint; lists are bounded and redact provider/worker payloads; incident and support lifecycles are strict, concurrent-safe and auditable; health degradation and financial attention are actionable without executing money; runbooks and rollback preserve evidence.
+
+Status: **implementation complete in Supabase test; remote CI closure pending on 2026-09-02**. See [the F5 release candidate record](releases/2026-09-02-f5-operations-control.md). Production remains inactive and dead-letter replay is deliberately unavailable pending its own idempotency/approval contract.
+
+### Phases 6–10
+
+Build growth data, consent/attribution, referrals/automation, experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
 
 ## 16. Immediate delivery slices
 

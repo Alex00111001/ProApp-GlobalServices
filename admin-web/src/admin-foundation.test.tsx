@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AdminLayout } from './components/AdminLayout'
+import { OperationsPage } from './pages/OperationsPage'
 import { navigation } from './navigation'
 import { api } from './lib/api'
 import { session } from './state/session'
@@ -46,5 +48,28 @@ describe('permission-derived navigation', () => {
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Usuarios' })).toBeTruthy()
     expect(screen.queryByRole('link', { name: 'Auditoría' })).toBeNull()
+  })
+})
+
+describe('F5 operations control', () => {
+  it('renders only operational modules granted by the backend permission set', async () => {
+    const operationsSession = { ...sessionPayload, permissions: ['operations.read', 'errors.read', 'health.read'] }
+    const overview = {
+      generatedAt: new Date().toISOString(),
+      health: { status: 'HEALTHY', checkedAt: new Date().toISOString(), service: 'homeservices-core-api', dependencies: { database: { service: 'database', status: 'HEALTHY', latencyMs: 4 } } },
+      errors: { OPEN: 2 }, incidents: {}, jobs: {}, integrations: {}, support: {},
+      financialAttention: { failedRefunds: 0, failedPayouts: 0, activeDisputes: 0, latestReconciliation: null },
+      freshness: { latestErrorAt: null, latestIncidentAt: null, partialData: false },
+    }
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(operationsSession), { status: 201, headers: { 'content-type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(overview), { status: 200, headers: { 'content-type': 'application/json' } })))
+    await session.login('admin@example.com', 'correct-password')
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(<QueryClientProvider client={queryClient}><MemoryRouter><OperationsPage /></MemoryRouter></QueryClientProvider>)
+    expect(await screen.findByText('Errores abiertos')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Errores' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Health' })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /Jobs, integraciones/ })).toBeNull()
   })
 })

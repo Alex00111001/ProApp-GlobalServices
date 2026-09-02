@@ -78,9 +78,12 @@ Interactive database transactions use bounded acquisition and execution windows 
 
 All endpoints require authentication and database-backed permission checks.
 
+F5 exposes the production control surface under `/api/v1/admin/operations/*` using the dedicated administrative session boundary. The older `/api/admin/operations/*` path remains a compatibility interface and is not used by Admin Web.
+
 - `dashboard.read`: health, snapshots and metrics.
 - `incidents.manage`: list/detail/status of error groups and incidents; add comments.
 - `audit.read`: correlation/resource-filtered audit history.
+- Narrow F5 permissions separate errors/incidents read from lifecycle mutation and separately protect health, jobs, integrations, alerts, support and read-only financial monitoring.
 
 List limits are validated and capped at 100. Error detail exposes safe occurrence identifiers and request/correlation/trace IDs, never stack traces or raw metadata.
 
