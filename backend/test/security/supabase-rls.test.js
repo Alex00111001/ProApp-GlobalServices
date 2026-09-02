@@ -32,6 +32,15 @@ const supportControlSql = fs.readFileSync(path.join(
   '202609020001_operations_support_control',
   'migration.sql'
 ), 'utf8');
+const growthDataSql = fs.readFileSync(path.join(
+  __dirname,
+  '..',
+  '..',
+  'prisma',
+  'migrations',
+  '202609020002_growth_data',
+  'migration.sql'
+), 'utf8');
 
 const enabledTables = [...migrationSql.matchAll(/ALTER TABLE "([^"]+)" ENABLE ROW LEVEL SECURITY;/g)].map((match) => match[1]);
 const forcedTables = [...migrationSql.matchAll(/ALTER TABLE "([^"]+)" FORCE ROW LEVEL SECURITY;/g)].map((match) => match[1]);
@@ -67,4 +76,16 @@ test('operations support tables preserve the Supabase default-deny posture', () 
   assert.match(supportControlSql, /REVOKE ALL ON "SupportCase", "SupportCaseComment", "SupportCaseEvent" FROM authenticated;/);
   assert.doesNotMatch(supportControlSql, /CREATE POLICY/i);
   assert.doesNotMatch(supportControlSql, /SECURITY DEFINER/i);
+});
+
+test('growth data tables preserve idempotency and the Supabase default-deny posture', () => {
+  for (const table of ['Campaign', 'Lead', 'Conversion']) {
+    assert.match(growthDataSql, new RegExp(`ALTER TABLE "${table}" ENABLE ROW LEVEL SECURITY;`));
+    assert.match(growthDataSql, new RegExp(`ALTER TABLE "${table}" FORCE ROW LEVEL SECURITY;`));
+  }
+  assert.match(growthDataSql, /CREATE UNIQUE INDEX "MarketingEvent_clientEventId_key"/);
+  assert.match(growthDataSql, /CREATE UNIQUE INDEX "Conversion_eventId_key"/);
+  assert.match(growthDataSql, /REVOKE ALL ON "Campaign", "Lead", "Conversion" FROM PUBLIC;/);
+  assert.doesNotMatch(growthDataSql, /CREATE POLICY/i);
+  assert.doesNotMatch(growthDataSql, /ON DELETE CASCADE/i);
 });

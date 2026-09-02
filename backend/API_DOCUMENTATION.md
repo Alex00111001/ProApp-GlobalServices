@@ -321,6 +321,43 @@ Logs de auditoría
 
 ---
 
+## 7. GROWTH DATA (F6)
+
+### POST /events
+
+Acepta eventos first-party canónicos. El contrato anterior sigue vigente; los productores nuevos deben añadir un `eventId` aleatorio y estable de 16–128 caracteres para obtener deduplicación durable. `userId` y `professionalId` no se aceptan en el body: la identidad procede exclusivamente de autenticación opcional.
+
+```json
+{
+  "eventId": "evt_01k4example123456789",
+  "eventName": "signup_completed",
+  "occurredAt": "2026-09-02T10:00:00.000Z",
+  "anonymousId": "local-install-id",
+  "utm": { "source": "newsletter", "campaign": "summer-test" },
+  "geography": { "countryCode": "ES" },
+  "metadata": { "plan": "standard" }
+}
+```
+
+Respuesta `202`: `{ "id": "uuid", "accepted": true, "duplicate": false }`. El replay conserva el mismo `id` y devuelve `duplicate=true`. Identificadores anónimos/sesión se almacenan únicamente como HMAC; metadata sensible y coordenadas precisas se eliminan.
+
+### API administrativa `/api/v1/admin/growth`
+
+Requiere sesión administrativa dedicada y `marketing.read`, salvo las mutaciones de campaña que requieren `marketing.manage`.
+
+- `GET /overview`: métricas definidas, rango ISO, timezone, filtros `campaignId`/`countryCode`, frescura y `partialData`.
+- `GET /funnel`: eventos y sujetos únicos por etapa con tasas descriptivas.
+- `GET /campaigns`: lista paginada; filtros `status`, `search`, `countryCode`.
+- `POST /campaigns`: crea campaña DRAFT; requiere `reason`.
+- `PATCH /campaigns/:id`: edita una campaña no archivada; requiere `reason`.
+- `PATCH /campaigns/:id/status`: transición estricta; requiere `status` y `reason`.
+- `GET /leads`: lista seudónima paginada; filtros `status`, `campaignId`, `countryCode`.
+- `GET /conversions`: lista paginada; filtros `type`, `campaignId`, `countryCode`.
+
+Las salidas administrativas no contienen subject hashes, IDs de usuario/profesional, IDs anónimos/sesión, contactos ni metadata cruda. `ANALYST` no hereda estos permisos.
+
+---
+
 ## 📊 Estados y Enums
 
 ### BookingStatus

@@ -4,7 +4,7 @@ const { PERMISSIONS, roleGrantsPermission } = require('../src/modules/identity/p
 const { getPermissionKeys, hasPermission } = require('../src/modules/identity/authorization.service');
 const { inPercentage, matchesRules } = require('../src/modules/configuration/feature-flags.service');
 const { EVENT_NAMES, isKnownEvent } = require('../src/modules/growth/events/event-taxonomy');
-const { sanitizeMetadata, trackEvent } = require('../src/modules/growth/events/event.service');
+const { hashIdentifier, resolveSubject, sanitizeMetadata } = require('../src/modules/growth/events/event.service');
 const { fingerprintError, normalizeMessage } = require('../src/modules/observability/error.service');
 const { shouldRecommendIncident } = require('../src/modules/observability/incident.service');
 const { normalizeErrorBody } = require('../src/shared/http/error-contract');
@@ -18,7 +18,9 @@ const {
 
 test('administrative roles expose least-privilege permission sets', () => {
   assert.equal(roleGrantsPermission('SUPER_ADMIN', PERMISSIONS.ROLES_MANAGE), true);
+  assert.equal(roleGrantsPermission('MARKETING_ADMIN', PERMISSIONS.MARKETING_READ), true);
   assert.equal(roleGrantsPermission('MARKETING_ADMIN', PERMISSIONS.MARKETING_MANAGE), true);
+  assert.equal(roleGrantsPermission('ANALYST', PERMISSIONS.MARKETING_READ), false);
   assert.equal(roleGrantsPermission('MARKETING_ADMIN', PERMISSIONS.PAYOUTS_MANAGE), false);
   assert.equal(roleGrantsPermission('FINANCE_ADMIN', PERMISSIONS.PAYOUTS_MANAGE), true);
   assert.equal(roleGrantsPermission('FINANCE_ADMIN', PERMISSIONS.DISPUTES_READ), true);
@@ -102,6 +104,7 @@ test('production configuration fails closed and accepts an explicit complete con
     OBSERVABILITY_ALERT_WEBHOOK_HIGH_URL: 'https://alerts.example.com/high',
     OBSERVABILITY_ALERT_WEBHOOK_CRITICAL_URL: 'https://alerts.example.com/critical',
     OBSERVABILITY_ALERT_SIGNING_SECRET: 'observability-alert-signing-secret-123456',
+    GROWTH_PSEUDONYM_SECRET: 'g'.repeat(40),
   };
   const parsed = validateEnvironment(valid);
   assert.equal(parsed.corsOrigins.length, 2);
@@ -155,11 +158,11 @@ test('outbox leases are completed conditionally and failures back off or dead-le
   assert.equal(sanitizeOutboxError(`Bearer ${'x'.repeat(32)}`), '[REDACTED]');
 });
 
-test('event ingestion derives identity outside the submitted payload', async () => {
-  let created;
-  const client = { marketingEvent: { create: async (input) => { created = input.data; return { id: 'event-1' }; } } };
-  await trackEvent({ eventName: 'app_opened', userId: 'spoofed', metadata: {} }, { userId: 'trusted' }, client);
-  assert.equal(created.userId, 'trusted');
+test('event identity derives from the authenticated actor before submitted identifiers', () => {
+  const subject = resolveSubject({ userId: 'spoofed', anonymousId: 'anonymous-source' }, { userId: 'trusted' });
+  assert.equal(subject.subjectType, 'USER');
+  assert.equal(subject.subjectKey, hashIdentifier('USER', 'trusted'));
+  assert.notEqual(subject.subjectKey, hashIdentifier('ANONYMOUS', 'anonymous-source'));
 });
 
 test('error fingerprints group variable identifiers and numbers', () => {

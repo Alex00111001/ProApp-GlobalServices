@@ -52,6 +52,7 @@ test('production financial configuration rejects Stripe test credentials', () =>
     CORS_ORIGINS: 'https://app.example.com',
     JWT_SECRET: 'production-jwt-secret-with-at-least-32-characters',
     ADMIN_SESSION_PEPPER: 'production-admin-session-pepper-32-characters',
+    GROWTH_PSEUDONYM_SECRET: 'g'.repeat(40),
     STRIPE_API_KEY: 'sk_test_not-allowed-in-production-1234567890',
     STRIPE_WEBHOOK_SECRET: 'whsec_production-placeholder-1234567890',
   };

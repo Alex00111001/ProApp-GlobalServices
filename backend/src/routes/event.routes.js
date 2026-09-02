@@ -1,43 +1,25 @@
 const express = require('express');
-const { z } = require('zod');
 const { authenticateOptional } = require('../middleware/auth');
 const { trackEvent } = require('../modules/growth/events/event.service');
+const { eventSchema } = require('../validators/growth.validators');
 
 const router = express.Router();
-const eventSchema = z.object({
-  eventName: z.string().min(1).max(100),
-  occurredAt: z.iso.datetime().optional(),
-  bookingId: z.uuid().optional(),
-  sessionId: z.string().max(128).optional(),
-  anonymousId: z.string().max(128).optional(),
-  source: z.string().max(64).optional(),
-  channel: z.string().max(64).optional(),
-  campaign: z.string().max(128).optional(),
-  utm: z.object({
-    source: z.string().max(128).optional(), medium: z.string().max(128).optional(),
-    campaign: z.string().max(128).optional(), content: z.string().max(128).optional(),
-    term: z.string().max(128).optional(),
-  }).strict().optional(),
-  device: z.record(z.string(), z.unknown()).optional(),
-  appVersion: z.string().max(64).optional(),
-  geography: z.record(z.string(), z.unknown()).optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-}).strict();
 
 router.post('/', authenticateOptional, async (req, res, next) => {
   try {
     const input = eventSchema.parse(req.body);
-    const event = await trackEvent(input, {
+    const result = await trackEvent(input, {
       userId: req.user?.id,
       professionalId: req.user?.professionalProfile?.id,
-    });
-    res.status(202).json({ id: event.id, accepted: true });
+    }, undefined, req.context);
+    res.status(202).json({ id: result.event.id, accepted: true, duplicate: result.duplicate });
   } catch (error) {
-    if (error.name === 'ZodError' || error.code === 'UNKNOWN_EVENT' || error.code === 'METADATA_TOO_LARGE') {
+    if (error.name === 'ZodError' || ['UNKNOWN_EVENT', 'METADATA_TOO_LARGE', 'INVALID_EVENT_TIME', 'EVENT_TIME_IN_FUTURE', 'EVENT_TIME_TOO_OLD'].includes(error.code)) {
       return res.status(400).json({
         error: error.name === 'ZodError' ? 'Validation error' : error.message,
         code: error.code || 'VALIDATION_ERROR',
         details: error.name === 'ZodError' ? error.issues : undefined,
+        correlationId: req.context?.correlationId,
       });
     }
     return next(error);
