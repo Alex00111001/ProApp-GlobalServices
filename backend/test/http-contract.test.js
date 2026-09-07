@@ -104,6 +104,16 @@ test('versioned growth APIs require the dedicated administrative session contrac
   assert.equal(body.correlationId, 'growth-admin-auth-1');
 });
 
+test('versioned privacy and attribution APIs require dedicated administrative authentication', async () => {
+  for (const path of ['/api/v1/admin/privacy/policies', '/api/v1/admin/attribution/results']) {
+    const response = await fetch(`${baseUrl}${path}`, { headers: { 'x-correlation-id': 'f7-admin-auth-1' } });
+    const body = await response.json();
+    assert.equal(response.status, 401);
+    assert.equal(body.code, 'ADMIN_AUTHENTICATION_REQUIRED');
+    assert.equal(body.correlationId, 'f7-admin-auth-1');
+  }
+});
+
 test('admin refresh fails safely without cookie and CSRF verifier', async () => {
   const response = await fetch(`${baseUrl}/api/v1/admin/auth/refresh`, {
     method: 'POST',

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AdminLayout } from './components/AdminLayout'
 import { OperationsPage } from './pages/OperationsPage'
 import { GrowthPage } from './pages/GrowthPage'
+import { PrivacyAttributionPage } from './pages/PrivacyAttributionPage'
 import { navigation } from './navigation'
 import { api } from './lib/api'
 import { session } from './state/session'
@@ -41,6 +42,7 @@ describe('permission-derived navigation', () => {
     expect(navigation.every((item) => item.permissions.length > 0)).toBe(true)
     expect(navigation.find((item) => item.to === '/users')?.permissions).toContain('users.read')
     expect(navigation.find((item) => item.to === '/marketing')?.permissions).toEqual(['marketing.read'])
+    expect(navigation.find((item) => item.to === '/privacy-attribution')?.permissions).toContain('privacy.policy.read')
   })
 
   it('renders only destinations granted by the effective session permissions', async () => {
@@ -50,6 +52,28 @@ describe('permission-derived navigation', () => {
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Usuarios' })).toBeTruthy()
     expect(screen.queryByRole('link', { name: 'Auditoría' })).toBeNull()
+  })
+})
+
+describe('F7 consent and attribution', () => {
+  it('renders real versioned policies and hides lifecycle mutations from read-only sessions', async () => {
+    const privacySession = { ...sessionPayload, permissions: ['privacy.policy.read'] }
+    const policyList = { items: [{
+      id: 'policy-1', key: 'marketing-es', purpose: 'marketing_attribution', version: 3, countryCode: 'ES', locale: 'es',
+      status: 'ACTIVE', legalBasis: 'consent', enforcementMode: 'EXPLICIT_GRANT', documentReference: 'https://legal.example/v3', documentDigest: 'a'.repeat(64),
+      effectiveAt: new Date().toISOString(), retiredAt: null, retentionDays: 365, reviewStatus: 'APPROVED', reviewReference: 'LEGAL-2026-03', reviewedAt: new Date().toISOString(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+    }], pagination: { page: 1, limit: 25, totalItems: 1, totalPages: 1 } }
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input); const value = url.includes('/auth/login') ? privacySession : policyList
+      return new Response(JSON.stringify(value), { status: url.includes('/auth/login') ? 201 : 200, headers: { 'content-type': 'application/json' } })
+    }))
+    await session.login('admin@example.com', 'correct-password')
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(<QueryClientProvider client={queryClient}><MemoryRouter><PrivacyAttributionPage /></MemoryRouter></QueryClientProvider>)
+    expect(await screen.findByText('marketing-es v3')).toBeTruthy()
+    expect(screen.getByText('EXPLICIT_GRANT')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Nueva versión de política' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Retirar' })).toBeNull()
   })
 })
 

@@ -16,8 +16,17 @@ const registerSchema = z.object({
   acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Terms must be accepted' }) }),
   acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Privacy notice must be acknowledged' }) }),
   marketingConsent: z.boolean().default(false),
+  marketingPolicyId: z.uuid().optional(),
+  marketingPolicyVersion: z.number().int().positive().optional(),
   termsVersion: z.literal(LEGAL_DOCUMENT_VERSION),
   privacyVersion: z.literal(LEGAL_DOCUMENT_VERSION),
+}).strict().superRefine((value, context) => {
+  if (value.marketingConsent && (!value.marketingPolicyId || !value.marketingPolicyVersion)) {
+    context.addIssue({ code: 'custom', path: ['marketingPolicyId'], message: 'An effective marketing policy id and version are required.' });
+  }
+  if (Boolean(value.marketingPolicyId) !== Boolean(value.marketingPolicyVersion)) {
+    context.addIssue({ code: 'custom', path: ['marketingPolicyVersion'], message: 'Marketing policy id and version must be supplied together.' });
+  }
 });
 
 // Schema para login

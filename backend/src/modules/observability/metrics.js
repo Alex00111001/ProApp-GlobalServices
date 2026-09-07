@@ -47,6 +47,18 @@ const externalOperations = new Prometheus.Counter({
   labelNames: ['provider', 'operation', 'outcome'],
   registers: [registry],
 });
+const privacyOperations = new Prometheus.Counter({
+  name: 'homeservices_privacy_operations_total',
+  help: 'Privacy decisions and enforcement by bounded operation and outcome.',
+  labelNames: ['operation', 'outcome', 'reason'],
+  registers: [registry],
+});
+const attributionOperations = new Prometheus.Counter({
+  name: 'homeservices_attribution_operations_total',
+  help: 'Attribution and touchpoint operations by bounded operation and outcome.',
+  labelNames: ['operation', 'outcome', 'reason'],
+  registers: [registry],
+});
 
 const boundedLabel = (value, fallback = 'unknown') => {
   const label = String(value || '').toLowerCase();
@@ -93,6 +105,13 @@ const observeExternalOperation = ({ provider, operation, outcome }) => {
   });
 };
 
+const observePrivacyOperation = ({ operation, outcome, reason = 'none' }) => privacyOperations.inc({
+  operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason),
+});
+const observeAttributionOperation = ({ operation, outcome, reason = 'none' }) => attributionOperations.inc({
+  operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason),
+});
+
 const metricsHandler = async (req, res, next) => {
   try {
     res.set('content-type', registry.contentType);
@@ -109,6 +128,8 @@ module.exports = {
   metricsMiddleware,
   observeDependency,
   observeExternalOperation,
+  observePrivacyOperation,
+  observeAttributionOperation,
   registry,
   setOutboxDepth,
 };

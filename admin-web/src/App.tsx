@@ -12,6 +12,7 @@ import { GrowthPage } from './pages/GrowthPage'
 import { ProfessionalsPage } from './pages/ProfessionalsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { UsersPage } from './pages/UsersPage'
+import { PrivacyAttributionPage } from './pages/PrivacyAttributionPage'
 import { useSession } from './state/session'
 import './App.css'
 
@@ -39,6 +40,7 @@ export default function App() {
       <Route path="/operations" element={<RequirePermission permission="operations.read"><OperationsPage /></RequirePermission>} />
       <Route path="/support" element={<RequirePermission permission="support.read"><SupportPage /></RequirePermission>} />
       <Route path="/marketing" element={<RequirePermission permission="marketing.read"><GrowthPage /></RequirePermission>} />
+      <Route path="/privacy-attribution" element={<PrivacyAttributionPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/:module" element={<ModulePage />} />
     </Route>

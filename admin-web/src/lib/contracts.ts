@@ -143,3 +143,40 @@ export const conversionListSchema = z.object({
   items: z.array(z.object({ id: z.string(), type: z.string(), occurredAt: z.string(), createdAt: z.string(), campaign: z.object({ id: z.string(), key: z.string(), name: z.string() }).nullable(), event: z.object({ id: z.string(), eventName: z.string(), correlationId: z.string().nullable() }), lead: z.object({ subjectType: z.string() }).nullable() })),
   pagination: paginationSchema,
 })
+
+export const consentPolicySchema = z.object({
+  id: z.string(), key: z.string(), purpose: z.string(), version: z.number(), countryCode: z.string(), locale: z.string(),
+  status: z.string(), legalBasis: z.string(), enforcementMode: z.string(), documentReference: z.string(), documentDigest: z.string(),
+  effectiveAt: z.string().nullable(), retiredAt: z.string().nullable(), retentionDays: z.number().nullable(), reviewStatus: z.string(),
+  reviewReference: z.string().nullable(), reviewedAt: z.string().nullable(), createdAt: z.string(), updatedAt: z.string(),
+})
+export const consentPolicyListSchema = z.object({ items: z.array(consentPolicySchema), pagination: paginationSchema })
+export const consentDecisionListSchema = z.object({
+  items: z.array(z.object({
+    id: z.string(), policyId: z.string(), policyVersion: z.number(), purpose: z.string(), userId: z.string().nullable(), subjectType: z.string(),
+    decision: z.string(), source: z.string(), evidence: z.unknown().nullable(), occurredAt: z.string(), createdAt: z.string(),
+    requestId: z.string().nullable(), correlationId: z.string().nullable(), traceId: z.string().nullable(),
+    policy: z.object({ key: z.string(), countryCode: z.string(), locale: z.string(), documentReference: z.string() }),
+  })), pagination: paginationSchema,
+})
+export const touchpointListSchema = z.object({
+  items: z.array(z.object({
+    id: z.string(), userId: z.string().nullable(), subjectType: z.string(), policyId: z.string(), policyVersion: z.number(), campaignId: z.string().nullable(), leadId: z.string().nullable(),
+    source: z.string(), medium: z.string().nullable(), channel: z.string().nullable(), referrerOrigin: z.string().nullable(), referrerPath: z.string().nullable(), landingPath: z.string().nullable(),
+    occurredAt: z.string(), receivedAt: z.string(), requestId: z.string().nullable(), correlationId: z.string().nullable(), traceId: z.string().nullable(),
+  })), pagination: paginationSchema,
+})
+export const attributionModelSchema = z.object({
+  id: z.string(), key: z.string(), version: z.number(), name: z.string(), type: z.string(), purpose: z.string(), windowDays: z.number(), status: z.string(),
+  effectiveAt: z.string().nullable(), retiredAt: z.string().nullable(), createdAt: z.string(), updatedAt: z.string(),
+})
+export const attributionModelListSchema = z.object({ items: z.array(attributionModelSchema), pagination: paginationSchema })
+export const attributionListSchema = z.object({
+  items: z.array(z.object({
+    id: z.string(), status: z.string(), reasonCode: z.string(), inputDigest: z.string(), windowStartedAt: z.string(), windowEndedAt: z.string(), calculatedAt: z.string(),
+    requestId: z.string().nullable(), correlationId: z.string().nullable(), traceId: z.string().nullable(),
+    conversion: z.object({ id: z.string(), type: z.string(), occurredAt: z.string(), campaignId: z.string().nullable() }),
+    model: attributionModelSchema,
+    touchpoint: z.object({ id: z.string(), source: z.string(), medium: z.string().nullable(), channel: z.string().nullable(), occurredAt: z.string(), campaignId: z.string().nullable() }).nullable(),
+  })), pagination: paginationSchema,
+})

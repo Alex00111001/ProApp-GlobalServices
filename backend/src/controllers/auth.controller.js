@@ -4,6 +4,8 @@ const { hashPassword, comparePassword } = require('../utils/password');
 const { generateToken } = require('../middleware/auth');
 const { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema } = require('../validators/auth.validators');
 const { normalizeRegistrationPayload } = require('../shared/http/compatibility');
+const env = require('../config/env');
+const { recordDecision } = require('../modules/privacy/consent.service');
 
 // Registrar usuario
 exports.register = async (req, res) => {
@@ -30,9 +32,10 @@ exports.register = async (req, res) => {
     // Hashear contraseña
     const passwordHash = await hashPassword(validatedData.password);
 
-    // Crear usuario
-    const user = await prisma.user.create({
-      data: {
+    // User/profile and optional F7 decision are one transaction. Marketing denial
+    // never blocks account creation when no policy was presented.
+    const user = await prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({ data: {
         email: validatedData.email,
         phone: validatedData.phone,
         passwordHash,
@@ -56,22 +59,43 @@ exports.register = async (req, res) => {
         role: true,
         countryCode: true,
         createdAt: true,
-      },
-    });
+      } });
 
-    // Crear perfil según el rol
-    if (validatedData.role === 'CLIENT') {
-      await prisma.clientProfile.create({
-        data: { userId: user.id, country: validatedData.countryCode },
-      });
-    } else if (validatedData.role === 'PROFESSIONAL') {
-      await prisma.professionalProfile.create({
+      let professionalId;
+      if (validatedData.role === 'CLIENT') {
+        await tx.clientProfile.create({
+          data: { userId: created.id, country: validatedData.countryCode },
+        });
+      } else if (validatedData.role === 'PROFESSIONAL') {
+        const profile = await tx.professionalProfile.create({
         data: { 
-          userId: user.id,
+          userId: created.id,
           status: 'PENDING_REVIEW',
         },
-      });
-    }
+        });
+        professionalId = profile.id;
+      }
+
+      if (env.consentAttributionEnabled && validatedData.marketingPolicyId) {
+        await recordDecision({
+          input: {
+            idempotencyKey: `registration:${created.id}:marketing:v${validatedData.marketingPolicyVersion}`,
+            policyId: validatedData.marketingPolicyId,
+            policyVersion: validatedData.marketingPolicyVersion,
+            purpose: 'marketing_attribution',
+            countryCode: validatedData.countryCode,
+            locale: validatedData.locale,
+            decision: validatedData.marketingConsent ? 'GRANTED' : 'DENIED',
+            source: 'REGISTRATION',
+            evidence: { interaction: 'separate_optional_control' },
+          },
+          identity: { userId: created.id, professionalId },
+          context: req.context,
+          database: tx,
+        });
+      }
+      return created;
+    });
 
     // Generar token JWT
     const token = generateToken({ userId: user.id, role: user.role });
@@ -91,8 +115,10 @@ exports.register = async (req, res) => {
       });
     }
 
-    res.status(500).json({ 
-      error: 'Internal server error' 
+    res.status(error.statusCode || 500).json({
+      error: error.statusCode ? error.message : 'Internal server error',
+      code: error.statusCode ? error.code : undefined,
+      correlationId: req.context?.correlationId,
     });
   }
 };

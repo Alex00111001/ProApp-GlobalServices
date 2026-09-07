@@ -48,6 +48,7 @@ export default function ProfileTab() {
     <View style={styles.section}><Text style={styles.sectionTitle}>{t('profile.account')}</Text><View style={styles.card}>
       <MenuItem icon="language-outline" title={t('profile.language')} value={languageName} onPress={chooseLanguage} />
       <MenuItem icon="lock-closed-outline" title={t('profile.changePassword')} onPress={() => router.push('/profile/security' as any)} />
+      <MenuItem icon="shield-checkmark-outline" title={t('privacyConsent.title')} value={t('privacyConsent.menuHint')} onPress={() => router.push('/profile/privacy-consent' as any)} />
       <MenuItem icon="notifications-outline" title={t('profile.notifications')} onPress={() => router.push('/notifications')} />
       <MenuItem icon="calendar-outline" title={t('profile.myBookings')} onPress={() => router.push('/(tabs)/bookings')} />
     </View></View>

@@ -31,6 +31,18 @@ const eventSchema = z.object({
   appVersion: optionalText(64),
   geography: z.object({ countryCode: countryCode.optional() }).catchall(z.unknown()).optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
+  touchpoint: z.object({
+    idempotencyKey: eventId,
+    purpose: z.string().trim().min(1).max(80).regex(/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/),
+    countryCode,
+    locale: z.string().trim().regex(/^[a-z]{2}(?:-[A-Z]{2})?$/),
+    policyId: z.uuid(),
+    policyVersion: z.number().int().positive(),
+    identityProof: z.string().trim().min(40).max(2_000).optional(),
+    referrer: z.string().trim().max(2_000).optional(),
+    landingUrl: z.string().trim().max(2_000).optional(),
+    context: z.record(z.string(), z.unknown()).optional(),
+  }).strict().optional(),
 }).strict();
 
 const rangeQuerySchema = z.object({

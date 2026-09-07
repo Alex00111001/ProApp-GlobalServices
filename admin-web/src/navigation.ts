@@ -8,6 +8,7 @@ export const navigation: NavigationItem[] = [
   { to: '/operations', label: 'Operaciones', permissions: ['operations.read'], phase: 'F5' },
   { to: '/support', label: 'Soporte', permissions: ['support.read'], phase: 'F5' },
   { to: '/marketing', label: 'Marketing', permissions: ['marketing.read'], phase: 'F6' },
+  { to: '/privacy-attribution', label: 'Privacidad y atribución', permissions: ['privacy.policy.read', 'privacy.consent.read', 'touchpoints.read', 'attribution.read'], phase: 'F7' },
   { to: '/analytics', label: 'Analytics', permissions: ['analytics.read'], phase: 'F6' },
   { to: '/audit', label: 'Auditoría', permissions: ['audit.read'] },
   { to: '/settings', label: 'Acceso', permissions: ['dashboard.read', 'roles.read', 'sessions.manage'] },

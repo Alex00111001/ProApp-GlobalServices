@@ -12,7 +12,17 @@ router.post('/', authenticateOptional, async (req, res, next) => {
       userId: req.user?.id,
       professionalId: req.user?.professionalProfile?.id,
     }, undefined, req.context);
-    res.status(202).json({ id: result.event.id, accepted: true, duplicate: result.duplicate });
+    res.status(202).json({
+      id: result.event.id,
+      accepted: true,
+      duplicate: result.duplicate,
+      touchpoint: result.touchpoint ? {
+        accepted: Boolean(result.touchpoint.touchpoint),
+        duplicate: Boolean(result.touchpoint.duplicate),
+        sanitized: Boolean(result.touchpoint.sanitized),
+        code: result.touchpoint.code,
+      } : undefined,
+    });
   } catch (error) {
     if (error.name === 'ZodError' || ['UNKNOWN_EVENT', 'METADATA_TOO_LARGE', 'INVALID_EVENT_TIME', 'EVENT_TIME_IN_FUTURE', 'EVENT_TIME_TOO_OLD'].includes(error.code)) {
       return res.status(400).json({
