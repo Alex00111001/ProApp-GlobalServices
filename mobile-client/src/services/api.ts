@@ -93,8 +93,8 @@ class ApiClient {
 
   private handleError(error: AxiosError): Error {
     if (error.response) {
-      const data = error.response.data as { message?: string };
-      return new Error(data.message || 'An error occurred');
+      const data = error.response.data as { error?: string; message?: string };
+      return new Error(data.error || data.message || 'An error occurred');
     } else if (error.request) {
       return new Error('No response from server. Please check your connection.');
     } else {
@@ -127,11 +127,31 @@ class ApiClient {
     marketingConsent: boolean;
     termsVersion: string;
     privacyVersion: string;
+    marketingPolicyId?: string;
+    marketingPolicyVersion?: number;
   }) {
     const response = await this.client.post<AuthResponse>('/auth/register', data);
     await SecureStore.setItemAsync('auth_token', response.data.token);
     await SecureStore.setItemAsync('user_data', JSON.stringify(response.data));
     return response.data;
+  }
+
+  async getConsentPolicies(countryCode: 'ES' | 'BR' | 'CL', locale: 'es' | 'en' | 'pt', purposes = 'marketing_attribution') {
+    const response = await this.client.get('/v1/privacy/policies', { params: { countryCode, locale, purposes } });
+    return response.data as { policies: Array<{ id: string; key: string; purpose: string; version: number; documentReference: string; effectiveAt: string; enforcementMode: string }> };
+  }
+
+  async getConsentHistory(purpose = 'marketing_attribution') {
+    return (await this.client.get('/v1/privacy/consents/history', { params: { purpose, page: 1, limit: 100 } })).data;
+  }
+
+  async withdrawConsent(purpose: string) {
+    return (await this.client.post('/v1/privacy/consents/withdrawals', {
+      idempotencyKey: `mobile-withdrawal:${Date.now()}:${Math.random().toString(36).slice(2)}`,
+      purpose,
+      source: 'CLIENT_SETTINGS',
+      evidence: { interaction: 'explicit_withdrawal_button' },
+    })).data;
   }
 
   // Authenticated methods

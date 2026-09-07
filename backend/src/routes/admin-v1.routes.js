@@ -4,6 +4,7 @@ const controller = require('../controllers/admin-v1.controller');
 const authController = require('../controllers/admin-auth.controller');
 const operationsController = require('../controllers/admin-operations.controller');
 const growthController = require('../controllers/admin-growth.controller');
+const privacyController = require('../controllers/admin-privacy.controller');
 const { authenticateAdmin } = require('../middleware/authenticate-admin');
 const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
@@ -62,6 +63,21 @@ router.patch('/growth/campaigns/:id', requirePermission(PERMISSIONS.MARKETING_MA
 router.patch('/growth/campaigns/:id/status', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.setCampaignStatus);
 router.get('/growth/leads', requirePermission(PERMISSIONS.MARKETING_READ), growthController.leads);
 router.get('/growth/conversions', requirePermission(PERMISSIONS.MARKETING_READ), growthController.conversions);
+
+router.get('/privacy/policies', requirePermission(PERMISSIONS.PRIVACY_POLICY_READ), privacyController.policies);
+router.post('/privacy/policies', requirePermission(PERMISSIONS.PRIVACY_POLICY_MANAGE), privacyController.createPolicy);
+router.patch('/privacy/policies/:id', requirePermission(PERMISSIONS.PRIVACY_POLICY_MANAGE), privacyController.updatePolicy);
+router.post('/privacy/policies/:id/review', requirePermission(PERMISSIONS.PRIVACY_POLICY_MANAGE), privacyController.reviewPolicy);
+router.patch('/privacy/policies/:id/status', requirePermission(PERMISSIONS.PRIVACY_POLICY_MANAGE), privacyController.setPolicyStatus);
+router.get('/privacy/consents', requirePermission(PERMISSIONS.PRIVACY_CONSENT_READ), privacyController.consentHistory);
+router.get('/privacy/withdrawals', requirePermission(PERMISSIONS.PRIVACY_CONSENT_READ), privacyController.withdrawals);
+router.get('/privacy/touchpoints', requirePermission(PERMISSIONS.TOUCHPOINTS_READ), privacyController.touchpoints);
+router.get('/attribution/models', requirePermission(PERMISSIONS.ATTRIBUTION_READ), privacyController.models);
+router.post('/attribution/models', requirePermission(PERMISSIONS.ATTRIBUTION_MANAGE), privacyController.createModel);
+router.patch('/attribution/models/:id', requirePermission(PERMISSIONS.ATTRIBUTION_MANAGE), privacyController.updateModel);
+router.patch('/attribution/models/:id/status', requirePermission(PERMISSIONS.ATTRIBUTION_MANAGE), privacyController.setModelStatus);
+router.get('/attribution/results', requirePermission(PERMISSIONS.ATTRIBUTION_READ), privacyController.attributions);
+router.post('/attribution/conversions/:id/calculate', requirePermission(PERMISSIONS.ATTRIBUTION_MANAGE), privacyController.calculate);
 
 router.get('/audit', requirePermission(PERMISSIONS.AUDIT_READ), controller.auditLogs);
 router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), controller.roles);

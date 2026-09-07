@@ -8,47 +8,53 @@ datasource db {
 }
 
 model User {
-  id                    String                   @id @default(uuid())
-  email                 String                   @unique
-  phone                 String                   @unique
-  passwordHash          String
-  firstName             String
-  lastName              String
-  avatarUrl             String?
-  role                  UserRole                 @default(CLIENT)
-  isActive              Boolean                  @default(true)
-  createdAt             DateTime                 @default(now())
-  updatedAt             DateTime                 @updatedAt
-  lastLoginAt           DateTime?
-  countryCode           String                   @default("ES")
-  termsAcceptedAt       DateTime?
-  termsVersion          String?
-  privacyAcceptedAt     DateTime?
-  privacyVersion        String?
-  marketingConsentAt    DateTime?
-  registrationLocale    String?
-  clientProfile         ClientProfile?
-  notifications         Notification[]
-  professionalProfile   ProfessionalProfile?
-  reviewsGiven          Review[]                 @relation("ReviewGiven")
-  reviewsReceived       Review[]                 @relation("ReviewReceived")
-  administrativeRoles   UserRoleAssignment[]
-  auditLogs             AuditLog[]               @relation("AuditActor")
-  marketingEvents       MarketingEvent[]
-  errorEvents           ErrorEvent[]
-  incidentComments      IncidentComment[]
-  adminSessions         AdminSession[]
-  adminRoleTargets      AdminRoleChangeRequest[] @relation("AdminRoleTarget")
-  adminRoleRequests     AdminRoleChangeRequest[] @relation("AdminRoleRequester")
-  adminRoleReviews      AdminRoleChangeRequest[] @relation("AdminRoleReviewer")
-  supportCasesRequested SupportCase[]            @relation("SupportRequester")
-  supportCasesAssigned  SupportCase[]            @relation("SupportAssignee")
-  supportCasesCreated   SupportCase[]            @relation("SupportCreator")
-  supportCaseComments   SupportCaseComment[]
-  supportCaseEvents     SupportCaseEvent[]
-  growthLeads           Lead[]                   @relation("GrowthLeadUser")
-  growthConversions     Conversion[]             @relation("GrowthConversionUser")
-  campaignsCreated      Campaign[]               @relation("CampaignCreator")
+  id                       String                   @id @default(uuid())
+  email                    String                   @unique
+  phone                    String                   @unique
+  passwordHash             String
+  firstName                String
+  lastName                 String
+  avatarUrl                String?
+  role                     UserRole                 @default(CLIENT)
+  isActive                 Boolean                  @default(true)
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+  lastLoginAt              DateTime?
+  countryCode              String                   @default("ES")
+  termsAcceptedAt          DateTime?
+  termsVersion             String?
+  privacyAcceptedAt        DateTime?
+  privacyVersion           String?
+  marketingConsentAt       DateTime?
+  registrationLocale       String?
+  clientProfile            ClientProfile?
+  notifications            Notification[]
+  professionalProfile      ProfessionalProfile?
+  reviewsGiven             Review[]                 @relation("ReviewGiven")
+  reviewsReceived          Review[]                 @relation("ReviewReceived")
+  administrativeRoles      UserRoleAssignment[]
+  auditLogs                AuditLog[]               @relation("AuditActor")
+  marketingEvents          MarketingEvent[]
+  errorEvents              ErrorEvent[]
+  incidentComments         IncidentComment[]
+  adminSessions            AdminSession[]
+  adminRoleTargets         AdminRoleChangeRequest[] @relation("AdminRoleTarget")
+  adminRoleRequests        AdminRoleChangeRequest[] @relation("AdminRoleRequester")
+  adminRoleReviews         AdminRoleChangeRequest[] @relation("AdminRoleReviewer")
+  supportCasesRequested    SupportCase[]            @relation("SupportRequester")
+  supportCasesAssigned     SupportCase[]            @relation("SupportAssignee")
+  supportCasesCreated      SupportCase[]            @relation("SupportCreator")
+  supportCaseComments      SupportCaseComment[]
+  supportCaseEvents        SupportCaseEvent[]
+  growthLeads              Lead[]                   @relation("GrowthLeadUser")
+  growthConversions        Conversion[]             @relation("GrowthConversionUser")
+  campaignsCreated         Campaign[]               @relation("CampaignCreator")
+  consentPoliciesCreated   ConsentPolicy[]          @relation("ConsentPolicyCreator")
+  consentPoliciesReviewed  ConsentPolicy[]          @relation("ConsentPolicyReviewer")
+  consentDecisions         ConsentDecision[]
+  subjectIdentityLinks     SubjectIdentityLink[]
+  privacyTouchpoints       Touchpoint[]
+  attributionModelsCreated AttributionModel[]       @relation("AttributionModelCreator")
 
   @@index([email])
   @@index([phone])
@@ -666,6 +672,7 @@ model MarketingEvent {
   professional   ProfessionalProfile? @relation(fields: [professionalId], references: [id], onDelete: SetNull)
   user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
   conversion     Conversion?
+  touchpoint     Touchpoint?
 
   @@index([eventName, occurredAt])
   @@index([userId, occurredAt])
@@ -698,6 +705,7 @@ model Campaign {
   events      MarketingEvent[]
   leads       Lead[]
   conversions Conversion[]
+  touchpoints Touchpoint[]
 
   @@index([status, startsAt, endsAt])
   @@index([source, medium, createdAt])
@@ -726,6 +734,7 @@ model Lead {
   campaign       Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
   events         MarketingEvent[]
   conversions    Conversion[]
+  touchpoints    Touchpoint[]
 
   @@index([status, lastSeenAt])
   @@index([campaignId, status, lastSeenAt])
@@ -752,11 +761,185 @@ model Conversion {
   user           User?                @relation("GrowthConversionUser", fields: [userId], references: [id], onDelete: SetNull)
   professional   ProfessionalProfile? @relation("GrowthConversionProfessional", fields: [professionalId], references: [id], onDelete: SetNull)
   booking        Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  attributions   Attribution[]
 
   @@index([type, occurredAt])
   @@index([campaignId, type, occurredAt])
   @@index([leadId, occurredAt])
   @@index([bookingId, occurredAt])
+}
+
+model ConsentPolicy {
+  id                String                 @id @default(uuid())
+  key               String
+  purpose           String
+  version           Int
+  countryCode       String
+  locale            String
+  status            ConsentPolicyStatus    @default(DRAFT)
+  legalBasis        String
+  enforcementMode   ConsentEnforcementMode
+  documentReference String
+  documentDigest    String
+  effectiveAt       DateTime?
+  retiredAt         DateTime?
+  retentionDays     Int?
+  reviewStatus      LegalReviewStatus      @default(PENDING)
+  reviewReference   String?
+  reviewedAt        DateTime?
+  createdById       String
+  reviewedById      String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  createdBy         User                   @relation("ConsentPolicyCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  reviewedBy        User?                  @relation("ConsentPolicyReviewer", fields: [reviewedById], references: [id], onDelete: Restrict)
+  decisions         ConsentDecision[]
+  touchpoints       Touchpoint[]
+
+  @@unique([key, version, countryCode, locale])
+  @@unique([id, version])
+  @@index([purpose, countryCode, locale, status, effectiveAt])
+  @@index([createdById])
+  @@index([reviewedById])
+}
+
+model ConsentDecision {
+  id             String              @id @default(uuid())
+  idempotencyKey String              @unique
+  policyId       String
+  policyVersion  Int
+  purpose        String
+  subjectKey     String
+  subjectType    ConsentSubjectType
+  userId         String?
+  decision       ConsentDecisionType
+  source         String
+  evidence       Json?
+  occurredAt     DateTime            @default(now())
+  requestId      String?
+  correlationId  String?
+  traceId        String?
+  createdAt      DateTime            @default(now())
+  policy         ConsentPolicy       @relation(fields: [policyId, policyVersion], references: [id, version], onDelete: Restrict)
+  user           User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  touchpoints    Touchpoint[]
+
+  @@index([subjectKey, purpose, occurredAt])
+  @@index([userId, purpose, occurredAt])
+  @@index([policyId, decision, occurredAt])
+  @@index([correlationId])
+}
+
+model SubjectIdentityLink {
+  id                      String       @id @default(uuid())
+  anonymousSubjectKey     String       @unique
+  authenticatedSubjectKey String
+  userId                  String
+  proofDigest             String       @unique
+  linkedAt                DateTime     @default(now())
+  requestId               String?
+  correlationId           String?
+  traceId                 String?
+  user                    User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  touchpoints             Touchpoint[]
+
+  @@index([authenticatedSubjectKey, linkedAt])
+  @@index([userId, linkedAt])
+}
+
+model Touchpoint {
+  id                String               @id @default(uuid())
+  idempotencyKey    String               @unique
+  subjectKey        String
+  subjectType       ConsentSubjectType
+  userId            String?
+  identityLinkId    String?
+  policyId          String
+  policyVersion     Int
+  consentDecisionId String?
+  campaignId        String?
+  leadId            String?
+  marketingEventId  String?              @unique
+  source            String
+  medium            String?
+  channel           String?
+  referrerOrigin    String?
+  referrerPath      String?
+  landingPath       String?
+  context           Json?
+  occurredAt        DateTime
+  receivedAt        DateTime             @default(now())
+  requestId         String?
+  correlationId     String?
+  traceId           String?
+  user              User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  identityLink      SubjectIdentityLink? @relation(fields: [identityLinkId], references: [id], onDelete: SetNull)
+  policy            ConsentPolicy        @relation(fields: [policyId, policyVersion], references: [id, version], onDelete: Restrict)
+  consentDecision   ConsentDecision?     @relation(fields: [consentDecisionId], references: [id], onDelete: Restrict)
+  campaign          Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  lead              Lead?                @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  marketingEvent    MarketingEvent?      @relation(fields: [marketingEventId], references: [id], onDelete: Restrict)
+  attributions      Attribution[]
+
+  @@index([subjectKey, occurredAt])
+  @@index([userId, occurredAt])
+  @@index([campaignId, occurredAt])
+  @@index([policyId, occurredAt])
+  @@index([consentDecisionId])
+  @@index([identityLinkId])
+  @@index([leadId, occurredAt])
+  @@index([source, medium, occurredAt])
+  @@index([correlationId])
+}
+
+model AttributionModel {
+  id          String                 @id @default(uuid())
+  key         String
+  version     Int
+  name        String
+  type        AttributionModelType
+  purpose     String
+  windowDays  Int
+  status      AttributionModelStatus @default(DRAFT)
+  effectiveAt DateTime?
+  retiredAt   DateTime?
+  createdById String
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  createdBy   User                   @relation("AttributionModelCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  results     Attribution[]
+
+  @@unique([key, version])
+  @@unique([id, version])
+  @@index([status, type, effectiveAt])
+  @@index([createdById])
+}
+
+model Attribution {
+  id              String            @id @default(uuid())
+  attributionKey  String            @unique
+  conversionId    String
+  modelId         String
+  modelVersion    Int
+  touchpointId    String?
+  status          AttributionStatus
+  reasonCode      String
+  windowStartedAt DateTime
+  windowEndedAt   DateTime
+  inputDigest     String
+  calculatedAt    DateTime          @default(now())
+  requestId       String?
+  correlationId   String?
+  traceId         String?
+  conversion      Conversion        @relation(fields: [conversionId], references: [id], onDelete: Restrict)
+  model           AttributionModel  @relation(fields: [modelId, modelVersion], references: [id, version], onDelete: Restrict)
+  touchpoint      Touchpoint?       @relation(fields: [touchpointId], references: [id], onDelete: Restrict)
+
+  @@unique([conversionId, modelId])
+  @@index([modelId, status, calculatedAt])
+  @@index([touchpointId])
+  @@index([conversionId, calculatedAt])
+  @@index([correlationId])
 }
 
 model ErrorGroup {
@@ -1429,6 +1612,54 @@ enum ConversionType {
   BOOKING
   PAYMENT
   JOB_COMPLETED
+}
+
+enum ConsentPolicyStatus {
+  DRAFT
+  ACTIVE
+  RETIRED
+}
+
+enum ConsentEnforcementMode {
+  EXPLICIT_GRANT
+  POLICY_ONLY
+  PROHIBITED
+}
+
+enum LegalReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ConsentSubjectType {
+  USER
+  PROFESSIONAL
+  ANONYMOUS
+  SESSION
+}
+
+enum ConsentDecisionType {
+  GRANTED
+  DENIED
+  WITHDRAWN
+}
+
+enum AttributionModelType {
+  FIRST_TOUCH
+  LAST_TOUCH
+}
+
+enum AttributionModelStatus {
+  DRAFT
+  ACTIVE
+  RETIRED
+}
+
+enum AttributionStatus {
+  ATTRIBUTED
+  UNATTRIBUTED
+  BLOCKED_CONSENT
 }
 
 enum PolicyStatus {

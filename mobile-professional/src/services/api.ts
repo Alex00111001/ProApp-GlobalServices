@@ -40,4 +40,12 @@ export const api = {
   async confirmBooking(id: string) { return (await client.post(`/bookings/${id}/confirm`)).data; },
   async completeBooking(id: string) { return (await client.post(`/bookings/${id}/complete`)).data; },
   async cancelBooking(id: string) { return (await client.post(`/bookings/${id}/cancel`)).data; },
+  async consentPolicies(countryCode: 'ES' | 'BR' | 'CL', locale: 'es' | 'en' | 'pt') {
+    return (await client.get('/v1/privacy/policies', { params: { countryCode, locale, purposes: 'marketing_attribution' } })).data as { policies: Array<{ id: string; key: string; purpose: string; version: number; documentReference: string }> };
+  },
+  async consentHistory() { return (await client.get('/v1/privacy/consents/history', { params: { purpose: 'marketing_attribution', page: 1, limit: 100 } })).data; },
+  async withdrawConsent() { return (await client.post('/v1/privacy/consents/withdrawals', {
+    idempotencyKey: `professional-withdrawal:${Date.now()}:${Math.random().toString(36).slice(2)}`,
+    purpose: 'marketing_attribution', source: 'PROFESSIONAL_SETTINGS', evidence: { interaction: 'explicit_withdrawal_button' },
+  })).data; },
 };

@@ -28,6 +28,8 @@ interface AuthState {
     marketingConsent: boolean;
     termsVersion: string;
     privacyVersion: string;
+    marketingPolicyId?: string;
+    marketingPolicyVersion?: number;
   }) => Promise<void>;
   logout: () => Promise<void>;
   loadUser: () => Promise<void>;

@@ -118,6 +118,8 @@ test('production configuration fails closed and accepts an explicit complete con
   assert.throws(() => validateEnvironment({ ...valid, DATABASE_URL: '' }), /DATABASE_URL/);
   assert.throws(() => validateEnvironment({ ...valid, JWT_SECRET: 'short' }), /JWT_SECRET/);
   assert.throws(() => validateEnvironment({ ...valid, ADMIN_SESSION_PEPPER: 'short' }), /ADMIN_SESSION_PEPPER/);
+  assert.throws(() => validateEnvironment({ ...valid, CONSENT_ATTRIBUTION_ENABLED: 'true' }), /GROWTH_IDENTITY_PROOF_SECRET/);
+  assert.equal(validateEnvironment({ ...valid, CONSENT_ATTRIBUTION_ENABLED: 'true', GROWTH_IDENTITY_PROOF_SECRET: 'i'.repeat(40) }).consentAttributionEnabled, true);
   assert.throws(() => validateEnvironment({ ...valid, FINANCIAL_PAYOUT_EXECUTION_ENABLED: 'yes' }), /either true or false/);
 });
 

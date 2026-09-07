@@ -56,6 +56,8 @@ export const useAuth = () => {
       acceptTerms: true;
       acceptPrivacy: true;
       marketingConsent: boolean;
+      marketingPolicyId?: string;
+      marketingPolicyVersion?: number;
       termsVersion: string;
       privacyVersion: string;
     }) => {

@@ -105,6 +105,7 @@ const validateEnvironment = (source = process.env) => {
   const stripeApiKey = source.STRIPE_API_KEY || source.STRIPE_SECRET_KEY;
   const stripeWebhookSecret = source.STRIPE_WEBHOOK_SECRET_CURRENT || source.STRIPE_WEBHOOK_SECRET;
   const otelEnabled = parseBoolean('OTEL_ENABLED', source.OTEL_ENABLED, false);
+  const consentAttributionEnabled = parseBoolean('CONSENT_ATTRIBUTION_ENABLED', source.CONSENT_ATTRIBUTION_ENABLED, false);
   const logTransport = parseChoice('LOG_TRANSPORT', source.LOG_TRANSPORT, 'stdout', ['stdout', 'file']);
   const logLevel = parseChoice('LOG_LEVEL', source.LOG_LEVEL, environment === 'production' ? 'info' : 'debug', [
     'trace', 'debug', 'info', 'warn', 'error', 'fatal',
@@ -130,6 +131,7 @@ const validateEnvironment = (source = process.env) => {
   requireProductionSecret(environment, 'JWT_SECRET', jwtSecret);
   requireProductionSecret(environment, 'ADMIN_SESSION_PEPPER', source.ADMIN_SESSION_PEPPER);
   requireProductionSecret(environment, 'GROWTH_PSEUDONYM_SECRET', source.GROWTH_PSEUDONYM_SECRET);
+  if (consentAttributionEnabled) requireProductionSecret(environment, 'GROWTH_IDENTITY_PROOF_SECRET', source.GROWTH_IDENTITY_PROOF_SECRET);
 
   if (environment === 'production') {
     if (!/^postgres(?:ql)?:\/\//.test(source.DATABASE_URL || '')) {
@@ -188,6 +190,9 @@ const validateEnvironment = (source = process.env) => {
     adminRoleChangesEnabled: parseBoolean('ADMIN_ROLE_CHANGES_ENABLED', source.ADMIN_ROLE_CHANGES_ENABLED, false),
     growthDataEnabled: parseBoolean('GROWTH_DATA_ENABLED', source.GROWTH_DATA_ENABLED, environment !== 'production'),
     growthPseudonymSecret: source.GROWTH_PSEUDONYM_SECRET || 'development-only-growth-pseudonym-secret',
+    consentAttributionEnabled,
+    growthIdentityProofSecret: source.GROWTH_IDENTITY_PROOF_SECRET || 'development-only-growth-identity-proof-secret',
+    identityProofTtlHours: parseInteger('IDENTITY_PROOF_TTL_HOURS', source.IDENTITY_PROOF_TTL_HOURS, 24, 1, 168),
     logLevel,
     logTransport,
     logFilePath: source.LOG_FILE_PATH,

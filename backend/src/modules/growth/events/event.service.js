@@ -3,6 +3,8 @@ const { isKnownEvent } = require('./event-taxonomy');
 const { telemetryMetadata } = require('../../observability/context');
 const { redactText } = require('../../observability/redaction');
 const { growthDataEnabled, growthPseudonymSecret } = require('../../../config/env');
+const env = require('../../../config/env');
+const { observeAttributionOperation } = require('../../observability/metrics');
 
 const BLOCKED_KEYS = /password|token|authorization|secret|api[_-]?key|card|cvv|email|phone|(?:first|last|full)[_-]?name|address|postal|ip[_-]?address|user[_-]?agent|latitude|longitude|coordinates|^lat$|^lng$/i;
 
@@ -171,8 +173,37 @@ const trackEvent = async (input, identity = {}, client, context = {}, options = 
       correlationId: contextData.correlationId,
       traceId: contextData.traceId,
     } });
+    let touchpointResult;
+    if (pipelineEnabled && env.consentAttributionEnabled && input.touchpoint) {
+      try {
+        const { ingestTouchpoint } = require('../../privacy/touchpoint.service');
+        touchpointResult = await ingestTouchpoint({
+          input: {
+            ...input.touchpoint,
+            source: input.source || input.utm?.source,
+            medium: input.utm?.medium,
+            channel: input.channel,
+            occurredAt: occurredAt.toISOString(),
+          },
+          identity,
+          proof: input.touchpoint.identityProof,
+          context,
+          database: tx,
+          links: { campaignId: campaign?.id, leadId: lead?.id, marketingEventId: event.id, expectedSubjectKey: subject?.subjectKey },
+        });
+      } catch (error) {
+        if (!Number.isInteger(error?.statusCode) || error.statusCode >= 500) throw error;
+        touchpointResult = { rejected: true, code: error.code || 'TOUCHPOINT_REJECTED' };
+        observeAttributionOperation({ operation: 'touchpoint_ingestion', outcome: 'rejected', reason: touchpointResult.code });
+        await tx.outboxEvent.create({ data: {
+          aggregateType: 'MarketingEvent', aggregateId: event.id, eventType: 'privacy.touchpoint.rejected',
+          payload: { eventId: event.id, code: touchpointResult.code }, metadata: contextData,
+        } });
+      }
+    }
+    let conversion;
     if (pipelineEnabled && conversionType) {
-      await tx.conversion.create({ data: {
+      conversion = await tx.conversion.create({ data: {
         conversionKey: `event:${event.id}:${conversionType}`,
         type: conversionType,
         eventId: event.id,
@@ -183,6 +214,10 @@ const trackEvent = async (input, identity = {}, client, context = {}, options = 
         bookingId: input.bookingId,
         occurredAt,
       } });
+      if (env.consentAttributionEnabled) {
+        const { attributeConversion } = require('../../attribution/attribution.service');
+        await attributeConversion({ conversionId: conversion.id, context, database: tx });
+      }
     }
     if (pipelineEnabled) {
       await tx.outboxEvent.create({ data: {
@@ -193,7 +228,7 @@ const trackEvent = async (input, identity = {}, client, context = {}, options = 
         metadata: contextData,
       } });
     }
-    return { event, duplicate: false, pipelineActive: pipelineEnabled };
+    return { event, duplicate: false, pipelineActive: pipelineEnabled, touchpoint: touchpointResult, conversion };
   };
   try {
     return await database.$transaction(work);

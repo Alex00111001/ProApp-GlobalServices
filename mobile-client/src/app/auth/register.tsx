@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Alert, KeyboardAvoidingView, Linking, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { type Href, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,7 @@ import { Button, Input } from '@/components/ui';
 import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
 import { useAuthStore } from '@/store/authStore';
 import { LEGAL_DOCUMENT_VERSION } from '@/constants/legal';
+import { apiClient } from '@/services/api';
 
 type CountryCode = 'ES' | 'BR' | 'CL';
 const COUNTRIES: Array<{ code: CountryCode; flag: string; dialCode: string }> = [
@@ -22,8 +23,16 @@ export default function RegisterScreen() {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
+  const [marketingPolicy, setMarketingPolicy] = useState<{ id: string; key: string; version: number; documentReference: string; effectiveAt: string } | null>(null);
+  const [policyLoading, setPolicyLoading] = useState(false);
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', password: '', confirmPassword: '' });
   const selectedCountry = useMemo(() => COUNTRIES.find((country) => country.code === countryCode)!, [countryCode]);
+  const locale = (['es', 'en', 'pt'].includes(i18n.language) ? i18n.language : 'es') as 'es' | 'en' | 'pt';
+  useEffect(() => {
+    let active = true; setPolicyLoading(true); setMarketingPolicy(null); setMarketingConsent(false);
+    apiClient.getConsentPolicies(countryCode, locale).then(({ policies }) => { if (active) setMarketingPolicy(policies.find((item) => item.purpose === 'marketing_attribution') || null); }).catch(() => { if (active) setMarketingPolicy(null); }).finally(() => { if (active) setPolicyLoading(false); });
+    return () => { active = false };
+  }, [countryCode, locale]);
 
   const handleRegister = async () => {
     const firstName = formData.firstName.trim();
@@ -38,8 +47,10 @@ export default function RegisterScreen() {
     if (!acceptTerms || !acceptPrivacy) return Alert.alert(t('common.error'), t('auth.legalRequired'));
     try {
       await register({ firstName, lastName, email, phone, password: formData.password, role: 'CLIENT', countryCode,
-        locale: (['es', 'en', 'pt'].includes(i18n.language) ? i18n.language : 'es') as 'es' | 'en' | 'pt',
-        acceptTerms: true, acceptPrivacy: true, marketingConsent, termsVersion: LEGAL_DOCUMENT_VERSION, privacyVersion: LEGAL_DOCUMENT_VERSION });
+        locale,
+        acceptTerms: true, acceptPrivacy: true, marketingConsent, termsVersion: LEGAL_DOCUMENT_VERSION, privacyVersion: LEGAL_DOCUMENT_VERSION,
+        ...(marketingPolicy ? { marketingPolicyId: marketingPolicy.id, marketingPolicyVersion: marketingPolicy.version } : {}),
+      });
       router.replace('/(tabs)');
     } catch (error) {
       Alert.alert(t('auth.registrationFailed'), error instanceof Error ? error.message : t('common.error'));
@@ -71,7 +82,7 @@ export default function RegisterScreen() {
       <View style={styles.privacyNotice}><Text style={styles.privacyTitle}>{t('auth.privacySummaryTitle')}</Text><Text style={styles.privacyText}>{t(`auth.privacySummary.${countryCode}`)}</Text></View>
       <Checkbox checked={acceptTerms} onPress={() => setAcceptTerms((v) => !v)}><Text style={styles.legalText}>{t('auth.acceptTermsPrefix')} <Text style={styles.legalLink} onPress={() => router.push('/legal/terms' as Href)}>{t('auth.terms')}</Text>.</Text></Checkbox>
       <Checkbox checked={acceptPrivacy} onPress={() => setAcceptPrivacy((v) => !v)}><Text style={styles.legalText}>{t('auth.acceptPrivacyPrefix')} <Text style={styles.legalLink} onPress={() => router.push('/legal/privacy' as Href)}>{t('auth.privacy')}</Text>.</Text></Checkbox>
-      <Checkbox checked={marketingConsent} onPress={() => setMarketingConsent((v) => !v)}><Text style={styles.legalText}>{t('auth.marketingOptional')}</Text></Checkbox>
+      {marketingPolicy ? <Checkbox checked={marketingConsent} onPress={() => setMarketingConsent((v) => !v)}><Text style={styles.legalText}>{t('auth.marketingOptional')} <Text style={styles.legalLink} onPress={() => void Linking.openURL(marketingPolicy.documentReference)}>{marketingPolicy.key} v{marketingPolicy.version}</Text>.</Text></Checkbox> : <View style={styles.privacyNotice}><Text style={styles.privacyText}>{t(policyLoading ? 'auth.marketingPolicyLoading' : 'auth.marketingUnavailable')}</Text></View>}
       <Button title={t('auth.register')} onPress={handleRegister} loading={isLoading} disabled={isLoading || !acceptTerms || !acceptPrivacy} fullWidth size="large" />
       <TouchableOpacity onPress={() => router.replace('/auth/login')} style={styles.loginLinkContainer}><Text style={styles.loginText}>{t('auth.hasAccount')} <Text style={styles.legalLink}>{t('auth.signIn')}</Text></Text></TouchableOpacity>
     </ScrollView>
