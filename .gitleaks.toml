@@ -1,0 +1,19 @@
+title = "HomeServices secret scanning"
+
+[extend]
+useDefault = true
+
+# These are deliberately non-secret fixtures/placeholders. Keep the expressions
+# exact so similar values elsewhere remain detectable.
+[[allowlists]]
+description = "F7 non-secret test fixtures and configuration placeholders"
+regexTarget = "match"
+regexes = [
+  '''replace-with-an-independent-32-character-secret''',
+  '''f7-growth-pseudonym-test-secret-with-32-characters''',
+  '''f7-identity-proof-test-secret-with-32-characters''',
+  '''growth-pseudonym-test-secret-with-32-characters''',
+  '''identity-proof-test-secret-with-32-characters''',
+  '''withdrawal-key-123456''',
+  '''consent-key-123456''',
+]
