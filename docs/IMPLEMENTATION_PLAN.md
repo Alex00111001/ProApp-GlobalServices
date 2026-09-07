@@ -277,7 +277,7 @@ Implementation slices:
 5. Real Client, Professional and Admin Web experiences with independent purposes and no contractual gating by marketing consent.
 6. Migration rehearsal, unit/integration/security/regression gates, runbooks, release evidence, remote publication and CI closure.
 
-Status: **in progress in the Supabase test environment as of 2026-09-07**. Production activation remains prohibited.
+Status: **partial in the Supabase test environment as of 2026-09-07**. Implementation, clean PostgreSQL replay and remote CI are green in [Platform verification run 34161577954](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34161577954). Closure remains blocked by rotation and reviewed disposition of credentials found in an inherited public-history `backend/.env` commit. Production activation remains prohibited.
 
 ### Phases 8–10
 
