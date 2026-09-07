@@ -25,3 +25,8 @@ Name files `NNNN-short-kebab-title.md`. Use this structure:
 ```
 
 An accepted ADR must remain within `docs/IMPLEMENTATION_PLAN.md` or update it in the same reviewed change. Implementation PRs link the ADR and relevant contracts/tests.
+
+## Records
+
+- [ADR 0001 — Stripe Connect separate charges and transfers](0001-stripe-connect-separate-charges-transfers.md)
+- [ADR 0002 — Consent, first-party identity and reproducible attribution evidence](0002-consent-attribution-evidence.md)

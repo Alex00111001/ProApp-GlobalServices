@@ -37,6 +37,8 @@ F5 Operations and Support are real permission-derived surfaces backed by `/api/v
 
 F6 Growth is a real permission-derived surface backed by `/api/v1/admin/growth/*`. It presents first-party overview/funnel definitions, internal campaign create/edit/lifecycle, pseudonymous leads and conversion evidence without raw analytical identifiers or contact data. `MARKETING_ADMIN` receives `marketing.read` and `marketing.manage`; `ANALYST` intentionally receives neither. No advertising-provider action or causal attribution is available.
 
+F7 Privacy and Attribution is a real permission-derived surface backed by `/api/v1/admin/privacy/*` and `/api/v1/admin/attribution/*`. It presents policy/review lifecycle, sensitive consent/withdrawal history, sanitized touchpoints, versioned models/windows and frozen attribution results. `COMPLIANCE_ADMIN` manages policies and reads decision evidence; `MARKETING_ADMIN` manages models but cannot read consent history; `ANALYST` receives no F7 access.
+
 ## Deployment configuration
 
 For local development, copy `admin-web/.env.example` to `.env.local` and run `npm run dev`. `VITE_API_URL` may point to the backend `/api` base. Production defaults to same-origin `/api`; an explicit production URL must use HTTPS and cannot contain credentials.
@@ -46,8 +48,9 @@ Backend production requirements:
 - explicit `CORS_ORIGINS` containing the admin origin;
 - HTTPS termination and exact `TRUST_PROXY_HOPS`;
 - separate 32+ character `JWT_SECRET` and `ADMIN_SESSION_PEPPER`;
-- 16 reviewed migrations applied and the RBAC catalog synchronized;
+- 18 reviewed migrations applied and the RBAC catalog synchronized;
 - `GROWTH_DATA_ENABLED` remains false until the intended environment passes F6 gates, and production has a dedicated `GROWTH_PSEUDONYM_SECRET`;
+- `CONSENT_ATTRIBUTION_ENABLED=false` until F7 activation approval, with an independent `GROWTH_IDENTITY_PROOF_SECRET` when enabled;
 - shared ingress/WAF authentication rate limits in addition to the in-process limiter;
 - observability exporters and alert routes configured as required by F2.
 

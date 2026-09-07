@@ -260,9 +260,28 @@ Implementation slices:
 
 Status: **completed in Supabase test on 2026-09-02**. Implementation commit `60d6091` passed [Platform verification run 33637424333](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/33637424333), including build/unit/contract, PostgreSQL migration/integration and secret-scan jobs. See [the F6 release record](releases/2026-09-02-f6-growth-data.md). Production, privacy-dependent collection and external advertising remain inactive.
 
-### Phases 7–10
+### Phase 7 — Consent and attribution
 
-Build consent/attribution, referrals/automation, experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
+Deliver versioned and reviewed consent policies, immutable purpose-specific decision history, immediate withdrawal enforcement, first-party privacy-safe touchpoints, proof-bound anonymous identity reconciliation, immutable versioned first/last-touch attribution and complete self-service/administrative surfaces.
+
+Acceptance: the server fails closed for missing, stale, denied or withdrawn consent; clients cannot forge policy or identity evidence; touchpoints persist no raw anonymous identifiers, personal/payment data or secret URL components; retries cannot duplicate evidence; attribution is reproducible for a conversion/model version and never invents revenue; dedicated RBAC, audit, RLS, telemetry, PostgreSQL/Supabase integration, client/admin verification and remote CI all pass. Production remains disabled pending explicit release approval and qualified legal review.
+
+The durable data, identity, privacy, legal-review and rollback boundaries are defined in [ADR 0002](adr/0002-consent-attribution-evidence.md). Existing registration acceptance columns remain compatibility projections and are not backfilled as immutable consent evidence.
+
+Implementation slices:
+
+1. Additive policy, decision, subject-link, touchpoint, model and attribution persistence with immutability, constraints and forced RLS.
+2. Fail-closed consent/withdrawal and signed identity-proof services with safe observability and audit/outbox evidence.
+3. First-party touchpoint ingestion and deterministic attribution integrated with F6 events and conversions without changing financial facts.
+4. Versioned self-service and administrative APIs with narrow RBAC, pagination and sensitive-read audit.
+5. Real Client, Professional and Admin Web experiences with independent purposes and no contractual gating by marketing consent.
+6. Migration rehearsal, unit/integration/security/regression gates, runbooks, release evidence, remote publication and CI closure.
+
+Status: **in progress in the Supabase test environment as of 2026-09-07**. Production activation remains prohibited.
+
+### Phases 8–10
+
+Build referrals/automation, experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
 
 ## 16. Immediate delivery slices
 
