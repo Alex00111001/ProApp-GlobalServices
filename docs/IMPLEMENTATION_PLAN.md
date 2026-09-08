@@ -277,7 +277,7 @@ Implementation slices:
 5. Real Client, Professional and Admin Web experiences with independent purposes and no contractual gating by marketing consent.
 6. Migration rehearsal, unit/integration/security/regression gates, runbooks, release evidence, remote publication and CI closure.
 
-Status: **partial in the Supabase test environment as of 2026-09-07**. Implementation, clean PostgreSQL replay and remote CI are green in [Platform verification run 34161577954](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34161577954). Closure remains blocked by rotation and reviewed disposition of credentials found in an inherited public-history `backend/.env` commit. Production activation remains prohibited.
+Status: **completed in the Supabase test environment on 2026-09-08**. Implementation, clean PostgreSQL replay, client/admin verification and full-history secret scanning are green in [post-rewrite verification run 34198550969](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34198550969). Exposed test credentials were rotated, `backend/.env` and the historical seed-password literal were removed from all 19 published branch histories, and all five npm audit surfaces report zero vulnerabilities. GitHub Support purge of 36 read-only PR refs/cached views remains an administrative residual documented in the [secret-history purge runbook](runbooks/GIT_HISTORY_SECRET_PURGE.md); it does not authorize production activation. Production remains prohibited and F8 has not started.
 
 ### Phases 8–10
 

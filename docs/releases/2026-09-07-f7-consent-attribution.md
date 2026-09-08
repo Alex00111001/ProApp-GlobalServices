@@ -7,7 +7,7 @@
 - Rewritten implementation SHA: `ea447ba664ddb7f0206af884679b90dd19d0f0d3`
 - Environment: Supabase test
 - Production activated: **NO**
-- Status: closure candidate; history and dependency remediation are locally green, final remote verification is pending
+- Status: **HECHO** in the Supabase test environment; production remains inactive
 
 ## Delivered scope
 
@@ -46,6 +46,8 @@ All three migrations were applied successfully to the authorized Supabase test d
 Commands executed include `npm run verify`, `npm run test:integration`, `npx prisma format`, `npx prisma validate`, `npx prisma generate`, `npx prisma migrate deploy`, `npx prisma migrate status`, `npx expo install --check`, `npm audit --audit-level=high`, `git diff --check`, ignored-secret checks and a checksum-verified local Gitleaks 8.30.0 scan.
 
 [Platform verification run 34161577954](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34161577954) passed all three jobs: build/unit/contract/client gates, clean PostgreSQL migration/integration replay and secret scan. The preceding run 34160981261 correctly rejected newly introduced non-secret fixture strings; `.gitleaks.toml` now allowlists only those exact fixture/placeholder values.
+
+[Post-rewrite verification run 34198550969](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34198550969) passed all three jobs after the history rewrite and dependency hardening: build/unit/contract/client gates, clean PostgreSQL migration/integration replay and full-history secret scan.
 
 ## History and credential remediation
 
