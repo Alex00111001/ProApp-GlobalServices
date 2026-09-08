@@ -30,3 +30,4 @@ An accepted ADR must remain within `docs/IMPLEMENTATION_PLAN.md` or update it in
 
 - [ADR 0001 — Stripe Connect separate charges and transfers](0001-stripe-connect-separate-charges-transfers.md)
 - [ADR 0002 — Consent, first-party identity and reproducible attribution evidence](0002-consent-attribution-evidence.md)
+- [ADR 0003 — Versioned referrals and PostgreSQL-backed durable automation](0003-referrals-durable-automation.md)

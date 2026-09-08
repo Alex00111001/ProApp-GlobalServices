@@ -279,9 +279,17 @@ Implementation slices:
 
 Status: **completed in the Supabase test environment on 2026-09-08**. Implementation, clean PostgreSQL replay, client/admin verification and full-history secret scanning are green in [post-rewrite verification run 34198550969](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34198550969). Exposed test credentials were rotated, `backend/.env` and the historical seed-password literal were removed from all 19 published branch histories, and all five npm audit surfaces report zero vulnerabilities. GitHub Support purge of 36 read-only PR refs/cached views remains an administrative residual documented in the [secret-history purge runbook](runbooks/GIT_HISTORY_SECRET_PURGE.md); it does not authorize production activation. Production remains prohibited and F8 has not started.
 
-### Phases 8–10
+### Phase 8 — Referrals and automation
 
-Build referrals/automation, experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
+Status: **implemented and verified locally/Supabase test on 2026-09-08 at implementation closure `d942507b`; remote CI publication gate pending**.
+
+F8 adds versioned referral programs/codes/claims/conversions/rewards and a PostgreSQL-backed versioned trigger/condition/action engine. Referral conversion consumes authoritative events; F3 remains the sole financial authority and reward fulfillment is disabled. Automation uses independent outbox fan-out, database leases, closed registries, exactly-once-effect keys, bounded retry/dead-letter and current F7 consent enforcement. Client, Professional, Admin Web, narrow RBAC/audit, Operations visibility, telemetry and forced RLS/default deny are included.
+
+See [F8 architecture](REFERRALS_AUTOMATION.md), [ADR 0003](adr/0003-referrals-durable-automation.md), [the runbook](runbooks/REFERRALS_AUTOMATION.md) and [release evidence](releases/2026-09-08-f8-referrals-automation.md). Production remains inactive and F9 has not started.
+
+### Phases 9–10
+
+Build experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
 
 ## 16. Immediate delivery slices
 
