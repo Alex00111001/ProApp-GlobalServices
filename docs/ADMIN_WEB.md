@@ -39,6 +39,8 @@ F6 Growth is a real permission-derived surface backed by `/api/v1/admin/growth/*
 
 F7 Privacy and Attribution is a real permission-derived surface backed by `/api/v1/admin/privacy/*` and `/api/v1/admin/attribution/*`. It presents policy/review lifecycle, sensitive consent/withdrawal history, sanitized touchpoints, versioned models/windows and frozen attribution results. `COMPLIANCE_ADMIN` manages policies and reads decision evidence; `MARKETING_ADMIN` manages models but cannot read consent history; `ANALYST` receives no F7 access.
 
+F8 Referrals & Automation is exposed at `/referrals-automation` and derives visibility from the dedicated referral/reward/automation permissions. It reads versioned `/api/v1/admin/referrals/*` and `/api/v1/admin/automation/*` contracts and provides server-paginated program, code, referral, conversion, reward, definition/version, execution and dead-letter views. It never displays referred-party identity, raw event payloads or unsafe errors, and explicitly shows that blind manual replay and reward fulfillment are disabled.
+
 ## Deployment configuration
 
 For local development, copy `admin-web/.env.example` to `.env.local` and run `npm run dev`. `VITE_API_URL` may point to the backend `/api` base. Production defaults to same-origin `/api`; an explicit production URL must use HTTPS and cannot contain credentials.
@@ -51,6 +53,7 @@ Backend production requirements:
 - 18 reviewed migrations applied and the RBAC catalog synchronized;
 - `GROWTH_DATA_ENABLED` remains false until the intended environment passes F6 gates, and production has a dedicated `GROWTH_PSEUDONYM_SECRET`;
 - `CONSENT_ATTRIBUTION_ENABLED=false` until F7 activation approval, with an independent `GROWTH_IDENTITY_PROOF_SECRET` when enabled;
+- `REFERRALS_ENABLED=false`, `AUTOMATION_ENGINE_ENABLED=false`, `AUTOMATION_WORKER_ENABLED=false`, reward fulfillment false and manual replay false until a separately approved F8 rollout;
 - shared ingress/WAF authentication rate limits in addition to the in-process limiter;
 - observability exporters and alert routes configured as required by F2.
 
