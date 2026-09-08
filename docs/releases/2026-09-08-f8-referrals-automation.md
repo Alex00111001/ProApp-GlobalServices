@@ -6,6 +6,7 @@
 - Base: `95ce43b6b4c02639963a6461a100b59d934326ed`
 - Core implementation: `ac563c4c94e9a9d3e6ec498af113c11941b4e5a1`
 - Implementation closure: `d942507be7bbe9ab13ed110faa046762b41f7136`
+- Security closure: `782c2c4a1a91fb6a842205d3a2bf58c8bc7ec9df`
 - Documentation/release revision: pending publication
 - Production activation: **NO**
 - F9 started: **NO**
@@ -43,8 +44,8 @@ Both were applied with `prisma migrate deploy` to the configured Supabase test e
 - RLS: every application table enabled and forced; `anon` and `authenticated` retain no public-schema/table grants; trusted backend role bypass verified.
 - Dependency audits: all five npm surfaces report zero vulnerabilities.
 - Tracked working-tree Gitleaks 8.24.3 scan: approximately 1.90 MB scanned with no leaks.
-- Published-branch Gitleaks 8.24.3 history scan: 96 commits and approximately 295.55 MB scanned with no leaks. Two pre-rewrite commits remain reachable only through the local, unpushed `refs/stash`; they are absent from the branch and are not part of published history.
-- Remote GitHub Actions: pending documentation/publication gate.
+- Published-branch Gitleaks 8.24.3 history scan: 97 commits and approximately 295.55 MB scanned with no leaks before this release-record-only commit. Two pre-rewrite commits remain reachable only through the local, unpushed `refs/stash`; they are absent from the branch and are not part of published history.
+- [Platform verification 34256942669](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34256942669): build/unit/contract, clean PostgreSQL migrations/integration and Secret Scan all passed.
 
 ### Secret-scan compatibility closure
 
@@ -52,7 +53,7 @@ Platform verification run `34221356002` passed build/unit/contract and PostgreSQ
 
 The former global `regexTarget = "match"` entry was insufficient because `match` evaluates the complete detector match (including the `idempotencyKey` assignment), not only the extracted secret. In addition, Gitleaks 8.24.3 represents the global exception as the single `[allowlist]` table; top-level `[[allowlists]]` arrays are not consumed by that version. The closure therefore extends only the existing `generic-api-key` rule via `[[rules.allowlists]]`, targets `secret`, and anchors the exact fixture with `^claim-revoked-1$`. It does not exempt a path, commit, identifier family, detector or history range.
 
-`node scripts/verify-gitleaks-allowlist.cjs <gitleaks-8.24.3-binary>` is the reproducible negative-control procedure. It proves that the exact fixture is classified while `claim-revoked-2` and a runtime-generated high-entropy value assigned to `idempotencyKey` are both still reported by `generic-api-key`. The original failing three-commit range and the complete published branch history are scanned separately with the same 8.24.3 binary and configuration. The replacement remote run is recorded after publication.
+`node scripts/verify-gitleaks-allowlist.cjs <gitleaks-8.24.3-binary>` is the reproducible negative-control procedure. It proves that the exact fixture is classified while `claim-revoked-2` and a runtime-generated high-entropy value assigned to `idempotencyKey` are both still reported by `generic-api-key`. The original failing three-commit range and the complete published branch history were scanned separately with the same 8.24.3 binary and configuration. Replacement run `34256942669` passed its full-history checkout Secret Scan.
 
 The final regression also replaced a fixed-date identity proof in one F7 unit test with a proof issued at test execution time. This prevents calendar-driven expiry without changing the production TTL, verification logic or any runtime policy.
 
@@ -88,4 +89,4 @@ The first F8 Supabase run exposed missing initial `ReferralProgramVersion.versio
 - Store-signed mobile builds, physical-device share flows and production-like worker soak remain release-rehearsal gates.
 - Client currently has no Jest component files; typecheck and API-contract coverage pass, but device/UI automation remains a later release-rehearsal requirement.
 
-Final `HECHO` status requires a completely green remote GitHub Actions run on the published documentation revision.
+This revision is the F8 closure candidate. It becomes final only if its own remote GitHub Actions run is completely green; any regression keeps F8 partial and reopens correction.
