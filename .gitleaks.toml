@@ -5,16 +5,24 @@ useDefault = true
 
 # These are deliberately non-secret fixtures/placeholders. Keep the expressions
 # exact so similar values elsewhere remain detectable.
-[[allowlists]]
+[allowlist]
 description = "F7 non-secret test fixtures and configuration placeholders"
-regexTarget = "match"
 regexes = [
-  '''replace-with-an-independent-32-character-secret''',
-  '''f7-growth-pseudonym-test-secret-with-32-characters''',
-  '''f7-identity-proof-test-secret-with-32-characters''',
-  '''growth-pseudonym-test-secret-with-32-characters''',
-  '''identity-proof-test-secret-with-32-characters''',
-  '''withdrawal-key-123456''',
-  '''consent-key-123456''',
-  '''claim-revoked-1''',
+  '''^replace-with-an-independent-32-character-secret$''',
+  '''^f7-growth-pseudonym-test-secret-with-32-characters$''',
+  '''^f7-identity-proof-test-secret-with-32-characters$''',
+  '''^growth-pseudonym-test-secret-with-32-characters$''',
+  '''^identity-proof-test-secret-with-32-characters$''',
+  '''^withdrawal-key-123456$''',
+  '''^consent-key-123456$''',
+]
+
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "F8 deterministic non-secret referral idempotency test fixture"
+regexTarget = "secret"
+regexes = [
+  '''^claim-revoked-1$''',
 ]
