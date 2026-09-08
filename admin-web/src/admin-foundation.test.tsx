@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AdminLayout } from './components/AdminLayout'
@@ -77,6 +77,8 @@ describe('F8 referrals and automation', () => {
     expect(await screen.findByText('Invita clientes ES')).toBeTruthy()
     expect(screen.getByText('booking.completed')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Automatizaciones' })).toBeNull()
+    fireEvent.change(screen.getByRole('combobox', { name: 'Filtrar por estado' }), { target: { value: 'DRAFT' } })
+    await waitFor(() => expect(vi.mocked(fetch).mock.calls.some(([input]) => String(input).includes('status=DRAFT'))).toBe(true))
   })
 })
 

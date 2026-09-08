@@ -16,4 +16,5 @@ regexes = [
   '''identity-proof-test-secret-with-32-characters''',
   '''withdrawal-key-123456''',
   '''consent-key-123456''',
+  '''claim-revoked-1''',
 ]
