@@ -1,12 +1,13 @@
 # F7 Consent & Attribution release evidence
 
 - Date: 2026-09-07
+- Security closure: 2026-09-08
 - Branch: `feature/consent-attribution-phase-7`
-- Base: `84222f3f882ce1367c9849e7e210eb03a8611b56`
-- Implementation SHA: `c00784631a532955f3b4606b6a0ba88dbea1c312`
+- Rewritten base: `c7a551849dcbec166e45946330493fe75c6f39a9`
+- Rewritten implementation SHA: `ea447ba664ddb7f0206af884679b90dd19d0f0d3`
 - Environment: Supabase test
 - Production activated: **NO**
-- Status: partial; remote gates are green, inherited credential remediation remains open
+- Status: closure candidate; history and dependency remediation are locally green, final remote verification is pending
 
 ## Delivered scope
 
@@ -39,23 +40,20 @@ All three migrations were applied successfully to the authorized Supabase test d
 - Professional: TypeScript passed; Expo dependency check passed.
 - Admin Web: lint, production build and 7/7 tests passed.
 - Expo dependency check: Client and Professional dependencies are aligned with Expo 57.
-- Dependency audits: root, backend and Admin Web report zero vulnerabilities. Client has 15 moderate and Professional has 13 moderate transitive Expo-toolchain advisories; neither has high/critical findings. The offered fixes require breaking downgrades to Expo 46 or `expo-router` 5 and were deliberately rejected.
-- Diff hygiene: `git diff --check` passed; local `.env` files are ignored. Full-history Gitleaks remains the pinned remote CI gate because the binary is not installed locally.
+- Dependency audits: root, backend, Admin Web, Client and Professional report zero vulnerabilities. The two underlying moderate Expo-toolchain advisories were removed with compatible overrides to patched `decode-uri-component` and CommonJS-compatible `uuid` releases; both mobile applications pass TypeScript, Expo Doctor 21/21 and dependency smoke checks.
+- Diff hygiene: `git diff --check` passed; local `.env` files are ignored. A checksum-verified Gitleaks 8.30.0 scan of all rewritten refs reports zero findings.
 
 Commands executed include `npm run verify`, `npm run test:integration`, `npx prisma format`, `npx prisma validate`, `npx prisma generate`, `npx prisma migrate deploy`, `npx prisma migrate status`, `npx expo install --check`, `npm audit --audit-level=high`, `git diff --check`, ignored-secret checks and a checksum-verified local Gitleaks 8.30.0 scan.
 
 [Platform verification run 34161577954](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34161577954) passed all three jobs: build/unit/contract/client gates, clean PostgreSQL migration/integration replay and secret scan. The preceding run 34160981261 correctly rejected newly introduced non-secret fixture strings; `.gitleaks.toml` now allowlists only those exact fixture/placeholder values.
 
-## Inherited credential finding
+## History and credential remediation
 
-A separate full-history local scan found seven inherited findings outside the F7 range: two seed-output test strings and five findings in commit `689d9c59c48ce05607753438f616bbc3562d427c`, which committed `backend/.env`. No values were printed or added to this record. Comparison by variable name/equality only established:
+Credential rotation was verified by equality checks that never printed values: the test database URL, Stripe keys, JWT secret, Cloudinary key and Cloudinary secret all differ from the exposed revision. The unchanged Supabase anonymous key is intentionally client-publishable and remains constrained by forced RLS/default-deny.
 
-- the current test database URL and Stripe keys no longer match the historical values;
-- the Supabase anonymous key still matches but is a client-publishable identifier protected by forced RLS/default-deny;
-- the local test `JWT_SECRET` and `CLOUDINARY_API_SECRET` still match the public-history values and must be treated as compromised;
-- making the repository private does not revoke credentials that were already exposed.
+With explicit owner authorization, `git-filter-repo` 2.47.0 rewrote all 135 commits and 55 affected refs. It removed `backend/.env` from every branch and internal PR lineage and also removed the repeated historical seed-password literal identified by Gitleaks. Current application content was preserved: the pre/post rewrite HEAD tree hashes are identical. All 19 published branch heads now match the rewritten map, there are no tags, history/path queries return zero `backend/.env` objects and full-history Gitleaks reports zero findings.
 
-F7 remains partial even though its remote run is green. Closure requires rotation of the Cloudinary secret and local/test JWT secret, validation with the replacement values, and an owner-approved history remediation or documented revoked-secret baseline. Rewriting shared Git history is intentionally not performed without explicit authorization.
+GitHub rejected updates to its 36 read-only `refs/pull/*/head` references as designed. The active branch/tag history is clean, credentials are rotated and the repository has no forks, but GitHub Support must dereference those PR refs and purge cached views/server objects for physical expungement. The required owner action and exact evidence are recorded in [the secret-history purge runbook](../runbooks/GIT_HISTORY_SECRET_PURGE.md). Collaborators must re-clone or carefully rebase; merging an old clone can reintroduce the tainted objects.
 
 ## Activation and legal gate
 
