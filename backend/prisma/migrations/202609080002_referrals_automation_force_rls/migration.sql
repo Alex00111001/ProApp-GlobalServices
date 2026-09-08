@@ -1,0 +1,15 @@
+-- F8 hardening: the backend role must explicitly bypass RLS; every direct table role fails closed.
+ALTER TABLE "ReferralProgram" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "ReferralProgramVersion" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "ReferralCode" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "Referral" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "ReferralConversion" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "ReferralReward" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "ReferralRiskAssessment" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AutomationDefinition" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AutomationVersion" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AutomationTrigger" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AutomationAction" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AutomationEventDelivery" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AutomationExecution" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "AutomationStepExecution" FORCE ROW LEVEL SECURITY;

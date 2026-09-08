@@ -6,6 +6,7 @@ import { AdminLayout } from './components/AdminLayout'
 import { OperationsPage } from './pages/OperationsPage'
 import { GrowthPage } from './pages/GrowthPage'
 import { PrivacyAttributionPage } from './pages/PrivacyAttributionPage'
+import { ReferralsAutomationPage } from './pages/ReferralsAutomationPage'
 import { navigation } from './navigation'
 import { api } from './lib/api'
 import { session } from './state/session'
@@ -43,6 +44,7 @@ describe('permission-derived navigation', () => {
     expect(navigation.find((item) => item.to === '/users')?.permissions).toContain('users.read')
     expect(navigation.find((item) => item.to === '/marketing')?.permissions).toEqual(['marketing.read'])
     expect(navigation.find((item) => item.to === '/privacy-attribution')?.permissions).toContain('privacy.policy.read')
+    expect(navigation.find((item) => item.to === '/referrals-automation')?.permissions).toContain('automation.execution.read')
   })
 
   it('renders only destinations granted by the effective session permissions', async () => {
@@ -52,6 +54,29 @@ describe('permission-derived navigation', () => {
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Usuarios' })).toBeTruthy()
     expect(screen.queryByRole('link', { name: 'Auditoría' })).toBeNull()
+  })
+})
+
+describe('F8 referrals and automation', () => {
+  it('renders persisted program versions for a read-only referrals session', async () => {
+    const f8Session = { ...sessionPayload, permissions: ['referrals.read'] }
+    const now = new Date().toISOString()
+    const programs = { items: [{
+      id: 'program-1', key: 'client-es', name: 'Invita clientes ES', status: 'ACTIVE', currentVersion: 2, rowVersion: 3,
+      featureFlagKey: 'referrals.client.es', effectiveAt: now, endsAt: null, createdAt: now, updatedAt: now,
+      versions: [{ id: 'version-2', version: 2, referrerActorType: 'CLIENT', referredActorType: 'CLIENT', enabledMarkets: ['ES'], qualifyingEventType: 'booking.completed', waitingPeriodHours: 24, cancellationWindowHours: 48, maxCodesPerOwner: 1, maxUsesPerCode: 10, maxReferralsPerOwner: 10, rewardType: 'NON_MONETARY', referrerRewardAmount: null, referredRewardAmount: null, currency: null, nonMonetaryBenefitKey: 'priority-support', configurationDigest: 'a'.repeat(64), createdAt: now }],
+      _count: { codes: 4, referrals: 7 },
+    }], pagination: { page: 1, limit: 25, totalItems: 1, totalPages: 1 } }
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input); const value = url.includes('/auth/login') ? f8Session : programs
+      return new Response(JSON.stringify(value), { status: url.includes('/auth/login') ? 201 : 200, headers: { 'content-type': 'application/json' } })
+    }))
+    await session.login('admin@example.com', 'correct-password')
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(<QueryClientProvider client={queryClient}><MemoryRouter><ReferralsAutomationPage /></MemoryRouter></QueryClientProvider>)
+    expect(await screen.findByText('Invita clientes ES')).toBeTruthy()
+    expect(screen.getByText('booking.completed')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Automatizaciones' })).toBeNull()
   })
 })
 

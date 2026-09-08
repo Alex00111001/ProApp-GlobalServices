@@ -44,7 +44,9 @@ test.after(async () => {
     await tx.consentDecision.deleteMany({ where: { id: { in: ids.decisions } } });
     await tx.subjectIdentityLink.deleteMany({ where: { id: { in: ids.links } } });
   });
-  await prisma.outboxEvent.deleteMany({ where: { aggregateId: { in: [...ids.decisions, ...ids.links, ...ids.touchpoints, ...ids.models, ...ids.policies, ...ids.events, ...ids.conversions, ...ids.attributions] } } });
+  const evidenceIds = [...ids.decisions, ...ids.links, ...ids.touchpoints, ...ids.models, ...ids.policies, ...ids.events, ...ids.conversions, ...ids.attributions];
+  await prisma.automationEventDelivery.deleteMany({ where: { sourceEvent: { aggregateId: { in: evidenceIds } } } });
+  await prisma.outboxEvent.deleteMany({ where: { aggregateId: { in: evidenceIds } } });
   await prisma.conversion.deleteMany({ where: { id: { in: ids.conversions } } });
   await prisma.marketingEvent.deleteMany({ where: { id: { in: ids.events } } });
   await prisma.lead.deleteMany({ where: { id: { in: ids.leads } } });

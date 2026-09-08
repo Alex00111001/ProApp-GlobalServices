@@ -5,6 +5,8 @@ const authController = require('../controllers/admin-auth.controller');
 const operationsController = require('../controllers/admin-operations.controller');
 const growthController = require('../controllers/admin-growth.controller');
 const privacyController = require('../controllers/admin-privacy.controller');
+const referralsController = require('../controllers/admin-referrals.controller');
+const automationController = require('../controllers/admin-automation.controller');
 const { authenticateAdmin } = require('../middleware/authenticate-admin');
 const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
@@ -78,6 +80,23 @@ router.patch('/attribution/models/:id', requirePermission(PERMISSIONS.ATTRIBUTIO
 router.patch('/attribution/models/:id/status', requirePermission(PERMISSIONS.ATTRIBUTION_MANAGE), privacyController.setModelStatus);
 router.get('/attribution/results', requirePermission(PERMISSIONS.ATTRIBUTION_READ), privacyController.attributions);
 router.post('/attribution/conversions/:id/calculate', requirePermission(PERMISSIONS.ATTRIBUTION_MANAGE), privacyController.calculate);
+
+router.get('/referrals/programs', requirePermission(PERMISSIONS.REFERRALS_READ), referralsController.programs);
+router.post('/referrals/programs', requirePermission(PERMISSIONS.REFERRALS_MANAGE), referralsController.createProgram);
+router.post('/referrals/programs/:id/versions', requirePermission(PERMISSIONS.REFERRALS_MANAGE), referralsController.createVersion);
+router.patch('/referrals/programs/:id/status', requirePermission(PERMISSIONS.REFERRALS_MANAGE), referralsController.setStatus);
+router.get('/referrals/codes', requirePermission(PERMISSIONS.REFERRALS_READ), referralsController.codes);
+router.get('/referrals/referrals', requirePermission(PERMISSIONS.REFERRALS_READ), referralsController.referrals);
+router.get('/referrals/conversions', requirePermission(PERMISSIONS.REFERRALS_READ), referralsController.conversions);
+router.get('/referrals/rewards', requirePermission(PERMISSIONS.REFERRAL_REWARDS_READ), referralsController.rewards);
+router.patch('/referrals/rewards/:id/status', requirePermission(PERMISSIONS.REFERRAL_REWARDS_MANAGE), referralsController.setRewardStatus);
+
+router.get('/automation/definitions', requirePermission(PERMISSIONS.AUTOMATION_READ), automationController.definitions);
+router.post('/automation/definitions', requirePermission(PERMISSIONS.AUTOMATION_MANAGE), automationController.createDefinition);
+router.post('/automation/definitions/:id/versions', requirePermission(PERMISSIONS.AUTOMATION_MANAGE), automationController.createVersion);
+router.patch('/automation/definitions/:id/status', requirePermission(PERMISSIONS.AUTOMATION_ACTIVATE), automationController.setStatus);
+router.get('/automation/executions', requirePermission(PERMISSIONS.AUTOMATION_EXECUTION_READ), automationController.executions);
+router.get('/automation/dead-letter', requirePermission(PERMISSIONS.AUTOMATION_EXECUTION_READ), automationController.deadLetter);
 
 router.get('/audit', requirePermission(PERMISSIONS.AUDIT_READ), controller.auditLogs);
 router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), controller.roles);

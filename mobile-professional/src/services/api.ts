@@ -48,4 +48,9 @@ export const api = {
     idempotencyKey: `professional-withdrawal:${Date.now()}:${Math.random().toString(36).slice(2)}`,
     purpose: 'marketing_attribution', source: 'PROFESSIONAL_SETTINGS', evidence: { interaction: 'explicit_withdrawal_button' },
   })).data; },
+  async referralPrograms() { return (await client.get('/v1/referrals/programs')).data; },
+  async referralCodes() { return (await client.get('/v1/referrals/codes')).data; },
+  async referrals(page = 1) { return (await client.get('/v1/referrals/me', { params: { page, limit: 50 } })).data; },
+  async createReferralCode(programKey: string) { return (await client.post('/v1/referrals/codes', { programKey, idempotencyKey: `professional-code:${programKey}:${Date.now()}` })).data; },
+  async claimReferral(code: string) { return (await client.post('/v1/referrals/claims', { code: code.trim().toUpperCase(), idempotencyKey: `professional-claim:${Date.now()}` })).data; },
 };

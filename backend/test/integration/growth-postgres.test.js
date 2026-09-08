@@ -46,7 +46,9 @@ test.before(async () => {
 test.after(async () => {
   if (eventIds.length) {
     await prisma.conversion.deleteMany({ where: { eventId: { in: eventIds } } });
-    await prisma.outboxEvent.deleteMany({ where: { OR: [{ aggregateType: 'MarketingEvent', aggregateId: { in: eventIds } }, ...(campaignId ? [{ aggregateType: 'Campaign', aggregateId: campaignId }] : [])] } });
+    const outboxWhere = { OR: [{ aggregateType: 'MarketingEvent', aggregateId: { in: eventIds } }, ...(campaignId ? [{ aggregateType: 'Campaign', aggregateId: campaignId }] : [])] };
+    await prisma.automationEventDelivery.deleteMany({ where: { sourceEvent: outboxWhere } });
+    await prisma.outboxEvent.deleteMany({ where: outboxWhere });
     await prisma.marketingEvent.deleteMany({ where: { id: { in: eventIds } } });
   }
   if (leadId) await prisma.lead.deleteMany({ where: { id: leadId } });

@@ -59,6 +59,32 @@ const attributionOperations = new Prometheus.Counter({
   labelNames: ['operation', 'outcome', 'reason'],
   registers: [registry],
 });
+const referralOperations = new Prometheus.Counter({
+  name: 'homeservices_referral_operations_total',
+  help: 'Referral lifecycle operations by bounded operation and outcome.',
+  labelNames: ['operation', 'outcome', 'reason'],
+  registers: [registry],
+});
+const automationOperations = new Prometheus.Counter({
+  name: 'homeservices_automation_operations_total',
+  help: 'Automation trigger and execution outcomes.',
+  labelNames: ['operation', 'outcome', 'reason'],
+  registers: [registry],
+});
+const automationExecutionDuration = new Prometheus.Histogram({
+  name: 'homeservices_automation_execution_duration_seconds',
+  help: 'Automation execution latency without definition or subject labels.',
+  labelNames: ['outcome'],
+  buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60],
+  registers: [registry],
+});
+const automationQueueAge = new Prometheus.Histogram({
+  name: 'homeservices_automation_queue_age_seconds',
+  help: 'Age of claimed durable automation work.',
+  labelNames: ['queue'],
+  buckets: [1, 5, 15, 30, 60, 300, 900, 3600, 21600],
+  registers: [registry],
+});
 
 const boundedLabel = (value, fallback = 'unknown') => {
   const label = String(value || '').toLowerCase();
@@ -111,6 +137,12 @@ const observePrivacyOperation = ({ operation, outcome, reason = 'none' }) => pri
 const observeAttributionOperation = ({ operation, outcome, reason = 'none' }) => attributionOperations.inc({
   operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason),
 });
+const observeReferralOperation = ({ operation, outcome, reason = 'none' }) => referralOperations.inc({ operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason) });
+const observeAutomationOperation = ({ operation, outcome, reason = 'none', durationSeconds, queueAgeSeconds, queue = 'delivery' }) => {
+  automationOperations.inc({ operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason) });
+  if (Number.isFinite(durationSeconds)) automationExecutionDuration.observe({ outcome: boundedLabel(outcome) }, Math.max(0, durationSeconds));
+  if (Number.isFinite(queueAgeSeconds)) automationQueueAge.observe({ queue: boundedLabel(queue) }, Math.max(0, queueAgeSeconds));
+};
 
 const metricsHandler = async (req, res, next) => {
   try {
@@ -130,6 +162,8 @@ module.exports = {
   observeExternalOperation,
   observePrivacyOperation,
   observeAttributionOperation,
+  observeReferralOperation,
+  observeAutomationOperation,
   registry,
   setOutboxDepth,
 };

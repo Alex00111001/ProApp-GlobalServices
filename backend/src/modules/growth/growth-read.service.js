@@ -48,7 +48,7 @@ const getGrowthOverview = async (query, client = prisma) => {
     client.marketingEvent.count({ where: eventsWhere }),
     client.lead.count({ where: leadWhere(range) }),
     client.conversion.count({ where: conversionWhere(range) }),
-    client.campaign.count({ where: { status: 'ACTIVE', ...(range.countryCode ? { countryCode: range.countryCode } : {}) } }),
+    client.campaign.count({ where: { status: 'ACTIVE', ...(range.campaignId ? { id: range.campaignId } : {}), ...(range.countryCode ? { countryCode: range.countryCode } : {}) } }),
     client.conversion.groupBy({ by: ['type'], where: conversionWhere(range), _count: { _all: true } }),
     client.marketingEvent.findFirst({ where: eventsWhere, orderBy: { receivedAt: 'desc' }, select: { receivedAt: true } }),
     client.marketingEvent.count({ where: { ...eventsWhere, OR: [{ subjectKey: null }, { clientEventId: null }] } }),

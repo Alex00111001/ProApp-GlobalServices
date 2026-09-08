@@ -154,6 +154,13 @@ class ApiClient {
     })).data;
   }
 
+  async getReferralPrograms() { return (await this.client.get('/v1/referrals/programs')).data; }
+  async getReferralCodes() { return (await this.client.get('/v1/referrals/codes')).data; }
+  async getMyReferrals(page = 1) { return (await this.client.get('/v1/referrals/me', { params: { page, limit: 50 } })).data; }
+  async createReferralCode(programKey: string) { return (await this.client.post('/v1/referrals/codes', { programKey, idempotencyKey: `client-code:${programKey}:${Date.now()}` })).data; }
+  async claimReferral(code: string) { return (await this.client.post('/v1/referrals/claims', { code: code.trim().toUpperCase(), idempotencyKey: `client-claim:${Date.now()}` })).data; }
+  async revokeReferralCode(id: string, reason: string) { return (await this.client.post(`/v1/referrals/codes/${id}/revoke`, { reason })).data; }
+
   // Authenticated methods
   async getProfile() {
     const response = await this.client.get<AuthResponse>('/auth/profile');
