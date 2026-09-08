@@ -55,6 +55,12 @@ model User {
   subjectIdentityLinks     SubjectIdentityLink[]
   privacyTouchpoints       Touchpoint[]
   attributionModelsCreated AttributionModel[]       @relation("AttributionModelCreator")
+  referralProgramsCreated  ReferralProgram[]        @relation("ReferralProgramCreator")
+  referralCodesOwned       ReferralCode[]           @relation("ReferralCodeOwner")
+  referralsMade            Referral[]               @relation("ReferralReferrer")
+  referralsReceived        Referral[]               @relation("ReferralReferred")
+  referralRewards          ReferralReward[]         @relation("ReferralRewardBeneficiary")
+  automationDefinitions    AutomationDefinition[]   @relation("AutomationDefinitionCreator")
 
   @@index([email])
   @@index([phone])
@@ -595,19 +601,22 @@ model IdempotencyRecord {
 }
 
 model OutboxEvent {
-  id            String       @id @default(uuid())
-  aggregateType String
-  aggregateId   String
-  eventType     String
-  payload       Json
-  metadata      Json?
-  status        OutboxStatus @default(PENDING)
-  attempts      Int          @default(0)
-  availableAt   DateTime     @default(now())
-  lockedAt      DateTime?
-  processedAt   DateTime?
-  lastError     String?
-  createdAt     DateTime     @default(now())
+  id                   String                   @id @default(uuid())
+  aggregateType        String
+  aggregateId          String
+  eventType            String
+  payload              Json
+  metadata             Json?
+  status               OutboxStatus             @default(PENDING)
+  attempts             Int                      @default(0)
+  availableAt          DateTime                 @default(now())
+  lockedAt             DateTime?
+  processedAt          DateTime?
+  lastError            String?
+  createdAt            DateTime                 @default(now())
+  referralConversions  ReferralConversion[]
+  automationDelivery   AutomationEventDelivery?
+  automationExecutions AutomationExecution[]
 
   @@index([status, availableAt])
   @@index([aggregateType, aggregateId, createdAt])
@@ -744,24 +753,25 @@ model Lead {
 }
 
 model Conversion {
-  id             String               @id @default(uuid())
-  conversionKey  String               @unique
-  type           ConversionType
-  eventId        String               @unique
-  leadId         String?
-  campaignId     String?
-  userId         String?
-  professionalId String?
-  bookingId      String?
-  occurredAt     DateTime
-  createdAt      DateTime             @default(now())
-  event          MarketingEvent       @relation(fields: [eventId], references: [id], onDelete: Restrict)
-  lead           Lead?                @relation(fields: [leadId], references: [id], onDelete: SetNull)
-  campaign       Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
-  user           User?                @relation("GrowthConversionUser", fields: [userId], references: [id], onDelete: SetNull)
-  professional   ProfessionalProfile? @relation("GrowthConversionProfessional", fields: [professionalId], references: [id], onDelete: SetNull)
-  booking        Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
-  attributions   Attribution[]
+  id                  String               @id @default(uuid())
+  conversionKey       String               @unique
+  type                ConversionType
+  eventId             String               @unique
+  leadId              String?
+  campaignId          String?
+  userId              String?
+  professionalId      String?
+  bookingId           String?
+  occurredAt          DateTime
+  createdAt           DateTime             @default(now())
+  event               MarketingEvent       @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  lead                Lead?                @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  campaign            Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  user                User?                @relation("GrowthConversionUser", fields: [userId], references: [id], onDelete: SetNull)
+  professional        ProfessionalProfile? @relation("GrowthConversionProfessional", fields: [professionalId], references: [id], onDelete: SetNull)
+  booking             Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  attributions        Attribution[]
+  referralConversions ReferralConversion[]
 
   @@index([type, occurredAt])
   @@index([campaignId, type, occurredAt])
@@ -940,6 +950,308 @@ model Attribution {
   @@index([touchpointId])
   @@index([conversionId, calculatedAt])
   @@index([correlationId])
+}
+
+model ReferralProgram {
+  id             String                   @id @default(uuid())
+  key            String                   @unique
+  name           String
+  status         ReferralProgramStatus    @default(DRAFT)
+  currentVersion Int                      @default(1)
+  rowVersion     Int                      @default(1)
+  featureFlagKey String
+  effectiveAt    DateTime?
+  endsAt         DateTime?
+  createdById    String
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  createdBy      User                     @relation("ReferralProgramCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  versions       ReferralProgramVersion[]
+  codes          ReferralCode[]
+  referrals      Referral[]
+
+  @@index([status, effectiveAt, endsAt])
+  @@index([createdById])
+}
+
+model ReferralProgramVersion {
+  id                      String             @id @default(uuid())
+  programId               String
+  version                 Int
+  referrerActorType       ReferralActorType
+  referredActorType       ReferralActorType
+  enabledMarkets          String[]
+  qualifyingEventType     String
+  waitingPeriodHours      Int                @default(0)
+  cancellationWindowHours Int                @default(0)
+  maxCodesPerOwner        Int                @default(1)
+  maxUsesPerCode          Int                @default(100)
+  maxReferralsPerOwner    Int                @default(100)
+  rewardType              ReferralRewardType
+  referrerRewardAmount    Decimal?           @db.Decimal(18, 2)
+  referredRewardAmount    Decimal?           @db.Decimal(18, 2)
+  currency                String?
+  nonMonetaryBenefitKey   String?
+  configurationDigest     String
+  createdAt               DateTime           @default(now())
+  program                 ReferralProgram    @relation(fields: [programId], references: [id], onDelete: Restrict)
+  referrals               Referral[]
+  rewards                 ReferralReward[]
+
+  @@unique([programId, version])
+  @@index([qualifyingEventType])
+}
+
+model ReferralCode {
+  id             String             @id @default(uuid())
+  code           String             @unique
+  idempotencyKey String             @unique
+  programId      String
+  ownerUserId    String
+  ownerType      ReferralActorType
+  status         ReferralCodeStatus @default(ACTIVE)
+  maxUses        Int
+  useCount       Int                @default(0)
+  expiresAt      DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  program        ReferralProgram    @relation(fields: [programId], references: [id], onDelete: Restrict)
+  owner          User               @relation("ReferralCodeOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
+  referrals      Referral[]
+
+  @@index([programId, ownerUserId, status])
+  @@index([status, expiresAt])
+}
+
+model Referral {
+  id               String                   @id @default(uuid())
+  idempotencyKey   String                   @unique
+  programId        String
+  programVersionId String
+  referralCodeId   String
+  referrerUserId   String
+  referredUserId   String
+  market           String
+  status           ReferralStatus           @default(CREATED)
+  riskStatus       ReferralRiskStatus       @default(CLEAR)
+  rejectionCode    String?
+  qualifiedAt      DateTime?
+  convertedAt      DateTime?
+  rejectedAt       DateTime?
+  reversedAt       DateTime?
+  requestId        String?
+  correlationId    String?
+  traceId          String?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+  program          ReferralProgram          @relation(fields: [programId], references: [id], onDelete: Restrict)
+  programVersion   ReferralProgramVersion   @relation(fields: [programVersionId], references: [id], onDelete: Restrict)
+  referralCode     ReferralCode             @relation(fields: [referralCodeId], references: [id], onDelete: Restrict)
+  referrer         User                     @relation("ReferralReferrer", fields: [referrerUserId], references: [id], onDelete: Restrict)
+  referred         User                     @relation("ReferralReferred", fields: [referredUserId], references: [id], onDelete: Restrict)
+  conversions      ReferralConversion[]
+  rewards          ReferralReward[]
+  riskAssessments  ReferralRiskAssessment[]
+
+  @@unique([programId, referredUserId])
+  @@index([referrerUserId, status, createdAt])
+  @@index([referredUserId, status, createdAt])
+  @@index([programId, status, createdAt])
+  @@index([correlationId])
+}
+
+model ReferralConversion {
+  id                  String                   @id @default(uuid())
+  referralId          String
+  sourceOutboxEventId String                   @unique
+  sourceConversionId  String?
+  eventType           String
+  status              ReferralConversionStatus @default(QUALIFIED)
+  evidenceDigest      String
+  occurredAt          DateTime
+  createdAt           DateTime                 @default(now())
+  reversedAt          DateTime?
+  referral            Referral                 @relation(fields: [referralId], references: [id], onDelete: Restrict)
+  sourceOutboxEvent   OutboxEvent              @relation(fields: [sourceOutboxEventId], references: [id], onDelete: Restrict)
+  sourceConversion    Conversion?              @relation(fields: [sourceConversionId], references: [id], onDelete: Restrict)
+
+  @@unique([referralId, eventType])
+  @@index([sourceConversionId])
+  @@index([status, occurredAt])
+}
+
+model ReferralReward {
+  id                String                 @id @default(uuid())
+  idempotencyKey    String                 @unique
+  referralId        String
+  programVersionId  String
+  beneficiaryUserId String
+  beneficiarySide   ReferralRewardSide
+  rewardType        ReferralRewardType
+  amount            Decimal?               @db.Decimal(18, 2)
+  currency          String?
+  benefitKey        String?
+  status            ReferralRewardStatus   @default(PENDING)
+  evidenceDigest    String
+  eligibleAt        DateTime
+  approvedAt        DateTime?
+  heldAt            DateTime?
+  fulfilledAt       DateTime?
+  rejectedAt        DateTime?
+  reversedAt        DateTime?
+  financialIntentId String?                @unique
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  referral          Referral               @relation(fields: [referralId], references: [id], onDelete: Restrict)
+  programVersion    ReferralProgramVersion @relation(fields: [programVersionId], references: [id], onDelete: Restrict)
+  beneficiary       User                   @relation("ReferralRewardBeneficiary", fields: [beneficiaryUserId], references: [id], onDelete: Restrict)
+
+  @@unique([referralId, beneficiarySide])
+  @@index([beneficiaryUserId, status, createdAt])
+  @@index([status, eligibleAt])
+}
+
+model ReferralRiskAssessment {
+  id             String             @id @default(uuid())
+  referralId     String
+  ruleVersion    Int
+  outcome        ReferralRiskStatus
+  signals        Json
+  evidenceDigest String
+  createdAt      DateTime           @default(now())
+  referral       Referral           @relation(fields: [referralId], references: [id], onDelete: Restrict)
+
+  @@index([referralId, createdAt])
+  @@index([outcome, createdAt])
+}
+
+model AutomationDefinition {
+  id             String                     @id @default(uuid())
+  key            String                     @unique
+  name           String
+  status         AutomationDefinitionStatus @default(DRAFT)
+  currentVersion Int                        @default(1)
+  rowVersion     Int                        @default(1)
+  featureFlagKey String
+  createdById    String
+  createdAt      DateTime                   @default(now())
+  updatedAt      DateTime                   @updatedAt
+  createdBy      User                       @relation("AutomationDefinitionCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  versions       AutomationVersion[]
+
+  @@index([status, updatedAt])
+  @@index([createdById])
+}
+
+model AutomationVersion {
+  id                  String                @id @default(uuid())
+  definitionId        String
+  version             Int
+  conditionTree       Json?
+  configurationDigest String
+  activatedAt         DateTime?
+  retiredAt           DateTime?
+  createdAt           DateTime              @default(now())
+  definition          AutomationDefinition  @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+  trigger             AutomationTrigger?
+  actions             AutomationAction[]
+  executions          AutomationExecution[]
+
+  @@unique([definitionId, version])
+}
+
+model AutomationTrigger {
+  id                  String            @id @default(uuid())
+  automationVersionId String            @unique
+  eventType           String
+  schemaVersion       Int               @default(1)
+  automationVersion   AutomationVersion @relation(fields: [automationVersionId], references: [id], onDelete: Restrict)
+
+  @@index([eventType])
+}
+
+model AutomationAction {
+  id                    String                    @id @default(uuid())
+  automationVersionId   String
+  position              Int
+  actionType            String
+  configuration         Json
+  delaySeconds          Int                       @default(0)
+  maxAttempts           Int                       @default(5)
+  initialBackoffSeconds Int                       @default(30)
+  maxBackoffSeconds     Int                       @default(3600)
+  automationVersion     AutomationVersion         @relation(fields: [automationVersionId], references: [id], onDelete: Restrict)
+  stepExecutions        AutomationStepExecution[]
+
+  @@unique([automationVersionId, position])
+  @@index([actionType])
+}
+
+model AutomationEventDelivery {
+  id            String                   @id @default(uuid())
+  sourceEventId String                   @unique
+  eventType     String
+  status        AutomationDeliveryStatus @default(PENDING)
+  attempts      Int                      @default(0)
+  availableAt   DateTime                 @default(now())
+  lockedAt      DateTime?
+  processedAt   DateTime?
+  lastError     String?
+  createdAt     DateTime                 @default(now())
+  sourceEvent   OutboxEvent              @relation(fields: [sourceEventId], references: [id], onDelete: Restrict)
+
+  @@index([status, availableAt])
+  @@index([eventType, createdAt])
+}
+
+model AutomationExecution {
+  id                  String                    @id @default(uuid())
+  automationVersionId String
+  triggerEventId      String
+  status              AutomationExecutionStatus @default(TRIGGERED)
+  attemptCount        Int                       @default(0)
+  nextAttemptAt       DateTime?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  firstFailureAt      DateTime?
+  lastFailureAt       DateTime?
+  lastError           String?
+  correlationId       String?
+  traceId             String?
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+  automationVersion   AutomationVersion         @relation(fields: [automationVersionId], references: [id], onDelete: Restrict)
+  triggerEvent        OutboxEvent               @relation(fields: [triggerEventId], references: [id], onDelete: Restrict)
+  steps               AutomationStepExecution[]
+
+  @@unique([automationVersionId, triggerEventId])
+  @@index([status, nextAttemptAt])
+  @@index([correlationId])
+}
+
+model AutomationStepExecution {
+  id              String                        @id @default(uuid())
+  executionId     String
+  actionId        String
+  idempotencyKey  String                        @unique
+  status          AutomationStepExecutionStatus @default(PENDING)
+  attempts        Int                           @default(0)
+  nextAttemptAt   DateTime
+  lockedAt        DateTime?
+  firstFailureAt  DateTime?
+  lastFailureAt   DateTime?
+  lastError       String?
+  resultReference Json?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime                      @default(now())
+  updatedAt       DateTime                      @updatedAt
+  execution       AutomationExecution           @relation(fields: [executionId], references: [id], onDelete: Restrict)
+  action          AutomationAction              @relation(fields: [actionId], references: [id], onDelete: Restrict)
+
+  @@unique([executionId, actionId])
+  @@index([status, nextAttemptAt])
 }
 
 model ErrorGroup {
@@ -1660,6 +1972,98 @@ enum AttributionStatus {
   ATTRIBUTED
   UNATTRIBUTED
   BLOCKED_CONSENT
+}
+
+enum ReferralProgramStatus {
+  DRAFT
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+enum ReferralActorType {
+  CLIENT
+  PROFESSIONAL
+}
+
+enum ReferralCodeStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum ReferralStatus {
+  CREATED
+  QUALIFIED
+  CONVERTED
+  REJECTED
+  REVERSED
+}
+
+enum ReferralConversionStatus {
+  QUALIFIED
+  CONVERTED
+  REVERSED
+}
+
+enum ReferralRewardType {
+  ACCOUNT_CREDIT
+  NON_MONETARY
+}
+
+enum ReferralRewardSide {
+  REFERRER
+  REFERRED
+}
+
+enum ReferralRewardStatus {
+  PENDING
+  APPROVED
+  HELD
+  FULFILLED
+  REJECTED
+  REVERSED
+}
+
+enum ReferralRiskStatus {
+  CLEAR
+  ATTENTION
+  REVIEWED
+}
+
+enum AutomationDefinitionStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum AutomationDeliveryStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+  DEAD_LETTER
+}
+
+enum AutomationExecutionStatus {
+  TRIGGERED
+  SKIPPED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  EXHAUSTED
+}
+
+enum AutomationStepExecutionStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  EXHAUSTED
+  SKIPPED
 }
 
 enum PolicyStatus {

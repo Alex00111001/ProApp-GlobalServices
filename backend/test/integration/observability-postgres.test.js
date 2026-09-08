@@ -27,6 +27,7 @@ test.after(async () => {
   if (incidentId) {
     await prisma.incidentComment.deleteMany({ where: { incidentId } });
     await prisma.incidentEvent.deleteMany({ where: { incidentId } });
+    await prisma.automationEventDelivery.deleteMany({ where: { sourceEvent: { aggregateId: incidentId } } });
     await prisma.outboxEvent.deleteMany({ where: { aggregateId: incidentId } });
     await prisma.auditLog.deleteMany({ where: { resourceId: incidentId } });
     await prisma.incident.deleteMany({ where: { id: incidentId } });

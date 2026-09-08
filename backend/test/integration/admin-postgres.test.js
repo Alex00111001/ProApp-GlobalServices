@@ -34,6 +34,7 @@ test.before(async () => {
 test.after(async () => {
   if (changeId) await prisma.adminRoleChangeRequest.deleteMany({ where: { id: changeId } });
   if (supportCaseId) {
+    await prisma.automationEventDelivery.deleteMany({ where: { sourceEvent: { aggregateType: 'SupportCase', aggregateId: supportCaseId } } });
     await prisma.outboxEvent.deleteMany({ where: { aggregateType: 'SupportCase', aggregateId: supportCaseId } });
     await prisma.supportCaseComment.deleteMany({ where: { caseId: supportCaseId } });
     await prisma.supportCaseEvent.deleteMany({ where: { caseId: supportCaseId } });

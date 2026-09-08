@@ -106,6 +106,9 @@ const validateEnvironment = (source = process.env) => {
   const stripeWebhookSecret = source.STRIPE_WEBHOOK_SECRET_CURRENT || source.STRIPE_WEBHOOK_SECRET;
   const otelEnabled = parseBoolean('OTEL_ENABLED', source.OTEL_ENABLED, false);
   const consentAttributionEnabled = parseBoolean('CONSENT_ATTRIBUTION_ENABLED', source.CONSENT_ATTRIBUTION_ENABLED, false);
+  const referralsAutomationEnabled = parseBoolean('REFERRALS_AUTOMATION_ENABLED', source.REFERRALS_AUTOMATION_ENABLED, environment !== 'production');
+  const referralsEnabled = parseBoolean('REFERRALS_ENABLED', source.REFERRALS_ENABLED, environment !== 'production');
+  const automationEngineEnabled = parseBoolean('AUTOMATION_ENGINE_ENABLED', source.AUTOMATION_ENGINE_ENABLED, environment !== 'production');
   const logTransport = parseChoice('LOG_TRANSPORT', source.LOG_TRANSPORT, 'stdout', ['stdout', 'file']);
   const logLevel = parseChoice('LOG_LEVEL', source.LOG_LEVEL, environment === 'production' ? 'info' : 'debug', [
     'trace', 'debug', 'info', 'warn', 'error', 'fatal',
@@ -191,6 +194,14 @@ const validateEnvironment = (source = process.env) => {
     growthDataEnabled: parseBoolean('GROWTH_DATA_ENABLED', source.GROWTH_DATA_ENABLED, environment !== 'production'),
     growthPseudonymSecret: source.GROWTH_PSEUDONYM_SECRET || 'development-only-growth-pseudonym-secret',
     consentAttributionEnabled,
+    referralsAutomationEnabled,
+    referralsEnabled: referralsAutomationEnabled || referralsEnabled,
+    automationEngineEnabled: referralsAutomationEnabled || automationEngineEnabled,
+    referralRewardFulfillmentEnabled: parseBoolean('REFERRAL_REWARD_FULFILLMENT_ENABLED', source.REFERRAL_REWARD_FULFILLMENT_ENABLED, false),
+    automationWorkerEnabled: parseBoolean('AUTOMATION_WORKER_ENABLED', source.AUTOMATION_WORKER_ENABLED, false),
+    automationManualReplayEnabled: parseBoolean('AUTOMATION_MANUAL_REPLAY_ENABLED', source.AUTOMATION_MANUAL_REPLAY_ENABLED, false),
+    automationWorkerPollMs: parseInteger('AUTOMATION_WORKER_POLL_MS', source.AUTOMATION_WORKER_POLL_MS, 1_000, 100, 60_000),
+    automationWorkerBatchSize: parseInteger('AUTOMATION_WORKER_BATCH_SIZE', source.AUTOMATION_WORKER_BATCH_SIZE, 25, 1, 100),
     growthIdentityProofSecret: source.GROWTH_IDENTITY_PROOF_SECRET || 'development-only-growth-identity-proof-secret',
     identityProofTtlHours: parseInteger('IDENTITY_PROOF_TTL_HOURS', source.IDENTITY_PROOF_TTL_HOURS, 24, 1, 168),
     logLevel,
