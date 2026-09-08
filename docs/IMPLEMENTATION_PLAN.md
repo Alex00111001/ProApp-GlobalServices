@@ -281,7 +281,7 @@ Status: **completed in the Supabase test environment on 2026-09-08**. Implementa
 
 ### Phase 8 — Referrals and automation
 
-Status: **implemented and verified locally/Supabase test on 2026-09-08 at implementation closure `d942507b`; remote CI publication gate pending**.
+Status: **implemented and verified locally/Supabase test on 2026-09-08 at implementation closure `d942507b`; remote CI publication gate pending**. Platform verification `34221356002` passed build/unit/contract and PostgreSQL integration but classified the exact non-secret fixture `claim-revoked-1` as `generic-api-key`; the 8.24.3-compatible, rule-specific `secret` allowlist and its negative-control procedure are the only pending closure change.
 
 F8 adds versioned referral programs/codes/claims/conversions/rewards and a PostgreSQL-backed versioned trigger/condition/action engine. Referral conversion consumes authoritative events; F3 remains the sole financial authority and reward fulfillment is disabled. Automation uses independent outbox fan-out, database leases, closed registries, exactly-once-effect keys, bounded retry/dead-letter and current F7 consent enforcement. Client, Professional, Admin Web, narrow RBAC/audit, Operations visibility, telemetry and forced RLS/default deny are included.
 

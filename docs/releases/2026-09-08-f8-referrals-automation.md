@@ -42,9 +42,19 @@ Both were applied with `prisma migrate deploy` to the configured Supabase test e
 - Professional: TypeScript passed.
 - RLS: every application table enabled and forced; `anon` and `authenticated` retain no public-schema/table grants; trusted backend role bypass verified.
 - Dependency audits: all five npm surfaces report zero vulnerabilities.
-- Tracked working-tree Gitleaks scan: passed with no leaks.
-- Published-branch Gitleaks history scan: 99 commits and approximately 295.70 MB scanned with no leaks. Two pre-rewrite commits remain reachable only through the local, unpushed `refs/stash`; they are absent from heads/remotes and are not part of published history.
+- Tracked working-tree Gitleaks 8.24.3 scan: approximately 1.90 MB scanned with no leaks.
+- Published-branch Gitleaks 8.24.3 history scan: 96 commits and approximately 295.55 MB scanned with no leaks. Two pre-rewrite commits remain reachable only through the local, unpushed `refs/stash`; they are absent from the branch and are not part of published history.
 - Remote GitHub Actions: pending documentation/publication gate.
+
+### Secret-scan compatibility closure
+
+Platform verification run `34221356002` passed build/unit/contract and PostgreSQL migration/integration, but its Gitleaks 8.24.3 job reported one `generic-api-key` finding in implementation commit `ac563c4c`, line 124 of `backend/test/referrals-automation.test.js`. The extracted value, `claim-revoked-1`, is a deterministic idempotency-key fixture and not a credential.
+
+The former global `regexTarget = "match"` entry was insufficient because `match` evaluates the complete detector match (including the `idempotencyKey` assignment), not only the extracted secret. In addition, Gitleaks 8.24.3 represents the global exception as the single `[allowlist]` table; top-level `[[allowlists]]` arrays are not consumed by that version. The closure therefore extends only the existing `generic-api-key` rule via `[[rules.allowlists]]`, targets `secret`, and anchors the exact fixture with `^claim-revoked-1$`. It does not exempt a path, commit, identifier family, detector or history range.
+
+`node scripts/verify-gitleaks-allowlist.cjs <gitleaks-8.24.3-binary>` is the reproducible negative-control procedure. It proves that the exact fixture is classified while `claim-revoked-2` and a runtime-generated high-entropy value assigned to `idempotencyKey` are both still reported by `generic-api-key`. The original failing three-commit range and the complete published branch history are scanned separately with the same 8.24.3 binary and configuration. The replacement remote run is recorded after publication.
+
+The final regression also replaced a fixed-date identity proof in one F7 unit test with a proof issued at test execution time. This prevents calendar-driven expiry without changing the production TTL, verification logic or any runtime policy.
 
 ## Defects found by real database rehearsal
 

@@ -85,7 +85,7 @@ test('AttributionModel version sequence rejects skipped historical versions', as
 });
 
 test('identity reconciliation is account-bound and replay-safe', async () => {
-  const proof = issueAnonymousProof({ anonymousId: 'anonymous-device-123456', now }).proof;
+  const proof = issueAnonymousProof({ anonymousId: 'anonymous-device-123456' }).proof;
   let stored;
   const database = {
     subjectIdentityLink: {
