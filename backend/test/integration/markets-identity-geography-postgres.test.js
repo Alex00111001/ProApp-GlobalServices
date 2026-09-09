@@ -35,6 +35,7 @@ const reqFor = (userId, action) => ({
 });
 
 let server;
+let apiOrigin;
 let baseUrl;
 
 test.before(async () => {
@@ -85,7 +86,8 @@ test.before(async () => {
 
   server = http.createServer(app);
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-  baseUrl = `http://127.0.0.1:${server.address().port}/api/v1`;
+  apiOrigin = `http://127.0.0.1:${server.address().port}`;
+  baseUrl = `${apiOrigin}/api/v1`;
 });
 
 test.after(async () => {
@@ -117,7 +119,7 @@ test('dynamic public registration creates protected identity and normalized addr
   const schema = await schemaResponse.json();
   assert.equal(schema.geography.levels.length, 3);
 
-  const registration = await fetch(`${baseUrl}/auth/register`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-correlation-id': runId }, body: JSON.stringify({
+  const registration = await fetch(`${apiOrigin}/api/auth/register`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-correlation-id': runId }, body: JSON.stringify({
     email: `${runId}-client@example.test`, phone: `+347${Date.now().toString().slice(-8)}`, password: 'integration-password', firstName: 'Client', lastName: 'Market', role: 'CLIENT',
     countryCode: 'ES', marketCode, registrationSchemaVersion: schema.schemaVersion, identityDocument: { type: 'DNI', value: '12345678Z' },
     normalizedAddress: { line1: 'Integration street 1', postalCode: '28001', divisionIds: created.divisionIds }, locale: 'es',
