@@ -24,6 +24,7 @@ Later layers implement earlier ones and cannot silently override them.
 5. Check public contracts, permission/ownership matrices, financial invariants, migration safety, privacy evidence, and release controls.
 6. Verify external skill provenance, lock/hash, license, permissions/tools/scripts, instruction safety, maintenance status, and approval register.
 7. Report evidence with file/line, severity, impact, confidence, governing artifact, and smallest safe next action.
+8. For national variation, audit against the COUNTRY/MARKET VARIATION GATE in `docs/MARKETS_IDENTITY_GEOGRAPHY.md` and flag frontend rules, free-text geography, country-specific identity columns, and fail-open market resolution.
 
 ## Output
 

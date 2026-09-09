@@ -21,4 +21,6 @@ Canonical location: `.agents/skills/`. Codex invokes explicitly with `$skill-nam
 
 Combine skills when a task crosses domains, but keep one primary owner. Examples: booking cancellation with refund uses `booking-engine` plus `payments`; an admin refund UI uses `admin-operations`, `payments`, `frontend`, `security`, and `testing`.
 
+All skills that introduce country- or market-specific behavior must first apply the canonical COUNTRY/MARKET VARIATION GATE in `docs/MARKETS_IDENTITY_GEOGRAPHY.md`. `architecture-guardian` owns boundary review; relevant domain skills then implement the accepted policy/adapter/registry contract. Legal, tax, identity, currency, and payment interpretations retain their existing DEEP and qualified-review requirements.
+
 The name `backend-fastapi` is retained from the requested pack. Its canonical instructions explicitly preserve Express 5/CommonJS and require an ADR before any FastAPI service or migration.

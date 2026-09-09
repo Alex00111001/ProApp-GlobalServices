@@ -29,4 +29,6 @@ Use the deep/critical model tier for design and final review. Read `docs/BILLING
 
 Never issue live charges, refunds, payouts, disputes, or production configuration changes without explicit user authorization at the moment of action.
 
+Market may declare an operating currency, but Billing remains the financial authority. Currency/tax/payment variation must pass the COUNTRY/MARKET VARIATION GATE and resolve through versioned server policy; never infer financial behavior from `Country` alone.
+
 Completion requires unit decision tables, integration tests, replay/concurrency cases, ledger invariants, reconciliation evidence, telemetry, and a rollback/runbook.

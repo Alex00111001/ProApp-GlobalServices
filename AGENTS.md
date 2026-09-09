@@ -24,6 +24,8 @@ Do not simplify the target architecture into a disposable MVP. Sequence work by 
 
 PostgreSQL is the system of record. Frontends use backend APIs only. Routes remain transport adapters; application services own use cases, policies, transactions, idempotency, provider orchestration, and domain events.
 
+Country- or market-specific structural, legal, identity, geography, address, locale, currency, tax, payment, or policy variation must resolve through the server-authoritative Market Policy architecture defined in `docs/MARKETS_IDENTITY_GEOGRAPHY.md`. Client, Professional, Admin Web, and Public Web consume versioned contracts and must not become authoritative sources of national rules. Apply the canonical **COUNTRY/MARKET VARIATION GATE** in that document before introducing country-specific behavior.
+
 ## Task classification
 
 Before substantial implementation, record:

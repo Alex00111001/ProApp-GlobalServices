@@ -21,6 +21,10 @@ The leftmost layer has the highest authority:
 
 Code can reveal that documentation is stale, but it cannot silently redefine intended architecture. An ADR cannot contradict the target architecture unless the architecture document is amended or explicitly delegates the decision.
 
+## Country and market variation
+
+`docs/MARKETS_IDENTITY_GEOGRAPHY.md` is the canonical architecture for country, operating-market, identity, geography, address, locale, currency, tax, payment, legal-policy, and related variation. Every such difference must be resolved by an explicit server-authoritative Market Policy, adapter, or closed registry. Product surfaces consume versioned contracts and never define national rules independently. Apply the COUNTRY/MARKET VARIATION GATE in that document before design or implementation.
+
 ## Conflict protocol
 
 1. Identify the exact conflicting artifacts and affected consumers/data.

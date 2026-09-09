@@ -22,6 +22,7 @@ Read `docs/DATABASE_MIGRATIONS.md`, the data sections of `docs/IMPLEMENTATION_PL
 - Keep financial/audit rows immutable; correct through reversals or controlled anonymization.
 - Put multi-record invariants inside explicit transactions and analyze concurrency, retries, and locks.
 - Do not use `prisma db push` as a substitute for reviewed migration history.
+- Keep `Country`, operating `Market`, normalized geography, addresses, and service coverage distinct as required by `docs/MARKETS_IDENTITY_GEOGRAPHY.md`; do not add country-named identity columns or encode geography as Prisma enums/free text.
 
 ## Verification
 
