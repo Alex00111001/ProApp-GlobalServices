@@ -10,6 +10,7 @@ The repository has a versioned additive history beginning with:
 - `202609020002_growth_data` adds Campaign, Lead and Conversion plus backward-compatible MarketingEvent idempotency/context fields. It is additive, default-deny/RLS protected and contains no data deletion.
 - `202609080001_referrals_automation` adds the versioned referral and automation domains, lifecycle/idempotency/check constraints, query indexes, restrictive evidence relations and independent `OutboxEvent` fan-out.
 - `202609080002_referrals_automation_force_rls` forces RLS for all fourteen F8 tables. Supabase API roles remain default-deny and the backend role must explicitly bypass RLS.
+- `202609090001_markets_identity_geography` adds Country, Market, versioned MarketPolicy, official geography import/change evidence, hierarchical divisions, protected identity documents, normalized addresses, professional service areas and F6/F7/F8/F3-compatible nullable market relations. It seeds ES/BR/CL as `DISABLED`, performs only explicit compatibility backfills and forces default-deny RLS on all eleven new tables.
 
 ## Existing database
 
@@ -23,7 +24,7 @@ Do not reset it and do not execute the baseline SQL against populated tables. Be
 6. Run `npm run seed:rbac` to synchronize system roles and permissions.
 7. Run `prisma migrate status`, the unit suite and the explicit PostgreSQL integration gate before enabling new flags.
 
-The database integration gate is deliberate and refuses production mode:
+The database integration gate is deliberate and refuses production mode. F8.5 requires both the full suite and its isolated market/identity/geography fixture:
 
 ```powershell
 $env:RUN_DATABASE_INTEGRATION_TESTS='true'
@@ -31,7 +32,7 @@ $env:NODE_ENV='test'
 npm run test:integration
 ```
 
-It creates uniquely identified fixtures, tests concurrent inbox/capture/refund behavior and cleans only those fixture IDs.
+It creates uniquely identified fixtures, tests concurrent inbox/capture/refund behavior plus official geography import, four-eyes policy activation, dynamic registration, protected identity persistence, normalized address hierarchy, masked RBAC reads and audit evidence, and cleans only those fixture IDs.
 
 Any unexpected drift blocks deployment until it has a reviewed reconciliation migration. Never use `prisma db push` for production changes.
 

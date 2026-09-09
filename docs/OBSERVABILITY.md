@@ -52,6 +52,8 @@ The protected `/api/admin/operations/metrics` endpoint emits Prometheus format. 
 
 Do not add user IDs, URLs, error messages, provider object IDs or arbitrary tenant values as metric labels.
 
+F8.5 adds bounded counters for market/policy resolution, identity format category, geography import outcome, hierarchy rejection and service-area validation. Allowed labels are operation, market code, outcome and closed reason category. Identity values, masks, document ciphertext/digests, addresses, postal codes and coordinates are forbidden in logs, events and labels; the central sanitizer removes these fields recursively.
+
 ## Incident lifecycle and alerting
 
 Valid incident transitions are:
