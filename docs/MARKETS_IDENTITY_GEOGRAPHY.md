@@ -1,6 +1,6 @@
 # F8.5 Markets, Identity and Geography
 
-- Status: authoritative architecture; implementation in progress
+- Status: complete in isolated test/CI; production inactive
 - Date: 2026-09-09
 - Production: inactive
 - Governing ADR: [ADR 0004](adr/0004-market-identity-geography.md)
