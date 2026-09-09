@@ -23,5 +23,6 @@ Use the deep/critical model tier for security design and final review. Work defe
 - Logs/events use allowlisted metadata and redact credentials, personal data, card data, and documents.
 - Uploads validate authentication, authorization, size, content/type, storage path, and deletion scope.
 - CORS, headers, body limits, and rate limits are environment-aware and fail safely.
+- Identity documents are sensitive: store only purpose-necessary protected representations, never log or label document values, restrict reads beyond ordinary profile access, and validate market/country/geography relationships server-side.
 
 Do not rotate secrets, change live access, scan systems outside scope, or deploy fixes without explicit authorization. Produce evidence-backed findings with severity, exploit preconditions, affected assets, safe remediation, and regression tests.

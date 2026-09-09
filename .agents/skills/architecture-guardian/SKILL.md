@@ -24,8 +24,9 @@ Inspect the current code before assuming the implementation-plan baseline is sti
 2. Identify the highest-authority artifact governing the change.
 3. Map affected contexts, public contracts, data, providers, security boundaries, telemetry, and rollback path.
 4. Prefer an incremental slice that advances the final architecture and preserves compatibility.
-5. Require an ADR when the proposal changes a target boundary, system of record, provider strategy, public contract policy, financial invariant, or security model.
-6. Define acceptance evidence before implementation.
+5. For country- or market-specific behavior, apply the canonical COUNTRY/MARKET VARIATION GATE in `docs/MARKETS_IDENTITY_GEOGRAPHY.md`; require server-authoritative policies/adapters/registries and fail-closed resolution.
+6. Require an ADR when the proposal changes a target boundary, system of record, provider strategy, public contract policy, financial invariant, or security model.
+7. Define acceptance evidence before implementation.
 
 ## Invariants
 

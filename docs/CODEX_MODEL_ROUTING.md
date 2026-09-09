@@ -235,8 +235,16 @@ Do not spend significant implementation effort before this classification for no
 - Terra default.
 - Sol when automation can trigger financial or irreversible actions.
 
+### F8.5 — Markets / Identity / Geography
+
+- Sol for Country/Market boundaries, identity protection, legal/document semantics, official geography ingestion, RLS/RBAC, migration compatibility, and final review.
+- Terra only for isolated implementation after ADR 0004 and the Registration Schema/data contracts are fixed.
+- Luna for deterministic documentation/fixture synchronization only.
+- Apply `docs/MARKETS_IDENTITY_GEOGRAPHY.md` and its COUNTRY/MARKET VARIATION GATE before any national behavior.
+
 ### F9 — Experiments / Content / SEO
 
+- Paused until F8.5 is verifiably closed and an explicit instruction resumes it.
 - Terra default.
 - Luna for content/mechanical tasks.
 - Sol if experiments can alter pricing, permissions or high-impact policy.

@@ -14,6 +14,8 @@ Choose capability from task risk and uncertainty, then map that capability to an
 
 Use STANDARD by default. Use DEEP immediately for CRITICAL risk or when a wrong design can cause unauthorized access, financial loss, unrecoverable data change, regulatory exposure, or cross-context incompatibility.
 
+Country/market architecture, identity documents, legal or tax interpretation, cross-market authorization, official geography ingestion, and changes that couple market currency to financial policy require DEEP design and final review. Isolated implementation slices may use STANDARD only after the accepted Market/Identity/Geography ADR and versioned contracts remove the ambiguity.
+
 ## Provider map
 
 | Capability | Codex | Claude Code |

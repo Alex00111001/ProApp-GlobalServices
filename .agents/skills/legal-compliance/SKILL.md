@@ -16,6 +16,7 @@ This skill governs engineering evidence; it does not provide legal advice or inv
 - Preserve immutable financial/audit evidence while minimizing or anonymizing personal data where the approved policy permits.
 - Apply privacy by default: minimization, purpose limitation, access controls, redaction, encryption, retention enforcement, and auditable privileged access.
 - Keep child/sensitive-data and automated-decision features disabled until their explicit policy and review gates exist.
+- Express jurisdictional differences through the reviewed, versioned Market Policy references in `docs/MARKETS_IDENTITY_GEOGRAPHY.md`; legal review status must fail closed and client surfaces never infer the applicable rule.
 
 ## Delivery gate
 

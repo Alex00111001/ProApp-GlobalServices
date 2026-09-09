@@ -20,6 +20,7 @@ Read `docs/IMPLEMENTATION_PLAN.md`, `backend/API_DOCUMENTATION.md`, the relevant
 - Preserve accepted legacy request aliases and response fields during compatibility phases.
 - Pass request context into logs, audits, outbox events, and provider operations.
 - Do not make unrelated framework or module-system conversions.
+- Resolve all country/market variation through the versioned server-authoritative contracts and closed registries defined in `docs/MARKETS_IDENTITY_GEOGRAPHY.md`; routes never contain ad hoc national branching.
 
 ## Approved FastAPI work
 

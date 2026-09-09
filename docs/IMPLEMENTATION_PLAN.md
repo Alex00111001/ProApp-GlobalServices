@@ -6,6 +6,8 @@ This document records the repository baseline audited on 2026-08-30 and the stag
 
 The bounded contexts are: Core Marketplace, Identity and Access, Billing and Revenue, Growth, Communications, Observability and Incidents, Analytics, Configuration and Markets, Admin Control Center, and Automation/AI Operations. PostgreSQL is the system of record. Frontends never access it directly.
 
+Country and operating-market variation follows the canonical server-authoritative architecture and COUNTRY/MARKET VARIATION GATE in [F8.5 Markets, Identity and Geography](MARKETS_IDENTITY_GEOGRAPHY.md). Country is territorial fact; Market is an explicit HomeServices operating configuration and lifecycle. No frontend owns national rules.
+
 ## 2. Audited repository baseline
 
 The default branch contains three top-level products:
@@ -287,9 +289,17 @@ F8 adds versioned referral programs/codes/claims/conversions/rewards and a Postg
 
 See [F8 architecture](REFERRALS_AUTOMATION.md), [ADR 0003](adr/0003-referrals-durable-automation.md), [the runbook](runbooks/REFERRALS_AUTOMATION.md) and [release evidence](releases/2026-09-08-f8-referrals-automation.md). Production remains inactive and F9 has not started.
 
+### Phase 8.5 — Markets, identity and geography
+
+Status: **in progress from F8 SHA `dc17780b0d026b422a9917c0bfbc20c0edddcbda` on 2026-09-09**. F9 is **PAUSED — architectural dependency F8.5**; its recoverable working material is preserved, but no F9 functional implementation may continue. Production remains inactive.
+
+F8.5 separates Country from operating Market; adds versioned server-authoritative MarketPolicy; closed ES/BR/CL identity adapters; protected identity evidence; normalized, hierarchical and officially sourced geography; Address distinct from ProfessionalServiceArea; declarative Registration Schema; narrow RBAC/RLS/audit/telemetry; and dynamic Client, Professional, and Admin consumers. It preserves F3 as financial authority, F7 as consent/legal-evidence authority, and F8 lifecycle/idempotency/automation boundaries.
+
+Acceptance requires the full gate in [the F8.5 architecture](MARKETS_IDENTITY_GEOGRAPHY.md), [ADR 0004](adr/0004-market-identity-geography.md), and the release record. Initial ES/BR/CL records remain disabled; architecture/data readiness never activates a market.
+
 ### Phases 9–10
 
-Build experiments/content/SEO, supply-demand/readiness and guarded AI operations in that order. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
+Dependency order is explicit: `F8 -> F8.5 -> F9 -> F10`. F9 does not resume automatically after F8.5; a new explicit instruction is required. F10 remains not started. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
 
 ## 16. Immediate delivery slices
 

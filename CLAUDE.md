@@ -10,6 +10,8 @@ Before substantial work, read and follow:
 
 `AGENTS.md` and the governance documents are the shared source of truth for Claude Code and Codex. This file is only the Claude Code adapter and must not redefine project architecture.
 
+For country- or market-specific behavior, read `docs/MARKETS_IDENTITY_GEOGRAPHY.md` and apply its canonical COUNTRY/MARKET VARIATION GATE before implementation.
+
 Project skills are exposed in `.claude/skills/<name>/SKILL.md`. Each adapter points to the canonical implementation in `.agents/skills/<name>/SKILL.md`; read the canonical file completely when a skill activates and resolve its relative links from the canonical skill directory.
 
 Use `/skill-name` for explicit Claude Code invocation. Allow implicit selection only when the task matches the description. Do not invoke external Prisma/Supabase skills unless the exact entry is approved in `docs/agent-governance/EXTERNAL_SKILLS_REGISTER.md`.

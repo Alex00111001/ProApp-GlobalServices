@@ -16,6 +16,7 @@ Inspect the current `mobile-professional`, backend professional controllers/rout
 - Service/category eligibility and market configuration are validated at the backend.
 - Professional earnings are projections of ledger-backed financial facts, not an editable balance.
 - Commission policy is versioned and distinct from client platform fees.
+- Professional domicile and service coverage are independent aggregates. Country-specific onboarding and eligibility consume the server-authoritative Market Policy and Registration Schema.
 
 ## Workflow
 

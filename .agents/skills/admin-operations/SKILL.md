@@ -17,6 +17,7 @@ Read `docs/ADMIN_WEB.md`, the Admin and Operations sections of `docs/IMPLEMENTAT
 - Paginate/filter admin lists server-side and prevent PII leakage in exports, errors, or logs.
 - Display metric definition, time range, timezone, currency, freshness, and partial-data state.
 - Keep `admin-web` independent and API-only; do not introduce direct database access.
+- Market, identity-policy, and official-geography administration uses narrow permissions, controlled lifecycle transitions, version evidence, and server validation; official codes are never arbitrary editable strings.
 
 The target plan proposed Next.js, while the current implementation is React/Vite. Do not migrate frameworks incidentally; require an explicit architectural decision and migration plan.
 

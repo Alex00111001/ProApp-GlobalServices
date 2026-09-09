@@ -14,6 +14,7 @@ Treat a release as a reviewed change set with reproducible evidence, not merely 
 - Install from lockfiles and run Prisma format/validate/generate, syntax/type checks, unit/integration/contract/security tests, migration drift review, and secret scan as applicable.
 - Review migration forward compatibility, backfill, constraint timing, rollback/roll-forward, backup, and reconciliation.
 - Confirm dashboards, alerts, runbooks, support communication, and ownership.
+- For market activation, require an explicit reviewed market lifecycle transition, official geography dataset/version evidence, legal-policy review status, current Registration Schema compatibility, and independent financial activation approval.
 
 ## Rollout
 

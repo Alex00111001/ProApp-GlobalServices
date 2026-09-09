@@ -25,3 +25,5 @@ Read `docs/OBSERVABILITY.md` and inspect the existing request-context, logger, e
 5. Test redaction and failure paths explicitly.
 
 Observability must not change business behavior when exporters are unavailable. Verify correlation across a representative request, redaction, grouping, dependency health degradation, incident permissions, and bounded metric dimensions.
+
+Market/policy/geography telemetry may use stable market codes, policy versions, failure categories, and bounded division levels. It must never include identity-document values, full addresses, postal addresses, or precise coordinates.
