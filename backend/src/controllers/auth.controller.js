@@ -6,12 +6,39 @@ const { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema }
 const { normalizeRegistrationPayload } = require('../shared/http/compatibility');
 const env = require('../config/env');
 const { recordDecision } = require('../modules/privacy/consent.service');
+const { assertAddressPolicyInput, assertCurrentSchema, resolveMarketPolicy, validateDivisionHierarchy } = require('../modules/markets/market.service');
+const { canonicalType, validateIdentityDocument } = require('../modules/markets/identity-adapters');
+const { protectIdentityValue } = require('../modules/markets/identity-protection');
+const { writeAuditLog } = require('../modules/audit/audit.service');
 
 // Registrar usuario
 exports.register = async (req, res) => {
   try {
     // Validar datos de entrada
     const validatedData = registerSchema.parse(normalizeRegistrationPayload(req.body));
+
+    let marketContext = null;
+    let protectedIdentity = null;
+    let addressDivisions = null;
+    if (env.marketsIdentityGeographyEnabled) {
+      if (!validatedData.marketCode || !validatedData.registrationSchemaVersion || !validatedData.identityDocument || !validatedData.normalizedAddress) {
+        throw Object.assign(new Error('Current market registration data is required.'), { code: 'REGISTRATION_SCHEMA_REQUIRED', statusCode: 400 });
+      }
+      marketContext = await resolveMarketPolicy({ marketCode: validatedData.marketCode });
+      assertCurrentSchema(marketContext.market, marketContext.policy, validatedData.registrationSchemaVersion);
+      if (marketContext.market.country.isoAlpha2.trim() !== validatedData.countryCode) {
+        throw Object.assign(new Error('Registration country does not match the market.'), { code: 'REGISTRATION_MARKET_COUNTRY_MISMATCH', statusCode: 400 });
+      }
+      const submittedType = validatedData.identityDocument.type;
+      const typeKey = canonicalType(validatedData.countryCode, submittedType);
+      const supported = marketContext.policy.identityPolicy.documentTypes.some((document) => document.type === typeKey || document.aliases?.includes(submittedType));
+      if (!supported) throw Object.assign(new Error('Identity document type is unsupported.'), { code: 'IDENTITY_TYPE_UNSUPPORTED', statusCode: 400 });
+      const identityValidation = validateIdentityDocument({ countryCode: validatedData.countryCode, type: submittedType, value: validatedData.identityDocument.value });
+      if (!identityValidation.valid) throw Object.assign(new Error('Identity document format is invalid.'), { code: identityValidation.category === 'INVALID_CHECKSUM' ? 'IDENTITY_CHECKSUM_INVALID' : 'IDENTITY_FORMAT_INVALID', statusCode: 400 });
+      protectedIdentity = { typeKey: identityValidation.type, ...protectIdentityValue({ normalized: identityValidation.normalized, countryCode: validatedData.countryCode, typeKey: identityValidation.type }) };
+      assertAddressPolicyInput(validatedData.normalizedAddress, marketContext.policy);
+      addressDivisions = await validateDivisionHierarchy({ divisionIds: validatedData.normalizedAddress.divisionIds, market: marketContext.market, policy: marketContext.policy });
+    }
 
     // Verificar si el email o teléfono ya existen
     const existingUser = await prisma.user.findFirst({
@@ -44,6 +71,7 @@ exports.register = async (req, res) => {
         role: validatedData.role,
         countryCode: validatedData.countryCode,
         registrationLocale: validatedData.locale,
+        marketId: marketContext?.market.id,
         termsAcceptedAt: new Date(),
         termsVersion: validatedData.termsVersion,
         privacyAcceptedAt: new Date(),
@@ -60,6 +88,27 @@ exports.register = async (req, res) => {
         countryCode: true,
         createdAt: true,
       } });
+
+      if (marketContext && protectedIdentity && addressDivisions) {
+        await tx.identityDocument.create({
+          data: {
+            userId: created.id, marketId: marketContext.market.id, countryId: marketContext.market.countryId,
+            typeKey: protectedIdentity.typeKey, encryptedValue: protectedIdentity.encryptedValue,
+            encryptionKeyVersion: protectedIdentity.encryptionKeyVersion, lookupDigest: protectedIdentity.lookupDigest,
+            maskedValue: protectedIdentity.maskedValue, formatStatus: 'VALID',
+          },
+        });
+        await tx.address.create({
+          data: {
+            userId: created.id, marketId: marketContext.market.id, countryId: marketContext.market.countryId,
+            purpose: validatedData.role === 'PROFESSIONAL' ? 'PROFESSIONAL_DOMICILE' : 'CLIENT_CONTACT',
+            line1: validatedData.normalizedAddress.line1, line2: validatedData.normalizedAddress.line2,
+            locality: validatedData.normalizedAddress.locality, postalCode: validatedData.normalizedAddress.postalCode,
+            validationStatus: 'FORMAT_VALID', isPrimary: true,
+            divisions: { create: addressDivisions.map((division) => ({ divisionId: division.id, level: division.level })) },
+          },
+        });
+      }
 
       let professionalId;
       if (validatedData.role === 'CLIENT') {
@@ -97,6 +146,8 @@ exports.register = async (req, res) => {
       return created;
     });
 
+    if (marketContext) await writeAuditLog({ req: { ...req, user }, action: 'MARKET_REGISTRATION_COMPLETED', resourceType: 'USER', resourceId: user.id, metadata: { marketCode: marketContext.market.code, schemaVersion: validatedData.registrationSchemaVersion, identityType: protectedIdentity.typeKey, divisionCount: addressDivisions.length } });
+
     // Generar token JWT
     const token = generateToken({ userId: user.id, role: user.role });
 
@@ -113,6 +164,10 @@ exports.register = async (req, res) => {
         error: 'Validation error', 
         details: error.issues
       });
+    }
+
+    if (error.code === 'P2002') {
+      return res.status(409).json({ error: 'Registration data conflicts with an existing account.', code: 'REGISTRATION_CONFLICT', correlationId: req.context?.correlationId });
     }
 
     res.status(error.statusCode || 500).json({

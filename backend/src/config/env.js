@@ -109,6 +109,7 @@ const validateEnvironment = (source = process.env) => {
   const referralsAutomationEnabled = parseBoolean('REFERRALS_AUTOMATION_ENABLED', source.REFERRALS_AUTOMATION_ENABLED, environment !== 'production');
   const referralsEnabled = parseBoolean('REFERRALS_ENABLED', source.REFERRALS_ENABLED, environment !== 'production');
   const automationEngineEnabled = parseBoolean('AUTOMATION_ENGINE_ENABLED', source.AUTOMATION_ENGINE_ENABLED, environment !== 'production');
+  const marketsIdentityGeographyEnabled = parseBoolean('MARKETS_IDENTITY_GEOGRAPHY_ENABLED', source.MARKETS_IDENTITY_GEOGRAPHY_ENABLED, false);
   const logTransport = parseChoice('LOG_TRANSPORT', source.LOG_TRANSPORT, 'stdout', ['stdout', 'file']);
   const logLevel = parseChoice('LOG_LEVEL', source.LOG_LEVEL, environment === 'production' ? 'info' : 'debug', [
     'trace', 'debug', 'info', 'warn', 'error', 'fatal',
@@ -135,6 +136,13 @@ const validateEnvironment = (source = process.env) => {
   requireProductionSecret(environment, 'ADMIN_SESSION_PEPPER', source.ADMIN_SESSION_PEPPER);
   requireProductionSecret(environment, 'GROWTH_PSEUDONYM_SECRET', source.GROWTH_PSEUDONYM_SECRET);
   if (consentAttributionEnabled) requireProductionSecret(environment, 'GROWTH_IDENTITY_PROOF_SECRET', source.GROWTH_IDENTITY_PROOF_SECRET);
+  if (marketsIdentityGeographyEnabled) {
+    requireProductionSecret(environment, 'IDENTITY_DOCUMENT_LOOKUP_KEY', source.IDENTITY_DOCUMENT_LOOKUP_KEY);
+    if (environment === 'production') {
+      const encryptionKey = Buffer.from(source.IDENTITY_DOCUMENT_ENCRYPTION_KEY_BASE64 || '', 'base64');
+      if (encryptionKey.length !== 32) throw new Error('IDENTITY_DOCUMENT_ENCRYPTION_KEY_BASE64 must decode to exactly 32 bytes in production.');
+    }
+  }
 
   if (environment === 'production') {
     if (!/^postgres(?:ql)?:\/\//.test(source.DATABASE_URL || '')) {
@@ -202,6 +210,10 @@ const validateEnvironment = (source = process.env) => {
     automationManualReplayEnabled: parseBoolean('AUTOMATION_MANUAL_REPLAY_ENABLED', source.AUTOMATION_MANUAL_REPLAY_ENABLED, false),
     automationWorkerPollMs: parseInteger('AUTOMATION_WORKER_POLL_MS', source.AUTOMATION_WORKER_POLL_MS, 1_000, 100, 60_000),
     automationWorkerBatchSize: parseInteger('AUTOMATION_WORKER_BATCH_SIZE', source.AUTOMATION_WORKER_BATCH_SIZE, 25, 1, 100),
+    marketsIdentityGeographyEnabled,
+    identityDocumentEncryptionKeyBase64: source.IDENTITY_DOCUMENT_ENCRYPTION_KEY_BASE64,
+    identityDocumentEncryptionKeyVersion: parseIdentifier('IDENTITY_DOCUMENT_ENCRYPTION_KEY_VERSION', source.IDENTITY_DOCUMENT_ENCRYPTION_KEY_VERSION, 'development-v1'),
+    identityDocumentLookupKey: source.IDENTITY_DOCUMENT_LOOKUP_KEY || 'development-only-identity-lookup-key',
     growthIdentityProofSecret: source.GROWTH_IDENTITY_PROOF_SECRET || 'development-only-growth-identity-proof-secret',
     identityProofTtlHours: parseInteger('IDENTITY_PROOF_TTL_HOURS', source.IDENTITY_PROOF_TTL_HOURS, 24, 1, 168),
     logLevel,

@@ -1,0 +1,4184 @@
+{
+  "countryCode": "CL",
+  "sourceKey": "INE_CL_SUBDERE",
+  "sourceUrl": "https://www.subdere.gov.cl/sites/default/files/documentos/CUT_2018_v04.xls",
+  "sourceVersion": "CUT_2018_v04",
+  "referenceDate": "2018-09-06",
+  "retrievedAt": "2026-09-09T07:30:00Z",
+  "checksumSha256": "0cfb59bb34114c83170d6dd7c2f96b0f3da15e6ff0b4435d78dd9f590f9ba4c4",
+  "parserVersion": "f8.5-geography-normalizer-v1",
+  "completeSnapshot": true,
+  "sourceArtifacts": [
+    {
+      "url": "https://www.subdere.gov.cl/sites/default/files/documentos/CUT_2018_v04.xls",
+      "mediaType": "application/vnd.ms-excel",
+      "sha256": "d1b7fc3abb93cea3d115861579297d8bbdc9a7c762c958e646cd01b804df1ea0"
+    }
+  ],
+  "records": [
+    {
+      "code": "REGION:01",
+      "name": "Tarapacá",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Tarapacá"
+      }
+    },
+    {
+      "code": "REGION:02",
+      "name": "Antofagasta",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Antofagasta"
+      }
+    },
+    {
+      "code": "REGION:03",
+      "name": "Atacama",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Atacama"
+      }
+    },
+    {
+      "code": "REGION:04",
+      "name": "Coquimbo",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Coquimbo"
+      }
+    },
+    {
+      "code": "REGION:05",
+      "name": "Valparaíso",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Valparaíso"
+      }
+    },
+    {
+      "code": "REGION:06",
+      "name": "Libertador General Bernardo O'Higgins",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Libertador General Bernardo O'Higgins"
+      }
+    },
+    {
+      "code": "REGION:07",
+      "name": "Maule",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Maule"
+      }
+    },
+    {
+      "code": "REGION:08",
+      "name": "Biobío",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Biobío"
+      }
+    },
+    {
+      "code": "REGION:09",
+      "name": "La Araucanía",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "La Araucanía"
+      }
+    },
+    {
+      "code": "REGION:10",
+      "name": "Los Lagos",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Los Lagos"
+      }
+    },
+    {
+      "code": "REGION:11",
+      "name": "Aysén del General Carlos Ibáñez del Campo",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Aysén del General Carlos Ibáñez del Campo"
+      }
+    },
+    {
+      "code": "REGION:12",
+      "name": "Magallanes y de la Antártica Chilena",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Magallanes y de la Antártica Chilena"
+      }
+    },
+    {
+      "code": "REGION:13",
+      "name": "Metropolitana de Santiago",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Metropolitana de Santiago"
+      }
+    },
+    {
+      "code": "REGION:14",
+      "name": "Los Ríos",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Los Ríos"
+      }
+    },
+    {
+      "code": "REGION:15",
+      "name": "Arica y Parinacota",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Arica y Parinacota"
+      }
+    },
+    {
+      "code": "REGION:16",
+      "name": "Ñuble",
+      "type": "REGION",
+      "level": 1,
+      "displayNames": {
+        "es-CL": "Ñuble"
+      }
+    },
+    {
+      "code": "PROVINCE:011",
+      "name": "Iquique",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Iquique"
+      },
+      "parentCode": "REGION:01"
+    },
+    {
+      "code": "PROVINCE:014",
+      "name": "Tamarugal",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Tamarugal"
+      },
+      "parentCode": "REGION:01"
+    },
+    {
+      "code": "PROVINCE:021",
+      "name": "Antofagasta",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Antofagasta"
+      },
+      "parentCode": "REGION:02"
+    },
+    {
+      "code": "PROVINCE:022",
+      "name": "El Loa",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "El Loa"
+      },
+      "parentCode": "REGION:02"
+    },
+    {
+      "code": "PROVINCE:023",
+      "name": "Tocopilla",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Tocopilla"
+      },
+      "parentCode": "REGION:02"
+    },
+    {
+      "code": "PROVINCE:031",
+      "name": "Copiapó",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Copiapó"
+      },
+      "parentCode": "REGION:03"
+    },
+    {
+      "code": "PROVINCE:032",
+      "name": "Chañaral",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Chañaral"
+      },
+      "parentCode": "REGION:03"
+    },
+    {
+      "code": "PROVINCE:033",
+      "name": "Huasco",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Huasco"
+      },
+      "parentCode": "REGION:03"
+    },
+    {
+      "code": "PROVINCE:041",
+      "name": "Elqui",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Elqui"
+      },
+      "parentCode": "REGION:04"
+    },
+    {
+      "code": "PROVINCE:042",
+      "name": "Choapa",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Choapa"
+      },
+      "parentCode": "REGION:04"
+    },
+    {
+      "code": "PROVINCE:043",
+      "name": "Limarí",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Limarí"
+      },
+      "parentCode": "REGION:04"
+    },
+    {
+      "code": "PROVINCE:051",
+      "name": "Valparaíso",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Valparaíso"
+      },
+      "parentCode": "REGION:05"
+    },
+    {
+      "code": "PROVINCE:052",
+      "name": "Isla de Pascua",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Isla de Pascua"
+      },
+      "parentCode": "REGION:05"
+    },
+    {
+      "code": "PROVINCE:053",
+      "name": "Los Andes",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Los Andes"
+      },
+      "parentCode": "REGION:05"
+    },
+    {
+      "code": "PROVINCE:054",
+      "name": "Petorca",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Petorca"
+      },
+      "parentCode": "REGION:05"
+    },
+    {
+      "code": "PROVINCE:055",
+      "name": "Quillota",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Quillota"
+      },
+      "parentCode": "REGION:05"
+    },
+    {
+      "code": "PROVINCE:056",
+      "name": "San Antonio",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "San Antonio"
+      },
+      "parentCode": "REGION:05"
+    },
+    {
+      "code": "PROVINCE:057",
+      "name": "San Felipe de Aconcagua",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "San Felipe de Aconcagua"
+      },
+      "parentCode": "REGION:05"
+    },
+    {
+      "code": "PROVINCE:058",
+      "name": "Marga Marga",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Marga Marga"
+      },
+      "parentCode": "REGION:05"
+    },
+    {
+      "code": "PROVINCE:061",
+      "name": "Cachapoal",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Cachapoal"
+      },
+      "parentCode": "REGION:06"
+    },
+    {
+      "code": "PROVINCE:062",
+      "name": "Cardenal Caro",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Cardenal Caro"
+      },
+      "parentCode": "REGION:06"
+    },
+    {
+      "code": "PROVINCE:063",
+      "name": "Colchagua",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Colchagua"
+      },
+      "parentCode": "REGION:06"
+    },
+    {
+      "code": "PROVINCE:071",
+      "name": "Talca",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Talca"
+      },
+      "parentCode": "REGION:07"
+    },
+    {
+      "code": "PROVINCE:072",
+      "name": "Cauquenes",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Cauquenes"
+      },
+      "parentCode": "REGION:07"
+    },
+    {
+      "code": "PROVINCE:073",
+      "name": "Curicó",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Curicó"
+      },
+      "parentCode": "REGION:07"
+    },
+    {
+      "code": "PROVINCE:074",
+      "name": "Linares",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Linares"
+      },
+      "parentCode": "REGION:07"
+    },
+    {
+      "code": "PROVINCE:081",
+      "name": "Concepción",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Concepción"
+      },
+      "parentCode": "REGION:08"
+    },
+    {
+      "code": "PROVINCE:082",
+      "name": "Arauco",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Arauco"
+      },
+      "parentCode": "REGION:08"
+    },
+    {
+      "code": "PROVINCE:083",
+      "name": "Biobío",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Biobío"
+      },
+      "parentCode": "REGION:08"
+    },
+    {
+      "code": "PROVINCE:091",
+      "name": "Cautín",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Cautín"
+      },
+      "parentCode": "REGION:09"
+    },
+    {
+      "code": "PROVINCE:092",
+      "name": "Malleco",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Malleco"
+      },
+      "parentCode": "REGION:09"
+    },
+    {
+      "code": "PROVINCE:101",
+      "name": "Llanquihue",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Llanquihue"
+      },
+      "parentCode": "REGION:10"
+    },
+    {
+      "code": "PROVINCE:102",
+      "name": "Chiloé",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Chiloé"
+      },
+      "parentCode": "REGION:10"
+    },
+    {
+      "code": "PROVINCE:103",
+      "name": "Osorno",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Osorno"
+      },
+      "parentCode": "REGION:10"
+    },
+    {
+      "code": "PROVINCE:104",
+      "name": "Palena",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Palena"
+      },
+      "parentCode": "REGION:10"
+    },
+    {
+      "code": "PROVINCE:111",
+      "name": "Coyhaique",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Coyhaique"
+      },
+      "parentCode": "REGION:11"
+    },
+    {
+      "code": "PROVINCE:112",
+      "name": "Aysén",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Aysén"
+      },
+      "parentCode": "REGION:11"
+    },
+    {
+      "code": "PROVINCE:113",
+      "name": "Capitán Prat",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Capitán Prat"
+      },
+      "parentCode": "REGION:11"
+    },
+    {
+      "code": "PROVINCE:114",
+      "name": "General Carrera",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "General Carrera"
+      },
+      "parentCode": "REGION:11"
+    },
+    {
+      "code": "PROVINCE:121",
+      "name": "Magallanes",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Magallanes"
+      },
+      "parentCode": "REGION:12"
+    },
+    {
+      "code": "PROVINCE:122",
+      "name": "Antártica Chilena",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Antártica Chilena"
+      },
+      "parentCode": "REGION:12"
+    },
+    {
+      "code": "PROVINCE:123",
+      "name": "Tierra del Fuego",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Tierra del Fuego"
+      },
+      "parentCode": "REGION:12"
+    },
+    {
+      "code": "PROVINCE:124",
+      "name": "Última Esperanza",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Última Esperanza"
+      },
+      "parentCode": "REGION:12"
+    },
+    {
+      "code": "PROVINCE:131",
+      "name": "Santiago",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Santiago"
+      },
+      "parentCode": "REGION:13"
+    },
+    {
+      "code": "PROVINCE:132",
+      "name": "Cordillera",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Cordillera"
+      },
+      "parentCode": "REGION:13"
+    },
+    {
+      "code": "PROVINCE:133",
+      "name": "Chacabuco",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Chacabuco"
+      },
+      "parentCode": "REGION:13"
+    },
+    {
+      "code": "PROVINCE:134",
+      "name": "Maipo",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Maipo"
+      },
+      "parentCode": "REGION:13"
+    },
+    {
+      "code": "PROVINCE:135",
+      "name": "Melipilla",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Melipilla"
+      },
+      "parentCode": "REGION:13"
+    },
+    {
+      "code": "PROVINCE:136",
+      "name": "Talagante",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Talagante"
+      },
+      "parentCode": "REGION:13"
+    },
+    {
+      "code": "PROVINCE:141",
+      "name": "Valdivia",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Valdivia"
+      },
+      "parentCode": "REGION:14"
+    },
+    {
+      "code": "PROVINCE:142",
+      "name": "Ranco",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Ranco"
+      },
+      "parentCode": "REGION:14"
+    },
+    {
+      "code": "PROVINCE:151",
+      "name": "Arica",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Arica"
+      },
+      "parentCode": "REGION:15"
+    },
+    {
+      "code": "PROVINCE:152",
+      "name": "Parinacota",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Parinacota"
+      },
+      "parentCode": "REGION:15"
+    },
+    {
+      "code": "PROVINCE:161",
+      "name": "Diguillín",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Diguillín"
+      },
+      "parentCode": "REGION:16"
+    },
+    {
+      "code": "PROVINCE:162",
+      "name": "Itata",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Itata"
+      },
+      "parentCode": "REGION:16"
+    },
+    {
+      "code": "PROVINCE:163",
+      "name": "Punilla",
+      "type": "PROVINCE",
+      "level": 2,
+      "displayNames": {
+        "es-CL": "Punilla"
+      },
+      "parentCode": "REGION:16"
+    },
+    {
+      "code": "COMMUNE:01101",
+      "name": "Iquique",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Iquique"
+      },
+      "parentCode": "PROVINCE:011"
+    },
+    {
+      "code": "COMMUNE:01107",
+      "name": "Alto Hospicio",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Alto Hospicio"
+      },
+      "parentCode": "PROVINCE:011"
+    },
+    {
+      "code": "COMMUNE:01401",
+      "name": "Pozo Almonte",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pozo Almonte"
+      },
+      "parentCode": "PROVINCE:014"
+    },
+    {
+      "code": "COMMUNE:01402",
+      "name": "Camiña",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Camiña"
+      },
+      "parentCode": "PROVINCE:014"
+    },
+    {
+      "code": "COMMUNE:01403",
+      "name": "Colchane",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Colchane"
+      },
+      "parentCode": "PROVINCE:014"
+    },
+    {
+      "code": "COMMUNE:01404",
+      "name": "Huara",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Huara"
+      },
+      "parentCode": "PROVINCE:014"
+    },
+    {
+      "code": "COMMUNE:01405",
+      "name": "Pica",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pica"
+      },
+      "parentCode": "PROVINCE:014"
+    },
+    {
+      "code": "COMMUNE:02101",
+      "name": "Antofagasta",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Antofagasta"
+      },
+      "parentCode": "PROVINCE:021"
+    },
+    {
+      "code": "COMMUNE:02102",
+      "name": "Mejillones",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Mejillones"
+      },
+      "parentCode": "PROVINCE:021"
+    },
+    {
+      "code": "COMMUNE:02103",
+      "name": "Sierra Gorda",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Sierra Gorda"
+      },
+      "parentCode": "PROVINCE:021"
+    },
+    {
+      "code": "COMMUNE:02104",
+      "name": "Taltal",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Taltal"
+      },
+      "parentCode": "PROVINCE:021"
+    },
+    {
+      "code": "COMMUNE:02201",
+      "name": "Calama",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Calama"
+      },
+      "parentCode": "PROVINCE:022"
+    },
+    {
+      "code": "COMMUNE:02202",
+      "name": "Ollagüe",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Ollagüe"
+      },
+      "parentCode": "PROVINCE:022"
+    },
+    {
+      "code": "COMMUNE:02203",
+      "name": "San Pedro de Atacama",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Pedro de Atacama"
+      },
+      "parentCode": "PROVINCE:022"
+    },
+    {
+      "code": "COMMUNE:02301",
+      "name": "Tocopilla",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Tocopilla"
+      },
+      "parentCode": "PROVINCE:023"
+    },
+    {
+      "code": "COMMUNE:02302",
+      "name": "María Elena",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "María Elena"
+      },
+      "parentCode": "PROVINCE:023"
+    },
+    {
+      "code": "COMMUNE:03101",
+      "name": "Copiapó",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Copiapó"
+      },
+      "parentCode": "PROVINCE:031"
+    },
+    {
+      "code": "COMMUNE:03102",
+      "name": "Caldera",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Caldera"
+      },
+      "parentCode": "PROVINCE:031"
+    },
+    {
+      "code": "COMMUNE:03103",
+      "name": "Tierra Amarilla",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Tierra Amarilla"
+      },
+      "parentCode": "PROVINCE:031"
+    },
+    {
+      "code": "COMMUNE:03201",
+      "name": "Chañaral",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chañaral"
+      },
+      "parentCode": "PROVINCE:032"
+    },
+    {
+      "code": "COMMUNE:03202",
+      "name": "Diego de Almagro",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Diego de Almagro"
+      },
+      "parentCode": "PROVINCE:032"
+    },
+    {
+      "code": "COMMUNE:03301",
+      "name": "Vallenar",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Vallenar"
+      },
+      "parentCode": "PROVINCE:033"
+    },
+    {
+      "code": "COMMUNE:03302",
+      "name": "Alto del Carmen",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Alto del Carmen"
+      },
+      "parentCode": "PROVINCE:033"
+    },
+    {
+      "code": "COMMUNE:03303",
+      "name": "Freirina",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Freirina"
+      },
+      "parentCode": "PROVINCE:033"
+    },
+    {
+      "code": "COMMUNE:03304",
+      "name": "Huasco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Huasco"
+      },
+      "parentCode": "PROVINCE:033"
+    },
+    {
+      "code": "COMMUNE:04101",
+      "name": "La Serena",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Serena"
+      },
+      "parentCode": "PROVINCE:041"
+    },
+    {
+      "code": "COMMUNE:04102",
+      "name": "Coquimbo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Coquimbo"
+      },
+      "parentCode": "PROVINCE:041"
+    },
+    {
+      "code": "COMMUNE:04103",
+      "name": "Andacollo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Andacollo"
+      },
+      "parentCode": "PROVINCE:041"
+    },
+    {
+      "code": "COMMUNE:04104",
+      "name": "La Higuera",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Higuera"
+      },
+      "parentCode": "PROVINCE:041"
+    },
+    {
+      "code": "COMMUNE:04105",
+      "name": "Paiguano",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Paiguano"
+      },
+      "parentCode": "PROVINCE:041"
+    },
+    {
+      "code": "COMMUNE:04106",
+      "name": "Vicuña",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Vicuña"
+      },
+      "parentCode": "PROVINCE:041"
+    },
+    {
+      "code": "COMMUNE:04201",
+      "name": "Illapel",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Illapel"
+      },
+      "parentCode": "PROVINCE:042"
+    },
+    {
+      "code": "COMMUNE:04202",
+      "name": "Canela",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Canela"
+      },
+      "parentCode": "PROVINCE:042"
+    },
+    {
+      "code": "COMMUNE:04203",
+      "name": "Los Vilos",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Los Vilos"
+      },
+      "parentCode": "PROVINCE:042"
+    },
+    {
+      "code": "COMMUNE:04204",
+      "name": "Salamanca",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Salamanca"
+      },
+      "parentCode": "PROVINCE:042"
+    },
+    {
+      "code": "COMMUNE:04301",
+      "name": "Ovalle",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Ovalle"
+      },
+      "parentCode": "PROVINCE:043"
+    },
+    {
+      "code": "COMMUNE:04302",
+      "name": "Combarbalá",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Combarbalá"
+      },
+      "parentCode": "PROVINCE:043"
+    },
+    {
+      "code": "COMMUNE:04303",
+      "name": "Monte Patria",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Monte Patria"
+      },
+      "parentCode": "PROVINCE:043"
+    },
+    {
+      "code": "COMMUNE:04304",
+      "name": "Punitaqui",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Punitaqui"
+      },
+      "parentCode": "PROVINCE:043"
+    },
+    {
+      "code": "COMMUNE:04305",
+      "name": "Río Hurtado",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Río Hurtado"
+      },
+      "parentCode": "PROVINCE:043"
+    },
+    {
+      "code": "COMMUNE:05101",
+      "name": "Valparaíso",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Valparaíso"
+      },
+      "parentCode": "PROVINCE:051"
+    },
+    {
+      "code": "COMMUNE:05102",
+      "name": "Casablanca",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Casablanca"
+      },
+      "parentCode": "PROVINCE:051"
+    },
+    {
+      "code": "COMMUNE:05103",
+      "name": "Concón",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Concón"
+      },
+      "parentCode": "PROVINCE:051"
+    },
+    {
+      "code": "COMMUNE:05104",
+      "name": "Juan Fernández",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Juan Fernández"
+      },
+      "parentCode": "PROVINCE:051"
+    },
+    {
+      "code": "COMMUNE:05105",
+      "name": "Puchuncaví",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Puchuncaví"
+      },
+      "parentCode": "PROVINCE:051"
+    },
+    {
+      "code": "COMMUNE:05107",
+      "name": "Quintero",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quintero"
+      },
+      "parentCode": "PROVINCE:051"
+    },
+    {
+      "code": "COMMUNE:05109",
+      "name": "Viña del Mar",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Viña del Mar"
+      },
+      "parentCode": "PROVINCE:051"
+    },
+    {
+      "code": "COMMUNE:05201",
+      "name": "Isla de Pascua",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Isla de Pascua"
+      },
+      "parentCode": "PROVINCE:052"
+    },
+    {
+      "code": "COMMUNE:05301",
+      "name": "Los Andes",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Los Andes"
+      },
+      "parentCode": "PROVINCE:053"
+    },
+    {
+      "code": "COMMUNE:05302",
+      "name": "Calle Larga",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Calle Larga"
+      },
+      "parentCode": "PROVINCE:053"
+    },
+    {
+      "code": "COMMUNE:05303",
+      "name": "Rinconada",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Rinconada"
+      },
+      "parentCode": "PROVINCE:053"
+    },
+    {
+      "code": "COMMUNE:05304",
+      "name": "San Esteban",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Esteban"
+      },
+      "parentCode": "PROVINCE:053"
+    },
+    {
+      "code": "COMMUNE:05401",
+      "name": "La Ligua",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Ligua"
+      },
+      "parentCode": "PROVINCE:054"
+    },
+    {
+      "code": "COMMUNE:05402",
+      "name": "Cabildo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cabildo"
+      },
+      "parentCode": "PROVINCE:054"
+    },
+    {
+      "code": "COMMUNE:05403",
+      "name": "Papudo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Papudo"
+      },
+      "parentCode": "PROVINCE:054"
+    },
+    {
+      "code": "COMMUNE:05404",
+      "name": "Petorca",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Petorca"
+      },
+      "parentCode": "PROVINCE:054"
+    },
+    {
+      "code": "COMMUNE:05405",
+      "name": "Zapallar",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Zapallar"
+      },
+      "parentCode": "PROVINCE:054"
+    },
+    {
+      "code": "COMMUNE:05501",
+      "name": "Quillota",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quillota"
+      },
+      "parentCode": "PROVINCE:055"
+    },
+    {
+      "code": "COMMUNE:05502",
+      "name": "Calera",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Calera"
+      },
+      "parentCode": "PROVINCE:055"
+    },
+    {
+      "code": "COMMUNE:05503",
+      "name": "Hijuelas",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Hijuelas"
+      },
+      "parentCode": "PROVINCE:055"
+    },
+    {
+      "code": "COMMUNE:05504",
+      "name": "La Cruz",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Cruz"
+      },
+      "parentCode": "PROVINCE:055"
+    },
+    {
+      "code": "COMMUNE:05506",
+      "name": "Nogales",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Nogales"
+      },
+      "parentCode": "PROVINCE:055"
+    },
+    {
+      "code": "COMMUNE:05601",
+      "name": "San Antonio",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Antonio"
+      },
+      "parentCode": "PROVINCE:056"
+    },
+    {
+      "code": "COMMUNE:05602",
+      "name": "Algarrobo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Algarrobo"
+      },
+      "parentCode": "PROVINCE:056"
+    },
+    {
+      "code": "COMMUNE:05603",
+      "name": "Cartagena",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cartagena"
+      },
+      "parentCode": "PROVINCE:056"
+    },
+    {
+      "code": "COMMUNE:05604",
+      "name": "El Quisco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "El Quisco"
+      },
+      "parentCode": "PROVINCE:056"
+    },
+    {
+      "code": "COMMUNE:05605",
+      "name": "El Tabo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "El Tabo"
+      },
+      "parentCode": "PROVINCE:056"
+    },
+    {
+      "code": "COMMUNE:05606",
+      "name": "Santo Domingo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Santo Domingo"
+      },
+      "parentCode": "PROVINCE:056"
+    },
+    {
+      "code": "COMMUNE:05701",
+      "name": "San Felipe",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Felipe"
+      },
+      "parentCode": "PROVINCE:057"
+    },
+    {
+      "code": "COMMUNE:05702",
+      "name": "Catemu",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Catemu"
+      },
+      "parentCode": "PROVINCE:057"
+    },
+    {
+      "code": "COMMUNE:05703",
+      "name": "Llaillay",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Llaillay"
+      },
+      "parentCode": "PROVINCE:057"
+    },
+    {
+      "code": "COMMUNE:05704",
+      "name": "Panquehue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Panquehue"
+      },
+      "parentCode": "PROVINCE:057"
+    },
+    {
+      "code": "COMMUNE:05705",
+      "name": "Putaendo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Putaendo"
+      },
+      "parentCode": "PROVINCE:057"
+    },
+    {
+      "code": "COMMUNE:05706",
+      "name": "Santa María",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Santa María"
+      },
+      "parentCode": "PROVINCE:057"
+    },
+    {
+      "code": "COMMUNE:05801",
+      "name": "Quilpué",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quilpué"
+      },
+      "parentCode": "PROVINCE:058"
+    },
+    {
+      "code": "COMMUNE:05802",
+      "name": "Limache",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Limache"
+      },
+      "parentCode": "PROVINCE:058"
+    },
+    {
+      "code": "COMMUNE:05803",
+      "name": "Olmué",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Olmué"
+      },
+      "parentCode": "PROVINCE:058"
+    },
+    {
+      "code": "COMMUNE:05804",
+      "name": "Villa Alemana",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Villa Alemana"
+      },
+      "parentCode": "PROVINCE:058"
+    },
+    {
+      "code": "COMMUNE:06101",
+      "name": "Rancagua",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Rancagua"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06102",
+      "name": "Codegua",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Codegua"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06103",
+      "name": "Coinco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Coinco"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06104",
+      "name": "Coltauco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Coltauco"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06105",
+      "name": "Doñihue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Doñihue"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06106",
+      "name": "Graneros",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Graneros"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06107",
+      "name": "Las Cabras",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Las Cabras"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06108",
+      "name": "Machalí",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Machalí"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06109",
+      "name": "Malloa",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Malloa"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06110",
+      "name": "Mostazal",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Mostazal"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06111",
+      "name": "Olivar",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Olivar"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06112",
+      "name": "Peumo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Peumo"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06113",
+      "name": "Pichidegua",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pichidegua"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06114",
+      "name": "Quinta de Tilcoco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quinta de Tilcoco"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06115",
+      "name": "Rengo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Rengo"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06116",
+      "name": "Requínoa",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Requínoa"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06117",
+      "name": "San Vicente",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Vicente"
+      },
+      "parentCode": "PROVINCE:061"
+    },
+    {
+      "code": "COMMUNE:06201",
+      "name": "Pichilemu",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pichilemu"
+      },
+      "parentCode": "PROVINCE:062"
+    },
+    {
+      "code": "COMMUNE:06202",
+      "name": "La Estrella",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Estrella"
+      },
+      "parentCode": "PROVINCE:062"
+    },
+    {
+      "code": "COMMUNE:06203",
+      "name": "Litueche",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Litueche"
+      },
+      "parentCode": "PROVINCE:062"
+    },
+    {
+      "code": "COMMUNE:06204",
+      "name": "Marchihue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Marchihue"
+      },
+      "parentCode": "PROVINCE:062"
+    },
+    {
+      "code": "COMMUNE:06205",
+      "name": "Navidad",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Navidad"
+      },
+      "parentCode": "PROVINCE:062"
+    },
+    {
+      "code": "COMMUNE:06206",
+      "name": "Paredones",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Paredones"
+      },
+      "parentCode": "PROVINCE:062"
+    },
+    {
+      "code": "COMMUNE:06301",
+      "name": "San Fernando",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Fernando"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06302",
+      "name": "Chépica",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chépica"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06303",
+      "name": "Chimbarongo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chimbarongo"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06304",
+      "name": "Lolol",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lolol"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06305",
+      "name": "Nancagua",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Nancagua"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06306",
+      "name": "Palmilla",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Palmilla"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06307",
+      "name": "Peralillo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Peralillo"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06308",
+      "name": "Placilla",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Placilla"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06309",
+      "name": "Pumanque",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pumanque"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:06310",
+      "name": "Santa Cruz",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Santa Cruz"
+      },
+      "parentCode": "PROVINCE:063"
+    },
+    {
+      "code": "COMMUNE:07101",
+      "name": "Talca",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Talca"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07102",
+      "name": "Constitución",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Constitución"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07103",
+      "name": "Curepto",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Curepto"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07104",
+      "name": "Empedrado",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Empedrado"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07105",
+      "name": "Maule",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Maule"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07106",
+      "name": "Pelarco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pelarco"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07107",
+      "name": "Pencahue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pencahue"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07108",
+      "name": "Río Claro",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Río Claro"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07109",
+      "name": "San Clemente",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Clemente"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07110",
+      "name": "San Rafael",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Rafael"
+      },
+      "parentCode": "PROVINCE:071"
+    },
+    {
+      "code": "COMMUNE:07201",
+      "name": "Cauquenes",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cauquenes"
+      },
+      "parentCode": "PROVINCE:072"
+    },
+    {
+      "code": "COMMUNE:07202",
+      "name": "Chanco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chanco"
+      },
+      "parentCode": "PROVINCE:072"
+    },
+    {
+      "code": "COMMUNE:07203",
+      "name": "Pelluhue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pelluhue"
+      },
+      "parentCode": "PROVINCE:072"
+    },
+    {
+      "code": "COMMUNE:07301",
+      "name": "Curicó",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Curicó"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07302",
+      "name": "Hualañé",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Hualañé"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07303",
+      "name": "Licantén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Licantén"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07304",
+      "name": "Molina",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Molina"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07305",
+      "name": "Rauco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Rauco"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07306",
+      "name": "Romeral",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Romeral"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07307",
+      "name": "Sagrada Familia",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Sagrada Familia"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07308",
+      "name": "Teno",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Teno"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07309",
+      "name": "Vichuquén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Vichuquén"
+      },
+      "parentCode": "PROVINCE:073"
+    },
+    {
+      "code": "COMMUNE:07401",
+      "name": "Linares",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Linares"
+      },
+      "parentCode": "PROVINCE:074"
+    },
+    {
+      "code": "COMMUNE:07402",
+      "name": "Colbún",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Colbún"
+      },
+      "parentCode": "PROVINCE:074"
+    },
+    {
+      "code": "COMMUNE:07403",
+      "name": "Longaví",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Longaví"
+      },
+      "parentCode": "PROVINCE:074"
+    },
+    {
+      "code": "COMMUNE:07404",
+      "name": "Parral",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Parral"
+      },
+      "parentCode": "PROVINCE:074"
+    },
+    {
+      "code": "COMMUNE:07405",
+      "name": "Retiro",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Retiro"
+      },
+      "parentCode": "PROVINCE:074"
+    },
+    {
+      "code": "COMMUNE:07406",
+      "name": "San Javier",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Javier"
+      },
+      "parentCode": "PROVINCE:074"
+    },
+    {
+      "code": "COMMUNE:07407",
+      "name": "Villa Alegre",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Villa Alegre"
+      },
+      "parentCode": "PROVINCE:074"
+    },
+    {
+      "code": "COMMUNE:07408",
+      "name": "Yerbas Buenas",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Yerbas Buenas"
+      },
+      "parentCode": "PROVINCE:074"
+    },
+    {
+      "code": "COMMUNE:08101",
+      "name": "Concepción",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Concepción"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08102",
+      "name": "Coronel",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Coronel"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08103",
+      "name": "Chiguayante",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chiguayante"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08104",
+      "name": "Florida",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Florida"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08105",
+      "name": "Hualqui",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Hualqui"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08106",
+      "name": "Lota",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lota"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08107",
+      "name": "Penco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Penco"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08108",
+      "name": "San Pedro de la Paz",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Pedro de la Paz"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08109",
+      "name": "Santa Juana",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Santa Juana"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08110",
+      "name": "Talcahuano",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Talcahuano"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08111",
+      "name": "Tomé",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Tomé"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08112",
+      "name": "Hualpén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Hualpén"
+      },
+      "parentCode": "PROVINCE:081"
+    },
+    {
+      "code": "COMMUNE:08201",
+      "name": "Lebu",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lebu"
+      },
+      "parentCode": "PROVINCE:082"
+    },
+    {
+      "code": "COMMUNE:08202",
+      "name": "Arauco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Arauco"
+      },
+      "parentCode": "PROVINCE:082"
+    },
+    {
+      "code": "COMMUNE:08203",
+      "name": "Cañete",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cañete"
+      },
+      "parentCode": "PROVINCE:082"
+    },
+    {
+      "code": "COMMUNE:08204",
+      "name": "Contulmo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Contulmo"
+      },
+      "parentCode": "PROVINCE:082"
+    },
+    {
+      "code": "COMMUNE:08205",
+      "name": "Curanilahue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Curanilahue"
+      },
+      "parentCode": "PROVINCE:082"
+    },
+    {
+      "code": "COMMUNE:08206",
+      "name": "Los Alamos",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Los Alamos"
+      },
+      "parentCode": "PROVINCE:082"
+    },
+    {
+      "code": "COMMUNE:08207",
+      "name": "Tirúa",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Tirúa"
+      },
+      "parentCode": "PROVINCE:082"
+    },
+    {
+      "code": "COMMUNE:08301",
+      "name": "Los Angeles",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Los Angeles"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08302",
+      "name": "Antuco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Antuco"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08303",
+      "name": "Cabrero",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cabrero"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08304",
+      "name": "Laja",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Laja"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08305",
+      "name": "Mulchén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Mulchén"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08306",
+      "name": "Nacimiento",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Nacimiento"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08307",
+      "name": "Negrete",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Negrete"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08308",
+      "name": "Quilaco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quilaco"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08309",
+      "name": "Quilleco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quilleco"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08310",
+      "name": "San Rosendo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Rosendo"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08311",
+      "name": "Santa Bárbara",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Santa Bárbara"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08312",
+      "name": "Tucapel",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Tucapel"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08313",
+      "name": "Yumbel",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Yumbel"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:08314",
+      "name": "Alto Biobío",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Alto Biobío"
+      },
+      "parentCode": "PROVINCE:083"
+    },
+    {
+      "code": "COMMUNE:09101",
+      "name": "Temuco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Temuco"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09102",
+      "name": "Carahue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Carahue"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09103",
+      "name": "Cunco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cunco"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09104",
+      "name": "Curarrehue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Curarrehue"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09105",
+      "name": "Freire",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Freire"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09106",
+      "name": "Galvarino",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Galvarino"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09107",
+      "name": "Gorbea",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Gorbea"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09108",
+      "name": "Lautaro",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lautaro"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09109",
+      "name": "Loncoche",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Loncoche"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09110",
+      "name": "Melipeuco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Melipeuco"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09111",
+      "name": "Nueva Imperial",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Nueva Imperial"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09112",
+      "name": "Padre Las Casas",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Padre Las Casas"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09113",
+      "name": "Perquenco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Perquenco"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09114",
+      "name": "Pitrufquén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pitrufquén"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09115",
+      "name": "Pucón",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pucón"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09116",
+      "name": "Saavedra",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Saavedra"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09117",
+      "name": "Teodoro Schmidt",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Teodoro Schmidt"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09118",
+      "name": "Toltén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Toltén"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09119",
+      "name": "Vilcún",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Vilcún"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09120",
+      "name": "Villarrica",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Villarrica"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09121",
+      "name": "Cholchol",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cholchol"
+      },
+      "parentCode": "PROVINCE:091"
+    },
+    {
+      "code": "COMMUNE:09201",
+      "name": "Angol",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Angol"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09202",
+      "name": "Collipulli",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Collipulli"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09203",
+      "name": "Curacautín",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Curacautín"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09204",
+      "name": "Ercilla",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Ercilla"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09205",
+      "name": "Lonquimay",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lonquimay"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09206",
+      "name": "Los Sauces",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Los Sauces"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09207",
+      "name": "Lumaco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lumaco"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09208",
+      "name": "Purén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Purén"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09209",
+      "name": "Renaico",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Renaico"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09210",
+      "name": "Traiguén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Traiguén"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:09211",
+      "name": "Victoria",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Victoria"
+      },
+      "parentCode": "PROVINCE:092"
+    },
+    {
+      "code": "COMMUNE:10101",
+      "name": "Puerto Montt",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Puerto Montt"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10102",
+      "name": "Calbuco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Calbuco"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10103",
+      "name": "Cochamó",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cochamó"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10104",
+      "name": "Fresia",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Fresia"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10105",
+      "name": "Frutillar",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Frutillar"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10106",
+      "name": "Los Muermos",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Los Muermos"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10107",
+      "name": "Llanquihue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Llanquihue"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10108",
+      "name": "Maullín",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Maullín"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10109",
+      "name": "Puerto Varas",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Puerto Varas"
+      },
+      "parentCode": "PROVINCE:101"
+    },
+    {
+      "code": "COMMUNE:10201",
+      "name": "Castro",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Castro"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10202",
+      "name": "Ancud",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Ancud"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10203",
+      "name": "Chonchi",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chonchi"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10204",
+      "name": "Curaco de Vélez",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Curaco de Vélez"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10205",
+      "name": "Dalcahue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Dalcahue"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10206",
+      "name": "Puqueldón",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Puqueldón"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10207",
+      "name": "Queilén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Queilén"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10208",
+      "name": "Quellón",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quellón"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10209",
+      "name": "Quemchi",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quemchi"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10210",
+      "name": "Quinchao",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quinchao"
+      },
+      "parentCode": "PROVINCE:102"
+    },
+    {
+      "code": "COMMUNE:10301",
+      "name": "Osorno",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Osorno"
+      },
+      "parentCode": "PROVINCE:103"
+    },
+    {
+      "code": "COMMUNE:10302",
+      "name": "Puerto Octay",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Puerto Octay"
+      },
+      "parentCode": "PROVINCE:103"
+    },
+    {
+      "code": "COMMUNE:10303",
+      "name": "Purranque",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Purranque"
+      },
+      "parentCode": "PROVINCE:103"
+    },
+    {
+      "code": "COMMUNE:10304",
+      "name": "Puyehue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Puyehue"
+      },
+      "parentCode": "PROVINCE:103"
+    },
+    {
+      "code": "COMMUNE:10305",
+      "name": "Río Negro",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Río Negro"
+      },
+      "parentCode": "PROVINCE:103"
+    },
+    {
+      "code": "COMMUNE:10306",
+      "name": "San Juan de la Costa",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Juan de la Costa"
+      },
+      "parentCode": "PROVINCE:103"
+    },
+    {
+      "code": "COMMUNE:10307",
+      "name": "San Pablo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Pablo"
+      },
+      "parentCode": "PROVINCE:103"
+    },
+    {
+      "code": "COMMUNE:10401",
+      "name": "Chaitén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chaitén"
+      },
+      "parentCode": "PROVINCE:104"
+    },
+    {
+      "code": "COMMUNE:10402",
+      "name": "Futaleufú",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Futaleufú"
+      },
+      "parentCode": "PROVINCE:104"
+    },
+    {
+      "code": "COMMUNE:10403",
+      "name": "Hualaihué",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Hualaihué"
+      },
+      "parentCode": "PROVINCE:104"
+    },
+    {
+      "code": "COMMUNE:10404",
+      "name": "Palena",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Palena"
+      },
+      "parentCode": "PROVINCE:104"
+    },
+    {
+      "code": "COMMUNE:11101",
+      "name": "Coyhaique",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Coyhaique"
+      },
+      "parentCode": "PROVINCE:111"
+    },
+    {
+      "code": "COMMUNE:11102",
+      "name": "Lago Verde",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lago Verde"
+      },
+      "parentCode": "PROVINCE:111"
+    },
+    {
+      "code": "COMMUNE:11201",
+      "name": "Aysén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Aysén"
+      },
+      "parentCode": "PROVINCE:112"
+    },
+    {
+      "code": "COMMUNE:11202",
+      "name": "Cisnes",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cisnes"
+      },
+      "parentCode": "PROVINCE:112"
+    },
+    {
+      "code": "COMMUNE:11203",
+      "name": "Guaitecas",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Guaitecas"
+      },
+      "parentCode": "PROVINCE:112"
+    },
+    {
+      "code": "COMMUNE:11301",
+      "name": "Cochrane",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cochrane"
+      },
+      "parentCode": "PROVINCE:113"
+    },
+    {
+      "code": "COMMUNE:11302",
+      "name": "O'Higgins",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "O'Higgins"
+      },
+      "parentCode": "PROVINCE:113"
+    },
+    {
+      "code": "COMMUNE:11303",
+      "name": "Tortel",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Tortel"
+      },
+      "parentCode": "PROVINCE:113"
+    },
+    {
+      "code": "COMMUNE:11401",
+      "name": "Chile Chico",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chile Chico"
+      },
+      "parentCode": "PROVINCE:114"
+    },
+    {
+      "code": "COMMUNE:11402",
+      "name": "Río Ibáñez",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Río Ibáñez"
+      },
+      "parentCode": "PROVINCE:114"
+    },
+    {
+      "code": "COMMUNE:12101",
+      "name": "Punta Arenas",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Punta Arenas"
+      },
+      "parentCode": "PROVINCE:121"
+    },
+    {
+      "code": "COMMUNE:12102",
+      "name": "Laguna Blanca",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Laguna Blanca"
+      },
+      "parentCode": "PROVINCE:121"
+    },
+    {
+      "code": "COMMUNE:12103",
+      "name": "Río Verde",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Río Verde"
+      },
+      "parentCode": "PROVINCE:121"
+    },
+    {
+      "code": "COMMUNE:12104",
+      "name": "San Gregorio",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Gregorio"
+      },
+      "parentCode": "PROVINCE:121"
+    },
+    {
+      "code": "COMMUNE:12201",
+      "name": "Cabo de Hornos",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cabo de Hornos"
+      },
+      "parentCode": "PROVINCE:122"
+    },
+    {
+      "code": "COMMUNE:12202",
+      "name": "Antártica",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Antártica"
+      },
+      "parentCode": "PROVINCE:122"
+    },
+    {
+      "code": "COMMUNE:12301",
+      "name": "Porvenir",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Porvenir"
+      },
+      "parentCode": "PROVINCE:123"
+    },
+    {
+      "code": "COMMUNE:12302",
+      "name": "Primavera",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Primavera"
+      },
+      "parentCode": "PROVINCE:123"
+    },
+    {
+      "code": "COMMUNE:12303",
+      "name": "Timaukel",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Timaukel"
+      },
+      "parentCode": "PROVINCE:123"
+    },
+    {
+      "code": "COMMUNE:12401",
+      "name": "Natales",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Natales"
+      },
+      "parentCode": "PROVINCE:124"
+    },
+    {
+      "code": "COMMUNE:12402",
+      "name": "Torres del Paine",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Torres del Paine"
+      },
+      "parentCode": "PROVINCE:124"
+    },
+    {
+      "code": "COMMUNE:13101",
+      "name": "Santiago",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Santiago"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13102",
+      "name": "Cerrillos",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cerrillos"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13103",
+      "name": "Cerro Navia",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cerro Navia"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13104",
+      "name": "Conchalí",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Conchalí"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13105",
+      "name": "El Bosque",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "El Bosque"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13106",
+      "name": "Estación Central",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Estación Central"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13107",
+      "name": "Huechuraba",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Huechuraba"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13108",
+      "name": "Independencia",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Independencia"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13109",
+      "name": "La Cisterna",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Cisterna"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13110",
+      "name": "La Florida",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Florida"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13111",
+      "name": "La Granja",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Granja"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13112",
+      "name": "La Pintana",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Pintana"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13113",
+      "name": "La Reina",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Reina"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13114",
+      "name": "Las Condes",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Las Condes"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13115",
+      "name": "Lo Barnechea",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lo Barnechea"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13116",
+      "name": "Lo Espejo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lo Espejo"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13117",
+      "name": "Lo Prado",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lo Prado"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13118",
+      "name": "Macul",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Macul"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13119",
+      "name": "Maipú",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Maipú"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13120",
+      "name": "Ñuñoa",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Ñuñoa"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13121",
+      "name": "Pedro Aguirre Cerda",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pedro Aguirre Cerda"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13122",
+      "name": "Peñalolén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Peñalolén"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13123",
+      "name": "Providencia",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Providencia"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13124",
+      "name": "Pudahuel",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pudahuel"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13125",
+      "name": "Quilicura",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quilicura"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13126",
+      "name": "Quinta Normal",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quinta Normal"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13127",
+      "name": "Recoleta",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Recoleta"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13128",
+      "name": "Renca",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Renca"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13129",
+      "name": "San Joaquín",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Joaquín"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13130",
+      "name": "San Miguel",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Miguel"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13131",
+      "name": "San Ramón",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Ramón"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13132",
+      "name": "Vitacura",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Vitacura"
+      },
+      "parentCode": "PROVINCE:131"
+    },
+    {
+      "code": "COMMUNE:13201",
+      "name": "Puente Alto",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Puente Alto"
+      },
+      "parentCode": "PROVINCE:132"
+    },
+    {
+      "code": "COMMUNE:13202",
+      "name": "Pirque",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pirque"
+      },
+      "parentCode": "PROVINCE:132"
+    },
+    {
+      "code": "COMMUNE:13203",
+      "name": "San José de Maipo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San José de Maipo"
+      },
+      "parentCode": "PROVINCE:132"
+    },
+    {
+      "code": "COMMUNE:13301",
+      "name": "Colina",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Colina"
+      },
+      "parentCode": "PROVINCE:133"
+    },
+    {
+      "code": "COMMUNE:13302",
+      "name": "Lampa",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lampa"
+      },
+      "parentCode": "PROVINCE:133"
+    },
+    {
+      "code": "COMMUNE:13303",
+      "name": "Tiltil",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Tiltil"
+      },
+      "parentCode": "PROVINCE:133"
+    },
+    {
+      "code": "COMMUNE:13401",
+      "name": "San Bernardo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Bernardo"
+      },
+      "parentCode": "PROVINCE:134"
+    },
+    {
+      "code": "COMMUNE:13402",
+      "name": "Buin",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Buin"
+      },
+      "parentCode": "PROVINCE:134"
+    },
+    {
+      "code": "COMMUNE:13403",
+      "name": "Calera de Tango",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Calera de Tango"
+      },
+      "parentCode": "PROVINCE:134"
+    },
+    {
+      "code": "COMMUNE:13404",
+      "name": "Paine",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Paine"
+      },
+      "parentCode": "PROVINCE:134"
+    },
+    {
+      "code": "COMMUNE:13501",
+      "name": "Melipilla",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Melipilla"
+      },
+      "parentCode": "PROVINCE:135"
+    },
+    {
+      "code": "COMMUNE:13502",
+      "name": "Alhué",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Alhué"
+      },
+      "parentCode": "PROVINCE:135"
+    },
+    {
+      "code": "COMMUNE:13503",
+      "name": "Curacaví",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Curacaví"
+      },
+      "parentCode": "PROVINCE:135"
+    },
+    {
+      "code": "COMMUNE:13504",
+      "name": "María Pinto",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "María Pinto"
+      },
+      "parentCode": "PROVINCE:135"
+    },
+    {
+      "code": "COMMUNE:13505",
+      "name": "San Pedro",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Pedro"
+      },
+      "parentCode": "PROVINCE:135"
+    },
+    {
+      "code": "COMMUNE:13601",
+      "name": "Talagante",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Talagante"
+      },
+      "parentCode": "PROVINCE:136"
+    },
+    {
+      "code": "COMMUNE:13602",
+      "name": "El Monte",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "El Monte"
+      },
+      "parentCode": "PROVINCE:136"
+    },
+    {
+      "code": "COMMUNE:13603",
+      "name": "Isla de Maipo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Isla de Maipo"
+      },
+      "parentCode": "PROVINCE:136"
+    },
+    {
+      "code": "COMMUNE:13604",
+      "name": "Padre Hurtado",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Padre Hurtado"
+      },
+      "parentCode": "PROVINCE:136"
+    },
+    {
+      "code": "COMMUNE:13605",
+      "name": "Peñaflor",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Peñaflor"
+      },
+      "parentCode": "PROVINCE:136"
+    },
+    {
+      "code": "COMMUNE:14101",
+      "name": "Valdivia",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Valdivia"
+      },
+      "parentCode": "PROVINCE:141"
+    },
+    {
+      "code": "COMMUNE:14102",
+      "name": "Corral",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Corral"
+      },
+      "parentCode": "PROVINCE:141"
+    },
+    {
+      "code": "COMMUNE:14103",
+      "name": "Lanco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lanco"
+      },
+      "parentCode": "PROVINCE:141"
+    },
+    {
+      "code": "COMMUNE:14104",
+      "name": "Los Lagos",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Los Lagos"
+      },
+      "parentCode": "PROVINCE:141"
+    },
+    {
+      "code": "COMMUNE:14105",
+      "name": "Máfil",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Máfil"
+      },
+      "parentCode": "PROVINCE:141"
+    },
+    {
+      "code": "COMMUNE:14106",
+      "name": "Mariquina",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Mariquina"
+      },
+      "parentCode": "PROVINCE:141"
+    },
+    {
+      "code": "COMMUNE:14107",
+      "name": "Paillaco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Paillaco"
+      },
+      "parentCode": "PROVINCE:141"
+    },
+    {
+      "code": "COMMUNE:14108",
+      "name": "Panguipulli",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Panguipulli"
+      },
+      "parentCode": "PROVINCE:141"
+    },
+    {
+      "code": "COMMUNE:14201",
+      "name": "La Unión",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "La Unión"
+      },
+      "parentCode": "PROVINCE:142"
+    },
+    {
+      "code": "COMMUNE:14202",
+      "name": "Futrono",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Futrono"
+      },
+      "parentCode": "PROVINCE:142"
+    },
+    {
+      "code": "COMMUNE:14203",
+      "name": "Lago Ranco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Lago Ranco"
+      },
+      "parentCode": "PROVINCE:142"
+    },
+    {
+      "code": "COMMUNE:14204",
+      "name": "Río Bueno",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Río Bueno"
+      },
+      "parentCode": "PROVINCE:142"
+    },
+    {
+      "code": "COMMUNE:15101",
+      "name": "Arica",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Arica"
+      },
+      "parentCode": "PROVINCE:151"
+    },
+    {
+      "code": "COMMUNE:15102",
+      "name": "Camarones",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Camarones"
+      },
+      "parentCode": "PROVINCE:151"
+    },
+    {
+      "code": "COMMUNE:15201",
+      "name": "Putre",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Putre"
+      },
+      "parentCode": "PROVINCE:152"
+    },
+    {
+      "code": "COMMUNE:15202",
+      "name": "General Lagos",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "General Lagos"
+      },
+      "parentCode": "PROVINCE:152"
+    },
+    {
+      "code": "COMMUNE:16101",
+      "name": "Chillán",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chillán"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16102",
+      "name": "Bulnes",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Bulnes"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16103",
+      "name": "Chillán Viejo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Chillán Viejo"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16104",
+      "name": "El Carmen",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "El Carmen"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16105",
+      "name": "Pemuco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pemuco"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16106",
+      "name": "Pinto",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Pinto"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16107",
+      "name": "Quillón",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quillón"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16108",
+      "name": "San Ignacio",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Ignacio"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16109",
+      "name": "Yungay",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Yungay"
+      },
+      "parentCode": "PROVINCE:161"
+    },
+    {
+      "code": "COMMUNE:16201",
+      "name": "Quirihue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Quirihue"
+      },
+      "parentCode": "PROVINCE:162"
+    },
+    {
+      "code": "COMMUNE:16202",
+      "name": "Cobquecura",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Cobquecura"
+      },
+      "parentCode": "PROVINCE:162"
+    },
+    {
+      "code": "COMMUNE:16203",
+      "name": "Coelemu",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Coelemu"
+      },
+      "parentCode": "PROVINCE:162"
+    },
+    {
+      "code": "COMMUNE:16204",
+      "name": "Ninhue",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Ninhue"
+      },
+      "parentCode": "PROVINCE:162"
+    },
+    {
+      "code": "COMMUNE:16205",
+      "name": "Portezuelo",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Portezuelo"
+      },
+      "parentCode": "PROVINCE:162"
+    },
+    {
+      "code": "COMMUNE:16206",
+      "name": "Ranquil",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Ranquil"
+      },
+      "parentCode": "PROVINCE:162"
+    },
+    {
+      "code": "COMMUNE:16207",
+      "name": "Treguaco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Treguaco"
+      },
+      "parentCode": "PROVINCE:162"
+    },
+    {
+      "code": "COMMUNE:16301",
+      "name": "San Carlos",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Carlos"
+      },
+      "parentCode": "PROVINCE:163"
+    },
+    {
+      "code": "COMMUNE:16302",
+      "name": "Coihueco",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Coihueco"
+      },
+      "parentCode": "PROVINCE:163"
+    },
+    {
+      "code": "COMMUNE:16303",
+      "name": "Ñiquén",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "Ñiquén"
+      },
+      "parentCode": "PROVINCE:163"
+    },
+    {
+      "code": "COMMUNE:16304",
+      "name": "San Fabián",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Fabián"
+      },
+      "parentCode": "PROVINCE:163"
+    },
+    {
+      "code": "COMMUNE:16305",
+      "name": "San Nicolás",
+      "type": "COMMUNE",
+      "level": 3,
+      "displayNames": {
+        "es-CL": "San Nicolás"
+      },
+      "parentCode": "PROVINCE:163"
+    }
+  ]
+}

@@ -11,8 +11,21 @@ const registerSchema = z.object({
   firstName: safeText(2, 80),
   lastName: safeText(2, 120),
   role: z.enum(['CLIENT', 'PROFESSIONAL']).default('CLIENT'),
-  countryCode: z.enum(['ES', 'BR', 'CL']),
-  locale: z.enum(['es', 'en', 'pt']).default('es'),
+  countryCode: z.string().trim().toUpperCase().regex(/^[A-Z]{2}$/),
+  marketCode: z.string().trim().toUpperCase().regex(/^[A-Z][A-Z0-9_-]{1,15}$/).optional(),
+  registrationSchemaVersion: z.string().trim().min(5).max(120).optional(),
+  identityDocument: z.object({
+    type: z.string().trim().toUpperCase().regex(/^[A-Z][A-Z0-9_]{1,31}$/),
+    value: z.string().trim().min(5).max(64),
+  }).strict().optional(),
+  normalizedAddress: z.object({
+    line1: safeText(1, 200),
+    line2: safeText(1, 200).optional(),
+    locality: safeText(1, 120).optional(),
+    postalCode: safeText(1, 32).optional(),
+    divisionIds: z.array(z.string().uuid()).min(1).max(12),
+  }).strict().optional(),
+  locale: z.string().trim().regex(/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/).max(35).default('es'),
   acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Terms must be accepted' }) }),
   acceptPrivacy: z.literal(true, { errorMap: () => ({ message: 'Privacy notice must be acknowledged' }) }),
   marketingConsent: z.boolean().default(false),
@@ -78,6 +91,7 @@ const professionalProfileSchema = z.object({
 // Schema para crear reserva
 const createBookingSchema = z.object({
   professionalId: z.string().uuid('Invalid professional ID'),
+  addressId: z.string().uuid().optional(),
   scheduledDate: z.string().datetime('Invalid date format'),
   address: safeText(5, 240),
   city: safeText(2, 100),

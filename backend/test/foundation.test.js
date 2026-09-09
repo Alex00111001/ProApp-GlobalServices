@@ -1,5 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+process.env.DATABASE_URL ||= 'postgresql://user:password@localhost:5432/test';
 const { PERMISSIONS, roleGrantsPermission } = require('../src/modules/identity/permission-catalog');
 const { getPermissionKeys, hasPermission } = require('../src/modules/identity/authorization.service');
 const { inPercentage, matchesRules } = require('../src/modules/configuration/feature-flags.service');

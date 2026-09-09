@@ -5,7 +5,7 @@ const { telemetryMetadata } = require('../../observability/context');
 
 const minorToDecimal = (amountMinor) => (amountMinor / 100).toFixed(2);
 
-const resolveRefundPolicy = async ({ tx, bookingId, country, now }) => {
+const resolveRefundPolicy = async ({ tx, bookingId, marketId, country, now }) => {
   const acceptance = await tx.bookingPolicyAcceptance.findFirst({
     where: { bookingId },
     include: { refundPolicy: true },
@@ -17,7 +17,11 @@ const resolveRefundPolicy = async ({ tx, bookingId, country, now }) => {
     where: {
       status: 'ACTIVE',
       AND: [
-        { OR: [{ country }, { country: null }] },
+        { OR: [
+          ...(marketId ? [{ marketId }] : []),
+          ...(country ? [{ marketId: null, country }] : []),
+          { marketId: null, country: null },
+        ] },
         { OR: [{ effectiveAt: null }, { effectiveAt: { lte: now } }] },
         { OR: [{ retiredAt: null }, { retiredAt: { gt: now } }] },
       ],
@@ -25,8 +29,9 @@ const resolveRefundPolicy = async ({ tx, bookingId, country, now }) => {
     orderBy: { version: 'desc' },
   });
   const policy = policies.sort((left, right) => {
-    const countryPriority = Number(right.country === country) - Number(left.country === country);
-    return countryPriority || right.version - left.version;
+    const marketPriority = Number(right.marketId === marketId) - Number(left.marketId === marketId);
+    const countryPriority = Number(right.marketId == null && right.country === country) - Number(left.marketId == null && left.country === country);
+    return marketPriority || countryPriority || right.version - left.version;
   })[0];
   return { policy: policy || null, acceptance: null };
 };
@@ -48,10 +53,12 @@ const createCancellationRefundRequestInTx = async ({
   const existing = await tx.refund.findUnique({ where: { idempotencyKey } });
   if (existing) return { outcome: 'EXISTING', refund: existing, duplicate: true };
 
-  const country = String(booking.client?.country || 'ES').toUpperCase();
+  const marketId = booking.marketId || null;
+  const country = booking.market?.country?.isoAlpha2?.trim()?.toUpperCase() || booking.client?.country?.trim()?.toUpperCase() || null;
   const { policy, acceptance } = await resolveRefundPolicy({
     tx,
     bookingId: booking.id,
+    marketId,
     country,
     now: cancelledAt,
   });
@@ -61,7 +68,7 @@ const createCancellationRefundRequestInTx = async ({
         aggregateType: 'Booking',
         aggregateId: booking.id,
         eventType: 'refund.policy_missing',
-        payload: { bookingId: booking.id, paymentId: booking.payment.id, country },
+        payload: { bookingId: booking.id, paymentId: booking.payment.id, marketId, country },
         metadata: telemetryMetadata(requestContext),
       },
     });

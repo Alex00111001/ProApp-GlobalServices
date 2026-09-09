@@ -27,6 +27,7 @@ model User {
   privacyVersion           String?
   marketingConsentAt       DateTime?
   registrationLocale       String?
+  marketId                 String?
   clientProfile            ClientProfile?
   notifications            Notification[]
   professionalProfile      ProfessionalProfile?
@@ -61,10 +62,14 @@ model User {
   referralsReceived        Referral[]               @relation("ReferralReferred")
   referralRewards          ReferralReward[]         @relation("ReferralRewardBeneficiary")
   automationDefinitions    AutomationDefinition[]   @relation("AutomationDefinitionCreator")
+  market                   Market?                  @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  addresses                Address[]
+  identityDocuments        IdentityDocument[]
 
   @@index([email])
   @@index([phone])
   @@index([role])
+  @@index([marketId])
 }
 
 model ClientProfile {
@@ -125,6 +130,7 @@ model ProfessionalProfile {
   disputes               Dispute[]
   growthLeads            Lead[]                     @relation("GrowthLeadProfessional")
   growthConversions      Conversion[]               @relation("GrowthConversionProfessional")
+  serviceAreas           ProfessionalServiceArea[]
 
   @@index([status])
   @@index([userId])
@@ -221,6 +227,8 @@ model Booking {
   currency               String                    @default("EUR")
   pricingSnapshot        Json?
   pricingPolicyId        String?
+  marketId               String?
+  addressId              String?
   cancelledBy            String?
   cancellationReason     String?
   cancelledAt            DateTime?
@@ -244,12 +252,16 @@ model Booking {
   supportCases           SupportCase[]
   growthConversions      Conversion[]
   pricingPolicy          PricingPolicy?            @relation(fields: [pricingPolicyId], references: [id], onDelete: Restrict)
+  market                 Market?                   @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  normalizedAddress      Address?                  @relation(fields: [addressId], references: [id], onDelete: Restrict)
 
   @@index([clientId])
   @@index([professionalId])
   @@index([status])
   @@index([scheduledDate])
   @@index([pricingPolicyId])
+  @@index([marketId, status, scheduledDate])
+  @@index([addressId])
 }
 
 model BookingService {
@@ -556,6 +568,265 @@ model FeatureFlag {
   @@index([status])
 }
 
+model Country {
+  id                      String                   @id @default(uuid())
+  isoAlpha2               String                   @unique @db.Char(2)
+  isoAlpha3               String                   @unique @db.Char(3)
+  isoNumeric              String                   @unique @db.Char(3)
+  canonicalName           String
+  lifecycle               CountryLifecycle         @default(ACTIVE)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  markets                 Market[]
+  administrativeDivisions AdministrativeDivision[]
+  geographyImports        GeographyDatasetImport[]
+  addresses               Address[]
+  identityDocuments       IdentityDocument[]
+
+  @@index([lifecycle, isoAlpha2])
+}
+
+model Market {
+  id                      String                         @id @default(uuid())
+  code                    String                         @unique
+  countryId               String
+  status                  MarketStatus                   @default(DISABLED)
+  currencyCode            String                         @db.Char(3)
+  defaultLocale           String
+  supportedLocales        String[]
+  timezonePolicy          Json
+  capabilities            Json
+  currentPolicyVersion    Int?
+  effectiveAt             DateTime?
+  retiredAt               DateTime?
+  createdAt               DateTime                       @default(now())
+  updatedAt               DateTime                       @updatedAt
+  country                 Country                        @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  policies                MarketPolicyVersion[]
+  users                   User[]
+  addresses               Address[]
+  identityDocuments       IdentityDocument[]
+  serviceAreas            ProfessionalServiceArea[]
+  bookings                Booking[]
+  campaigns               Campaign[]
+  leads                   Lead[]
+  marketingEvents         MarketingEvent[]
+  consentPolicies         ConsentPolicy[]
+  pricingPolicies         PricingPolicy[]
+  refundPolicies          RefundPolicy[]
+  referrals               Referral[]
+  referralProgramVersions ReferralProgramVersionMarket[]
+
+  @@unique([countryId, code])
+  @@index([status, effectiveAt])
+  @@index([countryId, status])
+}
+
+model MarketPolicyVersion {
+  id                     String             @id @default(uuid())
+  marketId               String
+  version                Int
+  status                 MarketPolicyStatus @default(DRAFT)
+  identityPolicy         Json
+  geographyPolicy        Json
+  addressPolicy          Json
+  localePolicy           Json
+  currencyPolicy         Json
+  legalPolicyReferences  Json
+  taxPolicyReference     Json?
+  paymentPolicyReference Json?
+  schemaDigest           String
+  reviewStatus           LegalReviewStatus  @default(PENDING)
+  reviewReference        String?
+  reviewedBy             String?
+  reviewedAt             DateTime?
+  effectiveAt            DateTime?
+  retiredAt              DateTime?
+  createdBy              String?
+  createdAt              DateTime           @default(now())
+  market                 Market             @relation(fields: [marketId], references: [id], onDelete: Restrict)
+
+  @@unique([marketId, version])
+  @@index([marketId, status, effectiveAt])
+  @@index([schemaDigest])
+}
+
+model GeographyDatasetImport {
+  id              String                         @id @default(uuid())
+  countryId       String
+  sourceKey       String
+  sourceUrl       String
+  sourceVersion   String
+  referenceDate   DateTime
+  retrievedAt     DateTime
+  checksumSha256  String
+  parserVersion   String
+  status          GeographyImportStatus          @default(PENDING)
+  rowCount        Int                            @default(0)
+  insertedCount   Int                            @default(0)
+  updatedCount    Int                            @default(0)
+  deprecatedCount Int                            @default(0)
+  errorCategory   String?
+  evidence        Json?
+  requestId       String?
+  correlationId   String?
+  traceId         String?
+  createdAt       DateTime                       @default(now())
+  completedAt     DateTime?
+  country         Country                        @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  divisions       AdministrativeDivision[]
+  changes         AdministrativeDivisionChange[]
+
+  @@unique([countryId, sourceKey, sourceVersion, checksumSha256])
+  @@index([countryId, sourceKey, status, createdAt])
+  @@index([correlationId])
+}
+
+model AdministrativeDivision {
+  id            String                          @id @default(uuid())
+  countryId     String
+  parentId      String?
+  level         Int
+  typeKey       String
+  canonicalCode String
+  canonicalName String
+  displayNames  Json?
+  lifecycle     AdministrativeDivisionLifecycle @default(ACTIVE)
+  sourceKey     String
+  sourceVersion String
+  lastImportId  String
+  effectiveAt   DateTime?
+  deprecatedAt  DateTime?
+  createdAt     DateTime                        @default(now())
+  updatedAt     DateTime                        @updatedAt
+  country       Country                         @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  parent        AdministrativeDivision?         @relation("AdministrativeDivisionHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children      AdministrativeDivision[]        @relation("AdministrativeDivisionHierarchy")
+  lastImport    GeographyDatasetImport          @relation(fields: [lastImportId], references: [id], onDelete: Restrict)
+  addressLinks  AddressAdministrativeDivision[]
+  serviceAreas  ProfessionalServiceArea[]
+  changes       AdministrativeDivisionChange[]
+
+  @@unique([countryId, sourceKey, canonicalCode])
+  @@index([countryId, parentId, level, lifecycle])
+  @@index([countryId, typeKey, canonicalName])
+  @@index([lastImportId])
+}
+
+model AdministrativeDivisionChange {
+  id         String                 @id @default(uuid())
+  importId   String
+  divisionId String
+  changeType GeographyChangeType
+  before     Json?
+  after      Json?
+  createdAt  DateTime               @default(now())
+  import     GeographyDatasetImport @relation(fields: [importId], references: [id], onDelete: Restrict)
+  division   AdministrativeDivision @relation(fields: [divisionId], references: [id], onDelete: Restrict)
+
+  @@index([importId, changeType])
+  @@index([divisionId, createdAt])
+}
+
+model Address {
+  id               String                          @id @default(uuid())
+  userId           String
+  marketId         String?
+  countryId        String
+  purpose          AddressPurpose
+  line1            String?
+  line2            String?
+  locality         String?
+  postalCode       String?
+  latitude         Decimal?                        @db.Decimal(9, 6)
+  longitude        Decimal?                        @db.Decimal(9, 6)
+  validationStatus AddressValidationStatus         @default(UNVALIDATED)
+  validationSource String?
+  validatedAt      DateTime?
+  isPrimary        Boolean                         @default(false)
+  createdAt        DateTime                        @default(now())
+  updatedAt        DateTime                        @updatedAt
+  user             User                            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  market           Market?                         @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  country          Country                         @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  divisions        AddressAdministrativeDivision[]
+  bookingSnapshots Booking[]
+
+  @@index([userId, purpose, isPrimary])
+  @@index([marketId])
+  @@index([countryId, postalCode])
+}
+
+model AddressAdministrativeDivision {
+  addressId  String
+  divisionId String
+  level      Int
+  createdAt  DateTime               @default(now())
+  address    Address                @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  division   AdministrativeDivision @relation(fields: [divisionId], references: [id], onDelete: Restrict)
+
+  @@id([addressId, divisionId])
+  @@unique([addressId, level])
+  @@index([divisionId])
+}
+
+model ProfessionalServiceArea {
+  id             String                           @id @default(uuid())
+  professionalId String
+  marketId       String
+  divisionId     String
+  kind           ProfessionalServiceAreaKind      @default(ADMINISTRATIVE_DIVISION)
+  lifecycle      ProfessionalServiceAreaLifecycle @default(ACTIVE)
+  createdAt      DateTime                         @default(now())
+  updatedAt      DateTime                         @updatedAt
+  professional   ProfessionalProfile              @relation(fields: [professionalId], references: [id], onDelete: Restrict)
+  market         Market                           @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  division       AdministrativeDivision           @relation(fields: [divisionId], references: [id], onDelete: Restrict)
+
+  @@unique([professionalId, marketId, divisionId, kind])
+  @@index([marketId, divisionId, lifecycle])
+  @@index([professionalId, lifecycle])
+}
+
+model IdentityDocument {
+  id                   String                     @id @default(uuid())
+  userId               String
+  marketId             String
+  countryId            String
+  typeKey              String
+  encryptedValue       String
+  encryptionKeyVersion String
+  lookupDigest         String
+  maskedValue          String
+  formatStatus         IdentityFormatStatus       @default(UNCHECKED)
+  verificationStatus   IdentityVerificationStatus @default(UNVERIFIED)
+  verificationMethod   String?
+  verificationSource   String?
+  verifiedAt           DateTime?
+  lifecycle            IdentityDocumentLifecycle  @default(ACTIVE)
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+  retiredAt            DateTime?
+  user                 User                       @relation(fields: [userId], references: [id], onDelete: Restrict)
+  market               Market                     @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  country              Country                    @relation(fields: [countryId], references: [id], onDelete: Restrict)
+
+  @@index([userId, lifecycle, createdAt])
+  @@index([marketId, typeKey, lifecycle])
+  @@index([countryId, typeKey, lookupDigest])
+}
+
+model ReferralProgramVersionMarket {
+  programVersionId String
+  marketId         String
+  createdAt        DateTime               @default(now())
+  programVersion   ReferralProgramVersion @relation(fields: [programVersionId], references: [id], onDelete: Restrict)
+  market           Market                 @relation(fields: [marketId], references: [id], onDelete: Restrict)
+
+  @@id([programVersionId, marketId])
+  @@index([marketId])
+}
+
 model AuditLog {
   id            String       @id @default(uuid())
   actorId       String?
@@ -672,6 +943,7 @@ model MarketingEvent {
   campaignId     String?
   leadId         String?
   countryCode    String?
+  marketId       String?
   requestId      String?
   correlationId  String?
   traceId        String?
@@ -680,6 +952,7 @@ model MarketingEvent {
   lead           Lead?                @relation(fields: [leadId], references: [id], onDelete: SetNull)
   professional   ProfessionalProfile? @relation(fields: [professionalId], references: [id], onDelete: SetNull)
   user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  market         Market?              @relation(fields: [marketId], references: [id], onDelete: Restrict)
   conversion     Conversion?
   touchpoint     Touchpoint?
 
@@ -693,6 +966,7 @@ model MarketingEvent {
   @@index([campaignId, occurredAt])
   @@index([leadId, eventName, occurredAt])
   @@index([countryCode, occurredAt])
+  @@index([marketId, occurredAt])
   @@index([correlationId])
 }
 
@@ -705,6 +979,7 @@ model Campaign {
   medium      String?
   channel     String?
   countryCode String?
+  marketId    String?
   startsAt    DateTime?
   endsAt      DateTime?
   createdById String
@@ -715,11 +990,13 @@ model Campaign {
   leads       Lead[]
   conversions Conversion[]
   touchpoints Touchpoint[]
+  market      Market?          @relation(fields: [marketId], references: [id], onDelete: Restrict)
 
   @@index([status, startsAt, endsAt])
   @@index([source, medium, createdAt])
   @@index([countryCode, status])
   @@index([createdById])
+  @@index([marketId, status])
 }
 
 model Lead {
@@ -733,6 +1010,7 @@ model Lead {
   source         String?
   channel        String?
   countryCode    String?
+  marketId       String?
   firstSeenAt    DateTime
   lastSeenAt     DateTime
   convertedAt    DateTime?
@@ -744,12 +1022,14 @@ model Lead {
   events         MarketingEvent[]
   conversions    Conversion[]
   touchpoints    Touchpoint[]
+  market         Market?              @relation(fields: [marketId], references: [id], onDelete: Restrict)
 
   @@index([status, lastSeenAt])
   @@index([campaignId, status, lastSeenAt])
   @@index([userId, lastSeenAt])
   @@index([professionalId, lastSeenAt])
   @@index([countryCode, firstSeenAt])
+  @@index([marketId, firstSeenAt])
 }
 
 model Conversion {
@@ -785,6 +1065,7 @@ model ConsentPolicy {
   purpose           String
   version           Int
   countryCode       String
+  marketId          String?
   locale            String
   status            ConsentPolicyStatus    @default(DRAFT)
   legalBasis        String
@@ -805,10 +1086,12 @@ model ConsentPolicy {
   reviewedBy        User?                  @relation("ConsentPolicyReviewer", fields: [reviewedById], references: [id], onDelete: Restrict)
   decisions         ConsentDecision[]
   touchpoints       Touchpoint[]
+  market            Market?                @relation(fields: [marketId], references: [id], onDelete: Restrict)
 
   @@unique([key, version, countryCode, locale])
   @@unique([id, version])
   @@index([purpose, countryCode, locale, status, effectiveAt])
+  @@index([marketId, purpose, status, effectiveAt])
   @@index([createdById])
   @@index([reviewedById])
 }
@@ -975,28 +1258,29 @@ model ReferralProgram {
 }
 
 model ReferralProgramVersion {
-  id                      String             @id @default(uuid())
+  id                      String                         @id @default(uuid())
   programId               String
   version                 Int
   referrerActorType       ReferralActorType
   referredActorType       ReferralActorType
   enabledMarkets          String[]
   qualifyingEventType     String
-  waitingPeriodHours      Int                @default(0)
-  cancellationWindowHours Int                @default(0)
-  maxCodesPerOwner        Int                @default(1)
-  maxUsesPerCode          Int                @default(100)
-  maxReferralsPerOwner    Int                @default(100)
+  waitingPeriodHours      Int                            @default(0)
+  cancellationWindowHours Int                            @default(0)
+  maxCodesPerOwner        Int                            @default(1)
+  maxUsesPerCode          Int                            @default(100)
+  maxReferralsPerOwner    Int                            @default(100)
   rewardType              ReferralRewardType
-  referrerRewardAmount    Decimal?           @db.Decimal(18, 2)
-  referredRewardAmount    Decimal?           @db.Decimal(18, 2)
+  referrerRewardAmount    Decimal?                       @db.Decimal(18, 2)
+  referredRewardAmount    Decimal?                       @db.Decimal(18, 2)
   currency                String?
   nonMonetaryBenefitKey   String?
   configurationDigest     String
-  createdAt               DateTime           @default(now())
-  program                 ReferralProgram    @relation(fields: [programId], references: [id], onDelete: Restrict)
+  createdAt               DateTime                       @default(now())
+  program                 ReferralProgram                @relation(fields: [programId], references: [id], onDelete: Restrict)
   referrals               Referral[]
   rewards                 ReferralReward[]
+  markets                 ReferralProgramVersionMarket[]
 
   @@unique([programId, version])
   @@index([qualifyingEventType])
@@ -1033,6 +1317,7 @@ model Referral {
   referrerUserId   String
   referredUserId   String
   market           String
+  marketId         String?
   status           ReferralStatus           @default(CREATED)
   riskStatus       ReferralRiskStatus       @default(CLEAR)
   rejectionCode    String?
@@ -1053,12 +1338,14 @@ model Referral {
   conversions      ReferralConversion[]
   rewards          ReferralReward[]
   riskAssessments  ReferralRiskAssessment[]
+  marketRecord     Market?                  @relation(fields: [marketId], references: [id], onDelete: Restrict)
 
   @@unique([programId, referredUserId])
   @@index([referrerUserId, status, createdAt])
   @@index([referredUserId, status, createdAt])
   @@index([programId, status, createdAt])
   @@index([correlationId])
+  @@index([marketId, status, createdAt])
 }
 
 model ReferralConversion {
@@ -1456,6 +1743,7 @@ model PricingPolicy {
   key         String
   version     Int
   country     String?
+  marketId    String?
   currency    String
   status      PolicyStatus @default(DRAFT)
   rules       Json
@@ -1465,9 +1753,11 @@ model PricingPolicy {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   bookings    Booking[]
+  market      Market?      @relation(fields: [marketId], references: [id], onDelete: Restrict)
 
   @@unique([key, version])
   @@index([country, status, effectiveAt])
+  @@index([marketId, status, effectiveAt])
 }
 
 model RefundPolicy {
@@ -1475,6 +1765,7 @@ model RefundPolicy {
   key         String
   version     Int
   country     String?
+  marketId    String?
   status      PolicyStatus              @default(DRAFT)
   rules       Json
   effectiveAt DateTime?
@@ -1485,9 +1776,11 @@ model RefundPolicy {
   acceptances BookingPolicyAcceptance[]
   refunds     Refund[]
   decisions   RefundDecision[]
+  market      Market?                   @relation(fields: [marketId], references: [id], onDelete: Restrict)
 
   @@unique([key, version])
   @@index([country, status, effectiveAt])
+  @@index([marketId, status, effectiveAt])
 }
 
 model BookingPolicyAcceptance {
@@ -1725,6 +2018,94 @@ model ReconciliationItem {
   @@unique([runId, resourceType, resourceId, category])
   @@index([bookingId, createdAt])
   @@index([status, createdAt])
+}
+
+enum CountryLifecycle {
+  ACTIVE
+  DEPRECATED
+}
+
+enum MarketStatus {
+  DRAFT
+  DISABLED
+  READY
+  ACTIVE
+  SUSPENDED
+  RETIRED
+}
+
+enum MarketPolicyStatus {
+  DRAFT
+  ACTIVE
+  RETIRED
+}
+
+enum GeographyImportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AdministrativeDivisionLifecycle {
+  ACTIVE
+  DEPRECATED
+  DISABLED
+}
+
+enum GeographyChangeType {
+  CREATED
+  RENAMED
+  REPARENTED
+  CODE_CHANGED
+  DEPRECATED
+  REACTIVATED
+}
+
+enum AddressPurpose {
+  CLIENT_CONTACT
+  PROFESSIONAL_DOMICILE
+  BOOKING_SERVICE
+  BILLING
+}
+
+enum AddressValidationStatus {
+  UNVALIDATED
+  FORMAT_VALID
+  VERIFIED
+  REJECTED
+}
+
+enum ProfessionalServiceAreaKind {
+  ADMINISTRATIVE_DIVISION
+  RADIUS
+  POLYGON
+}
+
+enum ProfessionalServiceAreaLifecycle {
+  ACTIVE
+  DISABLED
+  RETIRED
+}
+
+enum IdentityFormatStatus {
+  UNCHECKED
+  VALID
+  INVALID
+}
+
+enum IdentityVerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum IdentityDocumentLifecycle {
+  ACTIVE
+  RETIRED
+  REVOKED
 }
 
 enum UserRole {

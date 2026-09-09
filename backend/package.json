@@ -13,6 +13,7 @@
     "test": "node --test test/*.test.js",
     "test:integration": "node --test test/integration/*.test.js",
     "test:connections": "node scripts/test-connections.js",
+    "geography:validate": "node scripts/validate-geography-manifests.js",
     "db:audit-baseline": "node scripts/audit-prisma-baseline.js",
     "prisma:gen": "prisma generate",
     "prisma:migrate": "prisma migrate dev",

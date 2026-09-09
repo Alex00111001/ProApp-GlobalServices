@@ -1,6 +1,8 @@
 const prisma = require('../../config/prisma');
 const { redactText, sanitizeTelemetry } = require('../observability/redaction');
 const { telemetryMetadata } = require('../observability/context');
+const env = require('../../config/env');
+const { resolveMarketReference } = require('../markets/market.service');
 
 const CAMPAIGN_TRANSITIONS = Object.freeze({
   DRAFT: ['ACTIVE', 'ARCHIVED'],
@@ -34,8 +36,10 @@ const createCampaign = async ({ actorId, context, reason, ...input }, client = p
   validateWindow(input.startsAt, input.endsAt);
   try {
     return await client.$transaction(async (tx) => {
+      const market = await resolveMarketReference({ marketCode: input.countryCode, client: tx });
       const campaign = await tx.campaign.create({ data: {
         ...input,
+        marketId: market?.id,
         startsAt: dateValue(input.startsAt),
         endsAt: dateValue(input.endsAt),
         createdById: actorId,
@@ -69,6 +73,10 @@ const updateCampaign = async ({ id, actorId, reason, context, ...input }, client
     ...(input.startsAt !== undefined ? { startsAt } : {}),
     ...(input.endsAt !== undefined ? { endsAt } : {}),
   };
+  if (input.countryCode !== undefined) {
+    const market = await resolveMarketReference({ marketCode: input.countryCode, client: tx });
+    data.marketId = market?.id || null;
+  }
   const campaign = await tx.campaign.update({ where: { id }, data });
   const safeReason = redactText(reason);
   await tx.outboxEvent.create({ data: {
@@ -83,7 +91,7 @@ const updateCampaign = async ({ id, actorId, reason, context, ...input }, client
 });
 
 const transitionCampaign = async ({ id, toStatus, actorId, reason, context }, client = prisma) => client.$transaction(async (tx) => {
-  const current = await tx.campaign.findUnique({ where: { id } });
+  const current = await tx.campaign.findUnique({ where: { id }, include: { market: { select: { status: true } } } });
   if (!current) throw operationalError('Campaign was not found.', 'CAMPAIGN_NOT_FOUND', 404);
   if (current.status === toStatus) return { campaign: current, duplicate: true };
   if (!CAMPAIGN_TRANSITIONS[current.status]?.includes(toStatus)) {
@@ -92,6 +100,7 @@ const transitionCampaign = async ({ id, toStatus, actorId, reason, context }, cl
   if (toStatus === 'ACTIVE' && current.endsAt && current.endsAt <= new Date()) {
     throw operationalError('An expired campaign cannot be activated.', 'CAMPAIGN_WINDOW_EXPIRED', 409);
   }
+  if (toStatus === 'ACTIVE' && env.marketsIdentityGeographyEnabled && (!current.marketId || current.market?.status !== 'ACTIVE')) throw operationalError('Campaign market is not active.', 'CAMPAIGN_MARKET_INACTIVE', 409);
   const changed = await tx.campaign.updateMany({ where: { id, status: current.status }, data: { status: toStatus } });
   if (changed.count !== 1) throw operationalError('Campaign changed concurrently.', 'CAMPAIGN_CONFLICT', 409);
   const campaign = await tx.campaign.findUniqueOrThrow({ where: { id } });
