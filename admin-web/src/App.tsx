@@ -14,6 +14,7 @@ import { SettingsPage } from './pages/SettingsPage'
 import { UsersPage } from './pages/UsersPage'
 import { PrivacyAttributionPage } from './pages/PrivacyAttributionPage'
 import { ReferralsAutomationPage } from './pages/ReferralsAutomationPage'
+import { MarketsPage } from './pages/MarketsPage'
 import { useSession } from './state/session'
 import './App.css'
 
@@ -43,6 +44,7 @@ export default function App() {
       <Route path="/marketing" element={<RequirePermission permission="marketing.read"><GrowthPage /></RequirePermission>} />
       <Route path="/privacy-attribution" element={<PrivacyAttributionPage />} />
       <Route path="/referrals-automation" element={<ReferralsAutomationPage />} />
+      <Route path="/markets" element={<RequirePermission permission="markets.read"><MarketsPage /></RequirePermission>} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/:module" element={<ModulePage />} />
     </Route>

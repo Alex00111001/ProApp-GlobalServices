@@ -3,6 +3,21 @@ import * as SecureStore from 'expo-secure-store';
 import { AuthResponse } from '@/types';
 import Constants from 'expo-constants';
 
+export type MarketSummary = { code: string; countryCode: string; status: 'ACTIVE'; currencyCode: string; defaultLocale: string; supportedLocales: string[]; capabilities: Record<string, boolean> };
+export type RegistrationSchema = {
+  market: MarketSummary;
+  actorType: 'CLIENT' | 'PROFESSIONAL';
+  policyVersion: number;
+  schemaVersion: string;
+  locale: string;
+  identityDocuments: Array<{ type: string; aliases: string[]; labelKey: string; required: boolean; constraints: { maxLength: number } }>;
+  identitySelection: 'ONE_OF';
+  geography: { levels: Array<{ type: string; level: number; required: boolean }> };
+  address: { fields: Array<{ key: string; required: boolean; maxLength: number }>; coordinates: string };
+  capabilities: Record<string, boolean>;
+};
+export type DivisionOption = { id: string; parentId: string | null; level: number; typeKey: string; canonicalCode: string; canonicalName: string };
+
 // Expo requiere el prefijo EXPO_PUBLIC_ para las variables de entorno en el bundle
 // Para desarrollo en Android, 'localhost' no funciona, se debe usar la IP de la máquina o 10.0.2.2
 const API_URL = process.env.EXPO_PUBLIC_API_URL || (__DEV__ ? 'http://10.0.2.2:3000/api' : '');
@@ -120,8 +135,8 @@ class ApiClient {
     lastName: string;
     phone: string;
     role: 'CLIENT' | 'PROFESSIONAL';
-    countryCode: 'ES' | 'BR' | 'CL';
-    locale: 'es' | 'en' | 'pt';
+    countryCode: string;
+    locale: string;
     acceptTerms: true;
     acceptPrivacy: true;
     marketingConsent: boolean;
@@ -129,6 +144,10 @@ class ApiClient {
     privacyVersion: string;
     marketingPolicyId?: string;
     marketingPolicyVersion?: number;
+    marketCode?: string;
+    registrationSchemaVersion?: string;
+    identityDocument?: { type: string; value: string };
+    normalizedAddress?: { line1: string; line2?: string; locality?: string; postalCode?: string; divisionIds: string[] };
   }) {
     const response = await this.client.post<AuthResponse>('/auth/register', data);
     await SecureStore.setItemAsync('auth_token', response.data.token);
@@ -136,7 +155,19 @@ class ApiClient {
     return response.data;
   }
 
-  async getConsentPolicies(countryCode: 'ES' | 'BR' | 'CL', locale: 'es' | 'en' | 'pt', purposes = 'marketing_attribution') {
+  async getMarkets() {
+    return (await this.client.get<{ items: MarketSummary[] }>('/v1/markets')).data;
+  }
+
+  async getRegistrationSchema(marketCode: string, actorType: 'CLIENT' | 'PROFESSIONAL', locale?: string) {
+    return (await this.client.get<RegistrationSchema>(`/v1/markets/${marketCode}/registration-schema`, { params: { actorType, locale } })).data;
+  }
+
+  async getDivisions(marketCode: string, parentId?: string) {
+    return (await this.client.get<{ items: DivisionOption[] }>(`/v1/markets/${marketCode}/divisions`, { params: { parentId, page: 1, limit: 100 } })).data;
+  }
+
+  async getConsentPolicies(countryCode: string, locale: string, purposes = 'marketing_attribution') {
     const response = await this.client.get('/v1/privacy/policies', { params: { countryCode, locale, purposes } });
     return response.data as { policies: Array<{ id: string; key: string; purpose: string; version: number; documentReference: string; effectiveAt: string; enforcementMode: string }> };
   }

@@ -195,3 +195,27 @@ const automationVersionSchema = z.object({ id: z.string(), version: z.number(), 
 export const automationDefinitionListSchema = z.object({ items: z.array(z.object({ id: z.string(), key: z.string(), name: z.string(), status: z.string(), currentVersion: z.number(), rowVersion: z.number(), featureFlagKey: z.string(), createdAt: z.string(), updatedAt: z.string(), versions: z.array(automationVersionSchema) })), pagination: paginationSchema })
 const automationExecutionSchema = z.object({ id: z.string(), status: z.string(), triggerEventId: z.string(), attemptCount: z.number(), nextAttemptAt: z.string().nullable(), startedAt: z.string().nullable(), completedAt: z.string().nullable(), firstFailureAt: z.string().nullable(), lastFailureAt: z.string().nullable(), lastError: z.string().nullable(), correlationId: z.string().nullable(), traceId: z.string().nullable(), createdAt: z.string(), automationVersion: z.object({ id: z.string(), version: z.number(), definition: z.object({ id: z.string(), key: z.string(), name: z.string() }) }), steps: z.array(z.object({ id: z.string(), status: z.string(), attempts: z.number(), nextAttemptAt: z.string(), firstFailureAt: z.string().nullable(), lastFailureAt: z.string().nullable(), lastError: z.string().nullable(), action: z.object({ position: z.number(), actionType: z.string() }) })) })
 export const automationExecutionListSchema = z.object({ items: z.array(automationExecutionSchema), pagination: paginationSchema })
+
+export const marketListSchema = z.object({
+  items: z.array(z.object({
+    code: z.string(), countryCode: z.string(), status: z.string(), currencyCode: z.string(), defaultLocale: z.string(), supportedLocales: z.array(z.string()), capabilities: z.record(z.string(), z.unknown()), currentPolicyVersion: z.number().nullable(), effectiveAt: z.string().nullable(), updatedAt: z.string(),
+    policy: z.object({ version: z.number(), status: z.string(), reviewStatus: z.string(), reviewReference: z.string().nullable(), schemaDigest: z.string(), sourceVersion: z.string().optional() }).passthrough().nullable(),
+    counts: z.object({ serviceAreas: z.number(), users: z.number() }),
+  })),
+  pagination: paginationSchema,
+})
+
+export const geographyImportListSchema = z.object({
+  items: z.array(z.object({ id: z.string(), sourceKey: z.string(), sourceVersion: z.string(), status: z.string(), rowCount: z.number(), insertedCount: z.number(), updatedCount: z.number(), deprecatedCount: z.number(), checksumSha256: z.string(), retrievedAt: z.string(), completedAt: z.string().nullable(), country: z.object({ isoAlpha2: z.string() }) })),
+  pagination: paginationSchema,
+})
+
+export const identityPolicyListSchema = z.object({
+  items: z.array(z.object({
+    id: z.string(), version: z.number(), status: z.string(), reviewStatus: z.string(), reviewReference: z.string().nullable(),
+    schemaDigest: z.string(), createdBy: z.string().nullable(), reviewedBy: z.string().nullable(), reviewedAt: z.string().nullable(),
+    effectiveAt: z.string().nullable(), retiredAt: z.string().nullable(), createdAt: z.string(),
+    market: z.object({ code: z.string(), status: z.string() }),
+  }).passthrough()),
+  pagination: paginationSchema,
+})

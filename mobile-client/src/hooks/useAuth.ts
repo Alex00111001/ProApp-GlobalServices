@@ -51,8 +51,8 @@ export const useAuth = () => {
       lastName: string;
       phone: string;
       role: 'CLIENT' | 'PROFESSIONAL';
-      countryCode: 'ES' | 'BR' | 'CL';
-      locale: 'es' | 'en' | 'pt';
+      countryCode: string;
+      locale: string;
       acceptTerms: true;
       acceptPrivacy: true;
       marketingConsent: boolean;

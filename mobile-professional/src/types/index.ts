@@ -19,8 +19,8 @@ export interface User {
   phone?: string;
   avatarUrl?: string;
   role: 'CLIENT' | 'PROFESSIONAL' | 'ADMIN';
-  countryCode?: 'ES' | 'BR' | 'CL';
-  registrationLocale?: 'es' | 'en' | 'pt';
+  countryCode?: string;
+  registrationLocale?: string;
   professionalProfile?: ProfessionalProfile;
 }
 

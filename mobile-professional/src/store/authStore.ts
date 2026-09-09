@@ -11,6 +11,7 @@ interface AuthState {
   error: string | null;
   restore: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  register: (input: Record<string, unknown>) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -36,6 +37,19 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ loading: true, error: null });
     try {
       const { user } = await api.login(email.trim().toLowerCase(), password);
+      const profileResponse = await api.profile();
+      set({ user, profile: profileResponse.profile, loading: false });
+    } catch (error) {
+      await SecureStore.deleteItemAsync(api.tokenKey);
+      const message = error instanceof Error && !('response' in error) ? error.message : getApiError(error);
+      set({ loading: false, error: message });
+      throw error;
+    }
+  },
+  register: async (input) => {
+    set({ loading: true, error: null });
+    try {
+      const { user } = await api.register(input);
       const profileResponse = await api.profile();
       set({ user, profile: profileResponse.profile, loading: false });
     } catch (error) {
