@@ -14,6 +14,7 @@ exports.createBooking = async (req, res) => {
   try {
     const { 
       professionalId, 
+      addressId,
       scheduledDate, 
       address, 
       city, 
@@ -28,7 +29,7 @@ exports.createBooking = async (req, res) => {
     // Verificar que el profesional existe y está aprobado
     const professional = await prisma.professionalProfile.findUnique({
       where: { id: professionalId },
-      include: { services: true, categories: true },
+      include: { services: true, categories: true, user: { select: { marketId: true } } },
     });
 
     if (!professional || professional.status !== 'APPROVED') {
@@ -70,6 +71,18 @@ exports.createBooking = async (req, res) => {
       serviceAmountMinor += decimalToMinor(service.basePrice) * serviceItem.quantity;
     }
 
+    let normalizedAddress = null;
+    if (env.marketsIdentityGeographyEnabled) {
+      if (!req.user.marketId || professional.user.marketId !== req.user.marketId || !addressId) return res.status(400).json({ error: 'An owned address in the shared active market is required.', code: 'BOOKING_MARKET_ADDRESS_REQUIRED' });
+      normalizedAddress = await prisma.address.findFirst({
+        where: { id: addressId, userId: req.user.id, marketId: req.user.marketId, validationStatus: { in: ['FORMAT_VALID', 'VERIFIED'] } },
+        include: { divisions: { include: { division: true }, orderBy: { level: 'asc' } } },
+      });
+      if (!normalizedAddress) return res.status(400).json({ error: 'Booking address is unavailable.', code: 'BOOKING_ADDRESS_INVALID' });
+      const covered = await prisma.professionalServiceArea.count({ where: { professionalId, marketId: req.user.marketId, lifecycle: 'ACTIVE', divisionId: { in: normalizedAddress.divisions.map((entry) => entry.divisionId) } } });
+      if (covered === 0) return res.status(409).json({ error: 'Professional does not cover this address.', code: 'BOOKING_OUTSIDE_SERVICE_AREA' });
+    }
+
     const quote = calculateQuote({
       serviceAmountMinor,
       platformFeeBasisPoints: Math.round(CLIENT_PLATFORM_FEE_PERCENTAGE * 10_000),
@@ -85,13 +98,15 @@ exports.createBooking = async (req, res) => {
         data: {
           clientId: req.user.clientProfile?.id,
           professionalId,
+          marketId: req.user.marketId || undefined,
+          addressId: normalizedAddress?.id,
           scheduledDate: new Date(scheduledDate),
-          address,
-          city,
-          state,
-          postalCode,
-          latitude,
-          longitude,
+          address: normalizedAddress?.line1 || address,
+          city: normalizedAddress?.locality || normalizedAddress?.divisions.at(-1)?.division.canonicalName || city,
+          state: normalizedAddress?.divisions[0]?.division.canonicalName || state,
+          postalCode: normalizedAddress?.postalCode || postalCode,
+          latitude: normalizedAddress?.latitude ?? latitude,
+          longitude: normalizedAddress?.longitude ?? longitude,
           notes,
           totalPrice: money(quote.customerTotalMinor),
           serviceAmount: money(quote.serviceAmountMinor),
@@ -359,6 +374,7 @@ exports.cancelBooking = async (req, res) => {
       where: { id },
       include: {
         client: { select: { userId: true, country: true } },
+        market: { select: { country: { select: { isoAlpha2: true } } } },
         professional: { select: { userId: true } },
         payment: true,
       },

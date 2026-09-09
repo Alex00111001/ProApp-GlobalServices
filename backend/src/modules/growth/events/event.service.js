@@ -5,6 +5,7 @@ const { redactText } = require('../../observability/redaction');
 const { growthDataEnabled, growthPseudonymSecret } = require('../../../config/env');
 const env = require('../../../config/env');
 const { observeAttributionOperation } = require('../../observability/metrics');
+const { resolveMarketReference } = require('../../markets/market.service');
 
 const BLOCKED_KEYS = /password|token|authorization|secret|api[_-]?key|card|cvv|email|phone|(?:first|last|full)[_-]?name|address|postal|ip[_-]?address|user[_-]?agent|latitude|longitude|coordinates|^lat$|^lng$/i;
 
@@ -87,7 +88,7 @@ const assertReplayCompatible = (existing, input, identity) => {
   if (conflicts) throw operationalError('Event id was already used for a different event.', 'EVENT_ID_CONFLICT', 409);
 };
 
-const upsertLead = async ({ subject, identity, campaign, input, occurredAt, conversionType }, client) => {
+const upsertLead = async ({ subject, identity, campaign, input, occurredAt, conversionType, market }, client) => {
   if (!subject) return null;
   const countryCode = typeof input.geography?.countryCode === 'string' ? input.geography.countryCode.trim().toUpperCase() : undefined;
   const lead = await client.lead.upsert({
@@ -95,6 +96,7 @@ const upsertLead = async ({ subject, identity, campaign, input, occurredAt, conv
     update: {
       userId: identity.userId,
       professionalId: identity.professionalId,
+      ...(market ? { marketId: market.id, countryCode: market.code } : {}),
     },
     create: {
       subjectKey: subject.subjectKey,
@@ -105,6 +107,7 @@ const upsertLead = async ({ subject, identity, campaign, input, occurredAt, conv
       source: input.source || input.utm?.source,
       channel: input.channel,
       countryCode,
+      marketId: market?.id,
       firstSeenAt: occurredAt,
       lastSeenAt: occurredAt,
       status: conversionType ? 'CONVERTED' : ENGAGEMENT_EVENTS.has(input.eventName) ? 'ENGAGED' : 'NEW',
@@ -141,9 +144,10 @@ const trackEvent = async (input, identity = {}, client, context = {}, options = 
   const work = async (tx) => {
     if (pipelineEnabled) await assertBookingOwnership(input.bookingId, identity, tx);
     const campaign = pipelineEnabled ? await resolveCampaign(input, occurredAt, tx) : null;
-    const lead = pipelineEnabled ? await upsertLead({ subject, identity, campaign, input, occurredAt, conversionType }, tx) : null;
-    const contextData = telemetryMetadata(context);
     const countryCode = typeof input.geography?.countryCode === 'string' ? input.geography.countryCode.trim().toUpperCase() : undefined;
+    const market = await resolveMarketReference({ marketCode: countryCode, client: tx, requireActive: true });
+    const lead = pipelineEnabled ? await upsertLead({ subject, identity, campaign, input, occurredAt, conversionType, market }, tx) : null;
+    const contextData = telemetryMetadata(context);
     const event = await tx.marketingEvent.create({ data: {
       eventName: input.eventName,
       occurredAt,
@@ -167,6 +171,7 @@ const trackEvent = async (input, identity = {}, client, context = {}, options = 
       device: sanitizeMetadata(input.device),
       appVersion: input.appVersion,
       countryCode,
+      marketId: market?.id,
       geography: sanitizeMetadata(input.geography),
       metadata,
       requestId: contextData.requestId,

@@ -22,6 +22,15 @@ const assertEnabled = () => {
 const contextFields = (context = {}) => ({ requestId: context.requestId, correlationId: context.correlationId, traceId: context.traceId });
 const codeFor = (programId, ownerUserId, idempotencyKey) => `REF_${createHmac('sha256', env.jwtSecret).update(`${programId}:${ownerUserId}:${idempotencyKey}`).digest('hex').slice(0, 36).toUpperCase()}`;
 const rewardKey = (referralId, side) => createHash('sha256').update(`referral-reward:v1:${referralId}:${side}`).digest('hex');
+const marketCodeFor = (user) => user.market?.code || user.countryCode;
+
+const resolveVersionMarkets = async (database, enabledMarkets) => {
+  if (!env.marketsIdentityGeographyEnabled) return [];
+  const codes = [...new Set(enabledMarkets.map((code) => String(code).toUpperCase()))];
+  const markets = await database.market.findMany({ where: { code: { in: codes } }, select: { id: true, code: true } });
+  if (markets.length !== codes.length) throw operationalError('Referral version references an unknown market.', 'REFERRAL_MARKET_INVALID', 400);
+  return markets;
+};
 
 const assertActor = (user, actorType) => {
   const valid = actorType === 'CLIENT'
@@ -34,8 +43,12 @@ const assertProgramRuntime = async (program, version, user, database, now = new 
   if (program.status !== 'ACTIVE' || (program.effectiveAt && program.effectiveAt > now) || (program.endsAt && program.endsAt <= now)) {
     throw operationalError('Referral program is not active.', 'REFERRAL_PROGRAM_INACTIVE', 409);
   }
-  if (!version.enabledMarkets.includes(user.countryCode)) throw operationalError('Referral program is not available in this market.', 'REFERRAL_MARKET_INELIGIBLE', 403);
-  const enabled = await isFeatureEnabled(program.featureFlagKey, { environment: env.environment, country: user.countryCode, subjectId: user.id }, database);
+  const marketCode = marketCodeFor(user);
+  const normalizedEligible = !env.marketsIdentityGeographyEnabled || !version.markets
+    ? version.enabledMarkets.includes(marketCode)
+    : version.markets.some((entry) => entry.marketId === user.marketId || entry.market?.code === marketCode);
+  if (!normalizedEligible) throw operationalError('Referral program is not available in this market.', 'REFERRAL_MARKET_INELIGIBLE', 403);
+  const enabled = await isFeatureEnabled(program.featureFlagKey, { environment: env.environment, country: marketCode, subjectId: user.id }, database);
   if (!enabled) throw operationalError('Referral program is not enabled for this subject.', 'REFERRAL_FEATURE_DISABLED', 403);
 };
 
@@ -47,11 +60,12 @@ const createProgram = async ({ input, actorId, context = {}, database = prisma }
   assertEnabled();
   const digest = canonicalDigest(input.version);
   return database.$transaction(async (tx) => {
+    const markets = await resolveVersionMarkets(tx, input.version.enabledMarkets);
     const program = await tx.referralProgram.create({ data: {
       key: input.key, name: input.name, featureFlagKey: input.featureFlagKey,
       effectiveAt: input.effectiveAt ? new Date(input.effectiveAt) : undefined,
       endsAt: input.endsAt ? new Date(input.endsAt) : undefined, createdById: actorId,
-      versions: { create: { version: 1, ...input.version, configurationDigest: digest } },
+      versions: { create: { version: 1, ...input.version, configurationDigest: digest, ...(markets.length ? { markets: { create: markets.map((market) => ({ marketId: market.id })) } } : {}) } },
     }, include: { versions: true } });
     await audit(tx, { actorId, action: 'REFERRAL_PROGRAM_CREATED', resourceType: 'ReferralProgram', resourceId: program.id, reason: input.reason, after: { key: program.key, version: 1 }, context });
     await tx.outboxEvent.create({ data: { aggregateType: 'ReferralProgram', aggregateId: program.id, eventType: 'referral.program.created', payload: { programId: program.id, key: program.key, version: 1 }, metadata: telemetryMetadata(context) } });
@@ -67,7 +81,8 @@ const createProgramVersion = async ({ programId, input, actorId, context = {}, d
     if (!program) throw operationalError('Referral program not found.', 'REFERRAL_PROGRAM_NOT_FOUND', 404);
     if (!['DRAFT', 'PAUSED'].includes(program.status)) throw operationalError('Only draft or paused programs can receive a new version.', 'REFERRAL_PROGRAM_VERSION_LOCKED', 409);
     const version = program.currentVersion + 1;
-    const created = await tx.referralProgramVersion.create({ data: { programId, version, ...input.version, configurationDigest: canonicalDigest(input.version) } });
+    const markets = await resolveVersionMarkets(tx, input.version.enabledMarkets);
+    const created = await tx.referralProgramVersion.create({ data: { programId, version, ...input.version, configurationDigest: canonicalDigest(input.version), ...(markets.length ? { markets: { create: markets.map((market) => ({ marketId: market.id })) } } : {}) } });
     await tx.referralProgram.update({ where: { id: programId }, data: { currentVersion: version, rowVersion: { increment: 1 } } });
     await audit(tx, { actorId, action: 'REFERRAL_PROGRAM_VERSION_CREATED', resourceType: 'ReferralProgram', resourceId: programId, reason: input.reason, before: { version: program.currentVersion }, after: { version }, context });
     return created;
@@ -99,7 +114,7 @@ const createCode = async ({ input, user, context = {}, database = prisma }) => {
     await tx.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtextextended(${`referral-code:${input.programKey}:${user.id}`}, 0)) IS NULL AS acquired`);
     const program = await tx.referralProgram.findUnique({ where: { key: input.programKey } });
     if (!program) throw operationalError('Referral program not found.', 'REFERRAL_PROGRAM_NOT_FOUND', 404);
-    const version = await tx.referralProgramVersion.findUnique({ where: { programId_version: { programId: program.id, version: program.currentVersion } } });
+    const version = await tx.referralProgramVersion.findUnique({ where: { programId_version: { programId: program.id, version: program.currentVersion } }, include: { markets: { include: { market: { select: { code: true } } } } } });
     assertActor(user, version.referrerActorType);
     await assertProgramRuntime(program, version, user, tx);
     const existing = await tx.referralCode.findUnique({ where: { code: codeFor(program.id, user.id, input.idempotencyKey) } });
@@ -121,10 +136,10 @@ const claimReferral = async ({ input, user, context = {}, database = prisma, now
     if (code.status !== 'ACTIVE' || code.revokedAt) throw operationalError('Referral code is revoked.', 'REFERRAL_CODE_REVOKED', 409);
     if (code.expiresAt && code.expiresAt <= now) throw operationalError('Referral code is expired.', 'REFERRAL_CODE_EXPIRED', 409);
     if (code.ownerUserId === user.id) throw operationalError('Self-referral is prohibited.', 'REFERRAL_SELF_REFERRAL', 409);
-    const version = await tx.referralProgramVersion.findUnique({ where: { programId_version: { programId: code.programId, version: code.program.currentVersion } } });
+    const version = await tx.referralProgramVersion.findUnique({ where: { programId_version: { programId: code.programId, version: code.program.currentVersion } }, include: { markets: { include: { market: { select: { code: true } } } } } });
     assertActor(user, version.referredActorType);
     await assertProgramRuntime(code.program, version, user, tx, now);
-    if (code.owner.countryCode !== user.countryCode) throw operationalError('Cross-market referral claims are prohibited.', 'REFERRAL_CROSS_MARKET', 403);
+    if ((code.owner.marketId && user.marketId && code.owner.marketId !== user.marketId) || (!code.owner.marketId && code.owner.countryCode !== user.countryCode)) throw operationalError('Cross-market referral claims are prohibited.', 'REFERRAL_CROSS_MARKET', 403);
     const replay = await tx.referral.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
     if (replay) {
       if (replay.referralCodeId !== code.id || replay.referredUserId !== user.id) throw operationalError('Idempotency key conflict.', 'REFERRAL_IDEMPOTENCY_CONFLICT', 409);
@@ -136,7 +151,7 @@ const claimReferral = async ({ input, user, context = {}, database = prisma, now
     if (ownerUses >= version.maxReferralsPerOwner) throw operationalError('Referral owner limit reached.', 'REFERRAL_OWNER_LIMIT', 409);
     const claimed = await tx.referralCode.updateMany({ where: { id: code.id, status: 'ACTIVE', useCount: { lt: code.maxUses } }, data: { useCount: { increment: 1 } } });
     if (claimed.count !== 1) throw operationalError('Referral code usage limit reached.', 'REFERRAL_CODE_EXHAUSTED', 409);
-    const referral = await tx.referral.create({ data: { idempotencyKey: input.idempotencyKey, programId: code.programId, programVersionId: version.id, referralCodeId: code.id, referrerUserId: code.ownerUserId, referredUserId: user.id, market: user.countryCode, ...contextFields(context), riskAssessments: { create: { ruleVersion: 1, outcome: 'CLEAR', signals: { selfReferral: false, circularReferral: false, sameMarket: true }, evidenceDigest: canonicalDigest({ selfReferral: false, circularReferral: false, sameMarket: true }) } } } });
+    const referral = await tx.referral.create({ data: { idempotencyKey: input.idempotencyKey, programId: code.programId, programVersionId: version.id, referralCodeId: code.id, referrerUserId: code.ownerUserId, referredUserId: user.id, market: marketCodeFor(user), marketId: user.marketId || undefined, ...contextFields(context), riskAssessments: { create: { ruleVersion: 1, outcome: 'CLEAR', signals: { selfReferral: false, circularReferral: false, sameMarket: true }, evidenceDigest: canonicalDigest({ selfReferral: false, circularReferral: false, sameMarket: true }) } } } });
     await audit(tx, { actorId: user.id, action: 'REFERRAL_CREATED', resourceType: 'Referral', resourceId: referral.id, after: { programId: code.programId, market: referral.market }, context });
     await tx.outboxEvent.create({ data: { aggregateType: 'Referral', aggregateId: referral.id, eventType: 'referral.created', payload: { referralId: referral.id, market: referral.market, actorType: version.referredActorType }, metadata: telemetryMetadata(context) } });
     observeReferralOperation({ operation: 'referral_created', outcome: 'accepted' });
@@ -269,9 +284,11 @@ const setRewardStatus = async ({ rewardId, status, reason, actorId, context = {}
 const listEligiblePrograms = async ({ user, database = prisma, now = new Date() }) => {
   assertEnabled();
   const actorType = user.role === 'PROFESSIONAL' ? 'PROFESSIONAL' : 'CLIENT';
-  const programs = await database.referralProgram.findMany({ where: { status: 'ACTIVE', AND: [{ OR: [{ effectiveAt: null }, { effectiveAt: { lte: now } }] }, { OR: [{ endsAt: null }, { endsAt: { gt: now } }] }], versions: { some: { version: { gte: 1 }, referrerActorType: actorType, enabledMarkets: { has: user.countryCode } } } }, include: { versions: { where: { referrerActorType: actorType, enabledMarkets: { has: user.countryCode } }, orderBy: { version: 'desc' }, take: 1 } }, orderBy: { createdAt: 'desc' }, take: 50 });
+  const marketCode = marketCodeFor(user);
+  const versionMarketWhere = { referrerActorType: actorType, ...(env.marketsIdentityGeographyEnabled && user.marketId ? { markets: { some: { marketId: user.marketId } } } : { enabledMarkets: { has: marketCode } }) };
+  const programs = await database.referralProgram.findMany({ where: { status: 'ACTIVE', AND: [{ OR: [{ effectiveAt: null }, { effectiveAt: { lte: now } }] }, { OR: [{ endsAt: null }, { endsAt: { gt: now } }] }], versions: { some: { version: { gte: 1 }, ...versionMarketWhere } } }, include: { versions: { where: versionMarketWhere, orderBy: { version: 'desc' }, take: 1 } }, orderBy: { createdAt: 'desc' }, take: 50 });
   const output = [];
-  for (const program of programs) if (program.versions[0]?.version === program.currentVersion && await isFeatureEnabled(program.featureFlagKey, { environment: env.environment, country: user.countryCode, subjectId: user.id }, database)) output.push({ id: program.id, key: program.key, name: program.name, effectiveAt: program.effectiveAt, endsAt: program.endsAt, version: program.currentVersion, rewardType: program.versions[0].rewardType });
+  for (const program of programs) if (program.versions[0]?.version === program.currentVersion && await isFeatureEnabled(program.featureFlagKey, { environment: env.environment, country: marketCode, subjectId: user.id }, database)) output.push({ id: program.id, key: program.key, name: program.name, effectiveAt: program.effectiveAt, endsAt: program.endsAt, version: program.currentVersion, rewardType: program.versions[0].rewardType });
   return output;
 };
 

@@ -5,7 +5,7 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "verify:backend": "npm --prefix backend run build && npm --prefix backend test",
+    "verify:backend": "npm --prefix backend run geography:validate && npm --prefix backend run build && npm --prefix backend test",
     "verify:admin": "npm --prefix admin-web run lint && npm --prefix admin-web run test && npm --prefix admin-web run build",
     "verify:mobile-client": "npm --prefix mobile-client run typecheck && npm --prefix mobile-client run test:ci",
     "verify:mobile-professional": "npm --prefix mobile-professional run typecheck",

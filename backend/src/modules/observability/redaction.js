@@ -1,6 +1,6 @@
 const { createHash } = require('node:crypto');
 
-const SENSITIVE_KEY = /authorization|cookie|password|passcode|token|secret|api[_-]?key|card|cvv|document|email|phone|(?:first|last|full)[_-]?name|address|postal|iban|routing|bank[_-]?account|account[_-]?number|payment[_-]?method/i;
+const SENSITIVE_KEY = /authorization|cookie|password|passcode|token|secret|api[_-]?key|card|cvv|document|identity|dni|nie|cpf|rut|run|passport|email|phone|(?:first|last|full)[_-]?name|address|postal|latitude|longitude|coordinates|iban|routing|bank[_-]?account|account[_-]?number|payment[_-]?method/i;
 const MAX_STRING_LENGTH = 2_000;
 
 const redactText = (value) => String(value ?? '')
@@ -11,6 +11,8 @@ const redactText = (value) => String(value ?? '')
   .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, '[REDACTED_EMAIL]')
   .replace(/(?<!\d)(?:\d[ -]?){13,19}(?!\d)/g, '[REDACTED_PAYMENT_NUMBER]')
   .replace(/(?<!\d)(?:\+?\d[\s().-]?){8,15}(?!\d)/g, '[REDACTED_PHONE]')
+  .replace(/\b(?:[XYZ]\d{7}|\d{8})[A-Z]\b/gi, '[REDACTED_IDENTITY_DOCUMENT]')
+  .replace(/\b\d{1,2}(?:\.\d{3}){2}-[0-9K]\b/gi, '[REDACTED_IDENTITY_DOCUMENT]')
   .replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, '[REDACTED_IP]')
   .replace(/\b(?:password|secret|token|api[_-]?key)\s*[=:]\s*[^\s,;]+/gi, '$1=[REDACTED]')
   .slice(0, MAX_STRING_LENGTH);

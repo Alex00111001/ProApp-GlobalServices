@@ -26,6 +26,7 @@ const eventRoutes = require('./routes/event.routes');
 const privacyRoutes = require('./routes/privacy.routes');
 const referralRoutes = require('./routes/referral.routes');
 const operationsRoutes = require('./routes/operations.routes');
+const marketsRoutes = require('./routes/markets.routes');
 const adminV1Routes = require('./routes/admin-v1.routes');
 const paymentController = require('./controllers/payment.controller');
 
@@ -95,6 +96,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/v1/privacy', privacyRoutes);
 app.use('/api/v1/referrals', referralRoutes);
+app.use('/api/v1/markets', marketsRoutes);
 app.use('/api/admin/operations', operationsRoutes);
 
 app.use((req, res) => {

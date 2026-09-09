@@ -85,6 +85,12 @@ const automationQueueAge = new Prometheus.Histogram({
   buckets: [1, 5, 15, 30, 60, 300, 900, 3600, 21600],
   registers: [registry],
 });
+const marketOperations = new Prometheus.Counter({
+  name: 'homeservices_market_operations_total',
+  help: 'Market, policy, geography, identity and service-area outcomes with bounded non-PII labels.',
+  labelNames: ['operation', 'market', 'outcome', 'reason'],
+  registers: [registry],
+});
 
 const boundedLabel = (value, fallback = 'unknown') => {
   const label = String(value || '').toLowerCase();
@@ -143,6 +149,9 @@ const observeAutomationOperation = ({ operation, outcome, reason = 'none', durat
   if (Number.isFinite(durationSeconds)) automationExecutionDuration.observe({ outcome: boundedLabel(outcome) }, Math.max(0, durationSeconds));
   if (Number.isFinite(queueAgeSeconds)) automationQueueAge.observe({ queue: boundedLabel(queue) }, Math.max(0, queueAgeSeconds));
 };
+const observeMarketOperation = ({ operation, market = 'unknown', outcome, reason = 'none' }) => marketOperations.inc({
+  operation: boundedLabel(operation), market: boundedLabel(market), outcome: boundedLabel(outcome), reason: boundedLabel(reason),
+});
 
 const metricsHandler = async (req, res, next) => {
   try {
@@ -164,6 +173,7 @@ module.exports = {
   observeAttributionOperation,
   observeReferralOperation,
   observeAutomationOperation,
+  observeMarketOperation,
   registry,
   setOutboxDepth,
 };

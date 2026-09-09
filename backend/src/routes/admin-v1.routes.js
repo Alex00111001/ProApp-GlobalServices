@@ -7,6 +7,7 @@ const growthController = require('../controllers/admin-growth.controller');
 const privacyController = require('../controllers/admin-privacy.controller');
 const referralsController = require('../controllers/admin-referrals.controller');
 const automationController = require('../controllers/admin-automation.controller');
+const marketsController = require('../controllers/admin-markets.controller');
 const { authenticateAdmin } = require('../middleware/authenticate-admin');
 const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
@@ -97,6 +98,16 @@ router.post('/automation/definitions/:id/versions', requirePermission(PERMISSION
 router.patch('/automation/definitions/:id/status', requirePermission(PERMISSIONS.AUTOMATION_ACTIVATE), automationController.setStatus);
 router.get('/automation/executions', requirePermission(PERMISSIONS.AUTOMATION_EXECUTION_READ), automationController.executions);
 router.get('/automation/dead-letter', requirePermission(PERMISSIONS.AUTOMATION_EXECUTION_READ), automationController.deadLetter);
+
+router.get('/markets', requirePermission(PERMISSIONS.MARKETS_READ), marketsController.markets);
+router.patch('/markets/:marketCode/status', requirePermission(PERMISSIONS.MARKETS_MANAGE), marketsController.setStatus);
+router.get('/geography/imports', requirePermission(PERMISSIONS.GEOGRAPHY_READ), marketsController.imports);
+router.post('/geography/imports', requirePermission(PERMISSIONS.GEOGRAPHY_MANAGE), marketsController.importGeography);
+router.get('/geography/divisions', requirePermission(PERMISSIONS.GEOGRAPHY_READ), marketsController.divisions);
+router.get('/identity/policies', requirePermission(PERMISSIONS.IDENTITY_POLICY_READ), marketsController.identityPolicies);
+router.post('/identity/policies/:id/review', requirePermission(PERMISSIONS.IDENTITY_POLICY_MANAGE), marketsController.reviewIdentityPolicy);
+router.patch('/identity/policies/:id/status', requirePermission(PERMISSIONS.IDENTITY_POLICY_MANAGE), marketsController.setIdentityPolicyStatus);
+router.get('/identity/documents', requirePermission(PERMISSIONS.IDENTITY_DOCUMENTS_READ_MASKED), marketsController.identityDocuments);
 
 router.get('/audit', requirePermission(PERMISSIONS.AUDIT_READ), controller.auditLogs);
 router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), controller.roles);

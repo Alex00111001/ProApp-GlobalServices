@@ -1,6 +1,8 @@
 const prisma = require('../../config/prisma');
 const { writeAuditLog } = require('../audit/audit.service');
 const { asynchronousEvidence, operationalError } = require('./privacy-utils');
+const env = require('../../config/env');
+const { resolveMarketReference } = require('../markets/market.service');
 
 const policySelect = Object.freeze({
   id: true,
@@ -8,6 +10,7 @@ const policySelect = Object.freeze({
   purpose: true,
   version: true,
   countryCode: true,
+  marketId: true,
   locale: true,
   status: true,
   legalBasis: true,
@@ -77,8 +80,10 @@ const createPolicy = async ({ input, req, database = prisma }) => database.$tran
     throw operationalError('The first policy version must be 1.', 'CONSENT_POLICY_VERSION_SEQUENCE', 409);
   }
   const { reason, ...data } = input;
+  const market = await resolveMarketReference({ marketCode: input.countryCode, client: tx });
   const policy = await tx.consentPolicy.create({ data: {
     ...data,
+    marketId: market?.id,
     status: 'DRAFT',
     reviewStatus: 'PENDING',
     createdById: req.user.id,
@@ -126,6 +131,10 @@ const setPolicyStatus = async ({ id, status, effectiveAt, reason, req, database 
       id: { not: id }, purpose: current.purpose, countryCode: current.countryCode, locale: current.locale, status: 'ACTIVE',
     }, select: { id: true } });
     if (conflict) throw operationalError('Retire the currently active policy before activating another version.', 'ACTIVE_CONSENT_POLICY_CONFLICT', 409);
+    if (env.marketsIdentityGeographyEnabled) {
+      const market = current.marketId ? await tx.market.findUnique({ where: { id: current.marketId }, select: { status: true } }) : null;
+      if (!market || market.status !== 'ACTIVE') throw operationalError('Consent policy market is not active.', 'CONSENT_POLICY_MARKET_INACTIVE', 409);
+    }
   } else if (status === 'RETIRED') {
     if (current.status !== 'ACTIVE') throw operationalError('Only an active policy can be retired.', 'INVALID_CONSENT_POLICY_TRANSITION', 409);
   } else {
