@@ -7,8 +7,9 @@
 - Architecture/ADR: `c68cd572c9ca0467186a03e9834a013aaa6ca68d`
 - Backend/domain implementation: `0b4bd43a`
 - Product surfaces: `bc5bb4eb`
+- CI gate correction: `cfab43b575f2929d48b2123ec43ae192a9390754`
 - Documentation/release revision: pending publication
-- Status: **closure candidate; remote CI pending**
+- Status: **complete in isolated test/CI**
 - Production activation: **NO**
 - F9 resumed: **NO**
 - F10 started: **NO**
@@ -66,15 +67,15 @@ The Chilean snapshot remains activation-blocked until the official CUT relation 
 - Admin Web lint, 9/9 tests and production build passed.
 - Client TypeScript and its dynamic Registration Schema test passed: 1/1.
 - Professional TypeScript passed.
-- Full root verification, dependency audits, working-tree secret scan and remote PostgreSQL/Supabase-compatible CI evidence are pending this release-record publication.
+- Clean ephemeral PostgreSQL rehearsal applied all 22 migrations, synchronized RBAC, passed the baseline audit and passed the focused F8.5 HTTP/database scenario: 2/2.
+- All five npm audit surfaces report zero vulnerabilities after updating the Client's nested `js-yaml` from 3.15.1 to 3.15.2.
+- [Platform verification 34359300711](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34359300711) passed Build/unit/contract, PostgreSQL 17 migrations/integration and full-history Secret Scan for correction SHA `cfab43b575f2929d48b2123ec43ae192a9390754`.
 
-## Closure gates still pending
+## Remote closure and defect evidence
 
-- Apply every migration to a clean isolated PostgreSQL 17 database and run all integration scenarios, including the focused F8.5 fixture.
-- Prove forced RLS/default deny and unchanged backend bypass behavior in that database.
-- Run all five dependency audits and the working-tree/full-history secret scans.
-- Publish this branch and obtain a completely green GitHub Actions Platform Verification run for the final documentation revision.
-- Update the development control record to `HECHO` only after the exact CI evidence is recorded.
+Initial run [34355200714](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34355200714) proved that migrations and baseline checks passed, but exposed two real closure defects: the Client lockfile retained vulnerable `js-yaml` 3.15.1, and the new integration fixture called registration at `/api/v1/auth/register` instead of the preserved public contract `/api/auth/register`. No runtime API was changed and no gate was weakened. Commit `cfab43b575f2929d48b2123ec43ae192a9390754` updated only the transitively resolved safe version and the fixture URL. Replacement run `34359300711` passed all three jobs.
+
+PostgreSQL 17 applied the full 22-migration history, synchronized RBAC, passed baseline compatibility and ran the complete integration/concurrency suite. That suite includes forced RLS/default-deny assertions, trusted backend-role behavior and the focused F8.5 registration/identity/address/audit scenario. Secret Scan checked the committed branch's full history.
 
 ## Residual risks and activation blockers
 
@@ -84,4 +85,4 @@ The Chilean snapshot remains activation-blocked until the official CUT relation 
 - Store-signed mobile builds, physical-device onboarding and operational load/soak remain later release-readiness gates.
 - No production deployment or market activation is authorized by this record.
 
-This revision remains **PARCIAL** until every closure gate is green. F9 is preserved and paused; even after F8.5 closes it becomes dependency-ready only and requires a new explicit instruction to resume.
+F8.5 is complete in the isolated test/CI scope. Production and all seeded markets remain inactive. F9 is preserved, paused and dependency-ready only; it requires a new explicit instruction to resume.

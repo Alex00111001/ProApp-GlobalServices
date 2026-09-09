@@ -291,11 +291,11 @@ See [F8 architecture](REFERRALS_AUTOMATION.md), [ADR 0003](adr/0003-referrals-du
 
 ### Phase 8.5 — Markets, identity and geography
 
-Status: **in progress from F8 SHA `dc17780b0d026b422a9917c0bfbc20c0edddcbda` on 2026-09-09**. F9 is **PAUSED — architectural dependency F8.5**; its recoverable working material is preserved, but no F9 functional implementation may continue. Production remains inactive.
+Status: **completed in the isolated test environment on 2026-09-09** from F8 SHA `dc17780b0d026b422a9917c0bfbc20c0edddcbda`. [Platform verification 34359300711](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34359300711) passed build/unit/contract, five dependency audits, clean PostgreSQL 17 migrations/integration and full-history Secret Scan. F9 is **PAUSED — dependency-ready after F8.5**; its recoverable working material remains preserved and requires a new explicit instruction to resume. Production remains inactive.
 
 F8.5 separates Country from operating Market; adds versioned server-authoritative MarketPolicy; closed ES/BR/CL identity adapters; protected identity evidence; normalized, hierarchical and officially sourced geography; Address distinct from ProfessionalServiceArea; declarative Registration Schema; narrow RBAC/RLS/audit/telemetry; and dynamic Client, Professional, and Admin consumers. It preserves F3 as financial authority, F7 as consent/legal-evidence authority, and F8 lifecycle/idempotency/automation boundaries.
 
-Acceptance requires the full gate in [the F8.5 architecture](MARKETS_IDENTITY_GEOGRAPHY.md), [ADR 0004](adr/0004-market-identity-geography.md), and the release record. Initial ES/BR/CL records remain disabled; architecture/data readiness never activates a market.
+The full acceptance gate is recorded in [the F8.5 architecture](MARKETS_IDENTITY_GEOGRAPHY.md), [ADR 0004](adr/0004-market-identity-geography.md), [the runbook](runbooks/MARKETS_IDENTITY_GEOGRAPHY.md), and [the release evidence](releases/2026-09-09-f8-5-markets-identity-geography.md). Initial ES/BR/CL records remain disabled; architecture/data readiness never activates a market.
 
 ### Phases 9–10
 
