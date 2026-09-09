@@ -194,3 +194,7 @@ Migrations are additive:
 Rollback is application-first: set both domain flags and worker flag to false, stop the worker, keep Admin read access for investigation and preserve all evidence. Do not drop tables, delete deliveries/executions, rewrite versions, relax unique constraints or remove RLS. Database rollback is allowed only for a demonstrably unused migration in an isolated environment.
 
 Operational procedures are in [the F8 runbook](runbooks/REFERRALS_AUTOMATION.md), and the architecture decision is recorded in [ADR 0003](adr/0003-referrals-durable-automation.md).
+
+## F8.5 market normalization
+
+F8.5 adds `ReferralProgramVersionMarket` and `Referral.marketId` as normalized authority while retaining `enabledMarkets` and `Referral.market` as compatibility projections. When F8.5 is enabled, every configured code must resolve to an existing Market and runtime eligibility uses the relation; unknown or cross-market claims fail closed. Referral lifecycle, idempotency, reward calculation, consent checks, automation delivery and the F3 financial boundary are unchanged.
