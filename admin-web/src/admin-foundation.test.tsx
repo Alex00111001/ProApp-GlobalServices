@@ -7,6 +7,7 @@ import { OperationsPage } from './pages/OperationsPage'
 import { GrowthPage } from './pages/GrowthPage'
 import { PrivacyAttributionPage } from './pages/PrivacyAttributionPage'
 import { ReferralsAutomationPage } from './pages/ReferralsAutomationPage'
+import { MarketsPage } from './pages/MarketsPage'
 import { navigation } from './navigation'
 import { api } from './lib/api'
 import { session } from './state/session'
@@ -45,6 +46,7 @@ describe('permission-derived navigation', () => {
     expect(navigation.find((item) => item.to === '/marketing')?.permissions).toEqual(['marketing.read'])
     expect(navigation.find((item) => item.to === '/privacy-attribution')?.permissions).toContain('privacy.policy.read')
     expect(navigation.find((item) => item.to === '/referrals-automation')?.permissions).toContain('automation.execution.read')
+    expect(navigation.find((item) => item.to === '/markets')?.permissions).toContain('markets.read')
   })
 
   it('renders only destinations granted by the effective session permissions', async () => {
@@ -54,6 +56,30 @@ describe('permission-derived navigation', () => {
     expect(screen.getByRole('link', { name: 'Dashboard' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Usuarios' })).toBeTruthy()
     expect(screen.queryByRole('link', { name: 'Auditoría' })).toBeNull()
+  })
+})
+
+describe('F8.5 markets, identity, and geography', () => {
+  it('renders server-owned lifecycle, policy, and official import evidence without read-only mutations', async () => {
+    const f85Session = { ...sessionPayload, permissions: ['markets.read', 'geography.read', 'identity.policy.read'] }
+    const now = new Date().toISOString()
+    const markets = { items: [{ code: 'BR', countryCode: 'BR', status: 'DISABLED', currencyCode: 'BRL', defaultLocale: 'pt-BR', supportedLocales: ['pt-BR', 'en'], capabilities: { registration: true }, currentPolicyVersion: 1, effectiveAt: null, updatedAt: now, policy: { version: 1, status: 'DRAFT', reviewStatus: 'PENDING', reviewReference: null, schemaDigest: 'a'.repeat(64) }, counts: { users: 0, serviceAreas: 0 } }], pagination: { page: 1, limit: 50, totalItems: 1, totalPages: 1 } }
+    const policies = { items: [{ id: 'policy-br-1', version: 1, status: 'DRAFT', reviewStatus: 'PENDING', reviewReference: null, schemaDigest: 'a'.repeat(64), createdBy: null, reviewedBy: null, reviewedAt: null, effectiveAt: null, retiredAt: null, createdAt: now, market: { code: 'BR', status: 'DISABLED' } }], pagination: markets.pagination }
+    const imports = { items: [{ id: 'import-br-1', sourceKey: 'IBGE_DTB', sourceVersion: '2025', status: 'COMPLETED', rowCount: 5598, insertedCount: 5598, updatedCount: 0, deprecatedCount: 0, checksumSha256: 'b'.repeat(64), retrievedAt: now, completedAt: now, country: { isoAlpha2: 'BR' } }], pagination: markets.pagination }
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input)
+      const value = url.includes('/auth/login') ? f85Session : url.includes('/geography/imports') ? imports : url.includes('/identity/policies') ? policies : markets
+      return new Response(JSON.stringify(value), { status: url.includes('/auth/login') ? 201 : 200, headers: { 'content-type': 'application/json' } })
+    }))
+    await session.login('admin@example.com', 'correct-password')
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(<QueryClientProvider client={queryClient}><MemoryRouter><MarketsPage /></MemoryRouter></QueryClientProvider>)
+    expect(await screen.findByText('Mercados configurados')).toBeTruthy()
+    expect(await screen.findByText('Políticas versionadas')).toBeTruthy()
+    expect(await screen.findByText('Importaciones versionadas')).toBeTruthy()
+    expect(screen.getByText('IBGE_DTB')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Cambiar estado' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Aprobar' })).toBeNull()
   })
 })
 

@@ -32,6 +32,7 @@ export default function LoginScreen() {
             {loading ? <ActivityIndicator color={COLORS.white} /> : <><Text style={styles.buttonText}>Iniciar sesión</Text><Ionicons name="arrow-forward" size={20} color={COLORS.white} /></>}
           </Pressable>
         </View>
+        <Pressable style={styles.registerLink} onPress={() => router.push('/auth/register' as any)}><Text style={styles.registerText}>Crear cuenta profesional</Text></Pressable>
         <Text style={styles.help}>Acceso seguro para profesionales registrados</Text>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -44,5 +45,5 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: '800', color: COLORS.text }, subtitle: { color: COLORS.muted, fontSize: 15, lineHeight: 22, marginTop: SPACING.sm, marginBottom: SPACING.xl }, form: { backgroundColor: COLORS.surface, borderRadius: RADIUS.lg, padding: SPACING.lg, borderWidth: 1, borderColor: COLORS.border }, label: { color: COLORS.text, fontSize: 13, fontWeight: '700', marginBottom: SPACING.sm, marginTop: SPACING.sm },
   inputWrap: { minHeight: 54, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.border, paddingHorizontal: SPACING.md, flexDirection: 'row', alignItems: 'center', backgroundColor: '#FBFCFE' }, input: { flex: 1, color: COLORS.text, fontSize: 15, marginLeft: SPACING.sm, paddingVertical: 0 },
   errorBox: { flexDirection: 'row', backgroundColor: '#FEECEC', borderRadius: RADIUS.sm, padding: SPACING.md, marginTop: SPACING.md }, error: { color: COLORS.danger, flex: 1, marginLeft: SPACING.sm, fontSize: 13 },
-  button: { minHeight: 54, borderRadius: RADIUS.md, backgroundColor: COLORS.primary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, marginTop: SPACING.lg }, buttonDisabled: { opacity: 0.5 }, buttonText: { color: COLORS.white, fontSize: 16, fontWeight: '700' }, help: { color: COLORS.muted, textAlign: 'center', fontSize: 12, marginTop: SPACING.xl },
+  button: { minHeight: 54, borderRadius: RADIUS.md, backgroundColor: COLORS.primary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, marginTop: SPACING.lg }, buttonDisabled: { opacity: 0.5 }, buttonText: { color: COLORS.white, fontSize: 16, fontWeight: '700' }, registerLink: { alignItems: 'center', marginTop: SPACING.lg }, registerText: { color: COLORS.primary, fontWeight: '700' }, help: { color: COLORS.muted, textAlign: 'center', fontSize: 12, marginTop: SPACING.xl },
 });

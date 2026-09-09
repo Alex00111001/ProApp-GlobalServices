@@ -21,8 +21,8 @@ interface AuthState {
     lastName: string;
     phone: string;
     role: 'CLIENT' | 'PROFESSIONAL';
-    countryCode: 'ES' | 'BR' | 'CL';
-    locale: 'es' | 'en' | 'pt';
+    countryCode: string;
+    locale: string;
     acceptTerms: true;
     acceptPrivacy: true;
     marketingConsent: boolean;
@@ -30,6 +30,10 @@ interface AuthState {
     privacyVersion: string;
     marketingPolicyId?: string;
     marketingPolicyVersion?: number;
+    marketCode?: string;
+    registrationSchemaVersion?: string;
+    identityDocument?: { type: string; value: string };
+    normalizedAddress?: { line1: string; line2?: string; locality?: string; postalCode?: string; divisionIds: string[] };
   }) => Promise<void>;
   logout: () => Promise<void>;
   loadUser: () => Promise<void>;
