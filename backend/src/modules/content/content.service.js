@@ -103,6 +103,10 @@ const reviewContent = async ({ versionId, decision, reason, actorId, req, databa
 const qualityGate = async (version, database) => {
   if (version.robotsDirective !== 'index,follow') return false;
   if (!version.canonicalPath || version.summary.length < 80 || version.body.length < 3) return false;
+  if (version.entry.type === 'SERVICE_PAGE' && !version.serviceId) return false;
+  if (version.entry.type === 'CATEGORY_PAGE' && !version.categoryId) return false;
+  if (version.entry.type === 'LOCATION_PAGE' && !version.divisionId) return false;
+  if (version.categoryId) { const category = await database.category.findUnique({ where: { id: version.categoryId }, select: { isActive: true } }); if (!category?.isActive) return false; }
   if (version.serviceId) { const service = await database.service.findUnique({ where: { id: version.serviceId }, select: { isActive: true } }); if (!service?.isActive) return false; }
   if (version.divisionId) { const division = await database.administrativeDivision.findUnique({ where: { id: version.divisionId }, select: { lifecycle: true } }); if (division?.lifecycle !== 'ACTIVE') return false; }
   return true;

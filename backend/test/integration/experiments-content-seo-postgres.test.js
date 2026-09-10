@@ -71,14 +71,14 @@ test('PostgreSQL enforces deterministic concurrent assignment and exposure idemp
 });
 
 test('editorial four-eyes flow publishes immutable market-aware content and deterministic sitemap', async () => {
-  const entry = await createEntry({ input: { key: `${runId}.cleaning`, type: 'SERVICE_PAGE', marketCode }, actorId: created.author.id, req: reqFor(created.author.id, 'content-entry') });
+  const entry = await createEntry({ input: { key: `${runId}.cleaning`, type: 'LANDING_PAGE', marketCode }, actorId: created.author.id, req: reqFor(created.author.id, 'content-entry') });
   const version = await createContentVersion({ entryId: entry.id, input: { locale: 'es-ES', slug: `cleaning-${suffix.toLowerCase()}`, title: 'Integration cleaning service', summary: 'A reviewed and sufficiently detailed integration summary for a real market-aware public service page.', body: [{ type: 'heading', text: 'Reliable cleaning' }, { type: 'paragraph', text: 'This content is persisted, reviewed, approved, and rendered on the server.' }, { type: 'callout', text: 'Availability is derived from the active market.' }], seoTitle: 'Integration cleaning service', metaDescription: 'Reviewed integration content for a market-aware cleaning service page.', robotsDirective: 'index,follow', qualityEvidence: { checklist: 'editorial-and-seo-approved' }, structuredData: { '@context': 'https://schema.org', '@type': 'Service', name: 'Integration cleaning service' } }, actorId: created.author.id, req: reqFor(created.author.id, 'content-version') });
   await submitForReview({ versionId: version.id, actorId: created.author.id, req: reqFor(created.author.id, 'submit') });
   await assert.rejects(() => reviewContent({ versionId: version.id, decision: 'APPROVED', reason: 'Author must not self approve content.', actorId: created.author.id, req: reqFor(created.author.id, 'self-review') }), (error) => error.code === 'CONTENT_FOUR_EYES_REQUIRED');
   await reviewContent({ versionId: version.id, decision: 'APPROVED', reason: 'Independent editorial and SEO review completed.', actorId: created.reviewer.id, req: reqFor(created.reviewer.id, 'review') });
   const publication = await schedulePublication({ versionId: version.id, publishAt: new Date(Date.now() - 1000), actorId: created.reviewer.id, req: reqFor(created.reviewer.id, 'publish') });
   assert.equal(publication.status, 'PUBLISHED'); assert.equal(publication.indexable, true);
-  const page = await getPublishedContent({ marketCode, locale: 'es-ES', type: 'SERVICE_PAGE', slug: version.slug });
+  const page = await getPublishedContent({ marketCode, locale: 'es-ES', type: 'LANDING_PAGE', slug: version.slug });
   assert.equal(page.seo.robots, 'index,follow'); assert.equal(page.title, version.title);
   const first = await buildSitemap({ marketCode, locale: 'es-ES' }); const second = await buildSitemap({ marketCode, locale: 'es-ES' });
   assert.equal(first.digest, second.digest); assert.equal(first.urls.some((url) => url.location.endsWith(version.canonicalPath)), true);

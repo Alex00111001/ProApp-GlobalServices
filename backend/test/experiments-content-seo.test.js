@@ -18,6 +18,7 @@ const { bucketFor, evaluateAudience, selectVariant, validateAudience, validateDe
 const { criticalValue, summarizeAnalysis, wilson } = require('../src/modules/experiments/statistics');
 const { TRANSITIONS, assignVariant, recordExposure } = require('../src/modules/experiments/experiment.service');
 const { assertSafePath, canonicalPathFor, sanitizeBlocks, validateContentVersion } = require('../src/modules/content/content-registry');
+const { qualityGate } = require('../src/modules/content/content.service');
 const { assertNoRedirectLoop } = require('../src/modules/seo/seo.service');
 const { PERMISSIONS, ROLE_PERMISSIONS } = require('../src/modules/identity/permission-catalog');
 const { TRIGGER_REGISTRY } = require('../src/modules/automation/registries');
@@ -157,6 +158,15 @@ test('content version derives canonical market URL and rejects fabricated SEO cl
   assert.equal(parsed.canonicalPath, '/es/es-es/service-page/limpieza-hogar');
   assert.throws(() => validateContentVersion({ ...base, structuredData: { '@context': 'https://schema.org', '@type': 'Service', aggregateRating: { ratingValue: 5 } } }), (error) => error.code === 'SEO_STRUCTURED_DATA_UNSUPPORTED_CLAIM');
   assert.throws(() => validateContentVersion({ ...base, slug: '../admin' }), (error) => error.code === 'CONTENT_SLUG_INVALID');
+});
+
+test('programmatic SEO remains noindex without authoritative service, category or geography', async () => {
+  const common = { robotsDirective: 'index,follow', canonicalPath: '/es/es-es/page/test', summary: 'A'.repeat(80), body: [{}, {}, {}] };
+  const database = { service: { findUnique: async () => ({ isActive: true }) }, category: { findUnique: async () => ({ isActive: true }) }, administrativeDivision: { findUnique: async () => ({ lifecycle: 'ACTIVE' }) } };
+  assert.equal(await qualityGate({ ...common, entry: { type: 'SERVICE_PAGE' }, serviceId: null }, database), false);
+  assert.equal(await qualityGate({ ...common, entry: { type: 'CATEGORY_PAGE' }, categoryId: null }, database), false);
+  assert.equal(await qualityGate({ ...common, entry: { type: 'LOCATION_PAGE' }, divisionId: null }, database), false);
+  assert.equal(await qualityGate({ ...common, entry: { type: 'LANDING_PAGE' } }, database), true);
 });
 
 test('URL contract blocks traversal, encoded separators and unsafe paths', () => {
