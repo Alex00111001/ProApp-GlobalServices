@@ -126,7 +126,7 @@ test('AI execution duplicate resolution is idempotent and rejects payload confli
 
 test('model routing enforces provider capability, purpose and data-class policy', async () => {
   const policy = { id: randomUUID(), key: 'policy', status: 'ACTIVE', capability: 'text-summary', purposeAllowlist: ['operations'], operationAllowlist: ['SUMMARIZE_SUPPLY_DEMAND_ANOMALY'], maximumDataClass: 'INTERNAL', marketAllowlist: [], localeAllowlist: [], provider: { id: randomUUID(), key: 'provider', status: 'ACTIVE', capabilities: [], purposeAllowlist: ['operations'], maximumDataClass: 'INTERNAL' } };
-  const database = { aIModelPolicy: { findMany: async () => [policy] }, aIEvaluation: { findFirst: async () => ({ id: randomUUID(), status: 'PASSED' }) } };
+  const database = { aIModelPolicy: { findMany: async () => [policy] }, aIEvaluation: { findMany: async () => [{ id: randomUUID(), status: 'PASSED', modelPolicyKey: policy.key }] } };
   await assert.rejects(() => routeModel({ execution: { dataClass: 'INTERNAL', safeInput: { locale: 'es-ES' } }, version: { id: randomUUID(), requiredCapability: 'text-summary' }, definition: { kind: 'SUMMARIZE_SUPPLY_DEMAND_ANOMALY', purpose: 'operations' }, database }), { code: 'AI_MODEL_ROUTE_UNAVAILABLE' });
   policy.provider.capabilities.push('text-summary');
   assert.equal((await routeModel({ execution: { dataClass: 'INTERNAL', safeInput: { locale: 'es-ES' } }, version: { id: randomUUID(), requiredCapability: 'text-summary' }, definition: { kind: 'SUMMARIZE_SUPPLY_DEMAND_ANOMALY', purpose: 'operations' }, database })).provider.id, policy.provider.id);
