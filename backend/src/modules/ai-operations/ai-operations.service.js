@@ -143,15 +143,17 @@ const queueExecution = async ({ operationId, idempotencyKey, input, dataClass, a
 
 const routeModel = async ({ execution, version, definition, database = prisma, now = new Date() }) => {
   const policies = await database.aIModelPolicy.findMany({ where: { status: 'ACTIVE', effectiveAt: { lte: now }, AND: [{ OR: [{ retiredAt: null }, { retiredAt: { gt: now } }] }, ...(execution.market ? [{ OR: [{ marketAllowlist: { isEmpty: true } }, { marketAllowlist: { has: execution.market.code } }] }] : [])], capability: version.requiredCapability, operationAllowlist: { has: definition.kind }, purposeAllowlist: { has: definition.purpose }, maximumDataClass: { in: Object.keys(DATA_CLASS_RANK).filter((key) => DATA_CLASS_RANK[key] >= DATA_CLASS_RANK[execution.dataClass]) } }, include: { provider: true }, orderBy: [{ routingPriority: 'asc' }, { version: 'desc' }] });
-  const policy = policies.find((item) => item.provider.status === 'ACTIVE'
+  const eligiblePolicies = policies.filter((item) => item.provider.status === 'ACTIVE'
     && item.provider.capabilities.includes(version.requiredCapability)
     && item.provider.purposeAllowlist.includes(definition.purpose)
     && DATA_CLASS_RANK[item.provider.maximumDataClass] >= DATA_CLASS_RANK[execution.dataClass]
     && (!item.localeAllowlist.length || item.localeAllowlist.includes(execution.safeInput.locale)));
-  if (!policy) throw operationalError('No approved model route is available.', 'AI_MODEL_ROUTE_UNAVAILABLE', 503);
-  const evaluation = await database.aIEvaluation.findFirst({ where: { operationVersionId: version.id, status: 'PASSED', modelPolicyKey: policy.key }, orderBy: { evaluatedAt: 'desc' } });
-  if (!evaluation) throw operationalError('Selected model has no passing evaluation.', 'AI_MODEL_EVALUATION_REQUIRED', 409);
-  return { policy, provider: policy.provider, evaluation };
+  if (!eligiblePolicies.length) throw operationalError('No approved model route is available.', 'AI_MODEL_ROUTE_UNAVAILABLE', 503);
+  const evaluations = await database.aIEvaluation.findMany({ where: { operationVersionId: version.id, status: 'PASSED', modelPolicyKey: { in: eligiblePolicies.map((item) => item.key) } }, orderBy: { evaluatedAt: 'desc' } });
+  const evaluationByPolicy = new Map(evaluations.map((item) => [item.modelPolicyKey, item]));
+  const policy = eligiblePolicies.find((item) => evaluationByPolicy.has(item.key));
+  if (!policy) throw operationalError('No eligible model route has a passing operation evaluation.', 'AI_MODEL_EVALUATION_REQUIRED', 409);
+  return { policy, provider: policy.provider, evaluation: evaluationByPolicy.get(policy.key) };
 };
 
 const checkBudgets = async ({ execution, version, policy, database = prisma, now = new Date() }) => {
@@ -211,7 +213,13 @@ const processExecution = async (claimed, { database = prisma, executeProviderFn 
     observeAIOperation({ operation: 'execution', outcome: version.approvalRequired ? 'pending_review' : 'succeeded', durationSeconds: (Date.now() - started) / 1000, provider: provider.key }); return saved;
   } catch (error) {
     const retryable = !error.statusCode || error.statusCode >= 500 || error.statusCode === 429; const exhausted = !retryable || claimed.attemptCount >= version.maxAttempts;
-    await database.aIOperationExecution.updateMany({ where: { id: claimed.id, status: 'RUNNING', lockedAt: claimed.lockedAt }, data: { status: exhausted ? 'EXHAUSTED' : 'FAILED', nextAttemptAt: new Date(Date.now() + backoffSeconds(version, claimed.attemptCount) * 1000), lockedAt: null, firstFailureAt: loaded.firstFailureAt || new Date(), lastFailureAt: new Date(), lastErrorCode: error.code || 'AI_EXECUTION_FAILED', safeError: safeError(error), ...(exhausted ? { completedAt: new Date() } : {}) } });
+    await database.$transaction(async (tx) => {
+      const updated = await tx.aIOperationExecution.updateMany({ where: { id: claimed.id, status: 'RUNNING', lockedAt: claimed.lockedAt }, data: { status: exhausted ? 'EXHAUSTED' : 'FAILED', nextAttemptAt: new Date(Date.now() + backoffSeconds(version, claimed.attemptCount) * 1000), lockedAt: null, firstFailureAt: loaded.firstFailureAt || new Date(), lastFailureAt: new Date(), lastErrorCode: error.code || 'AI_EXECUTION_FAILED', safeError: safeError(error), ...(exhausted ? { completedAt: new Date() } : {}) } });
+      if (updated.count === 1) {
+        const auditReq = { user: { id: loaded.requestedById }, context: { requestId: loaded.requestId, correlationId: loaded.correlationId, traceId: loaded.traceId } };
+        await writeAuditLog({ req: auditReq, action: exhausted ? 'AI_EXECUTION_EXHAUSTED' : 'AI_EXECUTION_RETRY_SCHEDULED', resourceType: 'AI_OPERATION_EXECUTION', resourceId: loaded.id, metadata: { attemptCount: claimed.attemptCount, errorCode: error.code || 'AI_EXECUTION_FAILED', operationKind: definition.kind } }, tx);
+      }
+    });
     observeAIOperation({ operation: 'execution', outcome: exhausted ? 'exhausted' : 'retry', reason: error.code || 'error' }); return null;
   }
 };

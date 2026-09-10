@@ -108,6 +108,32 @@ test('PostgreSQL gives AI executions one durable effect under duplicate concurre
   assert.equal(saved.costRecords.length, 1);
 });
 
+test('PostgreSQL retries bounded AI failures, redacts errors and exposes a terminal dead-letter state', async () => {
+  const operation = await createRoutedOperation({ key: 'retry', kind: 'SUMMARIZE_SUPPLY_DEMAND_ANOMALY', riskClass: 'LOW', capability: 'text-summary', allowedToolKeys: ['READ_SUPPLY_DEMAND_SNAPSHOT'] });
+  const input = { locale: 'es-ES', marketCode, references: [{ type: 'SUPPLY_DEMAND_SNAPSHOT', id: created.snapshot.id, digest: created.snapshot.inputDigest, dataClass: 'INTERNAL' }], context: { anomaly: 'coverage_gap', status: 'OPEN' } };
+  const queued = await queueExecution({ operationId: operation.definition.id, idempotencyKey: `${runId}:retry:1`, input, dataClass: 'INTERNAL', actorId: created.author.id, req: reqFor(created.author.id, 'retry-queue') });
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    await prisma.aIOperationExecution.update({ where: { id: queued.execution.id }, data: { nextAttemptAt: new Date(0) } });
+    const claims = await claimExecutions({ batchSize: 20 });
+    const claimed = claims.find((item) => item.id === queued.execution.id);
+    assert.ok(claimed, `execution must be claimed for attempt ${attempt}`);
+    await processExecution(claimed, { providerExecutionEnabled: true, executeProviderFn: async () => {
+      const error = new Error('Provider rejected Authorization: Bearer test-sensitive-token-value');
+      error.code = 'AI_PROVIDER_RETRYABLE'; error.statusCode = 503; throw error;
+    } });
+    const saved = await prisma.aIOperationExecution.findUniqueOrThrow({ where: { id: queued.execution.id } });
+    assert.equal(saved.attemptCount, attempt);
+    assert.equal(saved.status, attempt === 3 ? 'EXHAUSTED' : 'FAILED');
+    assert.equal(saved.lastErrorCode, 'AI_PROVIDER_RETRYABLE');
+    assert.doesNotMatch(saved.safeError, /test-sensitive-token-value/);
+    assert.ok(saved.firstFailureAt && saved.lastFailureAt);
+  }
+  const audits = await prisma.auditLog.findMany({ where: { resourceType: 'AI_OPERATION_EXECUTION', resourceId: queued.execution.id }, orderBy: { createdAt: 'asc' } });
+  assert.deepEqual(audits.map((item) => item.action), ['AI_EXECUTION_QUEUED', 'AI_EXECUTION_RETRY_SCHEDULED', 'AI_EXECUTION_RETRY_SCHEDULED', 'AI_EXECUTION_EXHAUSTED']);
+  assert.equal(await prisma.aIOutputArtifact.count({ where: { executionId: queued.execution.id } }), 0);
+  assert.equal(await prisma.aICostRecord.count({ where: { executionId: queued.execution.id } }), 0);
+});
+
 test('HIGH AI outputs require immutable four-eyes approval and every F10 table remains forced-RLS default deny', async () => {
   const operation = await createRoutedOperation({ key: 'expansion', kind: 'SUGGEST_EXPANSION_HYPOTHESES', riskClass: 'HIGH', capability: 'reasoning', allowedToolKeys: ['READ_EXPANSION_EVALUATION'] });
   const input = { locale: 'es-ES', marketCode, references: [{ type: 'EXPANSION_EVALUATION', id: created.expansion.id, digest: created.expansion.inputDigest, dataClass: 'INTERNAL' }], context: { recommendation: 'DO_NOT_PROCEED' } };
