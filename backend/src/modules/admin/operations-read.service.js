@@ -1,4 +1,5 @@
 const prisma = require('../../config/prisma');
+const env = require('../../config/env');
 const { getReadiness } = require('../observability/health.service');
 
 const pageResult = (page, limit, totalItems) => ({
@@ -20,6 +21,7 @@ const getOperationsOverview = async (client = prisma) => {
     jobsByStatus,
     automationDeliveriesByStatus,
     automationExecutionsByStatus,
+    aiExecutionsByStatus,
     integrationsByStatus,
     supportByStatus,
     failedRefunds,
@@ -35,6 +37,7 @@ const getOperationsOverview = async (client = prisma) => {
     client.outboxEvent.groupBy({ by: ['status'], _count: { _all: true } }),
     client.automationEventDelivery.groupBy({ by: ['status'], _count: { _all: true } }),
     client.automationExecution.groupBy({ by: ['status'], _count: { _all: true } }),
+    client.aIOperationExecution.groupBy({ by: ['status'], _count: { _all: true } }),
     client.integrationEvent.groupBy({ by: ['status'], _count: { _all: true } }),
     client.supportCase.groupBy({ by: ['status'], _count: { _all: true } }),
     client.refund.count({ where: { status: 'FAILED' } }),
@@ -58,6 +61,7 @@ const getOperationsOverview = async (client = prisma) => {
       executions: countsBy(automationExecutionsByStatus, 'status'),
       manualReplayEnabled: false,
     },
+    aiOperations: { executions: countsBy(aiExecutionsByStatus, 'status'), providerExecutionEnabled: env.aiProviderExecutionEnabled, autonomousSensitiveActions: false },
     integrations: countsBy(integrationsByStatus, 'status'),
     support: countsBy(supportByStatus, 'status'),
     financialAttention: { failedRefunds, failedPayouts, activeDisputes, latestReconciliation },

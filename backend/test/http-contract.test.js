@@ -124,6 +124,16 @@ test('F9 administrative APIs fail closed without a dedicated administrative sess
   }
 });
 
+test('F10 administrative intelligence APIs fail closed without a dedicated administrative session', async () => {
+  for (const path of ['/api/v1/admin/supply-demand/snapshots', '/api/v1/admin/readiness/evaluations', '/api/v1/admin/ai/executions']) {
+    const response = await fetch(`${baseUrl}${path}`, { headers: { 'x-correlation-id': 'f10-admin-auth-1' } });
+    const body = await response.json();
+    assert.equal(response.status, 401);
+    assert.equal(body.code, 'ADMIN_AUTHENTICATION_REQUIRED');
+    assert.equal(body.correlationId, 'f10-admin-auth-1');
+  }
+});
+
 test('admin refresh fails safely without cookie and CSRF verifier', async () => {
   const response = await fetch(`${baseUrl}/api/v1/admin/auth/refresh`, {
     method: 'POST',
