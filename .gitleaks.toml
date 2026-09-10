@@ -9,6 +9,7 @@ useDefault = true
 description = "F7 non-secret test fixtures and configuration placeholders"
 regexes = [
   '''^replace-with-an-independent-32-character-secret$''',
+  '''^replace_with_an_independent_32_character_secret$''',
   '''^f7-growth-pseudonym-test-secret-with-32-characters$''',
   '''^f7-identity-proof-test-secret-with-32-characters$''',
   '''^growth-pseudonym-test-secret-with-32-characters$''',
