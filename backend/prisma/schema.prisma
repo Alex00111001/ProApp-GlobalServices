@@ -65,6 +65,12 @@ model User {
   market                   Market?                  @relation(fields: [marketId], references: [id], onDelete: Restrict)
   addresses                Address[]
   identityDocuments        IdentityDocument[]
+  experimentsCreated       Experiment[]             @relation("ExperimentCreator")
+  contentEntriesCreated    ContentEntry[]           @relation("ContentEntryCreator")
+  contentVersionsCreated   ContentVersion[]         @relation("ContentVersionCreator")
+  contentApprovals         ContentApproval[]        @relation("ContentApprover")
+  contentPublications      ContentPublication[]     @relation("ContentPublisher")
+  seoRedirectsCreated      SeoRedirect[]            @relation("SeoRedirectCreator")
 
   @@index([email])
   @@index([phone])
@@ -152,17 +158,18 @@ model ProfessionalCategory {
 }
 
 model Category {
-  id            String                 @id @default(uuid())
-  name          String                 @unique
-  slug          String                 @unique
-  description   String?
-  iconUrl       String?
-  isActive      Boolean                @default(true)
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
-  professionals ProfessionalCategory[]
-  services      Service[]
-  subcategories Subcategory[]
+  id              String                 @id @default(uuid())
+  name            String                 @unique
+  slug            String                 @unique
+  description     String?
+  iconUrl         String?
+  isActive        Boolean                @default(true)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  professionals   ProfessionalCategory[]
+  services        Service[]
+  subcategories   Subcategory[]
+  contentVersions ContentVersion[]
 
   @@index([slug])
 }
@@ -199,6 +206,7 @@ model Service {
   category        Category             @relation(fields: [categoryId], references: [id])
   professional    ProfessionalProfile? @relation(fields: [professionalId], references: [id])
   subcategory     Subcategory?         @relation(fields: [subcategoryId], references: [id])
+  contentVersions ContentVersion[]
 
   @@index([categoryId])
   @@index([professionalId])
@@ -616,6 +624,10 @@ model Market {
   refundPolicies          RefundPolicy[]
   referrals               Referral[]
   referralProgramVersions ReferralProgramVersionMarket[]
+  experiments             Experiment[]
+  contentEntries          ContentEntry[]
+  contentVersions         ContentVersion[]
+  sitemapSnapshots        SeoSitemapSnapshot[]
 
   @@unique([countryId, code])
   @@index([status, effectiveAt])
@@ -623,10 +635,10 @@ model Market {
 }
 
 model MarketPolicyVersion {
-  id                     String             @id @default(uuid())
+  id                     String              @id @default(uuid())
   marketId               String
   version                Int
-  status                 MarketPolicyStatus @default(DRAFT)
+  status                 MarketPolicyStatus  @default(DRAFT)
   identityPolicy         Json
   geographyPolicy        Json
   addressPolicy          Json
@@ -636,15 +648,17 @@ model MarketPolicyVersion {
   taxPolicyReference     Json?
   paymentPolicyReference Json?
   schemaDigest           String
-  reviewStatus           LegalReviewStatus  @default(PENDING)
+  reviewStatus           LegalReviewStatus   @default(PENDING)
   reviewReference        String?
   reviewedBy             String?
   reviewedAt             DateTime?
   effectiveAt            DateTime?
   retiredAt              DateTime?
   createdBy              String?
-  createdAt              DateTime           @default(now())
-  market                 Market             @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  createdAt              DateTime            @default(now())
+  market                 Market              @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  experimentVersions     ExperimentVersion[]
+  contentVersions        ContentVersion[]
 
   @@unique([marketId, version])
   @@index([marketId, status, effectiveAt])
@@ -683,29 +697,30 @@ model GeographyDatasetImport {
 }
 
 model AdministrativeDivision {
-  id            String                          @id @default(uuid())
-  countryId     String
-  parentId      String?
-  level         Int
-  typeKey       String
-  canonicalCode String
-  canonicalName String
-  displayNames  Json?
-  lifecycle     AdministrativeDivisionLifecycle @default(ACTIVE)
-  sourceKey     String
-  sourceVersion String
-  lastImportId  String
-  effectiveAt   DateTime?
-  deprecatedAt  DateTime?
-  createdAt     DateTime                        @default(now())
-  updatedAt     DateTime                        @updatedAt
-  country       Country                         @relation(fields: [countryId], references: [id], onDelete: Restrict)
-  parent        AdministrativeDivision?         @relation("AdministrativeDivisionHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
-  children      AdministrativeDivision[]        @relation("AdministrativeDivisionHierarchy")
-  lastImport    GeographyDatasetImport          @relation(fields: [lastImportId], references: [id], onDelete: Restrict)
-  addressLinks  AddressAdministrativeDivision[]
-  serviceAreas  ProfessionalServiceArea[]
-  changes       AdministrativeDivisionChange[]
+  id              String                          @id @default(uuid())
+  countryId       String
+  parentId        String?
+  level           Int
+  typeKey         String
+  canonicalCode   String
+  canonicalName   String
+  displayNames    Json?
+  lifecycle       AdministrativeDivisionLifecycle @default(ACTIVE)
+  sourceKey       String
+  sourceVersion   String
+  lastImportId    String
+  effectiveAt     DateTime?
+  deprecatedAt    DateTime?
+  createdAt       DateTime                        @default(now())
+  updatedAt       DateTime                        @updatedAt
+  country         Country                         @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  parent          AdministrativeDivision?         @relation("AdministrativeDivisionHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children        AdministrativeDivision[]        @relation("AdministrativeDivisionHierarchy")
+  lastImport      GeographyDatasetImport          @relation(fields: [lastImportId], references: [id], onDelete: Restrict)
+  addressLinks    AddressAdministrativeDivision[]
+  serviceAreas    ProfessionalServiceArea[]
+  changes         AdministrativeDivisionChange[]
+  contentVersions ContentVersion[]
 
   @@unique([countryId, sourceKey, canonicalCode])
   @@index([countryId, parentId, level, lifecycle])
@@ -1097,25 +1112,27 @@ model ConsentPolicy {
 }
 
 model ConsentDecision {
-  id             String              @id @default(uuid())
-  idempotencyKey String              @unique
-  policyId       String
-  policyVersion  Int
-  purpose        String
-  subjectKey     String
-  subjectType    ConsentSubjectType
-  userId         String?
-  decision       ConsentDecisionType
-  source         String
-  evidence       Json?
-  occurredAt     DateTime            @default(now())
-  requestId      String?
-  correlationId  String?
-  traceId        String?
-  createdAt      DateTime            @default(now())
-  policy         ConsentPolicy       @relation(fields: [policyId, policyVersion], references: [id, version], onDelete: Restrict)
-  user           User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
-  touchpoints    Touchpoint[]
+  id                    String                 @id @default(uuid())
+  idempotencyKey        String                 @unique
+  policyId              String
+  policyVersion         Int
+  purpose               String
+  subjectKey            String
+  subjectType           ConsentSubjectType
+  userId                String?
+  decision              ConsentDecisionType
+  source                String
+  evidence              Json?
+  occurredAt            DateTime               @default(now())
+  requestId             String?
+  correlationId         String?
+  traceId               String?
+  createdAt             DateTime               @default(now())
+  policy                ConsentPolicy          @relation(fields: [policyId, policyVersion], references: [id, version], onDelete: Restrict)
+  user                  User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  touchpoints           Touchpoint[]
+  experimentAssignments ExperimentAssignment[]
+  experimentExposures   ExperimentExposure[]
 
   @@index([subjectKey, purpose, occurredAt])
   @@index([userId, purpose, occurredAt])
@@ -1539,6 +1556,326 @@ model AutomationStepExecution {
 
   @@unique([executionId, actionId])
   @@index([status, nextAttemptAt])
+}
+
+model Experiment {
+  id                   String              @id @default(uuid())
+  key                  String              @unique
+  name                 String
+  description          String?
+  status               ExperimentStatus    @default(DRAFT)
+  currentVersion       Int                 @default(1)
+  rowVersion           Int                 @default(1)
+  marketId             String
+  layerKey             String
+  surface              String
+  featureFlagKey       String
+  trafficAllocationBps Int                 @default(0)
+  killSwitch           Boolean             @default(true)
+  createdById          String
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  market               Market              @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  createdBy            User                @relation("ExperimentCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  versions             ExperimentVersion[]
+
+  @@unique([marketId, layerKey, surface, key])
+  @@index([status, marketId, surface, updatedAt])
+  @@index([featureFlagKey, status])
+  @@index([createdById])
+}
+
+model ExperimentVersion {
+  id                    String                       @id @default(uuid())
+  experimentId          String
+  marketPolicyVersionId String
+  version               Int
+  purpose               String
+  startAt               DateTime?
+  endAt                 DateTime?
+  analysisAt            DateTime?
+  timezone              String
+  minimumSampleSize     Int                          @default(100)
+  significanceAlpha     Float                        @default(0.05)
+  configurationDigest   String
+  readyAt               DateTime?
+  startedAt             DateTime?
+  completedAt           DateTime?
+  createdAt             DateTime                     @default(now())
+  experiment            Experiment                   @relation(fields: [experimentId], references: [id], onDelete: Restrict)
+  marketPolicyVersion   MarketPolicyVersion          @relation(fields: [marketPolicyVersionId], references: [id], onDelete: Restrict)
+  audience              ExperimentAudience?
+  variants              ExperimentVariant[]
+  metrics               ExperimentMetricDefinition[]
+  assignments           ExperimentAssignment[]
+  exposures             ExperimentExposure[]
+  snapshots             ExperimentResultSnapshot[]
+
+  @@unique([experimentId, version])
+  @@index([marketPolicyVersionId])
+  @@index([startAt, endAt])
+}
+
+model ExperimentVariant {
+  id          String                 @id @default(uuid())
+  versionId   String
+  key         String
+  name        String
+  isControl   Boolean                @default(false)
+  weightBps   Int
+  payload     Json
+  createdAt   DateTime               @default(now())
+  version     ExperimentVersion      @relation(fields: [versionId], references: [id], onDelete: Restrict)
+  assignments ExperimentAssignment[]
+  exposures   ExperimentExposure[]
+
+  @@unique([versionId, key])
+  @@unique([id, versionId])
+  @@index([versionId, isControl])
+}
+
+model ExperimentAudience {
+  id                  String            @id @default(uuid())
+  versionId           String            @unique
+  conditionTree       Json?
+  configurationDigest String
+  createdAt           DateTime          @default(now())
+  version             ExperimentVersion @relation(fields: [versionId], references: [id], onDelete: Restrict)
+}
+
+model ExperimentAssignment {
+  id                String               @id @default(uuid())
+  versionId         String
+  variantId         String
+  subjectKey        String
+  subjectType       ConsentSubjectType
+  locale            String
+  bucketBps         Int
+  consentDecisionId String?
+  requestId         String?
+  correlationId     String?
+  traceId           String?
+  assignedAt        DateTime             @default(now())
+  version           ExperimentVersion    @relation(fields: [versionId], references: [id], onDelete: Restrict)
+  variant           ExperimentVariant    @relation(fields: [variantId, versionId], references: [id, versionId], onDelete: Restrict)
+  consentDecision   ConsentDecision?     @relation(fields: [consentDecisionId], references: [id], onDelete: Restrict)
+  exposures         ExperimentExposure[]
+
+  @@unique([versionId, subjectKey])
+  @@index([variantId, assignedAt])
+  @@index([subjectKey, assignedAt])
+  @@index([correlationId])
+}
+
+model ExperimentExposure {
+  id                String               @id @default(uuid())
+  eventId           String               @unique
+  assignmentId      String
+  versionId         String
+  variantId         String
+  consentDecisionId String?
+  surface           String
+  context           Json?
+  requestId         String?
+  correlationId     String?
+  traceId           String?
+  exposedAt         DateTime             @default(now())
+  assignment        ExperimentAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+  version           ExperimentVersion    @relation(fields: [versionId], references: [id], onDelete: Restrict)
+  variant           ExperimentVariant    @relation(fields: [variantId, versionId], references: [id, versionId], onDelete: Restrict)
+  consentDecision   ConsentDecision?     @relation(fields: [consentDecisionId], references: [id], onDelete: Restrict)
+
+  @@unique([assignmentId, eventId])
+  @@index([versionId, variantId, exposedAt])
+  @@index([correlationId])
+}
+
+model ExperimentMetricDefinition {
+  id                 String                @id @default(uuid())
+  versionId          String
+  key                String
+  role               ExperimentMetricRole
+  eventName          String
+  aggregation        ExperimentAggregation
+  windowHours        Int
+  direction          ExperimentDirection
+  minimumSampleSize  Int
+  guardrailThreshold Float?
+  createdAt          DateTime              @default(now())
+  version            ExperimentVersion     @relation(fields: [versionId], references: [id], onDelete: Restrict)
+
+  @@unique([versionId, key])
+  @@index([eventName, role])
+}
+
+model ExperimentResultSnapshot {
+  id            String                   @id @default(uuid())
+  snapshotKey   String                   @unique
+  versionId     String
+  windowStart   DateTime
+  windowEnd     DateTime
+  status        ExperimentAnalysisStatus
+  method        String
+  results       Json
+  inputDigest   String
+  requestId     String?
+  correlationId String?
+  traceId       String?
+  generatedAt   DateTime                 @default(now())
+  version       ExperimentVersion        @relation(fields: [versionId], references: [id], onDelete: Restrict)
+
+  @@index([versionId, generatedAt])
+  @@index([status, generatedAt])
+  @@index([correlationId])
+}
+
+model ContentEntry {
+  id             String             @id @default(uuid())
+  key            String             @unique
+  type           ContentType
+  status         ContentEntryStatus @default(DRAFT)
+  currentVersion Int                @default(1)
+  rowVersion     Int                @default(1)
+  marketId       String
+  createdById    String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  market         Market             @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  createdBy      User               @relation("ContentEntryCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  versions       ContentVersion[]
+  redirects      SeoRedirect[]
+
+  @@unique([marketId, key])
+  @@index([marketId, type, status, updatedAt])
+  @@index([createdById])
+}
+
+model ContentVersion {
+  id                    String                  @id @default(uuid())
+  entryId               String
+  marketId              String
+  marketPolicyVersionId String
+  version               Int
+  locale                String
+  slug                  String
+  status                ContentVersionStatus    @default(DRAFT)
+  title                 String
+  summary               String
+  body                  Json
+  seoTitle              String
+  metaDescription       String
+  canonicalPath         String
+  robotsDirective       String                  @default("noindex,nofollow")
+  indexable             Boolean                 @default(false)
+  openGraph             Json?
+  structuredData        Json?
+  qualityEvidence       Json
+  contentDigest         String
+  provenance            Json?
+  categoryId            String?
+  serviceId             String?
+  divisionId            String?
+  createdById           String
+  submittedAt           DateTime?
+  approvedAt            DateTime?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  entry                 ContentEntry            @relation(fields: [entryId], references: [id], onDelete: Restrict)
+  market                Market                  @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  marketPolicyVersion   MarketPolicyVersion     @relation(fields: [marketPolicyVersionId], references: [id], onDelete: Restrict)
+  category              Category?               @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  service               Service?                @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  division              AdministrativeDivision? @relation(fields: [divisionId], references: [id], onDelete: Restrict)
+  createdBy             User                    @relation("ContentVersionCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  approvals             ContentApproval[]
+  publication           ContentPublication?
+
+  @@unique([entryId, version])
+  @@unique([locale, canonicalPath, version])
+  @@index([marketPolicyVersionId])
+  @@index([marketId, locale, contentDigest])
+  @@index([status, locale, updatedAt])
+  @@index([contentDigest, indexable])
+  @@index([categoryId])
+  @@index([serviceId])
+  @@index([divisionId])
+  @@index([createdById])
+}
+
+model ContentApproval {
+  id         String                  @id @default(uuid())
+  versionId  String
+  decision   ContentApprovalDecision
+  reviewerId String
+  reason     String
+  createdAt  DateTime                @default(now())
+  version    ContentVersion          @relation(fields: [versionId], references: [id], onDelete: Restrict)
+  reviewer   User                    @relation("ContentApprover", fields: [reviewerId], references: [id], onDelete: Restrict)
+
+  @@unique([versionId, reviewerId])
+  @@index([versionId, decision, createdAt])
+  @@index([reviewerId, createdAt])
+}
+
+model ContentPublication {
+  id            String                   @id @default(uuid())
+  versionId     String                   @unique
+  status        ContentPublicationStatus @default(SCHEDULED)
+  path          String
+  locale        String
+  canonicalPath String
+  indexable     Boolean                  @default(false)
+  publishAt     DateTime
+  publishedAt   DateTime?
+  retiredAt     DateTime?
+  expiresAt     DateTime?
+  publishedById String
+  requestId     String?
+  correlationId String?
+  traceId       String?
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  version       ContentVersion           @relation(fields: [versionId], references: [id], onDelete: Restrict)
+  publishedBy   User                     @relation("ContentPublisher", fields: [publishedById], references: [id], onDelete: Restrict)
+
+  @@index([status, publishAt])
+  @@index([locale, indexable, status, publishedAt])
+  @@index([path, status])
+  @@index([correlationId])
+}
+
+model SeoRedirect {
+  id             String            @id @default(uuid())
+  sourcePath     String            @unique
+  targetPath     String
+  status         SeoRedirectStatus @default(ACTIVE)
+  httpStatus     Int               @default(308)
+  contentEntryId String?
+  reason         String
+  createdById    String
+  createdAt      DateTime          @default(now())
+  retiredAt      DateTime?
+  contentEntry   ContentEntry?     @relation(fields: [contentEntryId], references: [id], onDelete: Restrict)
+  createdBy      User              @relation("SeoRedirectCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@index([contentEntryId])
+}
+
+model SeoSitemapSnapshot {
+  id            String        @id @default(uuid())
+  marketId      String
+  locale        String
+  status        SitemapStatus
+  urlCount      Int
+  digest        String
+  safeError     String?
+  correlationId String?
+  generatedAt   DateTime      @default(now())
+  market        Market        @relation(fields: [marketId], references: [id], onDelete: Restrict)
+
+  @@index([marketId, locale, generatedAt])
+  @@index([status, generatedAt])
 }
 
 model ErrorGroup {
@@ -2445,6 +2782,87 @@ enum AutomationStepExecutionStatus {
   FAILED
   EXHAUSTED
   SKIPPED
+}
+
+enum ExperimentStatus {
+  DRAFT
+  READY
+  RUNNING
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+enum ExperimentMetricRole {
+  PRIMARY
+  GUARDRAIL
+}
+
+enum ExperimentAggregation {
+  UNIQUE_SUBJECT_RATE
+  EVENT_RATE
+}
+
+enum ExperimentDirection {
+  INCREASE
+  DECREASE
+}
+
+enum ExperimentAnalysisStatus {
+  INCONCLUSIVE
+  READY
+  GUARDRAIL_BLOCKED
+}
+
+enum ContentType {
+  LANDING_PAGE
+  CATEGORY_PAGE
+  SERVICE_PAGE
+  LOCATION_PAGE
+  HELP_FAQ
+  CAMPAIGN_LANDING
+  SEO_METADATA_BLOCK
+}
+
+enum ContentEntryStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  SCHEDULED
+  PUBLISHED
+  RETIRED
+}
+
+enum ContentVersionStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  SCHEDULED
+  PUBLISHED
+  RETIRED
+}
+
+enum ContentApprovalDecision {
+  APPROVED
+  REJECTED
+}
+
+enum ContentPublicationStatus {
+  SCHEDULED
+  PUBLISHED
+  RETIRED
+  FAILED
+}
+
+enum SeoRedirectStatus {
+  ACTIVE
+  RETIRED
+}
+
+enum SitemapStatus {
+  GENERATED
+  FAILED
 }
 
 enum PolicyStatus {

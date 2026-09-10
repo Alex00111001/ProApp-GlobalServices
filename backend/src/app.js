@@ -28,6 +28,8 @@ const referralRoutes = require('./routes/referral.routes');
 const operationsRoutes = require('./routes/operations.routes');
 const marketsRoutes = require('./routes/markets.routes');
 const adminV1Routes = require('./routes/admin-v1.routes');
+const experimentsRoutes = require('./routes/experiments.routes');
+const publicContentRoutes = require('./routes/public-content.routes');
 const paymentController = require('./controllers/payment.controller');
 
 const app = express();
@@ -97,6 +99,8 @@ app.use('/api/events', eventRoutes);
 app.use('/api/v1/privacy', privacyRoutes);
 app.use('/api/v1/referrals', referralRoutes);
 app.use('/api/v1/markets', marketsRoutes);
+app.use('/api/v1/experiments', experimentsRoutes);
+app.use('/api/v1/public', publicContentRoutes);
 app.use('/api/admin/operations', operationsRoutes);
 
 app.use((req, res) => {

@@ -91,6 +91,18 @@ const marketOperations = new Prometheus.Counter({
   labelNames: ['operation', 'market', 'outcome', 'reason'],
   registers: [registry],
 });
+const experimentOperations = new Prometheus.Counter({
+  name: 'homeservices_experiment_operations_total',
+  help: 'Experiment lifecycle, assignment, exposure and analysis outcomes with bounded labels.',
+  labelNames: ['operation', 'outcome', 'reason'],
+  registers: [registry],
+});
+const contentOperations = new Prometheus.Counter({
+  name: 'homeservices_content_operations_total',
+  help: 'Editorial and SEO lifecycle outcomes with bounded labels.',
+  labelNames: ['operation', 'outcome', 'reason'],
+  registers: [registry],
+});
 
 const boundedLabel = (value, fallback = 'unknown') => {
   const label = String(value || '').toLowerCase();
@@ -152,6 +164,8 @@ const observeAutomationOperation = ({ operation, outcome, reason = 'none', durat
 const observeMarketOperation = ({ operation, market = 'unknown', outcome, reason = 'none' }) => marketOperations.inc({
   operation: boundedLabel(operation), market: boundedLabel(market), outcome: boundedLabel(outcome), reason: boundedLabel(reason),
 });
+const observeExperimentOperation = ({ operation, outcome, reason = 'none' }) => experimentOperations.inc({ operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason) });
+const observeContentOperation = ({ operation, outcome, reason = 'none' }) => contentOperations.inc({ operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason) });
 
 const metricsHandler = async (req, res, next) => {
   try {
@@ -174,6 +188,8 @@ module.exports = {
   observeReferralOperation,
   observeAutomationOperation,
   observeMarketOperation,
+  observeExperimentOperation,
+  observeContentOperation,
   registry,
   setOutboxDepth,
 };

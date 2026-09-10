@@ -12,12 +12,16 @@ const TRIGGER_REGISTRY = Object.freeze({
   'referral.converted': { schemaVersion: 1 },
   'referral.reward.created': { schemaVersion: 1 },
   'referral.reward.reversed': { schemaVersion: 1 },
+  'content.review.requested': { schemaVersion: 1 },
+  'content.approved': { schemaVersion: 1 },
+  'content.publication.scheduled': { schemaVersion: 1 },
+  'content.published': { schemaVersion: 1 },
 });
 
 const FACT_PATHS = new Set([
   'event.type', 'event.aggregateType', 'event.aggregateId',
   'payload.status', 'payload.market', 'payload.actorType', 'payload.reasonCode',
-  'payload.rewardType', 'payload.beneficiarySide', 'payload.purpose',
+  'payload.rewardType', 'payload.beneficiarySide', 'payload.purpose', 'payload.status', 'payload.decision',
 ]);
 const OPERATORS = new Set(['equals', 'not_equals', 'gt', 'gte', 'lt', 'lte', 'in', 'before', 'after', 'is_true']);
 

@@ -110,6 +110,10 @@ const validateEnvironment = (source = process.env) => {
   const referralsEnabled = parseBoolean('REFERRALS_ENABLED', source.REFERRALS_ENABLED, environment !== 'production');
   const automationEngineEnabled = parseBoolean('AUTOMATION_ENGINE_ENABLED', source.AUTOMATION_ENGINE_ENABLED, environment !== 'production');
   const marketsIdentityGeographyEnabled = parseBoolean('MARKETS_IDENTITY_GEOGRAPHY_ENABLED', source.MARKETS_IDENTITY_GEOGRAPHY_ENABLED, false);
+  const experimentsContentSeoEnabled = parseBoolean('EXPERIMENTS_CONTENT_SEO_ENABLED', source.EXPERIMENTS_CONTENT_SEO_ENABLED, false);
+  const experimentsEnabled = parseBoolean('EXPERIMENTS_ENABLED', source.EXPERIMENTS_ENABLED, false);
+  const publicSeoEnabled = parseBoolean('PUBLIC_SEO_ENABLED', source.PUBLIC_SEO_ENABLED, false);
+  const contentWorkerEnabled = parseBoolean('CONTENT_WORKER_ENABLED', source.CONTENT_WORKER_ENABLED, false);
   const logTransport = parseChoice('LOG_TRANSPORT', source.LOG_TRANSPORT, 'stdout', ['stdout', 'file']);
   const logLevel = parseChoice('LOG_LEVEL', source.LOG_LEVEL, environment === 'production' ? 'info' : 'debug', [
     'trace', 'debug', 'info', 'warn', 'error', 'fatal',
@@ -142,6 +146,9 @@ const validateEnvironment = (source = process.env) => {
       const encryptionKey = Buffer.from(source.IDENTITY_DOCUMENT_ENCRYPTION_KEY_BASE64 || '', 'base64');
       if (encryptionKey.length !== 32) throw new Error('IDENTITY_DOCUMENT_ENCRYPTION_KEY_BASE64 must decode to exactly 32 bytes in production.');
     }
+  }
+  if (environment === 'production' && (experimentsContentSeoEnabled || experimentsEnabled)) {
+    requireProductionSecret(environment, 'EXPERIMENT_ASSIGNMENT_SECRET', source.EXPERIMENT_ASSIGNMENT_SECRET);
   }
 
   if (environment === 'production') {
@@ -211,6 +218,14 @@ const validateEnvironment = (source = process.env) => {
     automationWorkerPollMs: parseInteger('AUTOMATION_WORKER_POLL_MS', source.AUTOMATION_WORKER_POLL_MS, 1_000, 100, 60_000),
     automationWorkerBatchSize: parseInteger('AUTOMATION_WORKER_BATCH_SIZE', source.AUTOMATION_WORKER_BATCH_SIZE, 25, 1, 100),
     marketsIdentityGeographyEnabled,
+    experimentsContentSeoEnabled,
+    experimentsEnabled: experimentsContentSeoEnabled || experimentsEnabled,
+    contentPublishingEnabled: experimentsContentSeoEnabled || parseBoolean('CONTENT_PUBLISHING_ENABLED', source.CONTENT_PUBLISHING_ENABLED, false),
+    publicSeoEnabled: experimentsContentSeoEnabled || publicSeoEnabled,
+    contentWorkerEnabled,
+    contentWorkerPollMs: parseInteger('CONTENT_WORKER_POLL_MS', source.CONTENT_WORKER_POLL_MS, 5_000, 500, 60_000),
+    experimentAssignmentSecret: source.EXPERIMENT_ASSIGNMENT_SECRET || 'development-only-experiment-assignment-secret',
+    publicWebBaseUrl: parseHttpUrl('PUBLIC_WEB_BASE_URL', source.PUBLIC_WEB_BASE_URL, environment === 'production' && publicSeoEnabled),
     identityDocumentEncryptionKeyBase64: source.IDENTITY_DOCUMENT_ENCRYPTION_KEY_BASE64,
     identityDocumentEncryptionKeyVersion: parseIdentifier('IDENTITY_DOCUMENT_ENCRYPTION_KEY_VERSION', source.IDENTITY_DOCUMENT_ENCRYPTION_KEY_VERSION, 'development-v1'),
     identityDocumentLookupKey: source.IDENTITY_DOCUMENT_LOOKUP_KEY || 'development-only-identity-lookup-key',
