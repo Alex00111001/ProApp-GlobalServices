@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!page) return { title: 'Contenido no disponible', robots: { index: false, follow: false } }
   const index = page.seo.robots === 'index,follow'
   return {
-    title: page.seo.title, description: page.seo.description, alternates: { canonical: page.seo.canonical },
+    title: page.seo.title, description: page.seo.description, alternates: { canonical: page.seo.canonical, languages: page.seo.alternates },
     robots: { index, follow: index }, openGraph: { title: page.seo.title, description: page.seo.description, url: page.seo.canonical, type: 'website' },
   }
 }

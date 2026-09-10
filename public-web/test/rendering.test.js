@@ -7,6 +7,7 @@ test('public pages fetch approved server content and generate metadata before re
   const source = fs.readFileSync(path.join(root, 'app/[marketCode]/[locale]/[type]/[slug]/page.tsx'), 'utf8');
   assert.match(source, /generateMetadata/);
   assert.match(source, /await fetchPage/);
+  assert.match(source, /languages: page\.seo\.alternates/);
   assert.match(source, /notFound\(\)/);
   assert.doesNotMatch(source, /use client|dangerouslySetInnerHTML|Math\.random/);
 });

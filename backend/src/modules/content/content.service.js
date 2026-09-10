@@ -46,7 +46,7 @@ const createContentVersion = async ({ entryId, input, actorId, req, database = p
     await lock(tx, entryId);
     const entry = await tx.contentEntry.findUnique({ where: { id: entryId }, include: { market: true } });
     if (!entry) throw operationalError('Content entry not found.', 'CONTENT_ENTRY_NOT_FOUND', 404);
-    if (!['DRAFT', 'IN_REVIEW', 'APPROVED'].includes(entry.status)) throw operationalError('Content entry cannot receive a new draft.', 'CONTENT_ENTRY_LOCKED', 409);
+    if (entry.status === 'RETIRED') throw operationalError('Content entry cannot receive a new draft.', 'CONTENT_ENTRY_LOCKED', 409);
     const resolved = await resolveMarketPolicy({ marketCode: entry.market.code, client: tx, requireActive: false });
     if (!resolved.policy || !entry.market.supportedLocales.includes(input.locale)) throw operationalError('Locale or market policy is unavailable.', 'CONTENT_LOCALE_UNSUPPORTED', 400);
     const validated = validateContentVersion({ ...input, marketCode: entry.market.code, type: entry.type });
@@ -56,7 +56,11 @@ const createContentVersion = async ({ entryId, input, actorId, req, database = p
       entryId, marketId: entry.marketId, marketPolicyVersionId: resolved.policy.id, version: versionNumber, locale: input.locale, slug: input.slug,
       ...validated, robotsDirective: input.robotsDirective, indexable: false, ...references, createdById: actorId,
     } });
-    await tx.contentEntry.update({ where: { id: entryId }, data: { currentVersion: versionNumber + 1, status: 'DRAFT', rowVersion: { increment: 1 } } });
+    await tx.contentEntry.update({ where: { id: entryId }, data: {
+      currentVersion: versionNumber + 1,
+      ...(!['PUBLISHED', 'SCHEDULED'].includes(entry.status) ? { status: 'DRAFT' } : {}),
+      rowVersion: { increment: 1 },
+    } });
     return version;
   };
   const version = database.$transaction ? await database.$transaction(work) : await work(database);
@@ -68,11 +72,14 @@ const createContentVersion = async ({ entryId, input, actorId, req, database = p
 const submitForReview = async ({ versionId, actorId, req, database = prisma, now = new Date() }) => {
   assertEnabled();
   const version = await database.contentVersion.findUnique({ where: { id: versionId }, include: { entry: true } });
-  if (!version || version.status !== 'DRAFT' || version.entry.status !== 'DRAFT') throw operationalError('Draft is unavailable for review.', 'CONTENT_REVIEW_INVALID', 409);
+  if (!version || version.status !== 'DRAFT' || version.entry.status === 'RETIRED') throw operationalError('Draft is unavailable for review.', 'CONTENT_REVIEW_INVALID', 409);
   const updated = await database.$transaction(async (tx) => {
     await lock(tx, version.entryId);
     await tx.contentVersion.update({ where: { id: versionId }, data: { status: 'IN_REVIEW', submittedAt: now } });
-    const entry = await tx.contentEntry.update({ where: { id: version.entryId }, data: { status: 'IN_REVIEW', rowVersion: { increment: 1 } } });
+    const entry = await tx.contentEntry.update({ where: { id: version.entryId }, data: {
+      ...(!['PUBLISHED', 'SCHEDULED'].includes(version.entry.status) ? { status: 'IN_REVIEW' } : {}),
+      rowVersion: { increment: 1 },
+    } });
     await tx.outboxEvent.create({ data: { aggregateType: 'ContentVersion', aggregateId: versionId, eventType: 'content.review.requested', payload: { contentVersionId: versionId, contentEntryId: version.entryId }, metadata: { correlationId: req?.context?.correlationId, traceId: req?.context?.traceId } } });
     return entry;
   });
@@ -85,13 +92,16 @@ const reviewContent = async ({ versionId, decision, reason, actorId, req, databa
   assertEnabled();
   const result = await database.$transaction(async (tx) => {
     const version = await tx.contentVersion.findUnique({ where: { id: versionId }, include: { entry: true } });
-    if (!version || version.status !== 'IN_REVIEW' || version.entry.status !== 'IN_REVIEW') throw operationalError('Content is not awaiting review.', 'CONTENT_REVIEW_INVALID', 409);
+    if (!version || version.status !== 'IN_REVIEW' || version.entry.status === 'RETIRED') throw operationalError('Content is not awaiting review.', 'CONTENT_REVIEW_INVALID', 409);
     if (version.createdById === actorId) throw operationalError('Author cannot approve their own content.', 'CONTENT_FOUR_EYES_REQUIRED', 403);
     await lock(tx, version.entryId);
     await tx.contentApproval.create({ data: { versionId, decision, reviewerId: actorId, reason } });
     const status = decision === 'APPROVED' ? 'APPROVED' : 'DRAFT';
     await tx.contentVersion.update({ where: { id: versionId }, data: { status, approvedAt: decision === 'APPROVED' ? now : null } });
-    const entry = await tx.contentEntry.update({ where: { id: version.entryId }, data: { status, rowVersion: { increment: 1 } } });
+    const entry = await tx.contentEntry.update({ where: { id: version.entryId }, data: {
+      ...(!['PUBLISHED', 'SCHEDULED'].includes(version.entry.status) ? { status } : {}),
+      rowVersion: { increment: 1 },
+    } });
     await tx.outboxEvent.create({ data: { aggregateType: 'ContentVersion', aggregateId: versionId, eventType: decision === 'APPROVED' ? 'content.approved' : 'content.rejected', payload: { contentVersionId: versionId, contentEntryId: version.entryId, decision }, metadata: { correlationId: req?.context?.correlationId, traceId: req?.context?.traceId } } });
     return { entry, version };
   });
@@ -116,7 +126,7 @@ const schedulePublication = async ({ versionId, publishAt, expiresAt, actorId, r
   assertEnabled();
   const result = await database.$transaction(async (tx) => {
     const version = await tx.contentVersion.findUnique({ where: { id: versionId }, include: { entry: { include: { market: { include: { policies: true } } } } } });
-    if (!version || version.status !== 'APPROVED' || version.entry.status !== 'APPROVED') throw operationalError('Only approved content can be scheduled.', 'CONTENT_PUBLICATION_INVALID', 409);
+    if (!version || version.status !== 'APPROVED' || version.entry.status === 'RETIRED') throw operationalError('Only approved content can be scheduled.', 'CONTENT_PUBLICATION_INVALID', 409);
     if (version.createdById === actorId) throw operationalError('Author cannot publish their own content.', 'CONTENT_FOUR_EYES_REQUIRED', 403);
     await lock(tx, version.entryId);
     const currentPolicy = version.entry.market.policies.find((item) => item.version === version.entry.market.currentPolicyVersion && item.status === 'ACTIVE' && item.reviewStatus === 'APPROVED');
@@ -163,7 +173,17 @@ const retirePublication = async ({ publicationId, reason, actorId, req, database
     await lock(tx, publication.version.entryId);
     await tx.contentPublication.update({ where: { id: publicationId }, data: { status: 'RETIRED', retiredAt: now, indexable: false } });
     await tx.contentVersion.update({ where: { id: publication.versionId }, data: { status: 'RETIRED', indexable: false } });
-    await tx.contentEntry.update({ where: { id: publication.version.entryId }, data: { status: 'RETIRED', rowVersion: { increment: 1 } } });
+    const remainingVersions = await tx.contentVersion.findMany({ where: {
+      id: { not: publication.versionId },
+      entryId: publication.version.entryId,
+      status: { not: 'RETIRED' },
+    }, select: { status: true } });
+    const aggregateStatus = ['PUBLISHED', 'SCHEDULED', 'IN_REVIEW', 'APPROVED', 'DRAFT']
+      .find((status) => remainingVersions.some((version) => version.status === status)) || 'RETIRED';
+    await tx.contentEntry.update({ where: { id: publication.version.entryId }, data: {
+      status: aggregateStatus,
+      rowVersion: { increment: 1 },
+    } });
   });
   await writeAuditLog({ req, action: 'CONTENT_RETIRED', resourceType: 'CONTENT_PUBLICATION', resourceId: publicationId, reason, metadata: { actorId } }, database);
   observeContentOperation({ operation: 'publication', outcome: 'retired' });

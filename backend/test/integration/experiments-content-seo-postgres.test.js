@@ -21,7 +21,7 @@ const { hashPassword } = require('../../src/utils/password');
 const { policyDigest } = require('../../src/modules/markets/market.service');
 const { pseudonymize } = require('../../src/modules/privacy/privacy-utils');
 const { assignVariant, calculateResults, createExperiment, createVersion, recordExposure, setExperimentStatus } = require('../../src/modules/experiments/experiment.service');
-const { createContentVersion, createEntry, reviewContent, schedulePublication, submitForReview } = require('../../src/modules/content/content.service');
+const { createContentVersion, createEntry, retirePublication, reviewContent, schedulePublication, submitForReview } = require('../../src/modules/content/content.service');
 const { buildSitemap, getPublishedContent } = require('../../src/modules/seo/seo.service');
 
 const suffix = Date.now().toString(36).slice(-7).toUpperCase();
@@ -36,10 +36,10 @@ test.before(async () => {
   const passwordHash = await hashPassword('integration-password');
   const [author, reviewer, customer] = await Promise.all(['author', 'reviewer', 'customer'].map((name, index) => prisma.user.create({ data: { email: `${runId}-${name}@example.test`, phone: `+349${Date.now().toString().slice(-7)}${index}`, passwordHash, firstName: 'F9', lastName: name, role: 'CLIENT', countryCode: 'ES', registrationLocale: 'es-ES' } })));
   Object.assign(created, { author, reviewer, customer });
-  const market = await prisma.market.create({ data: { code: marketCode, countryId: country.id, status: 'ACTIVE', currencyCode: 'EUR', defaultLocale: 'es-ES', supportedLocales: ['es-ES'], timezonePolicy: { default: 'Europe/Madrid' }, capabilities: { experiments: true, publicContent: true }, currentPolicyVersion: 1, effectiveAt: new Date('2026-01-01') } });
+  const market = await prisma.market.create({ data: { code: marketCode, countryId: country.id, status: 'ACTIVE', currencyCode: 'EUR', defaultLocale: 'es-ES', supportedLocales: ['es-ES', 'en'], timezonePolicy: { default: 'Europe/Madrid' }, capabilities: { experiments: true, publicContent: true }, currentPolicyVersion: 1, effectiveAt: new Date('2026-01-01') } });
   created.market = market;
   await prisma.user.update({ where: { id: customer.id }, data: { marketId: market.id } });
-  const policyInput = { identityPolicy: { selection: 'ONE_OF', documentTypes: [] }, geographyPolicy: { source: 'INE_ES', levels: [] }, addressPolicy: { coordinates: 'OPTIONAL', fields: [] }, localePolicy: { default: 'es-ES', supported: ['es-ES'] }, currencyPolicy: { currency: 'EUR', authority: 'F3' }, legalPolicyReferences: [], taxPolicyReference: null, paymentPolicyReference: null };
+  const policyInput = { identityPolicy: { selection: 'ONE_OF', documentTypes: [] }, geographyPolicy: { source: 'INE_ES', levels: [] }, addressPolicy: { coordinates: 'OPTIONAL', fields: [] }, localePolicy: { default: 'es-ES', supported: ['es-ES', 'en'] }, currencyPolicy: { currency: 'EUR', authority: 'F3' }, legalPolicyReferences: [], taxPolicyReference: null, paymentPolicyReference: null };
   const marketPolicy = await prisma.marketPolicyVersion.create({ data: { marketId: market.id, version: 1, status: 'ACTIVE', reviewStatus: 'APPROVED', reviewedBy: reviewer.id, reviewedAt: new Date(), effectiveAt: new Date('2026-01-01'), ...policyInput, schemaDigest: policyDigest(policyInput) } });
   created.marketPolicy = marketPolicy;
   const consentPolicy = await prisma.consentPolicy.create({ data: { key: `${runId}.experiments`, purpose: consentPurpose, version: 1, countryCode: 'ES', marketId: market.id, locale: 'es-ES', status: 'ACTIVE', legalBasis: 'consent', enforcementMode: 'EXPLICIT_GRANT', documentReference: 'https://legal.integration.test/f9', documentDigest: 'c'.repeat(64), effectiveAt: new Date('2026-01-01'), reviewStatus: 'APPROVED', reviewReference: 'F9-INTEGRATION', reviewedById: reviewer.id, reviewedAt: new Date(), createdById: author.id } });
@@ -78,11 +78,26 @@ test('editorial four-eyes flow publishes immutable market-aware content and dete
   await reviewContent({ versionId: version.id, decision: 'APPROVED', reason: 'Independent editorial and SEO review completed.', actorId: created.reviewer.id, req: reqFor(created.reviewer.id, 'review') });
   const publication = await schedulePublication({ versionId: version.id, publishAt: new Date(Date.now() - 1000), actorId: created.reviewer.id, req: reqFor(created.reviewer.id, 'publish') });
   assert.equal(publication.status, 'PUBLISHED'); assert.equal(publication.indexable, true);
+  const englishVersion = await createContentVersion({ entryId: entry.id, input: { locale: 'en', slug: `cleaning-en-${suffix.toLowerCase()}`, title: 'Integration cleaning services in English', summary: 'A separately reviewed English localization with enough original detail to pass the editorial and SEO quality gate.', body: [{ type: 'heading', text: 'Reliable cleaning in English' }, { type: 'paragraph', text: 'This localized version has its own immutable review and publication history.' }, { type: 'callout', text: 'Market availability remains authoritative and shared across locales.' }], seoTitle: 'Integration cleaning services in English', metaDescription: 'Reviewed English localization for a market-aware cleaning services landing page.', robotsDirective: 'index,follow', qualityEvidence: { checklist: 'localized-editorial-and-seo-approved' }, structuredData: { '@context': 'https://schema.org', '@type': 'Service', name: 'Integration cleaning services in English' } }, actorId: created.author.id, req: reqFor(created.author.id, 'content-version-en') });
+  await submitForReview({ versionId: englishVersion.id, actorId: created.author.id, req: reqFor(created.author.id, 'submit-en') });
+  await reviewContent({ versionId: englishVersion.id, decision: 'APPROVED', reason: 'Independent localized editorial and SEO review completed.', actorId: created.reviewer.id, req: reqFor(created.reviewer.id, 'review-en') });
+  const englishPublication = await schedulePublication({ versionId: englishVersion.id, publishAt: new Date(Date.now() - 1000), actorId: created.reviewer.id, req: reqFor(created.reviewer.id, 'publish-en') });
+  assert.equal(englishPublication.status, 'PUBLISHED'); assert.equal(englishPublication.indexable, true);
   const page = await getPublishedContent({ marketCode, locale: 'es-ES', type: 'LANDING_PAGE', slug: version.slug });
   assert.equal(page.seo.robots, 'index,follow'); assert.equal(page.title, version.title);
+  assert.equal(page.seo.alternates['es-ES'].endsWith(version.canonicalPath), true);
+  assert.equal(page.seo.alternates.en.endsWith(englishVersion.canonicalPath), true);
+  const englishPage = await getPublishedContent({ marketCode, locale: 'en', type: 'LANDING_PAGE', slug: englishVersion.slug });
+  assert.equal(englishPage.seo.alternates['es-ES'], page.seo.alternates['es-ES']);
+  assert.equal(englishPage.seo.alternates.en, page.seo.alternates.en);
   const first = await buildSitemap({ marketCode, locale: 'es-ES' }); const second = await buildSitemap({ marketCode, locale: 'es-ES' });
   assert.equal(first.digest, second.digest); assert.equal(first.urls.some((url) => url.location.endsWith(version.canonicalPath)), true);
   await assert.rejects(() => prisma.contentVersion.update({ where: { id: version.id }, data: { title: 'Mutated published title' } }));
+  await retirePublication({ publicationId: publication.id, reason: 'Retire only the Spanish localization.', actorId: created.reviewer.id, req: reqFor(created.reviewer.id, 'retire-es') });
+  await assert.rejects(() => getPublishedContent({ marketCode, locale: 'es-ES', type: 'LANDING_PAGE', slug: version.slug }), (error) => error.code === 'PUBLIC_CONTENT_NOT_FOUND');
+  const survivingEnglishPage = await getPublishedContent({ marketCode, locale: 'en', type: 'LANDING_PAGE', slug: englishVersion.slug });
+  assert.equal(survivingEnglishPage.title, englishVersion.title);
+  assert.equal((await prisma.contentEntry.findUniqueOrThrow({ where: { id: entry.id } })).status, 'PUBLISHED');
 });
 
 test('all F9 tables retain enabled and forced default-deny RLS', async () => {
