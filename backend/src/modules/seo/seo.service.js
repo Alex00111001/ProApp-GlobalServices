@@ -11,7 +11,7 @@ const publicContentSelect = {
   id: true, locale: true, slug: true, title: true, summary: true, body: true, seoTitle: true,
   metaDescription: true, canonicalPath: true, robotsDirective: true, indexable: true,
   openGraph: true, structuredData: true, contentDigest: true,
-  entry: { select: { key: true, type: true, market: { select: { code: true, status: true, supportedLocales: true } } } },
+  entry: { select: { id: true, key: true, type: true, market: { select: { code: true, status: true, supportedLocales: true } } } },
 };
 
 const getPublishedContent = async ({ marketCode, locale, type, slug, database = prisma, now = new Date() }) => {
@@ -22,10 +22,19 @@ const getPublishedContent = async ({ marketCode, locale, type, slug, database = 
   const publication = await database.contentPublication.findFirst({ where: { path, status: 'PUBLISHED', publishedAt: { lte: now }, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }, select: { publishedAt: true, version: { select: publicContentSelect } } });
   if (!publication || publication.version.entry.type !== type || publication.version.canonicalPath !== path) throw operationalError('Published content is unavailable.', 'PUBLIC_CONTENT_NOT_FOUND', 404);
   const version = publication.version;
+  const localized = await database.contentPublication.findMany({ where: {
+    status: 'PUBLISHED', indexable: true, publishedAt: { lte: now },
+    OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+    version: { entryId: version.entry.id, status: 'PUBLISHED', indexable: true },
+  }, select: { locale: true, canonicalPath: true } });
+  const alternates = localized.length > 1 ? Object.fromEntries(localized
+    .filter((item) => version.entry.market.supportedLocales.includes(item.locale))
+    .sort((a, b) => a.locale.localeCompare(b.locale))
+    .map((item) => [item.locale, `${env.publicWebBaseUrl}${item.canonicalPath}`])) : undefined;
   return {
     key: version.entry.key, type: version.entry.type, marketCode: version.entry.market.code, locale: version.locale,
     title: version.title, summary: version.summary, body: version.body,
-    seo: { title: version.seoTitle, description: version.metaDescription, canonical: `${env.publicWebBaseUrl}${version.canonicalPath}`, robots: version.indexable ? version.robotsDirective : 'noindex,nofollow', openGraph: version.openGraph, structuredData: version.structuredData },
+    seo: { title: version.seoTitle, description: version.metaDescription, canonical: `${env.publicWebBaseUrl}${version.canonicalPath}`, robots: version.indexable ? version.robotsDirective : 'noindex,nofollow', alternates, openGraph: version.openGraph, structuredData: version.structuredData },
     publishedAt: publication.publishedAt, etag: version.contentDigest,
   };
 };

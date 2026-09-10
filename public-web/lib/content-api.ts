@@ -1,7 +1,7 @@
 import 'server-only'
 
 export type ContentBlock = { type: 'heading' | 'paragraph' | 'list' | 'faq' | 'callout' | 'service_summary' | 'location_summary'; text?: string; level?: number; items?: string[]; question?: string; answer?: string }
-export type PublishedPage = { key: string; type: string; marketCode: string; locale: string; title: string; summary: string; body: ContentBlock[]; seo: { title: string; description: string; canonical: string; robots: string; openGraph?: Record<string, unknown>; structuredData?: Record<string, unknown> }; publishedAt: string; etag: string }
+export type PublishedPage = { key: string; type: string; marketCode: string; locale: string; title: string; summary: string; body: ContentBlock[]; seo: { title: string; description: string; canonical: string; robots: string; alternates?: Record<string, string>; openGraph?: Record<string, unknown>; structuredData?: Record<string, unknown> }; publishedAt: string; etag: string }
 export type ActiveMarket = { code: string; supportedLocales: string[] }
 const API = process.env.CORE_API_BASE_URL || 'http://127.0.0.1:5000/api'
 const segment = (value: string) => encodeURIComponent(value)
