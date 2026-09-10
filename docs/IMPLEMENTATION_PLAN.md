@@ -307,7 +307,9 @@ Evidence includes backend 173/173, focused F9 19/19, PostgreSQL/Supabase integra
 
 ### Phase 10
 
-Dependency order remains `F8 -> F8.5 -> F9 -> F10`. F10 is blocked and has not started. It requires a new explicit instruction only after F9 remote closure. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
+Status: **IN PROGRESS from verified F9 closure `f2ffb4426ddc8bf7194e04aa61f46c75051ea203` on 2026-09-10**. F10 is governed by [ADR 0006](adr/0006-supply-demand-ai-operations.md). It adds deterministic supply/demand projections, evidence-based Market readiness and expansion recommendations, and governed AI Operations with provider abstraction, closed registries, structured outputs, risk classes, four-eyes approval, privacy controls, budgets and evaluation gates.
+
+Readiness never activates a Market; expansion review never executes an expansion; AI output is never authoritative. F3 remains financial authority and F8.5 remains Market activation authority. All F10 and provider-execution flags remain disabled in production, and Markets remain inactive. Closure still requires complete local/PostgreSQL/Supabase-compatible/security/frontend gates plus fully green remote CI.
 
 ## 16. Immediate delivery slices
 
