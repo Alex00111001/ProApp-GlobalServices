@@ -15,6 +15,7 @@ import { UsersPage } from './pages/UsersPage'
 import { PrivacyAttributionPage } from './pages/PrivacyAttributionPage'
 import { ReferralsAutomationPage } from './pages/ReferralsAutomationPage'
 import { MarketsPage } from './pages/MarketsPage'
+import { ExperimentsContentSeoPage } from './pages/ExperimentsContentSeoPage'
 import { useSession } from './state/session'
 import './App.css'
 
@@ -45,6 +46,7 @@ export default function App() {
       <Route path="/privacy-attribution" element={<PrivacyAttributionPage />} />
       <Route path="/referrals-automation" element={<ReferralsAutomationPage />} />
       <Route path="/markets" element={<RequirePermission permission="markets.read"><MarketsPage /></RequirePermission>} />
+      <Route path="/experiments-content-seo" element={<ExperimentsContentSeoPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/:module" element={<ModulePage />} />
     </Route>

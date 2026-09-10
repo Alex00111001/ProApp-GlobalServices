@@ -8,7 +8,9 @@ import { GrowthPage } from './pages/GrowthPage'
 import { PrivacyAttributionPage } from './pages/PrivacyAttributionPage'
 import { ReferralsAutomationPage } from './pages/ReferralsAutomationPage'
 import { MarketsPage } from './pages/MarketsPage'
+import { ExperimentsContentSeoPage } from './pages/ExperimentsContentSeoPage'
 import { navigation } from './navigation'
+import { experimentListSchema, contentEntryListSchema, seoRedirectListSchema } from './lib/contracts'
 import { api } from './lib/api'
 import { session } from './state/session'
 
@@ -187,5 +189,33 @@ describe('F6 growth data', () => {
     expect(await screen.findByText('Eventos aceptados')).toBeTruthy()
     expect(await screen.findByText('Sujetos únicos por etapa')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Nueva campaña' })).toBeNull()
+  })
+})
+
+describe('F9 experiments, content and SEO', () => {
+  it('validates all three paginated operational contracts', () => {
+    const pagination = { page: 1, limit: 25, totalItems: 0, totalPages: 1 }
+    expect(experimentListSchema.parse({ items: [], pagination }).items).toHaveLength(0)
+    expect(contentEntryListSchema.parse({ items: [], pagination }).items).toHaveLength(0)
+    expect(seoRedirectListSchema.parse({ items: [], pagination }).items).toHaveLength(0)
+  })
+
+  it('publishes one permission-derived F9 navigation destination', () => {
+    const item = navigation.find((candidate) => candidate.phase === 'F9')
+    expect(item).toEqual(expect.objectContaining({ to: '/experiments-content-seo' }))
+    expect(item?.permissions).toEqual(['experiments.read', 'content.read', 'seo.read'])
+  })
+
+  it('renders server-backed experiments without exposing activation to read-only analysts', async () => {
+    const now = new Date().toISOString()
+    const readSession = { ...sessionPayload, permissions: ['experiments.read', 'experiments.results.read'] }
+    const list = { items: [{ id: 'experiment-1', key: 'booking-layout', name: 'Booking layout', description: null, status: 'RUNNING', currentVersion: 2, rowVersion: 4, layerKey: 'booking', surface: 'booking.checkout', featureFlagKey: 'experiments.booking', trafficAllocationBps: 5000, killSwitch: false, createdAt: now, updatedAt: now, market: { code: 'ES' }, versions: [{ id: 'version-1', version: 1, purpose: 'product_experimentation', timezone: 'Europe/Madrid', minimumSampleSize: 100, significanceAlpha: 0.05, configurationDigest: 'a'.repeat(64), startAt: now, endAt: null, analysisAt: null, audience: null, variants: [{ id: 'variant-1', key: 'control', name: 'Control', isControl: true, weightBps: 5000, payload: {} }, { id: 'variant-2', key: 'compact', name: 'Compact', isControl: false, weightBps: 5000, payload: {} }], metrics: [], snapshots: [] }] }], pagination: { page: 1, limit: 25, totalItems: 1, totalPages: 1 } }
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => { const url = String(input); return new Response(JSON.stringify(url.includes('/auth/login') ? readSession : list), { status: url.includes('/auth/login') ? 201 : 200, headers: { 'content-type': 'application/json' } }) }))
+    await session.login('analyst@example.com', 'correct-password')
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(<QueryClientProvider client={queryClient}><MemoryRouter><ExperimentsContentSeoPage /></MemoryRouter></QueryClientProvider>)
+    expect(await screen.findByText('Booking layout')).toBeTruthy()
+    expect(screen.getByText('booking.checkout')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'PAUSED' })).toBeNull()
   })
 })
