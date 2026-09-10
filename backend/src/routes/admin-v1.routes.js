@@ -9,6 +9,7 @@ const referralsController = require('../controllers/admin-referrals.controller')
 const automationController = require('../controllers/admin-automation.controller');
 const marketsController = require('../controllers/admin-markets.controller');
 const f9Controller = require('../controllers/admin-f9.controller');
+const f10Controller = require('../controllers/admin-f10.controller');
 const { authenticateAdmin } = require('../middleware/authenticate-admin');
 const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
@@ -124,6 +125,37 @@ router.post('/content/versions/:id/publish', requirePermission(PERMISSIONS.CONTE
 router.post('/content/publications/:id/retire', requirePermission(PERMISSIONS.CONTENT_PUBLISH), f9Controller.retireContent);
 router.get('/seo/redirects', requirePermission(PERMISSIONS.SEO_READ), f9Controller.redirects);
 router.post('/seo/redirects', requirePermission(PERMISSIONS.SEO_MANAGE), f9Controller.createRedirect);
+
+router.get('/supply-demand/metrics', requirePermission(PERMISSIONS.SUPPLY_DEMAND_READ), f10Controller.metricDefinitions);
+router.get('/supply-demand/snapshots', requirePermission(PERMISSIONS.SUPPLY_DEMAND_READ), f10Controller.snapshots);
+router.post('/supply-demand/snapshots', requirePermission(PERMISSIONS.READINESS_MANAGE), f10Controller.generateSnapshot);
+router.get('/readiness/policies', requirePermission(PERMISSIONS.READINESS_READ), f10Controller.readinessPolicies);
+router.post('/readiness/policies', requirePermission(PERMISSIONS.READINESS_MANAGE), f10Controller.createReadinessPolicy);
+router.post('/readiness/policies/:id/review', requirePermission(PERMISSIONS.READINESS_MANAGE), f10Controller.reviewReadinessPolicy);
+router.post('/readiness/policies/:id/activate', requirePermission(PERMISSIONS.READINESS_MANAGE), f10Controller.activateReadinessPolicy);
+router.get('/readiness/evaluations', requirePermission(PERMISSIONS.READINESS_READ), f10Controller.readinessEvaluations);
+router.post('/readiness/evaluations', requirePermission(PERMISSIONS.READINESS_MANAGE), f10Controller.evaluateReadiness);
+router.get('/expansion', requirePermission(PERMISSIONS.EXPANSION_READ), f10Controller.expansion);
+router.post('/expansion', requirePermission(PERMISSIONS.EXPANSION_REVIEW), f10Controller.createExpansion);
+router.post('/expansion/:id/evaluations', requirePermission(PERMISSIONS.EXPANSION_REVIEW), f10Controller.evaluateExpansion);
+router.post('/expansion/evaluations/:id/review', requirePermission(PERMISSIONS.EXPANSION_REVIEW), f10Controller.reviewExpansion);
+
+router.get('/ai/providers', requirePermission(PERMISSIONS.AI_PROVIDERS_READ), f10Controller.providers);
+router.post('/ai/providers', requirePermission(PERMISSIONS.AI_PROVIDERS_MANAGE), f10Controller.createProvider);
+router.patch('/ai/providers/:id/status', requirePermission(PERMISSIONS.AI_PROVIDERS_MANAGE), f10Controller.setProviderStatus);
+router.post('/ai/providers/:id/model-policies', requirePermission(PERMISSIONS.AI_PROVIDERS_MANAGE), f10Controller.createModelPolicy);
+router.post('/ai/model-policies/:id/review', requirePermission(PERMISSIONS.AI_PROVIDERS_MANAGE), f10Controller.reviewModelPolicy);
+router.post('/ai/model-policies/:id/activate', requirePermission(PERMISSIONS.AI_PROVIDERS_MANAGE), f10Controller.activateModelPolicy);
+router.get('/ai/operations', requirePermission(PERMISSIONS.AI_OPERATIONS_READ), f10Controller.operations);
+router.post('/ai/operations', requirePermission(PERMISSIONS.AI_OPERATIONS_MANAGE), f10Controller.createOperation);
+router.post('/ai/prompts/:id/review', requirePermission(PERMISSIONS.AI_OPERATIONS_MANAGE), f10Controller.reviewPrompt);
+router.post('/ai/operation-versions/:id/evaluations', requirePermission(PERMISSIONS.AI_OPERATIONS_MANAGE), f10Controller.recordEvaluation);
+router.post('/ai/operations/:id/activate', requirePermission(PERMISSIONS.AI_OPERATIONS_MANAGE), f10Controller.activateOperation);
+router.post('/ai/operations/:id/executions', requirePermission(PERMISSIONS.AI_EXECUTE), f10Controller.executeOperation);
+router.get('/ai/executions', requirePermission(PERMISSIONS.AI_EXECUTIONS_READ), f10Controller.executions);
+router.post('/ai/executions/:id/approvals', requirePermission(PERMISSIONS.AI_APPROVE), f10Controller.reviewOutput);
+router.get('/ai/evaluations', requirePermission(PERMISSIONS.AI_OPERATIONS_READ), f10Controller.evaluations);
+router.get('/ai/costs', requirePermission(PERMISSIONS.AI_COSTS_READ), f10Controller.costs);
 
 router.get('/audit', requirePermission(PERMISSIONS.AUDIT_READ), controller.auditLogs);
 router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), controller.roles);

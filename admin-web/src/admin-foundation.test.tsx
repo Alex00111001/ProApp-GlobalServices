@@ -9,8 +9,9 @@ import { PrivacyAttributionPage } from './pages/PrivacyAttributionPage'
 import { ReferralsAutomationPage } from './pages/ReferralsAutomationPage'
 import { MarketsPage } from './pages/MarketsPage'
 import { ExperimentsContentSeoPage } from './pages/ExperimentsContentSeoPage'
+import { SupplyDemandAIPage } from './pages/SupplyDemandAIPage'
 import { navigation } from './navigation'
-import { experimentListSchema, contentEntryListSchema, seoRedirectListSchema } from './lib/contracts'
+import { aiExecutionListSchema, aiOperationListSchema, contentEntryListSchema, experimentListSchema, expansionListSchema, readinessEvaluationListSchema, seoRedirectListSchema, supplyDemandSnapshotListSchema } from './lib/contracts'
 import { api } from './lib/api'
 import { session } from './state/session'
 
@@ -217,5 +218,34 @@ describe('F9 experiments, content and SEO', () => {
     expect(await screen.findByText('Booking layout')).toBeTruthy()
     expect(screen.getByText('booking.checkout')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'PAUSED' })).toBeNull()
+  })
+})
+
+describe('F10 supply, demand and AI Operations', () => {
+  it('validates all persisted operational contracts', () => {
+    const pagination = { page: 1, limit: 25, totalItems: 0, totalPages: 1 }
+    for (const schema of [supplyDemandSnapshotListSchema, readinessEvaluationListSchema, expansionListSchema, aiOperationListSchema, aiExecutionListSchema]) {
+      expect(schema.parse({ items: [], pagination }).items).toHaveLength(0)
+    }
+  })
+
+  it('publishes one permission-derived F10 navigation destination', () => {
+    const item = navigation.find((candidate) => candidate.phase === 'F10')
+    expect(item).toEqual(expect.objectContaining({ to: '/supply-demand-ai' }))
+    expect(item?.permissions).toEqual(['supplyDemand.read', 'readiness.read', 'expansion.read', 'ai.operations.read'])
+  })
+
+  it('renders deterministic snapshots without exposing AI or activation controls to a read-only analyst', async () => {
+    const now = new Date().toISOString()
+    const readSession = { ...sessionPayload, permissions: ['supplyDemand.read'] }
+    const snapshots = { items: [{ id: 'snapshot-1', snapshotKey: 'a'.repeat(64), window: 'SEVEN_DAYS', windowStart: now, windowEnd: now, status: 'PARTIAL', components: { eligibleProfessionals: 4, verifiedProfessionals: 3, activeServiceAreas: 5, requestDemand: 10, unmetDemand: 4, bookingAttempts: 8 }, balance: { fulfilmentRate: 0.6, requestsPerProfessional: 2.5, geographicCoverage: 0.5 }, anomalies: [{ key: 'demand_spike' }], missingEvidence: ['time_to_match_unavailable'], algorithmVersion: 'supply-demand-v1', inputDigest: 'b'.repeat(64), generatedAt: now, market: { code: 'ES', status: 'DISABLED' }, division: null, service: null }], pagination: { page: 1, limit: 25, totalItems: 1, totalPages: 1 } }
+    vi.stubGlobal('fetch', vi.fn(async (request: RequestInfo | URL) => { const url = String(request); return new Response(JSON.stringify(url.includes('/auth/login') ? readSession : snapshots), { status: url.includes('/auth/login') ? 201 : 200, headers: { 'content-type': 'application/json' } }) }))
+    await session.login('analyst@example.com', 'correct-password')
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(<QueryClientProvider client={queryClient}><MemoryRouter><SupplyDemandAIPage /></MemoryRouter></QueryClientProvider>)
+    expect(await screen.findByText('Oferta y demanda')).toBeTruthy()
+    expect(screen.getByText('10 requests')).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'AI Operations' })).toBeNull()
+    expect(screen.getByText('DISABLED')).toBeTruthy()
   })
 })
