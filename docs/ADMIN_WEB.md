@@ -1,5 +1,7 @@
 # Admin Web Control Center
 
+F10 adds `/supply-demand-ai`, an API-only permission-derived surface for deterministic supply/demand snapshots, readiness evidence, expansion recommendations and governed AI Operations. Read-only users never receive mutation controls. HIGH AI approval requires `ai.approve`, an exact immutable digest and a reason; approval never executes a Market, financial or publication change.
+
 `admin-web/` is an independent React/TypeScript application. PostgreSQL and Supabase are never accessed from the browser; all reads and mutations flow through `/api/v1/admin` and backend RBAC remains authoritative.
 
 ## Session boundary
