@@ -65,7 +65,7 @@
 
 ## Residual activation risks
 
-- No real provider credential or model call is activated or required for phase closure. Provider smoke/load/soak, data-processing review, regional routing and actual cost calibration belong to the later go-live gate.
+- No real provider credential or model call is activated or required for phase closure. Provider smoke/load/soak, data-processing/residency review, regional routing, secret-store/rotation and actual cost calibration are explicitly blocked behind the [AI provider go-live gate](../runbooks/AI_PROVIDER_GO_LIVE_GATE.md).
 - Operational thresholds require calibration with lawfully collected representative traffic before business use.
 - Admin build retains its existing near-500 kB bundle warning; the production build is green and route splitting can be handled separately without weakening F10.
 

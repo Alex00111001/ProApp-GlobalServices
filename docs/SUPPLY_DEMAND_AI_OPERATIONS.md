@@ -156,4 +156,4 @@ Migration `202609100001_supply_demand_ai_operations` extends the 25-migration F9
 | Replay/cost multiplication | advisory lock, unique key, lease, one artifact/cost boundary |
 | Privilege escalation | dedicated RBAC plus audited 401/403 |
 
-F10 closure does not make the product globally production-ready. Real provider execution, traffic and Market activation require a later go-live gate with legal, infrastructure, operational, cost and load/soak approval.
+F10 closure does not make the product globally production-ready. Real provider execution, traffic and Market activation require the separate [AI provider go-live gate](runbooks/AI_PROVIDER_GO_LIVE_GATE.md), including legal/data-residency, secret-store, evaluation, infrastructure, operational, cost-calibration and load/soak approval.
