@@ -1,5 +1,7 @@
 # Database migration procedure
 
+The reviewed history contains 26 migrations after F10. `202609100001_supply_demand_ai_operations` is additive: 20 forced-RLS/default-deny tables, restrictive foreign keys, lifecycle/value/four-eyes constraints, immutable evidence triggers and no cascade deletes. Rollback is application-first; never delete the migration or drop evidence tables after deployment.
+
 Prisma CLI uses `DIRECT_URL` when configured and falls back to `DATABASE_URL`. Keep the pooled runtime URL in `DATABASE_URL`; reserve the direct connection for migrations, baseline audits and integration gates.
 
 The repository has a versioned additive history beginning with:
