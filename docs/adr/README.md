@@ -32,3 +32,5 @@ An accepted ADR must remain within `docs/IMPLEMENTATION_PLAN.md` or update it in
 - [ADR 0002 — Consent, first-party identity and reproducible attribution evidence](0002-consent-attribution-evidence.md)
 - [ADR 0003 — Versioned referrals and PostgreSQL-backed durable automation](0003-referrals-durable-automation.md)
 - [ADR 0004 — Market, identity and geography architecture](0004-market-identity-geography.md)
+- [ADR 0005 — Versioned experiments, editorial content and market-aware SEO](0005-experiments-content-seo.md)
+- [ADR 0006 — Supply, demand, market readiness and governed AI Operations](0006-supply-demand-ai-operations.md)
