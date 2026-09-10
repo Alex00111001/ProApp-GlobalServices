@@ -8,69 +8,83 @@ datasource db {
 }
 
 model User {
-  id                       String                   @id @default(uuid())
-  email                    String                   @unique
-  phone                    String                   @unique
-  passwordHash             String
-  firstName                String
-  lastName                 String
-  avatarUrl                String?
-  role                     UserRole                 @default(CLIENT)
-  isActive                 Boolean                  @default(true)
-  createdAt                DateTime                 @default(now())
-  updatedAt                DateTime                 @updatedAt
-  lastLoginAt              DateTime?
-  countryCode              String                   @default("ES")
-  termsAcceptedAt          DateTime?
-  termsVersion             String?
-  privacyAcceptedAt        DateTime?
-  privacyVersion           String?
-  marketingConsentAt       DateTime?
-  registrationLocale       String?
-  marketId                 String?
-  clientProfile            ClientProfile?
-  notifications            Notification[]
-  professionalProfile      ProfessionalProfile?
-  reviewsGiven             Review[]                 @relation("ReviewGiven")
-  reviewsReceived          Review[]                 @relation("ReviewReceived")
-  administrativeRoles      UserRoleAssignment[]
-  auditLogs                AuditLog[]               @relation("AuditActor")
-  marketingEvents          MarketingEvent[]
-  errorEvents              ErrorEvent[]
-  incidentComments         IncidentComment[]
-  adminSessions            AdminSession[]
-  adminRoleTargets         AdminRoleChangeRequest[] @relation("AdminRoleTarget")
-  adminRoleRequests        AdminRoleChangeRequest[] @relation("AdminRoleRequester")
-  adminRoleReviews         AdminRoleChangeRequest[] @relation("AdminRoleReviewer")
-  supportCasesRequested    SupportCase[]            @relation("SupportRequester")
-  supportCasesAssigned     SupportCase[]            @relation("SupportAssignee")
-  supportCasesCreated      SupportCase[]            @relation("SupportCreator")
-  supportCaseComments      SupportCaseComment[]
-  supportCaseEvents        SupportCaseEvent[]
-  growthLeads              Lead[]                   @relation("GrowthLeadUser")
-  growthConversions        Conversion[]             @relation("GrowthConversionUser")
-  campaignsCreated         Campaign[]               @relation("CampaignCreator")
-  consentPoliciesCreated   ConsentPolicy[]          @relation("ConsentPolicyCreator")
-  consentPoliciesReviewed  ConsentPolicy[]          @relation("ConsentPolicyReviewer")
-  consentDecisions         ConsentDecision[]
-  subjectIdentityLinks     SubjectIdentityLink[]
-  privacyTouchpoints       Touchpoint[]
-  attributionModelsCreated AttributionModel[]       @relation("AttributionModelCreator")
-  referralProgramsCreated  ReferralProgram[]        @relation("ReferralProgramCreator")
-  referralCodesOwned       ReferralCode[]           @relation("ReferralCodeOwner")
-  referralsMade            Referral[]               @relation("ReferralReferrer")
-  referralsReceived        Referral[]               @relation("ReferralReferred")
-  referralRewards          ReferralReward[]         @relation("ReferralRewardBeneficiary")
-  automationDefinitions    AutomationDefinition[]   @relation("AutomationDefinitionCreator")
-  market                   Market?                  @relation(fields: [marketId], references: [id], onDelete: Restrict)
-  addresses                Address[]
-  identityDocuments        IdentityDocument[]
-  experimentsCreated       Experiment[]             @relation("ExperimentCreator")
-  contentEntriesCreated    ContentEntry[]           @relation("ContentEntryCreator")
-  contentVersionsCreated   ContentVersion[]         @relation("ContentVersionCreator")
-  contentApprovals         ContentApproval[]        @relation("ContentApprover")
-  contentPublications      ContentPublication[]     @relation("ContentPublisher")
-  seoRedirectsCreated      SeoRedirect[]            @relation("SeoRedirectCreator")
+  id                         String                         @id @default(uuid())
+  email                      String                         @unique
+  phone                      String                         @unique
+  passwordHash               String
+  firstName                  String
+  lastName                   String
+  avatarUrl                  String?
+  role                       UserRole                       @default(CLIENT)
+  isActive                   Boolean                        @default(true)
+  createdAt                  DateTime                       @default(now())
+  updatedAt                  DateTime                       @updatedAt
+  lastLoginAt                DateTime?
+  countryCode                String                         @default("ES")
+  termsAcceptedAt            DateTime?
+  termsVersion               String?
+  privacyAcceptedAt          DateTime?
+  privacyVersion             String?
+  marketingConsentAt         DateTime?
+  registrationLocale         String?
+  marketId                   String?
+  clientProfile              ClientProfile?
+  notifications              Notification[]
+  professionalProfile        ProfessionalProfile?
+  reviewsGiven               Review[]                       @relation("ReviewGiven")
+  reviewsReceived            Review[]                       @relation("ReviewReceived")
+  administrativeRoles        UserRoleAssignment[]
+  auditLogs                  AuditLog[]                     @relation("AuditActor")
+  marketingEvents            MarketingEvent[]
+  errorEvents                ErrorEvent[]
+  incidentComments           IncidentComment[]
+  adminSessions              AdminSession[]
+  adminRoleTargets           AdminRoleChangeRequest[]       @relation("AdminRoleTarget")
+  adminRoleRequests          AdminRoleChangeRequest[]       @relation("AdminRoleRequester")
+  adminRoleReviews           AdminRoleChangeRequest[]       @relation("AdminRoleReviewer")
+  supportCasesRequested      SupportCase[]                  @relation("SupportRequester")
+  supportCasesAssigned       SupportCase[]                  @relation("SupportAssignee")
+  supportCasesCreated        SupportCase[]                  @relation("SupportCreator")
+  supportCaseComments        SupportCaseComment[]
+  supportCaseEvents          SupportCaseEvent[]
+  growthLeads                Lead[]                         @relation("GrowthLeadUser")
+  growthConversions          Conversion[]                   @relation("GrowthConversionUser")
+  campaignsCreated           Campaign[]                     @relation("CampaignCreator")
+  consentPoliciesCreated     ConsentPolicy[]                @relation("ConsentPolicyCreator")
+  consentPoliciesReviewed    ConsentPolicy[]                @relation("ConsentPolicyReviewer")
+  consentDecisions           ConsentDecision[]
+  subjectIdentityLinks       SubjectIdentityLink[]
+  privacyTouchpoints         Touchpoint[]
+  attributionModelsCreated   AttributionModel[]             @relation("AttributionModelCreator")
+  referralProgramsCreated    ReferralProgram[]              @relation("ReferralProgramCreator")
+  referralCodesOwned         ReferralCode[]                 @relation("ReferralCodeOwner")
+  referralsMade              Referral[]                     @relation("ReferralReferrer")
+  referralsReceived          Referral[]                     @relation("ReferralReferred")
+  referralRewards            ReferralReward[]               @relation("ReferralRewardBeneficiary")
+  automationDefinitions      AutomationDefinition[]         @relation("AutomationDefinitionCreator")
+  market                     Market?                        @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  addresses                  Address[]
+  identityDocuments          IdentityDocument[]
+  experimentsCreated         Experiment[]                   @relation("ExperimentCreator")
+  contentEntriesCreated      ContentEntry[]                 @relation("ContentEntryCreator")
+  contentVersionsCreated     ContentVersion[]               @relation("ContentVersionCreator")
+  contentApprovals           ContentApproval[]              @relation("ContentApprover")
+  contentPublications        ContentPublication[]           @relation("ContentPublisher")
+  seoRedirectsCreated        SeoRedirect[]                  @relation("SeoRedirectCreator")
+  supplyDemandDefinitions    SupplyDemandMetricDefinition[] @relation("SupplyDemandDefinitionCreator")
+  readinessPoliciesCreated   MarketReadinessPolicy[]        @relation("ReadinessPolicyCreator")
+  readinessPoliciesReviewed  MarketReadinessPolicy[]        @relation("ReadinessPolicyReviewer")
+  expansionCandidatesCreated ExpansionCandidate[]           @relation("ExpansionCandidateCreator")
+  expansionReviews           ExpansionEvaluation[]          @relation("ExpansionReviewer")
+  aiProvidersCreated         AIProvider[]                   @relation("AIProviderCreator")
+  aiModelPoliciesCreated     AIModelPolicy[]                @relation("AIModelPolicyCreator")
+  aiModelPoliciesReviewed    AIModelPolicy[]                @relation("AIModelPolicyReviewer")
+  aiPromptTemplatesCreated   AIPromptTemplate[]             @relation("AIPromptTemplateCreator")
+  aiPromptVersionsCreated    AIPromptVersion[]              @relation("AIPromptVersionCreator")
+  aiPromptVersionsReviewed   AIPromptVersion[]              @relation("AIPromptVersionReviewer")
+  aiOperationsCreated        AIOperationDefinition[]        @relation("AIOperationCreator")
+  aiExecutionsRequested      AIOperationExecution[]         @relation("AIExecutionRequester")
+  aiApprovals                AIApproval[]                   @relation("AIApprovalReviewer")
 
   @@index([email])
   @@index([phone])
@@ -191,22 +205,25 @@ model Subcategory {
 }
 
 model Service {
-  id              String               @id @default(uuid())
-  name            String
-  description     String?
-  basePrice       Decimal              @db.Decimal(10, 2)
-  duration        Int
-  categoryId      String
-  subcategoryId   String?
-  professionalId  String?
-  isActive        Boolean              @default(true)
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
-  bookingServices BookingService[]
-  category        Category             @relation(fields: [categoryId], references: [id])
-  professional    ProfessionalProfile? @relation(fields: [professionalId], references: [id])
-  subcategory     Subcategory?         @relation(fields: [subcategoryId], references: [id])
-  contentVersions ContentVersion[]
+  id                       String                    @id @default(uuid())
+  name                     String
+  description              String?
+  basePrice                Decimal                   @db.Decimal(10, 2)
+  duration                 Int
+  categoryId               String
+  subcategoryId            String?
+  professionalId           String?
+  isActive                 Boolean                   @default(true)
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  bookingServices          BookingService[]
+  category                 Category                  @relation(fields: [categoryId], references: [id])
+  professional             ProfessionalProfile?      @relation(fields: [professionalId], references: [id])
+  subcategory              Subcategory?              @relation(fields: [subcategoryId], references: [id])
+  contentVersions          ContentVersion[]
+  supplyDemandObservations SupplyDemandObservation[]
+  supplyDemandSnapshots    SupplyDemandSnapshot[]
+  expansionCandidates      ExpansionCandidate[]
 
   @@index([categoryId])
   @@index([professionalId])
@@ -595,39 +612,46 @@ model Country {
 }
 
 model Market {
-  id                      String                         @id @default(uuid())
-  code                    String                         @unique
-  countryId               String
-  status                  MarketStatus                   @default(DISABLED)
-  currencyCode            String                         @db.Char(3)
-  defaultLocale           String
-  supportedLocales        String[]
-  timezonePolicy          Json
-  capabilities            Json
-  currentPolicyVersion    Int?
-  effectiveAt             DateTime?
-  retiredAt               DateTime?
-  createdAt               DateTime                       @default(now())
-  updatedAt               DateTime                       @updatedAt
-  country                 Country                        @relation(fields: [countryId], references: [id], onDelete: Restrict)
-  policies                MarketPolicyVersion[]
-  users                   User[]
-  addresses               Address[]
-  identityDocuments       IdentityDocument[]
-  serviceAreas            ProfessionalServiceArea[]
-  bookings                Booking[]
-  campaigns               Campaign[]
-  leads                   Lead[]
-  marketingEvents         MarketingEvent[]
-  consentPolicies         ConsentPolicy[]
-  pricingPolicies         PricingPolicy[]
-  refundPolicies          RefundPolicy[]
-  referrals               Referral[]
-  referralProgramVersions ReferralProgramVersionMarket[]
-  experiments             Experiment[]
-  contentEntries          ContentEntry[]
-  contentVersions         ContentVersion[]
-  sitemapSnapshots        SeoSitemapSnapshot[]
+  id                       String                         @id @default(uuid())
+  code                     String                         @unique
+  countryId                String
+  status                   MarketStatus                   @default(DISABLED)
+  currencyCode             String                         @db.Char(3)
+  defaultLocale            String
+  supportedLocales         String[]
+  timezonePolicy           Json
+  capabilities             Json
+  currentPolicyVersion     Int?
+  effectiveAt              DateTime?
+  retiredAt                DateTime?
+  createdAt                DateTime                       @default(now())
+  updatedAt                DateTime                       @updatedAt
+  country                  Country                        @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  policies                 MarketPolicyVersion[]
+  users                    User[]
+  addresses                Address[]
+  identityDocuments        IdentityDocument[]
+  serviceAreas             ProfessionalServiceArea[]
+  bookings                 Booking[]
+  campaigns                Campaign[]
+  leads                    Lead[]
+  marketingEvents          MarketingEvent[]
+  consentPolicies          ConsentPolicy[]
+  pricingPolicies          PricingPolicy[]
+  refundPolicies           RefundPolicy[]
+  referrals                Referral[]
+  referralProgramVersions  ReferralProgramVersionMarket[]
+  experiments              Experiment[]
+  contentEntries           ContentEntry[]
+  contentVersions          ContentVersion[]
+  sitemapSnapshots         SeoSitemapSnapshot[]
+  supplyDemandObservations SupplyDemandObservation[]
+  supplyDemandSnapshots    SupplyDemandSnapshot[]
+  readinessPolicies        MarketReadinessPolicy[]
+  readinessEvaluations     MarketReadinessEvaluation[]
+  expansionCandidates      ExpansionCandidate[]
+  aiExecutions             AIOperationExecution[]
+  aiCostRecords            AICostRecord[]
 
   @@unique([countryId, code])
   @@index([status, effectiveAt])
@@ -697,30 +721,33 @@ model GeographyDatasetImport {
 }
 
 model AdministrativeDivision {
-  id              String                          @id @default(uuid())
-  countryId       String
-  parentId        String?
-  level           Int
-  typeKey         String
-  canonicalCode   String
-  canonicalName   String
-  displayNames    Json?
-  lifecycle       AdministrativeDivisionLifecycle @default(ACTIVE)
-  sourceKey       String
-  sourceVersion   String
-  lastImportId    String
-  effectiveAt     DateTime?
-  deprecatedAt    DateTime?
-  createdAt       DateTime                        @default(now())
-  updatedAt       DateTime                        @updatedAt
-  country         Country                         @relation(fields: [countryId], references: [id], onDelete: Restrict)
-  parent          AdministrativeDivision?         @relation("AdministrativeDivisionHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
-  children        AdministrativeDivision[]        @relation("AdministrativeDivisionHierarchy")
-  lastImport      GeographyDatasetImport          @relation(fields: [lastImportId], references: [id], onDelete: Restrict)
-  addressLinks    AddressAdministrativeDivision[]
-  serviceAreas    ProfessionalServiceArea[]
-  changes         AdministrativeDivisionChange[]
-  contentVersions ContentVersion[]
+  id                       String                          @id @default(uuid())
+  countryId                String
+  parentId                 String?
+  level                    Int
+  typeKey                  String
+  canonicalCode            String
+  canonicalName            String
+  displayNames             Json?
+  lifecycle                AdministrativeDivisionLifecycle @default(ACTIVE)
+  sourceKey                String
+  sourceVersion            String
+  lastImportId             String
+  effectiveAt              DateTime?
+  deprecatedAt             DateTime?
+  createdAt                DateTime                        @default(now())
+  updatedAt                DateTime                        @updatedAt
+  country                  Country                         @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  parent                   AdministrativeDivision?         @relation("AdministrativeDivisionHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children                 AdministrativeDivision[]        @relation("AdministrativeDivisionHierarchy")
+  lastImport               GeographyDatasetImport          @relation(fields: [lastImportId], references: [id], onDelete: Restrict)
+  addressLinks             AddressAdministrativeDivision[]
+  serviceAreas             ProfessionalServiceArea[]
+  changes                  AdministrativeDivisionChange[]
+  contentVersions          ContentVersion[]
+  supplyDemandObservations SupplyDemandObservation[]
+  supplyDemandSnapshots    SupplyDemandSnapshot[]
+  expansionCandidates      ExpansionCandidate[]
 
   @@unique([countryId, sourceKey, canonicalCode])
   @@index([countryId, parentId, level, lifecycle])
@@ -1878,6 +1905,538 @@ model SeoSitemapSnapshot {
   @@index([status, generatedAt])
 }
 
+model SupplyDemandMetricDefinition {
+  id                    String                    @id @default(uuid())
+  key                   String
+  version               Int
+  status                DefinitionLifecycle       @default(DRAFT)
+  kind                  SupplyDemandMetricKind
+  unit                  String
+  eventSources          String[]
+  numeratorDefinition   Json
+  denominatorDefinition Json?
+  deduplication         Json
+  dimensions            String[]
+  supportedWindows      SupplyDemandWindow[]
+  timezonePolicy        Json
+  lateArrivalMinutes    Int                       @default(60)
+  formulaVersion        String
+  configurationDigest   String
+  createdById           String
+  reviewedById          String?
+  reviewedAt            DateTime?
+  effectiveAt           DateTime?
+  retiredAt             DateTime?
+  createdAt             DateTime                  @default(now())
+  createdBy             User                      @relation("SupplyDemandDefinitionCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  observations          SupplyDemandObservation[]
+
+  @@unique([key, version])
+  @@index([status, kind, effectiveAt])
+  @@index([configurationDigest])
+}
+
+model SupplyDemandObservation {
+  id             String                       @id @default(uuid())
+  definitionId   String
+  marketId       String
+  divisionId     String?
+  serviceId      String?
+  dimensionKey   String
+  window         SupplyDemandWindow
+  windowStart    DateTime
+  windowEnd      DateTime
+  eventWatermark DateTime?
+  numerator      Decimal                      @db.Decimal(20, 6)
+  denominator    Decimal?                     @db.Decimal(20, 6)
+  value          Decimal                      @db.Decimal(20, 6)
+  sourceCount    Int
+  dataQuality    SupplyDemandDataQuality
+  qualityReasons String[]
+  evidence       Json
+  inputDigest    String
+  requestId      String?
+  correlationId  String?
+  traceId        String?
+  observedAt     DateTime                     @default(now())
+  processedAt    DateTime                     @default(now())
+  definition     SupplyDemandMetricDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+  market         Market                       @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  division       AdministrativeDivision?      @relation(fields: [divisionId], references: [id], onDelete: Restrict)
+  service        Service?                     @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  @@unique([definitionId, dimensionKey, windowStart, windowEnd, inputDigest])
+  @@index([marketId, windowStart, windowEnd])
+  @@index([marketId, divisionId, serviceId, windowEnd])
+  @@index([dataQuality, processedAt])
+  @@index([correlationId])
+}
+
+model SupplyDemandSnapshot {
+  id                   String                      @id @default(uuid())
+  snapshotKey          String                      @unique
+  marketId             String
+  divisionId           String?
+  serviceId            String?
+  window               SupplyDemandWindow
+  windowStart          DateTime
+  windowEnd            DateTime
+  eventWatermark       DateTime?
+  status               SupplyDemandDataQuality
+  components           Json
+  balance              Json
+  anomalies            Json
+  missingEvidence      String[]
+  algorithmVersion     String
+  inputDigest          String
+  requestId            String?
+  correlationId        String?
+  traceId              String?
+  generatedAt          DateTime                    @default(now())
+  market               Market                      @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  division             AdministrativeDivision?     @relation(fields: [divisionId], references: [id], onDelete: Restrict)
+  service              Service?                    @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  readinessEvaluations MarketReadinessEvaluation[]
+  recommendations      OperationalRecommendation[]
+
+  @@index([marketId, windowEnd, generatedAt])
+  @@index([marketId, divisionId, serviceId, windowEnd])
+  @@index([status, generatedAt])
+  @@index([correlationId])
+}
+
+model MarketReadinessPolicy {
+  id                  String                      @id @default(uuid())
+  key                 String
+  version             Int
+  marketId            String?
+  status              DefinitionLifecycle         @default(DRAFT)
+  requiredDimensions  String[]
+  thresholds          Json
+  weights             Json
+  dataQualityPolicy   Json
+  algorithmVersion    String
+  configurationDigest String
+  createdById         String
+  reviewedById        String?
+  reviewReason        String?
+  reviewedAt          DateTime?
+  effectiveAt         DateTime?
+  retiredAt           DateTime?
+  createdAt           DateTime                    @default(now())
+  market              Market?                     @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  createdBy           User                        @relation("ReadinessPolicyCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  reviewedBy          User?                       @relation("ReadinessPolicyReviewer", fields: [reviewedById], references: [id], onDelete: Restrict)
+  evaluations         MarketReadinessEvaluation[]
+
+  @@unique([key, version, marketId])
+  @@index([marketId, status, effectiveAt])
+  @@index([configurationDigest])
+}
+
+model MarketReadinessEvaluation {
+  id                   String                      @id @default(uuid())
+  evaluationKey        String                      @unique
+  policyId             String
+  marketId             String
+  snapshotId           String?
+  outcome              MarketReadinessOutcome
+  componentResults     Json
+  blockers             String[]
+  missingEvidence      String[]
+  evidenceReferences   Json
+  inputDigest          String
+  algorithmVersion     String
+  requestId            String?
+  correlationId        String?
+  traceId              String?
+  evaluatedAt          DateTime                    @default(now())
+  policy               MarketReadinessPolicy       @relation(fields: [policyId], references: [id], onDelete: Restrict)
+  market               Market                      @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  snapshot             SupplyDemandSnapshot?       @relation(fields: [snapshotId], references: [id], onDelete: Restrict)
+  expansionEvaluations ExpansionEvaluation[]
+  recommendations      OperationalRecommendation[]
+
+  @@index([marketId, outcome, evaluatedAt])
+  @@index([policyId, evaluatedAt])
+  @@index([correlationId])
+}
+
+model ExpansionCandidate {
+  id           String                   @id @default(uuid())
+  candidateKey String                   @unique
+  type         ExpansionCandidateType
+  status       ExpansionCandidateStatus @default(IDENTIFIED)
+  marketId     String
+  divisionId   String?
+  serviceId    String?
+  hypothesis   String
+  createdById  String
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+  market       Market                   @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  division     AdministrativeDivision?  @relation(fields: [divisionId], references: [id], onDelete: Restrict)
+  service      Service?                 @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  createdBy    User                     @relation("ExpansionCandidateCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  evaluations  ExpansionEvaluation[]
+
+  @@index([marketId, type, status, updatedAt])
+  @@index([divisionId, serviceId, status])
+}
+
+model ExpansionEvaluation {
+  id                    String                      @id @default(uuid())
+  evaluationKey         String                      @unique
+  candidateId           String
+  readinessEvaluationId String?
+  recommendation        ExpansionRecommendation
+  confidenceBps         Int
+  reasons               String[]
+  blockers              String[]
+  missingEvidence       String[]
+  guardrails            Json
+  evidenceReferences    Json
+  modelVersion          String
+  inputDigest           String
+  reviewStatus          RecommendationReviewStatus  @default(PENDING_REVIEW)
+  reviewedById          String?
+  reviewReason          String?
+  reviewedAt            DateTime?
+  expiresAt             DateTime?
+  requestId             String?
+  correlationId         String?
+  traceId               String?
+  generatedAt           DateTime                    @default(now())
+  candidate             ExpansionCandidate          @relation(fields: [candidateId], references: [id], onDelete: Restrict)
+  readinessEvaluation   MarketReadinessEvaluation?  @relation(fields: [readinessEvaluationId], references: [id], onDelete: Restrict)
+  reviewedBy            User?                       @relation("ExpansionReviewer", fields: [reviewedById], references: [id], onDelete: Restrict)
+  recommendations       OperationalRecommendation[]
+
+  @@index([candidateId, generatedAt])
+  @@index([reviewStatus, generatedAt])
+  @@index([correlationId])
+}
+
+model OperationalRecommendation {
+  id                    String                     @id @default(uuid())
+  key                   String                     @unique
+  kind                  String
+  status                RecommendationReviewStatus @default(PENDING_REVIEW)
+  snapshotId            String?
+  readinessEvaluationId String?
+  expansionEvaluationId String?
+  title                 String
+  summary               String
+  reasons               String[]
+  blockers              String[]
+  evidenceDigest        String
+  expiresAt             DateTime?
+  createdAt             DateTime                   @default(now())
+  snapshot              SupplyDemandSnapshot?      @relation(fields: [snapshotId], references: [id], onDelete: Restrict)
+  readinessEvaluation   MarketReadinessEvaluation? @relation(fields: [readinessEvaluationId], references: [id], onDelete: Restrict)
+  expansionEvaluation   ExpansionEvaluation?       @relation(fields: [expansionEvaluationId], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@index([kind, createdAt])
+}
+
+model AIProvider {
+  id                   String                 @id @default(uuid())
+  key                  String                 @unique
+  displayName          String
+  adapterType          String
+  status               AIProviderStatus       @default(DISABLED)
+  capabilities         String[]
+  purposeAllowlist     String[]
+  region               String?
+  maximumDataClass     AIDataClass
+  timeoutMs            Int
+  maxConcurrency       Int
+  requestsPerMinute    Int
+  circuitBreakerPolicy Json
+  configuration        Json
+  createdById          String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  createdBy            User                   @relation("AIProviderCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  modelPolicies        AIModelPolicy[]
+  executions           AIOperationExecution[]
+  costs                AICostRecord[]
+
+  @@index([status, adapterType])
+}
+
+model AIModelPolicy {
+  id                  String                 @id @default(uuid())
+  key                 String
+  version             Int
+  status              DefinitionLifecycle    @default(DRAFT)
+  providerId          String
+  modelIdentifier     String
+  capability          String
+  purposeAllowlist    String[]
+  operationAllowlist  AIOperationKind[]
+  maximumDataClass    AIDataClass
+  marketAllowlist     String[]
+  localeAllowlist     String[]
+  maxInputTokens      Int
+  maxOutputTokens     Int
+  timeoutMs           Int
+  maxCostMicros       BigInt
+  routingPriority     Int
+  constraints         Json
+  configurationDigest String
+  createdById         String
+  reviewedById        String?
+  reviewedAt          DateTime?
+  effectiveAt         DateTime?
+  retiredAt           DateTime?
+  createdAt           DateTime               @default(now())
+  provider            AIProvider             @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  createdBy           User                   @relation("AIModelPolicyCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  reviewedBy          User?                  @relation("AIModelPolicyReviewer", fields: [reviewedById], references: [id], onDelete: Restrict)
+  executions          AIOperationExecution[]
+  costs               AICostRecord[]
+
+  @@unique([key, version])
+  @@index([status, capability, routingPriority])
+  @@index([providerId, status])
+}
+
+model AIPromptTemplate {
+  id             String            @id @default(uuid())
+  key            String            @unique
+  purpose        String
+  riskClass      AIRiskClass
+  currentVersion Int               @default(1)
+  createdById    String
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  createdBy      User              @relation("AIPromptTemplateCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  versions       AIPromptVersion[]
+
+  @@index([purpose, riskClass])
+}
+
+model AIPromptVersion {
+  id                  String               @id @default(uuid())
+  templateId          String
+  version             Int
+  status              DefinitionLifecycle  @default(DRAFT)
+  systemPolicy        String
+  templateContent     String
+  requiredVariables   String[]
+  outputSchema        Json
+  providerConstraints Json
+  contentDigest       String
+  createdById         String
+  reviewedById        String?
+  reviewedAt          DateTime?
+  effectiveAt         DateTime?
+  retiredAt           DateTime?
+  createdAt           DateTime             @default(now())
+  template            AIPromptTemplate     @relation(fields: [templateId], references: [id], onDelete: Restrict)
+  createdBy           User                 @relation("AIPromptVersionCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  reviewedBy          User?                @relation("AIPromptVersionReviewer", fields: [reviewedById], references: [id], onDelete: Restrict)
+  operationVersions   AIOperationVersion[]
+
+  @@unique([templateId, version])
+  @@index([status, effectiveAt])
+  @@index([contentDigest])
+}
+
+model AIOperationDefinition {
+  id             String               @id @default(uuid())
+  key            String               @unique
+  kind           AIOperationKind
+  purpose        String
+  status         AIOperationStatus    @default(DRAFT)
+  currentVersion Int                  @default(1)
+  createdById    String
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  createdBy      User                 @relation("AIOperationCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  versions       AIOperationVersion[]
+
+  @@index([status, kind])
+}
+
+model AIOperationVersion {
+  id                    String                 @id @default(uuid())
+  definitionId          String
+  promptVersionId       String
+  version               Int
+  riskClass             AIRiskClass
+  inputSchema           Json
+  outputSchema          Json
+  allowedInputFields    String[]
+  allowedToolKeys       String[]
+  requiredCapability    String
+  maximumDataClass      AIDataClass
+  maxInputBytes         Int
+  maxAttempts           Int                    @default(3)
+  initialBackoffSeconds Int                    @default(30)
+  maxBackoffSeconds     Int                    @default(900)
+  maxCostMicros         BigInt
+  approvalRequired      Boolean                @default(false)
+  evaluationRequired    Boolean                @default(true)
+  configurationDigest   String
+  activatedAt           DateTime?
+  retiredAt             DateTime?
+  createdAt             DateTime               @default(now())
+  definition            AIOperationDefinition  @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+  promptVersion         AIPromptVersion        @relation(fields: [promptVersionId], references: [id], onDelete: Restrict)
+  executions            AIOperationExecution[]
+  evaluations           AIEvaluation[]
+
+  @@unique([definitionId, version])
+  @@index([promptVersionId])
+  @@index([riskClass, activatedAt])
+}
+
+model AIOperationExecution {
+  id                 String             @id @default(uuid())
+  idempotencyKey     String             @unique
+  operationVersionId String
+  providerId         String?
+  modelPolicyId      String?
+  marketId           String?
+  requestedById      String
+  status             AIExecutionStatus  @default(PENDING)
+  dataClass          AIDataClass
+  inputDigest        String
+  safeInput          Json
+  routingEvidence    Json?
+  attemptCount       Int                @default(0)
+  nextAttemptAt      DateTime           @default(now())
+  lockedAt           DateTime?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  firstFailureAt     DateTime?
+  lastFailureAt      DateTime?
+  lastErrorCode      String?
+  safeError          String?
+  requestId          String?
+  correlationId      String?
+  traceId            String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  operationVersion   AIOperationVersion @relation(fields: [operationVersionId], references: [id], onDelete: Restrict)
+  provider           AIProvider?        @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  modelPolicy        AIModelPolicy?     @relation(fields: [modelPolicyId], references: [id], onDelete: Restrict)
+  market             Market?            @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  requestedBy        User               @relation("AIExecutionRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+  inputReferences    AIInputReference[]
+  outputArtifact     AIOutputArtifact?
+  costRecords        AICostRecord[]
+
+  @@index([status, nextAttemptAt])
+  @@index([operationVersionId, createdAt])
+  @@index([providerId, status, createdAt])
+  @@index([marketId, createdAt])
+  @@index([correlationId])
+}
+
+model AIInputReference {
+  id            String               @id @default(uuid())
+  executionId   String
+  referenceType String
+  referenceId   String
+  dataClass     AIDataClass
+  contentDigest String
+  safeMetadata  Json?
+  createdAt     DateTime             @default(now())
+  execution     AIOperationExecution @relation(fields: [executionId], references: [id], onDelete: Restrict)
+
+  @@unique([executionId, referenceType, referenceId])
+  @@index([referenceType, referenceId])
+}
+
+model AIOutputArtifact {
+  id               String                   @id @default(uuid())
+  executionId      String                   @unique
+  schemaVersion    String
+  content          Json
+  contentDigest    String
+  validationStatus AIOutputValidationStatus
+  safetyEvidence   Json
+  createdAt        DateTime                 @default(now())
+  execution        AIOperationExecution     @relation(fields: [executionId], references: [id], onDelete: Restrict)
+  approvals        AIApproval[]
+
+  @@index([contentDigest])
+  @@index([validationStatus, createdAt])
+}
+
+model AIEvaluation {
+  id                  String             @id @default(uuid())
+  evaluationKey       String             @unique
+  operationVersionId  String
+  evaluatorVersion    String
+  datasetVersion      String
+  datasetDigest       String
+  modelPolicyKey      String
+  status              AIEvaluationStatus
+  sampleSize          Int
+  schemaPassRateBps   Int
+  safetyPassRateBps   Int
+  qualityScoreBps     Int
+  p95LatencyMs        Int
+  estimatedCostMicros BigInt
+  thresholds          Json
+  results             Json
+  inputDigest         String
+  evaluatedAt         DateTime           @default(now())
+  operationVersion    AIOperationVersion @relation(fields: [operationVersionId], references: [id], onDelete: Restrict)
+
+  @@index([operationVersionId, evaluatedAt])
+  @@index([status, evaluatedAt])
+}
+
+model AIApproval {
+  id               String             @id @default(uuid())
+  outputArtifactId String
+  reviewerId       String
+  decision         AIApprovalDecision
+  artifactDigest   String
+  reason           String
+  expiresAt        DateTime?
+  supersededAt     DateTime?
+  requestId        String?
+  correlationId    String?
+  traceId          String?
+  createdAt        DateTime           @default(now())
+  outputArtifact   AIOutputArtifact   @relation(fields: [outputArtifactId], references: [id], onDelete: Restrict)
+  reviewer         User               @relation("AIApprovalReviewer", fields: [reviewerId], references: [id], onDelete: Restrict)
+
+  @@unique([outputArtifactId, reviewerId])
+  @@index([decision, createdAt])
+  @@index([correlationId])
+}
+
+model AICostRecord {
+  id                  String               @id @default(uuid())
+  executionId         String
+  providerId          String
+  modelPolicyId       String
+  marketId            String?
+  inputTokens         Int
+  outputTokens        Int
+  estimatedCostMicros BigInt
+  actualCostMicros    BigInt?
+  currency            String               @default("USD") @db.Char(3)
+  recordedAt          DateTime             @default(now())
+  execution           AIOperationExecution @relation(fields: [executionId], references: [id], onDelete: Restrict)
+  provider            AIProvider           @relation(fields: [providerId], references: [id], onDelete: Restrict)
+  modelPolicy         AIModelPolicy        @relation(fields: [modelPolicyId], references: [id], onDelete: Restrict)
+  market              Market?              @relation(fields: [marketId], references: [id], onDelete: Restrict)
+
+  @@index([providerId, recordedAt])
+  @@index([modelPolicyId, recordedAt])
+  @@index([marketId, recordedAt])
+  @@index([executionId])
+}
+
 model ErrorGroup {
   id                    String        @id @default(uuid())
   fingerprint           String        @unique
@@ -2355,6 +2914,141 @@ model ReconciliationItem {
   @@unique([runId, resourceType, resourceId, category])
   @@index([bookingId, createdAt])
   @@index([status, createdAt])
+}
+
+enum DefinitionLifecycle {
+  DRAFT
+  ACTIVE
+  RETIRED
+}
+
+enum SupplyDemandMetricKind {
+  SUPPLY
+  DEMAND
+  BALANCE
+  GUARDRAIL
+}
+
+enum SupplyDemandWindow {
+  HOUR
+  DAY
+  SEVEN_DAYS
+  THIRTY_DAYS
+  CUSTOM
+}
+
+enum SupplyDemandDataQuality {
+  COMPLETE
+  PARTIAL
+  STALE
+  INSUFFICIENT
+  FAILED
+}
+
+enum MarketReadinessOutcome {
+  NOT_READY
+  CONDITIONALLY_READY
+  READY
+}
+
+enum ExpansionCandidateType {
+  MARKET
+  GEOGRAPHY
+  SERVICE
+  COVERAGE_INCREASE
+  COVERAGE_REDUCTION
+}
+
+enum ExpansionCandidateStatus {
+  IDENTIFIED
+  UNDER_REVIEW
+  REVIEWED
+  REJECTED
+  ARCHIVED
+}
+
+enum ExpansionRecommendation {
+  DO_NOT_PROCEED
+  INVESTIGATE
+  PREPARE
+  RECOMMEND_READY
+}
+
+enum RecommendationReviewStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  EXPIRED
+  SUPERSEDED
+}
+
+enum AIProviderStatus {
+  DISABLED
+  ACTIVE
+  DEGRADED
+  SUSPENDED
+  RETIRED
+}
+
+enum AIDataClass {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  RESTRICTED
+}
+
+enum AIRiskClass {
+  LOW
+  MEDIUM
+  HIGH
+  PROHIBITED
+}
+
+enum AIOperationKind {
+  SUMMARIZE_OPERATIONAL_INCIDENT
+  CLASSIFY_OPERATIONAL_SIGNAL
+  EXPLAIN_MARKET_READINESS
+  SUGGEST_EXPANSION_HYPOTHESES
+  SUMMARIZE_SUPPLY_DEMAND_ANOMALY
+  DRAFT_INTERNAL_CONTENT
+  RECOMMEND_INVESTIGATION_STEPS
+}
+
+enum AIOperationStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum AIExecutionStatus {
+  PENDING
+  ROUTING
+  RUNNING
+  AWAITING_APPROVAL
+  SUCCEEDED
+  SKIPPED
+  FAILED
+  EXHAUSTED
+  REJECTED
+}
+
+enum AIOutputValidationStatus {
+  VALID
+  INVALID_SCHEMA
+  REJECTED_SAFETY
+}
+
+enum AIEvaluationStatus {
+  PENDING
+  PASSED
+  FAILED
+  SUPERSEDED
+}
+
+enum AIApprovalDecision {
+  APPROVED
+  REJECTED
 }
 
 enum CountryLifecycle {
