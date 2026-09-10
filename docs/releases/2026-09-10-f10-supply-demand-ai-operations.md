@@ -9,8 +9,8 @@
 - Admin surfaces commit: `312bd9b5a90e5d4d71916f745e76eeff7538db7a`
 - AI routing/audit hardening SHA: `13ee26db3c6ad0b75c8e6700d8cc9f536277b8f3`
 - Documentation/release SHA: this record's published commit
-- Remote Platform verification: pending
-- Status: **PARCIAL — remote closure pending**
+- Remote Platform verification: [`34518351719`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34518351719) — SUCCESS
+- Status: **HECHO**
 - Markets activated: **NO**
 - Production activated: **NO**
 
@@ -58,7 +58,10 @@
 - Prisma format/validate/generate and migration status: green; all 26 migrations are current in configured Supabase test.
 - RBAC synchronization and baseline compatibility audit: green.
 - Dependency audits: zero vulnerabilities on root, backend, Admin Web, public web, Client and Professional.
-- Tracked-tree/full-history secret scans and remote CI: pending final closure run.
+- Gitleaks exact-fixture negative controls: green; variants and generated secret remain detected.
+- Tracked-tree scan: green.
+- Full-history scan: green across 124 commits.
+- Remote Platform verification `34518351719`: all three jobs green, including clean PostgreSQL 17 replay of 26 migrations, RBAC synchronization, 24/24 integration/concurrency and full-history Secret Scan.
 
 ## Residual activation risks
 
@@ -66,4 +69,4 @@
 - Operational thresholds require calibration with lawfully collected representative traffic before business use.
 - Admin build retains its existing near-500 kB bundle warning; the production build is green and route splitting can be handled separately without weakening F10.
 
-F10 remains PARCIAL until the complete local gate and final published Platform verification are green. Production and Markets remain inactive.
+F10 is HECHO with complete local and remote phase evidence. This does not declare the product production-ready: provider execution, production and Markets remain inactive and require a separate explicit go-live gate.
