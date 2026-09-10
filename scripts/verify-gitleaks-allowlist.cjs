@@ -23,6 +23,7 @@ regexes = [
 if (!config.includes('useDefault = true')) throw new Error('Default Gitleaks rules, including generic-api-key, must remain enabled.');
 if (!config.includes(exactBlock)) throw new Error('The exact F8 secret-target allowlist is missing or has changed.');
 if ((config.match(/claim-revoked-1/g) || []).length !== 1) throw new Error('The F8 fixture must be allowlisted exactly once.');
+if ((config.match(/\^replace_with_an_independent_32_character_secret\$/g) || []).length !== 1) throw new Error('The F9 configuration placeholder must be allowlisted exactly once.');
 if (/claim-\.\*|claim-\.\+|referrals-automation\.test\.js|ac563c4/i.test(config)) throw new Error('A broad F8 path, commit, or pattern allowlist is prohibited.');
 
 const root = mkdtempSync(join(tmpdir(), 'proapp-gitleaks-allowlist-'));
@@ -52,7 +53,13 @@ try {
   const secret = scan('generated-secret', generatedSecret);
   if (!secret.some((finding) => finding.RuleID === 'generic-api-key')) throw new Error('A generated high-entropy idempotency key must still trigger generic-api-key.');
 
-  console.log('Gitleaks allowlist verification passed: exact fixture allowed; variant and generated secret detected by generic-api-key.');
+  const f9Placeholder = scan('allowed-f9-placeholder', 'replace_with_an_independent_32_character_secret');
+  if (f9Placeholder.length !== 0) throw new Error('The exact F9 configuration placeholder was not classified by the allowlist.');
+
+  const f9PlaceholderVariant = scan('non-allowlisted-f9-placeholder-variant', 'replace_with_an_independent_33_character_secret');
+  if (!f9PlaceholderVariant.some((finding) => finding.RuleID === 'generic-api-key')) throw new Error('A variant of the F9 placeholder must still trigger generic-api-key.');
+
+  console.log('Gitleaks allowlist verification passed: exact F8/F9 fixtures allowed; variants and generated secret detected by generic-api-key.');
 } finally {
   rmSync(root, { recursive: true, force: true });
 }
