@@ -313,6 +313,25 @@ Readiness never activates a Market; expansion review never executes an expansion
 
 External provider execution is not authorized by F10. A future reviewer must close the independent [AI provider go-live gate](runbooks/AI_PROVIDER_GO_LIVE_GATE.md), including named human owners, privacy/legal and data-residency review, production secret-store/rotation, exact model routing, evaluation regression, measured cost ceilings, load/soak/provider-failure evidence, observability, staged rollout and rehearsed rollback. Missing or expired evidence is an automatic NO-GO.
 
+### Phase 11 — Production Control Plane and Go-Live Orchestrator
+
+Status: **PENDIENTE — architecture and execution plan created on 2026-09-11; runtime implementation has not started**. F11 is proposed from F10 SHA `afd1c19db94053795c75e64138090745739725d8` to turn the requested simple production control into a secure release workflow. Production and Markets remain inactive.
+
+The Admin Web action will create an immutable, environment-bound change request rather than directly toggle production. F11 plans versioned release artifacts/manifests, fail-closed preflight evidence, exact-digest four-eyes approval with step-up authentication, a closed least-privilege deployment adapter registry, durable idempotent execution, progressive rollout, observed-state reconciliation, planned deactivation, application-first rollback and a separately permissioned emergency stop. MarketPolicyVersion, F3 finance, F9 publication and F10 AI governance remain authoritative in their domains.
+
+Implementation slices:
+
+1. Accept [ADR 0007](adr/0007-production-control-plane.md) and select the production deployment/GitOps provider, secret manager, step-up MFA mechanism and environment topology.
+2. Add immutable release catalog, manifest, request/revision and approval-policy persistence with restrictive constraints and RLS.
+3. Implement the closed preflight/evidence engine with expiry and non-overridable checks.
+4. Add narrow release RBAC, step-up authentication and exact-digest four-eyes approval.
+5. Add PostgreSQL-backed execution, leases, exactly-once effect keys, retries/dead-letter, closed provider adapters and desired/observed-state reconciliation.
+6. Implement progressive rollout, deterministic abort gates, planned deactivation, rollback and emergency-stop rehearsal.
+7. Deliver versioned Admin APIs and the accessible API-only Release & Go-Live surface.
+8. Close security/concurrency, migrations/RLS, F1-F10 regression, runbooks, scans and remote CI while every production/Market flag remains off.
+
+Acceptance: all gates in the [F11 implementation plan](PRODUCTION_CONTROL_PLANE.md) pass remotely, including step-up four-eyes authorization, expiring evidence, no arbitrary execution surface, crash/replay-safe provider effects, staging/canary/rollback/emergency-stop rehearsal, audit/telemetry, forced RLS/default deny and clean migration history. F11 completion will not itself authorize the first production rollout; that requires a separate explicit, dated GO decision for the exact immutable release.
+
 ## 16. Immediate delivery slices
 
 1. Correlation/request context, structured errors, validated configuration and app/server separation.
