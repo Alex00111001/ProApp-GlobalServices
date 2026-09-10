@@ -8,6 +8,7 @@ const privacyController = require('../controllers/admin-privacy.controller');
 const referralsController = require('../controllers/admin-referrals.controller');
 const automationController = require('../controllers/admin-automation.controller');
 const marketsController = require('../controllers/admin-markets.controller');
+const f9Controller = require('../controllers/admin-f9.controller');
 const { authenticateAdmin } = require('../middleware/authenticate-admin');
 const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
@@ -108,6 +109,21 @@ router.get('/identity/policies', requirePermission(PERMISSIONS.IDENTITY_POLICY_R
 router.post('/identity/policies/:id/review', requirePermission(PERMISSIONS.IDENTITY_POLICY_MANAGE), marketsController.reviewIdentityPolicy);
 router.patch('/identity/policies/:id/status', requirePermission(PERMISSIONS.IDENTITY_POLICY_MANAGE), marketsController.setIdentityPolicyStatus);
 router.get('/identity/documents', requirePermission(PERMISSIONS.IDENTITY_DOCUMENTS_READ_MASKED), marketsController.identityDocuments);
+
+router.get('/experiments', requirePermission(PERMISSIONS.EXPERIMENTS_READ), f9Controller.experiments);
+router.post('/experiments', requirePermission(PERMISSIONS.EXPERIMENTS_MANAGE), f9Controller.createExperiment);
+router.post('/experiments/:id/versions', requirePermission(PERMISSIONS.EXPERIMENTS_MANAGE), f9Controller.createExperimentVersion);
+router.patch('/experiments/:id/status', requirePermission(PERMISSIONS.EXPERIMENTS_ACTIVATE), f9Controller.setExperimentStatus);
+router.post('/experiments/:id/results', requirePermission(PERMISSIONS.EXPERIMENTS_RESULTS_READ), f9Controller.results);
+router.get('/content', requirePermission(PERMISSIONS.CONTENT_READ), f9Controller.content);
+router.post('/content', requirePermission(PERMISSIONS.CONTENT_MANAGE), f9Controller.createContent);
+router.post('/content/:id/versions', requirePermission(PERMISSIONS.CONTENT_MANAGE), f9Controller.createContentVersion);
+router.post('/content/versions/:id/submit', requirePermission(PERMISSIONS.CONTENT_MANAGE), f9Controller.submitContent);
+router.post('/content/versions/:id/review', requirePermission(PERMISSIONS.CONTENT_REVIEW), f9Controller.reviewContent);
+router.post('/content/versions/:id/publish', requirePermission(PERMISSIONS.CONTENT_PUBLISH), f9Controller.publishContent);
+router.post('/content/publications/:id/retire', requirePermission(PERMISSIONS.CONTENT_PUBLISH), f9Controller.retireContent);
+router.get('/seo/redirects', requirePermission(PERMISSIONS.SEO_READ), f9Controller.redirects);
+router.post('/seo/redirects', requirePermission(PERMISSIONS.SEO_MANAGE), f9Controller.createRedirect);
 
 router.get('/audit', requirePermission(PERMISSIONS.AUDIT_READ), controller.auditLogs);
 router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), controller.roles);

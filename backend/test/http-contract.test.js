@@ -114,6 +114,16 @@ test('versioned privacy and attribution APIs require dedicated administrative au
   }
 });
 
+test('F9 administrative APIs fail closed without a dedicated administrative session', async () => {
+  for (const path of ['/api/v1/admin/experiments', '/api/v1/admin/content', '/api/v1/admin/seo/redirects']) {
+    const response = await fetch(`${baseUrl}${path}`, { headers: { 'x-correlation-id': 'f9-admin-auth-1' } });
+    const body = await response.json();
+    assert.equal(response.status, 401);
+    assert.equal(body.code, 'ADMIN_AUTHENTICATION_REQUIRED');
+    assert.equal(body.correlationId, 'f9-admin-auth-1');
+  }
+});
+
 test('admin refresh fails safely without cookie and CSRF verifier', async () => {
   const response = await fetch(`${baseUrl}/api/v1/admin/auth/refresh`, {
     method: 'POST',
