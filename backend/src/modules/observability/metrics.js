@@ -103,6 +103,11 @@ const contentOperations = new Prometheus.Counter({
   labelNames: ['operation', 'outcome', 'reason'],
   registers: [registry],
 });
+const supplyDemandOperations = new Prometheus.Counter({ name: 'homeservices_supply_demand_operations_total', help: 'Deterministic supply, demand, readiness and expansion outcomes.', labelNames: ['operation', 'outcome', 'reason'], registers: [registry] });
+const supplyDemandDuration = new Prometheus.Histogram({ name: 'homeservices_supply_demand_duration_seconds', help: 'Supply and demand aggregation duration.', labelNames: ['operation', 'outcome'], buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30], registers: [registry] });
+const supplyDemandLag = new Prometheus.Histogram({ name: 'homeservices_supply_demand_lag_seconds', help: 'Bounded source data lag for operational snapshots.', labelNames: ['outcome'], buckets: [0, 60, 300, 900, 3600, 21600, 86400], registers: [registry] });
+const aiOperations = new Prometheus.Counter({ name: 'homeservices_ai_operations_total', help: 'Governed AI operation outcomes without prompts, identities or content labels.', labelNames: ['operation', 'outcome', 'reason', 'provider'], registers: [registry] });
+const aiDuration = new Prometheus.Histogram({ name: 'homeservices_ai_operation_duration_seconds', help: 'Provider execution latency by bounded provider and outcome.', labelNames: ['provider', 'outcome'], buckets: [0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60, 120], registers: [registry] });
 
 const boundedLabel = (value, fallback = 'unknown') => {
   const label = String(value || '').toLowerCase();
@@ -166,6 +171,15 @@ const observeMarketOperation = ({ operation, market = 'unknown', outcome, reason
 });
 const observeExperimentOperation = ({ operation, outcome, reason = 'none' }) => experimentOperations.inc({ operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason) });
 const observeContentOperation = ({ operation, outcome, reason = 'none' }) => contentOperations.inc({ operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason) });
+const observeSupplyDemandOperation = ({ operation, outcome, reason = 'none', durationSeconds, lagSeconds }) => {
+  const labels = { operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason) }; supplyDemandOperations.inc(labels);
+  if (Number.isFinite(durationSeconds)) supplyDemandDuration.observe({ operation: labels.operation, outcome: labels.outcome }, Math.max(0, durationSeconds));
+  if (Number.isFinite(lagSeconds)) supplyDemandLag.observe({ outcome: labels.outcome }, Math.max(0, lagSeconds));
+};
+const observeAIOperation = ({ operation, outcome, reason = 'none', provider = 'none', durationSeconds }) => {
+  const labels = { operation: boundedLabel(operation), outcome: boundedLabel(outcome), reason: boundedLabel(reason), provider: boundedLabel(provider) }; aiOperations.inc(labels);
+  if (Number.isFinite(durationSeconds)) aiDuration.observe({ provider: labels.provider, outcome: labels.outcome }, Math.max(0, durationSeconds));
+};
 
 const metricsHandler = async (req, res, next) => {
   try {
@@ -190,6 +204,8 @@ module.exports = {
   observeMarketOperation,
   observeExperimentOperation,
   observeContentOperation,
+  observeSupplyDemandOperation,
+  observeAIOperation,
   registry,
   setOutboxDepth,
 };

@@ -9,6 +9,7 @@
     "start:observability-worker": "node src/workers/observability-worker.js",
     "start:content-worker": "node src/workers/content-worker.js",
     "start:automation-worker": "node src/workers/automation-worker.js",
+    "start:ai-operations-worker": "node src/workers/ai-operations-worker.js",
     "build": "npm run prisma:gen && npm run lint",
     "lint": "node scripts/check-syntax.js",
     "test": "node --test test/*.test.js",

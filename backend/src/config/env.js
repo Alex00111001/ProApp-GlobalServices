@@ -114,6 +114,12 @@ const validateEnvironment = (source = process.env) => {
   const experimentsEnabled = parseBoolean('EXPERIMENTS_ENABLED', source.EXPERIMENTS_ENABLED, false);
   const publicSeoEnabled = parseBoolean('PUBLIC_SEO_ENABLED', source.PUBLIC_SEO_ENABLED, false);
   const contentWorkerEnabled = parseBoolean('CONTENT_WORKER_ENABLED', source.CONTENT_WORKER_ENABLED, false);
+  const supplyDemandEnabled = parseBoolean('SUPPLY_DEMAND_ENABLED', source.SUPPLY_DEMAND_ENABLED, environment !== 'production');
+  const aiOperationsEnabled = parseBoolean('AI_OPERATIONS_ENABLED', source.AI_OPERATIONS_ENABLED, environment !== 'production');
+  const aiProviderExecutionEnabled = parseBoolean('AI_PROVIDER_EXECUTION_ENABLED', source.AI_PROVIDER_EXECUTION_ENABLED, false);
+  const aiOperationsWorkerEnabled = parseBoolean('AI_OPERATIONS_WORKER_ENABLED', source.AI_OPERATIONS_WORKER_ENABLED, false);
+  if (aiProviderExecutionEnabled && !aiOperationsEnabled) throw new Error('AI_PROVIDER_EXECUTION_ENABLED requires AI_OPERATIONS_ENABLED.');
+  if (aiOperationsWorkerEnabled && (!aiOperationsEnabled || !aiProviderExecutionEnabled)) throw new Error('AI_OPERATIONS_WORKER_ENABLED requires AI Operations and provider execution.');
   const logTransport = parseChoice('LOG_TRANSPORT', source.LOG_TRANSPORT, 'stdout', ['stdout', 'file']);
   const logLevel = parseChoice('LOG_LEVEL', source.LOG_LEVEL, environment === 'production' ? 'info' : 'debug', [
     'trace', 'debug', 'info', 'warn', 'error', 'fatal',
@@ -224,6 +230,15 @@ const validateEnvironment = (source = process.env) => {
     publicSeoEnabled: experimentsContentSeoEnabled || publicSeoEnabled,
     contentWorkerEnabled,
     contentWorkerPollMs: parseInteger('CONTENT_WORKER_POLL_MS', source.CONTENT_WORKER_POLL_MS, 5_000, 500, 60_000),
+    supplyDemandEnabled,
+    aiOperationsEnabled,
+    aiProviderExecutionEnabled,
+    aiOperationsWorkerEnabled,
+    aiOperationsWorkerPollMs: parseInteger('AI_OPERATIONS_WORKER_POLL_MS', source.AI_OPERATIONS_WORKER_POLL_MS, 2_000, 250, 60_000),
+    aiOperationsWorkerBatchSize: parseInteger('AI_OPERATIONS_WORKER_BATCH_SIZE', source.AI_OPERATIONS_WORKER_BATCH_SIZE, 10, 1, 50),
+    aiOperationsHourlyBudgetMicros: parseInteger('AI_OPERATIONS_HOURLY_BUDGET_MICROS', source.AI_OPERATIONS_HOURLY_BUDGET_MICROS, 5_000_000, 0, 2_000_000_000),
+    aiOperationsDailyBudgetMicros: parseInteger('AI_OPERATIONS_DAILY_BUDGET_MICROS', source.AI_OPERATIONS_DAILY_BUDGET_MICROS, 25_000_000, 0, 2_000_000_000),
+    aiOperationsMonthlyBudgetMicros: parseInteger('AI_OPERATIONS_MONTHLY_BUDGET_MICROS', source.AI_OPERATIONS_MONTHLY_BUDGET_MICROS, 250_000_000, 0, 2_000_000_000),
     experimentAssignmentSecret: source.EXPERIMENT_ASSIGNMENT_SECRET || 'development-only-experiment-assignment-secret',
     publicWebBaseUrl: parseHttpUrl('PUBLIC_WEB_BASE_URL', source.PUBLIC_WEB_BASE_URL, environment === 'production' && publicSeoEnabled),
     identityDocumentEncryptionKeyBase64: source.IDENTITY_DOCUMENT_ENCRYPTION_KEY_BASE64,
