@@ -1,6 +1,6 @@
 # F9 Experiments, Content and SEO
 
-- Status: closure candidate verified locally and in the Supabase test environment
+- Status: HECHO; verified locally, in the Supabase test environment and by remote Platform verification `34476722673`
 - Date: 2026-09-09
 - Base: F8.5 `0c1f088c863ca1f058263d8de714bb932953d02b`
 - Governing ADR: [ADR 0005](adr/0005-experiments-content-seo.md)
