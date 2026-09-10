@@ -115,4 +115,4 @@ The additive schema may remain under older code. Cleanup/retention requires a la
 
 ## Acceptance versus go-live
 
-F10 closure requires complete local and remote CI: clean 26-migration replay, PostgreSQL concurrency, forced RLS/default deny, RBAC sync, all apps, audits and secret scans. That proves the phase only. External providers, real traffic, production and Markets require a later explicit go-live gate, secret-store provisioning, legal/data-processing review, operational ownership and load/soak evidence.
+F10 closure requires complete local and remote CI: clean 26-migration replay, PostgreSQL concurrency, forced RLS/default deny, RBAC sync, all apps, audits and secret scans. That proves the phase only. External providers, real traffic, production and Markets require the separate [AI provider go-live gate](AI_PROVIDER_GO_LIVE_GATE.md), whose evidence covers secret-store provisioning, legal/data-processing and residency review, evaluation, operational ownership, cost calibration, load/soak and rollback.
