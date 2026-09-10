@@ -297,9 +297,17 @@ F8.5 separates Country from operating Market; adds versioned server-authoritativ
 
 The full acceptance gate is recorded in [the F8.5 architecture](MARKETS_IDENTITY_GEOGRAPHY.md), [ADR 0004](adr/0004-market-identity-geography.md), [the runbook](runbooks/MARKETS_IDENTITY_GEOGRAPHY.md), and [the release evidence](releases/2026-09-09-f8-5-markets-identity-geography.md). Initial ES/BR/CL records remain disabled; architecture/data readiness never activates a market.
 
-### Phases 9–10
+### Phase 9 — Experiments, content and SEO
 
-Dependency order is explicit: `F8 -> F8.5 -> F9 -> F10`. F9 does not resume automatically after F8.5; a new explicit instruction is required. F10 remains not started. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
+Status: **closure candidate verified locally and on the configured Supabase test environment on 2026-09-09; remote CI pending**. F9 was resumed explicitly from F8.5 SHA `0c1f088c863ca1f058263d8de714bb932953d02b`. The earlier F9 stash was inspected and remains preserved; valid work was adapted manually to the final Market/Policy/geography authority rather than applied blindly.
+
+F9 provides immutable versioned experiments; deterministic HMAC sticky assignment; explicit idempotent exposure; closed audiences and canonical metrics; fixed-horizon versioned-alpha results and guardrails; typed versioned content with four-eyes editorial governance and durable publication; and a separate server-rendered market-aware SEO surface with canonical/noindex quality gates, structured data, sitemap, safe redirects/410 and nonce CSP. Narrow RBAC, audit/outbox, telemetry, privacy boundaries, additive migrations and forced RLS/default deny cover every new domain table. All F9 flags, production and Markets remain inactive.
+
+Local evidence currently includes backend 173/173, focused F9 19/19, PostgreSQL/Supabase integration 20/20, focused F9 DB 3/3, Admin Web 12/12 plus lint/build, public web 4/4 plus production SSR build, and green Client/Professional verification. Root verification is green. Dependency audits report zero vulnerabilities on all six package surfaces; tracked-tree and 115-commit full-history Gitleaks scans are green, with exact-placeholder negative controls preserving `generic-api-key`. F9 remains PARCIAL only until remote Platform verification is completely green. See [F9 architecture](EXPERIMENTS_CONTENT_SEO.md), [ADR 0005](adr/0005-experiments-content-seo.md), [the runbook](runbooks/EXPERIMENTS_CONTENT_SEO.md) and [release evidence](releases/2026-09-09-f9-experiments-content-seo.md).
+
+### Phase 10
+
+Dependency order remains `F8 -> F8.5 -> F9 -> F10`. F10 is blocked and has not started. It requires a new explicit instruction only after F9 remote closure. Each phase requires domain tests, migration rollback/forward procedures, telemetry, runbooks and feature-flagged rollout before expansion.
 
 ## 16. Immediate delivery slices
 
