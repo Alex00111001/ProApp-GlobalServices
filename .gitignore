@@ -17,10 +17,12 @@ node_modules/
 *.swp
 *.swo
 *.tmp
+*.tsbuildinfo
 
 # Build artifacts
 dist/
 build/
+**/.next/
 *.js.map
 *.min.js
 *.min.css

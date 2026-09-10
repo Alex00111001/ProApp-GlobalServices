@@ -32,6 +32,7 @@ jobs:
             package-lock.json
             backend/package-lock.json
             admin-web/package-lock.json
+            public-web/package-lock.json
             mobile-client/package-lock.json
             mobile-professional/package-lock.json
       - name: Install locked dependencies
@@ -39,6 +40,7 @@ jobs:
           npm ci
           npm --prefix backend ci
           npm --prefix admin-web ci
+          npm --prefix public-web ci
           npm --prefix mobile-client ci
           npm --prefix mobile-professional ci
       - name: Verify every workspace
@@ -53,6 +55,7 @@ jobs:
           npm audit --audit-level=high
           npm --prefix backend audit --audit-level=high
           npm --prefix admin-web audit --audit-level=high
+          npm --prefix public-web audit --audit-level=high
           npm --prefix mobile-client audit --audit-level=high
           npm --prefix mobile-professional audit --audit-level=high
 
