@@ -10,9 +10,9 @@
 - Product surfaces SHA: `396172ca27a6ddc734d7c88205eb8333886b536c`
 - Localized publication fix SHA: `898acfaf`
 - Security classification SHA: `ebcb330e`
-- Documentation/release SHA: pending publication
-- Remote Platform verification: pending
-- Status: **closure candidate; remote evidence pending**
+- Documentation/release SHA: this release-record commit; exact SHA reported with the published closure
+- Remote Platform verification: [`34476722673`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34476722673) — SUCCESS
+- Status: **HECHO**
 - Production activation: **NO**
 - Market activation: **NO**
 - F10 started: **NO**
@@ -74,8 +74,8 @@ The preserved stash `stash@{0}: paused F9 work before F8.5 markets foundation`, 
 - Dependency audits: root, backend, Admin Web, public web, Client and Professional each report 0 vulnerabilities.
 - Gitleaks 8.24.3/8.30.1 negative controls: exact F8/F9 fixtures allowed; adjacent variants and a generated high-entropy key remain detected by `generic-api-key`.
 - Tracked Git tree: 5.76 MB scanned from a `git archive`, no leaks found.
-- Full Git history: 115 commits and 299.52 MB scanned, no leaks found.
-- Remote CI: pending final gate execution.
+- Full Git history before publication: 117 commits and 299.55 MB scanned, no leaks found.
+- Remote CI: run `34476722673` passed build/unit/contracts/dependency audit, clean PostgreSQL migration/RBAC/integration and full-history Secret Scan.
 
 ## Migration evidence and compatibility
 
@@ -85,12 +85,11 @@ During the first data-rich rehearsal, a previously interrupted F9 test fixture c
 
 The first full-history scan correctly classified `EXPERIMENT_ASSIGNMENT_SECRET=replace_with_an_independent_32_character_secret` in `backend/.env.example` as `generic-api-key`. This is an explicit non-secret setup placeholder. The committed Gitleaks configuration allowlists only that exact anchored secret value; it does not exempt the variable, path, rule, commit or similar values. The reproducible negative-control script proves that `replace_with_an_independent_33_character_secret` and a generated high-entropy value are still detected. The full-history scan then passed without reducing its scope.
 
-## Residual activation blockers
+## Residual risks and activation boundaries
 
-- Remote Platform verification must be green before F9 can be marked complete; local tracked-tree and full-history secret scans are already green.
 - Production infrastructure, legal/editorial approval, real Market activation, crawler smoke tests, traffic/load/soak and operational ownership are intentionally not activated by F9.
 - Statistical inference does not implement sequential testing, SRM diagnosis or automated decisioning; fixed-horizon manual review is the deliberate supported production contract.
 - No localized alternate is emitted until another independently approved locale publication exists.
 - The preserved pre-F8.5 stash remains until explicit cleanup authorization.
 
-F9 remains PARCIAL until the branch is published and a completely green remote Platform verification is linked here.
+F9 is HECHO with published implementation, complete local/Supabase evidence and remote Platform verification `34476722673` fully green. Production and Markets remain inactive; F10 has not started.
