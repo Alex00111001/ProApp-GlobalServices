@@ -5,9 +5,9 @@
 - Branch: `feature/supply-demand-ai-operations-phase-10`
 - Base F9 SHA: `f2ffb4426ddc8bf7194e04aa61f46c75051ea203`
 - Architecture SHA: `d39331ab26fa9e5678ca218b218a2c250a8c33e9`
-- Supply/Demand and AI core SHA: `38ff25c5e70329a5df7373d24f745a1965022141`
-- Admin surfaces commit: `b3137b22579936465b73a85801f7a2806d5bfb45`
-- AI routing/audit hardening SHA: `a26001bec70d0fa4bc1e382021d6a6a341be7f8f`
+- Supply/Demand and AI core SHA: `e9bbae38108be3aa5c2966afba3a87c48b8d8c05`
+- Admin surfaces commit: `312bd9b5a90e5d4d71916f745e76eeff7538db7a`
+- AI routing/audit hardening SHA: `13ee26db3c6ad0b75c8e6700d8cc9f536277b8f3`
 - Documentation/release SHA: this record's published commit
 - Remote Platform verification: pending
 - Status: **PARCIAL — remote closure pending**
