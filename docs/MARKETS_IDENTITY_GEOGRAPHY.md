@@ -221,13 +221,41 @@ F8.5 uses expand/migrate/contract:
 
 Rollback is application-first: disable F8.5 routes/market activation and return consumers to compatible legacy flows where safe. Retain all new tables, import evidence, audits, identities, and references. Never roll back by dropping populated evidence. Production and all markets remain inactive unless explicitly authorized.
 
+## F8.6 territorial access extension
+
+[ADR 0008](adr/0008-territorial-access-without-gps.md) governs automatic country eligibility. It extends
+F8.5 without merging Country and Market: a trusted ingress adapter derives a network country; the server
+combines that bounded evidence with an active Market and effective reviewed MarketPolicy; clients only
+render the versioned decision. A client-selected country, Market field, IP/header or cached result is not
+authorization.
+
+The decision registry is `ALLOWED`, `BLOCKED`, `UNDETERMINED`, and `TEMPORARILY_UNAVAILABLE`. Unknown,
+missing, anonymous/Tor, invalid, stale or provider-unavailable evidence fails closed. The origin accepts
+geography evidence only from an approved edge that strips caller-supplied headers, and direct origin
+bypass is denied. The selected provider remains behind a closed adapter.
+
+Territorial policy is versioned in or referenced by MarketPolicyVersion. It governs availability only;
+it cannot infer currency, pricing, tax, identity, residence, settlement or legal entitlement directly
+from Country. Billing, F7 legal evidence and professional eligibility retain their own authorities.
+
+The customer and professional apps resolve eligibility before authentication/session restoration, do
+not ask the user for country, request no GPS/location permission, and show distinct blocked,
+indeterminate and offline states. Backend middleware protects user routes on every request. Provider
+webhooks, workers, internal health and Admin access follow an explicit separate route/trust matrix.
+
+Persisted decisions contain no raw IP by default. Metrics use bounded decision/reason/Market/adapter
+labels. Retention, DPIA/DPA, false-block support, shadow/canary thresholds, real staging ingress, minimum
+client version and application-first rollback must be approved and evidenced before enforcement.
+
 ## Phase boundary
 
 ```text
 F8 Referrals & Automation
   -> F8.5 Markets / Identity / Geography
-       -> F9 Experiments / Content / SEO (PAUSED — dependency F8.5)
-            -> F10 Supply / Demand + AI Operations (NOT STARTED)
+       |- F9 Experiments / Content / SEO
+       |    -> F10 Supply / Demand + AI Operations (HECHO; production inactive)
+       `- F8.6 Territorial Access / No GPS (authorized; not implemented)
+              -> Production Readiness Remediation gate
 ```
 
-F9 later consumes Market, Country, locale, canonical division IDs/codes/names, hierarchy, public-safe identifiers, and a collision-safe localized slug strategy. It must not construct location pages from arbitrary strings. F8.5 does not implement SEO pages. F10 later consumes ProfessionalServiceArea; F8.5 does not implement matching.
+F9 consumes Market, Country, locale, canonical division IDs/codes/names, hierarchy, public-safe identifiers, and a collision-safe localized slug strategy. It must not construct location pages from arbitrary strings. F8.5 does not implement SEO pages. F10 consumes ProfessionalServiceArea; F8.5 does not implement matching. F8.6 is an availability/security boundary and does not rewrite F9 SEO or F10 readiness authority.

@@ -34,3 +34,6 @@ An accepted ADR must remain within `docs/IMPLEMENTATION_PLAN.md` or update it in
 - [ADR 0004 — Market, identity and geography architecture](0004-market-identity-geography.md)
 - [ADR 0005 — Versioned experiments, editorial content and market-aware SEO](0005-experiments-content-seo.md)
 - [ADR 0006 — Supply, demand, market readiness and governed AI Operations](0006-supply-demand-ai-operations.md)
+- [ADR 0007 — Production Control Plane and Go-Live Orchestrator](0007-production-control-plane.md)
+- [ADR 0008 — Territorial access without GPS](0008-territorial-access-without-gps.md)
+- [ADR 0009 — Cash payment quarantine](0009-cash-payment-quarantine.md)

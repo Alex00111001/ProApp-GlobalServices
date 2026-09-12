@@ -15,6 +15,18 @@ The professional lifecycle is `PENDING -> CONFIRMED -> IN_PROGRESS -> COMPLETED`
 
 Completion additionally requires a persisted `Payment` in `COMPLETED` state before creating earnings, payout requests, statistics, notifications, audit, or outbox effects. A provisional cash declaration remains `PENDING` and therefore cannot create financial entitlement; a separately governed cash-settlement workflow is required before enabling that method for completion.
 
+### Cash payment quarantine
+
+[ADR 0009](adr/0009-cash-payment-quarantine.md) makes `CASH_PAYMENT_ENABLED=false` the mandatory default.
+The legacy compatibility route must reject before every database/provider mutation and return a stable
+error. Customer declaration is not professional acceptance or settlement, cannot confirm a booking,
+cannot overwrite terminal provider evidence and cannot create ledger/earnings entitlement.
+
+Re-enabling cash requires a separately approved service-owned workflow with CAS booking/payment
+transitions, durable idempotency, audit/outbox, legal/tax policy, reconciliation, compensating correction,
+PostgreSQL concurrency tests and provider/staging evidence. Historical impact review is read-only; no
+record is automatically repaired or reinterpreted.
+
 Migration `202608300004_pricing_separation` is strictly additive. It does not reinterpret existing financial records. Legacy bookings retain their original columns, while the new separated fields use safe defaults. A production backfill must first reconcile real payments, earnings and booking values and then be delivered as a separately reviewed migration or resumable job.
 
 Rollback is application-first: disable the new pricing path and continue reading legacy projections. The added columns and enum remain in place because removing them after new bookings exist would discard financial evidence. Corrections are delivered forward; the migration is not reversed by dropping populated columns.
