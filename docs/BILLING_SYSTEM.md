@@ -27,6 +27,15 @@ transitions, durable idempotency, audit/outbox, legal/tax policy, reconciliation
 PostgreSQL concurrency tests and provider/staging evidence. Historical impact review is read-only; no
 record is automatically repaired or reinterpreted.
 
+Cash is available only to an eligible professional with a reusable provider-tokenized card registered for
+platform usage-fee collection. The platform never stores PAN or CVC. Eligibility requires current
+provider usability, versioned acceptance of the applicable Market Policy and off-session fee terms,
+completed setup authentication, and no blocking debt, dispute or risk restriction. It is checked when the
+method is offered and again before collection. A stored payment method is risk mitigation, not proof of
+settlement. Charge timing, amount limits, retries, notices, authentication-required recovery, debt and
+suspension rules remain fail-closed until separately approved and implemented with idempotent provider
+commands and signed-webhook reconciliation.
+
 Migration `202608300004_pricing_separation` is strictly additive. It does not reinterpret existing financial records. Legacy bookings retain their original columns, while the new separated fields use safe defaults. A production backfill must first reconcile real payments, earnings and booking values and then be delivered as a separately reviewed migration or resumable job.
 
 Rollback is application-first: disable the new pricing path and continue reading legacy projections. The added columns and enum remain in place because removing them after new bookings exist would discard financial evidence. Corrections are delivered forward; the migration is not reversed by dropping populated columns.

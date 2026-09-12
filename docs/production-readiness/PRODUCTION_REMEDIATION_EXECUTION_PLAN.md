@@ -153,8 +153,8 @@ debe dividirse antes de entrar en `EN CURSO`.
 
 | ID | Entregable | Depende de | Gate |
 |---|---|---|---|
-| PRR-101 | Diseñar workflow cash o retirada permanente compatible | GOV-05 | decisión e invariantes aprobados |
-| PRR-102 | Implementar servicio cash CAS/idempotente/transaccional | PRR-101 | carreras y terminal states verdes en PostgreSQL |
+| PRR-101 | Diseñar workflow cash y elegibilidad profesional con tarjeta tokenizada para fees, o retirada permanente compatible | GOV-05 | decisión de cobro/consentimiento/SCA/deuda e invariantes aprobados |
+| PRR-102 | Implementar servicio cash CAS/idempotente/transaccional y cobro de fee gobernado | PRR-101 | carreras, provider replay, fallos de tarjeta y terminal states verdes en PostgreSQL |
 | PRR-103 | Reparar filtración de errores 5xx | PRR-001 | respuestas estables sin detalles internos |
 | PRR-104 | Validar/capar paginación, filtros, UUID y cuerpos legacy | PRR-001 | tests malformed/abuse verdes |
 | PRR-105 | Publicar OpenAPI/contrato v1 compatible | PRR-103/104 | diff y consumer tests verdes |
