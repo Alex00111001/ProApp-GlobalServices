@@ -1,9 +1,10 @@
 # PRR-0 governance baseline — release evidence
 
 - Date: 2026-09-12
-- Status: **CLOSURE CANDIDATE — remote CI pending**
+- Status: **COMPLETE — implementation SHA remotely verified**
 - Branch: `feature/production-control-plane-phase-11`
 - Pre-change baseline: `dc338f296ca52097aac1e557f8bfa4522b7fda7c`
+- Governance implementation SHA: `4f7fb9c074a41b173f7ea8383d7f58a2ca696b6a`
 - Production: inactive and not authorized
 - Markets: not activated by this change
 - Live financial actions: none
@@ -46,9 +47,19 @@ Rollback: revert documentation/ADR commit before dependent runtime work; do not 
 
 ## Remote evidence
 
-The local GitHub CLI credential returned `401 Bad credentials` before this change. This record must not
-be changed to complete until the stage is pushed and all required jobs in `.github/workflows/ci.yml`
-pass for the exact closing SHA. The run URL and SHA will be appended in a closure commit.
+[Platform verification run 34684805928](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34684805928)
+completed successfully for exact implementation SHA `4f7fb9c074a41b173f7ea8383d7f58a2ca696b6a`
+in 1m33s:
+
+- Build, unit and contract gates: PASS in 1m31s.
+- PostgreSQL migrations and integration gates: PASS in 1m16s.
+- Secret scan over full committed history: PASS in 13s.
+- Gitleaks SARIF artifact digest:
+  `sha256:6583ea1b83169cfce86bcb5605b085a5d07a89eead8f192a62b8a7f91a34f8d7`.
+
+The local GitHub CLI credential still returns `401 Bad credentials`; the public GitHub Actions run page
+was inspected directly. This authentication defect does not change the successful public run result but
+must be repaired before an automated Notion sync is implemented.
 
 ## Acceptance and rollback
 
