@@ -1,8 +1,17 @@
 const prisma = require('../config/prisma');
+const { z } = require('zod');
 const { logError } = require('../modules/observability/safe-log');
 const { hashPassword, comparePassword } = require('../utils/password');
-const { generateToken } = require('../middleware/auth');
-const { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema } = require('../validators/auth.validators');
+const {
+  accountActionConfirmSchema,
+  changePasswordSchema,
+  loginSchema,
+  passwordRecoveryRequestSchema,
+  passwordResetSchema,
+  refreshSessionSchema,
+  registerSchema,
+  updateProfileSchema,
+} = require('../validators/auth.validators');
 const { normalizeRegistrationPayload } = require('../shared/http/compatibility');
 const env = require('../config/env');
 const { recordDecision } = require('../modules/privacy/consent.service');
@@ -10,6 +19,23 @@ const { assertAddressPolicyInput, assertCurrentSchema, resolveMarketPolicy, vali
 const { canonicalType, validateIdentityDocument } = require('../modules/markets/identity-adapters');
 const { protectIdentityValue } = require('../modules/markets/identity-protection');
 const { writeAuditLog } = require('../modules/audit/audit.service');
+const {
+  createCustomerSessionInTransaction,
+  listCustomerSessions,
+  refreshCustomerSession,
+  revokeAllCustomerSessionsInTransaction,
+  revokeCustomerSession,
+} = require('../modules/identity/customer-session.service');
+const {
+  requestEmailVerification,
+  requestPasswordReset,
+  resetPassword,
+  verifyEmail,
+} = require('../modules/identity/account-action.service');
+const { NotificationService } = require('../modules/notifications/notification.service');
+
+const DUMMY_PASSWORD_HASH = '$2b$12$wkoWUlaQnGviXbjEqvHrkeuD0QEIyDxGmt8f8vHhE4mClLkrkHDKi';
+const notificationService = new NotificationService();
 
 // Registrar usuario
 exports.register = async (req, res) => {
@@ -50,18 +76,18 @@ exports.register = async (req, res) => {
       },
     });
 
-    if (existingUser) {
-      return res.status(400).json({ 
-        error: 'Email or phone already registered' 
-      });
-    }
+    if (existingUser) return res.status(409).json({
+      error: 'Registration data conflicts with an existing account.',
+      code: 'REGISTRATION_CONFLICT',
+      correlationId: req.context?.correlationId,
+    });
 
     // Hashear contraseña
     const passwordHash = await hashPassword(validatedData.password);
 
     // User/profile and optional F7 decision are one transaction. Marketing denial
     // never blocks account creation when no policy was presented.
-    const user = await prisma.$transaction(async (tx) => {
+    const registration = await prisma.$transaction(async (tx) => {
       const created = await tx.user.create({ data: {
         email: validatedData.email,
         phone: validatedData.phone,
@@ -143,18 +169,26 @@ exports.register = async (req, res) => {
           database: tx,
         });
       }
-      return created;
+      const sessionAuth = await createCustomerSessionInTransaction({
+        userId: created.id,
+        role: created.role,
+        userAgent: req.get('user-agent'),
+        ipAddress: req.ip,
+      }, tx);
+      return { user: created, sessionAuth };
     });
 
-    if (marketContext) await writeAuditLog({ req: { ...req, user }, action: 'MARKET_REGISTRATION_COMPLETED', resourceType: 'USER', resourceId: user.id, metadata: { marketCode: marketContext.market.code, schemaVersion: validatedData.registrationSchemaVersion, identityType: protectedIdentity.typeKey, divisionCount: addressDivisions.length } });
+    const { user, sessionAuth } = registration;
 
-    // Generar token JWT
-    const token = generateToken({ userId: user.id, role: user.role });
+    if (marketContext) await writeAuditLog({ req: { ...req, user }, action: 'MARKET_REGISTRATION_COMPLETED', resourceType: 'USER', resourceId: user.id, metadata: { marketCode: marketContext.market.code, schemaVersion: validatedData.registrationSchemaVersion, identityType: protectedIdentity.typeKey, divisionCount: addressDivisions.length } });
 
     res.status(201).json({
       message: 'User registered successfully',
       user,
-      token,
+      token: sessionAuth.accessToken,
+      accessToken: sessionAuth.accessToken,
+      refreshToken: sessionAuth.refreshToken,
+      session: sessionAuth.session,
     });
   } catch (error) {
     logError(req, error, 'Registration failed');
@@ -179,7 +213,7 @@ exports.register = async (req, res) => {
 };
 
 // Login
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
   try {
     // Validar datos de entrada
     const validatedData = loginSchema.parse(req.body);
@@ -193,39 +227,26 @@ exports.login = async (req, res) => {
       },
     });
 
-    if (!user) {
-      return res.status(401).json({ 
-        error: 'Invalid credentials' 
-      });
-    }
-
-    // Verificar si el usuario está activo
-    if (!user.isActive) {
-      return res.status(401).json({ 
-        error: 'Account is deactivated' 
-      });
-    }
-
-    // Verificar contraseña
     const isValidPassword = await comparePassword(
-      validatedData.password, 
-      user.passwordHash
+      validatedData.password,
+      user?.passwordHash || DUMMY_PASSWORD_HASH
     );
 
-    if (!isValidPassword) {
+    if (!user || !user.isActive || !isValidPassword) {
       return res.status(401).json({ 
         error: 'Invalid credentials' 
       });
     }
 
-    // Actualizar último login
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() },
+    const sessionAuth = await prisma.$transaction(async (tx) => {
+      await tx.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+      return createCustomerSessionInTransaction({
+        userId: user.id,
+        role: user.role,
+        userAgent: req.get('user-agent'),
+        ipAddress: req.ip,
+      }, tx);
     });
-
-    // Generar token JWT
-    const token = generateToken({ userId: user.id, role: user.role });
 
     // Eliminar passwordHash de la respuesta
     const { passwordHash, ...userWithoutPassword } = user;
@@ -233,7 +254,10 @@ exports.login = async (req, res) => {
     res.json({
       message: 'Login successful',
       user: userWithoutPassword,
-      token,
+      token: sessionAuth.accessToken,
+      accessToken: sessionAuth.accessToken,
+      refreshToken: sessionAuth.refreshToken,
+      session: sessionAuth.session,
     });
   } catch (error) {
     logError(req, error, 'Login failed');
@@ -245,9 +269,147 @@ exports.login = async (req, res) => {
       });
     }
 
-    res.status(500).json({ 
-      error: 'Internal server error' 
+    next(error);
+  }
+};
+
+exports.refresh = async (req, res, next) => {
+  try {
+    const { refreshToken } = refreshSessionSchema.parse(req.body);
+    const sessionAuth = await refreshCustomerSession({
+      refreshToken,
+      userAgent: req.get('user-agent'),
+      ipAddress: req.ip,
     });
+    res.json({
+      token: sessionAuth.accessToken,
+      accessToken: sessionAuth.accessToken,
+      refreshToken: sessionAuth.refreshToken,
+      session: sessionAuth.session,
+    });
+  } catch (error) {
+    logError(req, error, 'Customer session refresh failed');
+    next(error);
+  }
+};
+
+exports.requestPasswordRecovery = async (req, res) => {
+  const response = {
+    message: 'If the account is eligible, password reset instructions will be sent.',
+  };
+  try {
+    const input = passwordRecoveryRequestSchema.parse(req.body);
+    try {
+      await requestPasswordReset({
+        ...input,
+        correlationId: req.context?.correlationId,
+        notificationService,
+      });
+    } catch (deliveryError) {
+      logError(req, deliveryError, 'Password recovery delivery failed');
+    }
+    return res.status(202).json(response);
+  } catch (error) {
+    logError(req, error, 'Password recovery request validation failed');
+    if (error.name === 'ZodError') return res.status(400).json({ error: 'Validation error', details: error.issues });
+    return res.status(202).json(response);
+  }
+};
+
+exports.confirmPasswordRecovery = async (req, res, next) => {
+  try {
+    const input = passwordResetSchema.parse(req.body);
+    await resetPassword(input);
+    res.json({ message: 'Password changed successfully. Sign in again on every device.' });
+  } catch (error) {
+    logError(req, error, 'Password recovery confirmation failed');
+    next(error);
+  }
+};
+
+exports.requestEmailVerification = async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { id: true, email: true, emailVerifiedAt: true, registrationLocale: true },
+    });
+    const result = await requestEmailVerification({
+      user,
+      correlationId: req.context?.correlationId,
+      notificationService,
+    });
+    res.status(202).json({ accepted: result.accepted, alreadyVerified: Boolean(result.alreadyVerified) });
+  } catch (error) {
+    logError(req, error, 'Email verification request failed');
+    next(error);
+  }
+};
+
+exports.confirmEmailVerification = async (req, res, next) => {
+  try {
+    const input = accountActionConfirmSchema.parse(req.body);
+    await verifyEmail(input);
+    res.json({ verified: true });
+  } catch (error) {
+    logError(req, error, 'Email verification confirmation failed');
+    next(error);
+  }
+};
+
+exports.logout = async (req, res, next) => {
+  try {
+    if (!req.customerSession) {
+      return res.status(409).json({
+        error: 'Sign in again to obtain a revocable session.',
+        code: 'CUSTOMER_SESSION_UPGRADE_REQUIRED',
+      });
+    }
+    await revokeCustomerSession({
+      sessionId: req.customerSession.id,
+      userId: req.user.id,
+      reason: 'USER_LOGOUT',
+    });
+    res.status(204).send();
+  } catch (error) {
+    logError(req, error, 'Customer logout failed');
+    next(error);
+  }
+};
+
+exports.listSessions = async (req, res, next) => {
+  try {
+    if (!req.customerSession) {
+      return res.status(409).json({
+        error: 'Sign in again to manage sessions.',
+        code: 'CUSTOMER_SESSION_UPGRADE_REQUIRED',
+      });
+    }
+    const sessions = await listCustomerSessions({
+      userId: req.user.id,
+      currentSessionId: req.customerSession.id,
+    });
+    res.json({ sessions });
+  } catch (error) {
+    logError(req, error, 'Customer session listing failed');
+    next(error);
+  }
+};
+
+exports.revokeSession = async (req, res, next) => {
+  try {
+    if (!z.string().uuid().safeParse(req.params.sessionId).success) {
+      return res.status(400).json({ error: 'Invalid session identifier.', code: 'VALIDATION_ERROR' });
+    }
+    const revoked = await revokeCustomerSession({
+      sessionId: req.params.sessionId,
+      userId: req.user.id,
+      reason: 'USER_REVOKED',
+    });
+    if (!revoked) return res.status(404).json({ error: 'Session not found.', code: 'SESSION_NOT_FOUND' });
+    res.status(204).send();
+  } catch (error) {
+    logError(req, error, 'Customer session revocation failed');
+    next(error);
   }
 };
 
@@ -375,13 +537,15 @@ exports.changePassword = async (req, res) => {
     // Hashear nueva contraseña
     const passwordHash = await hashPassword(newPassword);
 
-    // Actualizar contraseña
-    await prisma.user.update({
-      where: { id: req.user.id },
-      data: { passwordHash },
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({ where: { id: req.user.id }, data: { passwordHash } });
+      await revokeAllCustomerSessionsInTransaction({
+        userId: req.user.id,
+        reason: 'PASSWORD_CHANGED',
+      }, tx);
     });
 
-    res.json({ message: 'Password changed successfully' });
+    res.json({ message: 'Password changed successfully. Sign in again on every device.' });
   } catch (error) {
     logError(req, error, 'Password change failed');
     if (error.name === 'ZodError') {

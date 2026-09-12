@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, RADIUS, SPACING } from '@/constants/theme';
+import { COLORS, LAYOUT, RADIUS, SHADOWS, SPACING } from '@/constants/theme';
 import { useAuthStore } from '@/store/authStore';
 
 export default function LoginScreen() {
@@ -17,7 +17,8 @@ export default function LoginScreen() {
   };
   return (
     <SafeAreaView style={styles.safe}>
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.keyboard} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={styles.brandIcon}><Ionicons name="briefcase" size={34} color={COLORS.white} /></View>
         <Text style={styles.brand}>Home Services</Text><Text style={styles.brandAccent}>Para profesionales</Text>
         <Text style={styles.title}>Accede a tu cuenta profesional</Text>
@@ -26,24 +27,26 @@ export default function LoginScreen() {
           <Text style={styles.label}>Correo electrónico</Text>
           <View style={styles.inputWrap}><Ionicons name="mail-outline" size={20} color={COLORS.muted} /><TextInput style={styles.input} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="profesional@correo.com" placeholderTextColor="#9CA3AF" /></View>
           <Text style={styles.label}>Contraseña</Text>
-          <View style={styles.inputWrap}><Ionicons name="lock-closed-outline" size={20} color={COLORS.muted} /><TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry={!showPassword} placeholder="Mínimo 8 caracteres" placeholderTextColor="#9CA3AF" /><Pressable onPress={() => setShowPassword(!showPassword)}><Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={21} color={COLORS.muted} /></Pressable></View>
+          <View style={styles.inputWrap}><Ionicons name="lock-closed-outline" size={20} color={COLORS.muted} /><TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry={!showPassword} placeholder="Mínimo 8 caracteres" placeholderTextColor={COLORS.subtle} /><Pressable style={styles.iconButton} onPress={() => setShowPassword(!showPassword)} accessibilityRole="button" accessibilityLabel={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}><Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={21} color={COLORS.muted} /></Pressable></View>
           {!!error && <View style={styles.errorBox}><Ionicons name="alert-circle-outline" size={18} color={COLORS.danger} /><Text style={styles.error}>{error}</Text></View>}
           <Pressable style={[styles.button, (loading || !email.trim() || password.length < 8) && styles.buttonDisabled]} onPress={submit} disabled={loading || !email.trim() || password.length < 8}>
             {loading ? <ActivityIndicator color={COLORS.white} /> : <><Text style={styles.buttonText}>Iniciar sesión</Text><Ionicons name="arrow-forward" size={20} color={COLORS.white} /></>}
           </Pressable>
+          <View style={styles.securityNote}><Ionicons name="shield-checkmark-outline" size={17} color={COLORS.success} /><Text style={styles.securityText}>Acceso cifrado para profesionales registrados</Text></View>
         </View>
         <Pressable style={styles.registerLink} onPress={() => router.push('/auth/register' as any)}><Text style={styles.registerText}>Crear cuenta profesional</Text></Pressable>
         <Text style={styles.help}>Acceso seguro para profesionales registrados</Text>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background }, container: { flex: 1, padding: SPACING.xl, justifyContent: 'center' },
-  brandIcon: { width: 64, height: 64, borderRadius: 20, backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.lg }, brand: { fontSize: 30, fontWeight: '800', color: COLORS.text }, brandAccent: { color: COLORS.primary, fontWeight: '700', fontSize: 16, marginTop: -4, marginBottom: SPACING.xxl },
-  title: { fontSize: 26, fontWeight: '800', color: COLORS.text }, subtitle: { color: COLORS.muted, fontSize: 15, lineHeight: 22, marginTop: SPACING.sm, marginBottom: SPACING.xl }, form: { backgroundColor: COLORS.surface, borderRadius: RADIUS.lg, padding: SPACING.lg, borderWidth: 1, borderColor: COLORS.border }, label: { color: COLORS.text, fontSize: 13, fontWeight: '700', marginBottom: SPACING.sm, marginTop: SPACING.sm },
-  inputWrap: { minHeight: 54, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.border, paddingHorizontal: SPACING.md, flexDirection: 'row', alignItems: 'center', backgroundColor: '#FBFCFE' }, input: { flex: 1, color: COLORS.text, fontSize: 15, marginLeft: SPACING.sm, paddingVertical: 0 },
-  errorBox: { flexDirection: 'row', backgroundColor: '#FEECEC', borderRadius: RADIUS.sm, padding: SPACING.md, marginTop: SPACING.md }, error: { color: COLORS.danger, flex: 1, marginLeft: SPACING.sm, fontSize: 13 },
-  button: { minHeight: 54, borderRadius: RADIUS.md, backgroundColor: COLORS.primary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, marginTop: SPACING.lg }, buttonDisabled: { opacity: 0.5 }, buttonText: { color: COLORS.white, fontSize: 16, fontWeight: '700' }, registerLink: { alignItems: 'center', marginTop: SPACING.lg }, registerText: { color: COLORS.primary, fontWeight: '700' }, help: { color: COLORS.muted, textAlign: 'center', fontSize: 12, marginTop: SPACING.xl },
+  safe: { flex: 1, backgroundColor: COLORS.background }, keyboard: { flex: 1 }, scroll: { flex: 1 }, container: { width: '100%', maxWidth: 560, alignSelf: 'center', flexGrow: 1, padding: LAYOUT.screenPadding, paddingVertical: SPACING.xl, justifyContent: 'center' },
+  brandIcon: { width: 64, height: 64, borderRadius: 21, backgroundColor: COLORS.ink, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.lg, ...SHADOWS.md }, brand: { fontSize: 30, fontWeight: '800', color: COLORS.text }, brandAccent: { color: COLORS.primary, fontWeight: '700', fontSize: 16, marginTop: -4, marginBottom: SPACING.xxl },
+  title: { fontSize: 27, lineHeight: 33, fontWeight: '800', color: COLORS.text }, subtitle: { color: COLORS.muted, fontSize: 15, lineHeight: 22, marginTop: SPACING.sm, marginBottom: SPACING.xl }, form: { backgroundColor: COLORS.surface, borderRadius: RADIUS.xl, padding: SPACING.xl, borderWidth: 1, borderColor: COLORS.border, ...SHADOWS.sm }, label: { color: COLORS.text, fontSize: 13, fontWeight: '700', marginBottom: SPACING.sm, marginTop: SPACING.sm },
+  inputWrap: { minHeight: 54, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.borderStrong, paddingLeft: SPACING.md, flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.surfaceMuted }, input: { flex: 1, color: COLORS.text, fontSize: 15, marginLeft: SPACING.sm, paddingVertical: 0 }, iconButton: { width: LAYOUT.touchTarget, height: LAYOUT.touchTarget, alignItems: 'center', justifyContent: 'center' },
+  errorBox: { flexDirection: 'row', backgroundColor: COLORS.dangerSoft, borderRadius: RADIUS.sm, padding: SPACING.md, marginTop: SPACING.md }, error: { color: COLORS.danger, flex: 1, marginLeft: SPACING.sm, fontSize: 13 },
+  button: { minHeight: 54, borderRadius: RADIUS.md, backgroundColor: COLORS.primary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, marginTop: SPACING.lg }, buttonDisabled: { opacity: 0.5 }, buttonText: { color: COLORS.white, fontSize: 16, fontWeight: '700' }, securityNote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, marginTop: SPACING.lg }, securityText: { color: COLORS.subtle, fontSize: 11, flexShrink: 1 }, registerLink: { minHeight: LAYOUT.touchTarget, alignItems: 'center', justifyContent: 'center', marginTop: SPACING.lg }, registerText: { color: COLORS.primary, fontWeight: '700' }, help: { color: COLORS.muted, textAlign: 'center', fontSize: 12, marginTop: SPACING.lg },
 });

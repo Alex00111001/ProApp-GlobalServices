@@ -2,6 +2,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const {
+  assertAuditOptIn,
+  verifySupabaseTarget,
+} = require('../../scripts/audit-supabase-default-deny');
 
 const migrationPath = path.join(
   __dirname,
@@ -48,6 +52,15 @@ const f10Sql = fs.readFileSync(path.join(
   'prisma',
   'migrations',
   '202609100001_supply_demand_ai_operations',
+  'migration.sql'
+), 'utf8');
+const currentSchemaDefaultDenySql = fs.readFileSync(path.join(
+  __dirname,
+  '..',
+  '..',
+  'prisma',
+  'migrations',
+  '202609110003_supabase_current_schema_default_deny',
   'migration.sql'
 ), 'utf8');
 
@@ -119,4 +132,82 @@ test('F10 evidence and governance tables are forced-RLS default deny with durabl
   assert.match(f10Sql, /FOR UPDATE SKIP LOCKED|AIOperationExecution_status_nextAttemptAt_idx/);
   assert.doesNotMatch(f10Sql, /CREATE POLICY/i);
   assert.doesNotMatch(f10Sql, /ON DELETE CASCADE/i);
+});
+
+test('final schema hardening closes tables, views, routines and future public objects', () => {
+  const migrationDirectories = fs.readdirSync(path.join(__dirname, '..', '..', 'prisma', 'migrations'), {
+    withFileTypes: true,
+  }).filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
+
+  const hardeningMigration = '202609110003_supabase_current_schema_default_deny';
+  const hardeningIndex = migrationDirectories.indexOf(hardeningMigration);
+  assert.notEqual(hardeningIndex, -1, 'The release hardening migration is required.');
+  for (const successor of migrationDirectories.slice(hardeningIndex + 1)) {
+    const successorSql = fs.readFileSync(path.join(__dirname, '..', '..', 'prisma', 'migrations', successor, 'migration.sql'), 'utf8');
+    assert.doesNotMatch(
+      successorSql,
+      /CREATE\s+(?:TABLE|VIEW|MATERIALIZED\s+VIEW|FUNCTION|PROCEDURE|SEQUENCE|TYPE|SCHEMA)|CREATE\s+POLICY|GRANT\s+|DISABLE\s+ROW\s+LEVEL\s+SECURITY/i,
+      `${successor} expands the database/Data API surface and requires a reviewed default-deny successor.`
+    );
+  }
+  assert.match(currentSchemaDefaultDenySql, /BEGIN;/);
+  assert.match(currentSchemaDefaultDenySql, /SET LOCAL lock_timeout = '5s';/);
+  assert.match(currentSchemaDefaultDenySql, /REVOKE ALL PRIVILEGES ON SCHEMA public FROM PUBLIC;/);
+  assert.match(currentSchemaDefaultDenySql, /REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM PUBLIC;/);
+  assert.match(currentSchemaDefaultDenySql, /REVOKE ALL PRIVILEGES ON ALL ROUTINES IN SCHEMA public FROM PUBLIC;/);
+  assert.match(currentSchemaDefaultDenySql, /ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL PRIVILEGES ON TABLES FROM PUBLIC;/);
+  assert.match(currentSchemaDefaultDenySql, /ALTER DEFAULT PRIVILEGES REVOKE ALL PRIVILEGES ON ROUTINES FROM PUBLIC;/);
+  assert.match(currentSchemaDefaultDenySql, /ALTER DEFAULT PRIVILEGES REVOKE ALL PRIVILEGES ON TYPES FROM PUBLIC;/);
+  assert.match(currentSchemaDefaultDenySql, /ARRAY\['anon', 'authenticated', 'service_role'\]/);
+  assert.match(currentSchemaDefaultDenySql, /REVOKE USAGE ON TYPE public\.%I FROM PUBLIC/);
+  assert.match(currentSchemaDefaultDenySql, /ALTER TABLE public\.%I ENABLE ROW LEVEL SECURITY/);
+  assert.match(currentSchemaDefaultDenySql, /ALTER TABLE public\.%I FORCE ROW LEVEL SECURITY/);
+  assert.match(currentSchemaDefaultDenySql, /DROP POLICY %I ON %I\.%I/);
+  assert.match(currentSchemaDefaultDenySql, /has_type_privilege\(api_role, type_object\.oid, 'USAGE'\)/);
+  assert.match(currentSchemaDefaultDenySql, /pg_has_role\(api_role, acl\.grantee, 'USAGE'\)/);
+  assert.match(currentSchemaDefaultDenySql, /application_relation\.relowner = default_acl\.defaclrole/);
+  assert.match(currentSchemaDefaultDenySql, /RAISE EXCEPTION 'Supabase default-deny verification failed:/);
+  assert.match(currentSchemaDefaultDenySql, /COMMIT;/);
+  assert.doesNotMatch(currentSchemaDefaultDenySql, /CREATE\s+POLICY/i);
+  assert.doesNotMatch(currentSchemaDefaultDenySql, /GRANT\s+/i);
+  assert.doesNotMatch(currentSchemaDefaultDenySql, /DROP\s+TABLE|TRUNCATE\s+TABLE|DELETE\s+FROM|UPDATE\s+[^;]+\s+SET/i);
+});
+
+test('live audit refuses an unconfirmed or mismatched Supabase target', () => {
+  const projectRef = 'qwqvzlhxkolgzyaxacfe';
+  assert.deepEqual(
+    verifySupabaseTarget(`postgresql://postgres@db.${projectRef}.supabase.co:5432/postgres`, projectRef),
+    { projectRef, connectionKind: 'direct', database: 'postgres' }
+  );
+  assert.deepEqual(
+    verifySupabaseTarget(`postgresql://postgres.${projectRef}@aws-0-eu-west-1.pooler.supabase.com:5432/postgres`, projectRef),
+    { projectRef, connectionKind: 'pooler', database: 'postgres' }
+  );
+  assert.throws(
+    () => verifySupabaseTarget('postgresql://postgres@db.aaaaaaaaaaaaaaaaaaaa.supabase.co:5432/postgres', projectRef),
+    /does not match/
+  );
+  assert.throws(
+    () => verifySupabaseTarget(`postgresql://postgres@db.${projectRef}.supabase.co:5432/postgres`, 'invalid'),
+    /20-character/
+  );
+  assert.throws(() => assertAuditOptIn(undefined), /ALLOW_LIVE_SECURITY_AUDIT=true/);
+  assert.doesNotThrow(() => assertAuditOptIn('true'));
+});
+
+test('live audit covers effective inherited/default/type privileges and exposed public PostgREST', () => {
+  const auditSource = fs.readFileSync(path.join(
+    __dirname,
+    '..',
+    '..',
+    'scripts',
+    'audit-supabase-default-deny.js'
+  ), 'utf8');
+
+  assert.match(auditSource, /has_type_privilege\(role\.oid, type_object\.oid, 'USAGE'\)/);
+  assert.match(auditSource, /pg_has_role\(role\.oid, acl\.grantee, 'USAGE'\)/);
+  assert.match(auditSource, /EFFECTIVE_PUBLIC_DEFAULT_PRIVILEGE_FOR_DATA_API_ROLE/);
+  assert.match(auditSource, /applicationOwnerNames\.has\(grant\.owner_name\)/);
+  assert.match(auditSource, /platformManagedDefaultPrivileges/);
+  assert.match(auditSource, /POSTGREST_EXPOSES_PUBLIC_SCHEMA/);
 });

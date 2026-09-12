@@ -1,324 +1,224 @@
+const { Prisma } = require('@prisma/client');
+const { z } = require('zod');
 const prisma = require('../config/prisma');
 const { logError } = require('../modules/observability/safe-log');
+const { reviewSchema } = require('../validators/auth.validators');
+const { PUBLIC_USER_SELECT } = require('../shared/http/public-projections');
 
-/**
- * Obtener reviews de un profesional
- */
-exports.getProfessionalReviews = async (req, res) => {
-  try {
-    const { professionalId } = req.params;
-    const { page = 1, limit = 10, rating } = req.query;
+const uuid = z.string().uuid();
+const pageQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).max(100_000).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  rating: z.coerce.number().int().min(1).max(5).optional(),
+}).strict();
+const responseSchema = z.object({ response: z.string().trim().min(1).max(500) }).strict();
 
-    const whereClause = {
-      professionalId,
-      ...(rating ? { rating: parseInt(rating) } : {})
-    };
-
-    const reviews = await prisma.review.findMany({
-      where: whereClause,
-      skip: (page - 1) * limit,
-      take: parseInt(limit),
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            profileImage: true
-          }
-        },
-        booking: {
-          select: {
-            id: true,
-            service: {
-              select: {
-                name: true
-              }
-            }
-          }
-        }
+const reviewSelect = {
+  id: true,
+  bookingId: true,
+  rating: true,
+  comment: true,
+  response: true,
+  responseAt: true,
+  createdAt: true,
+  updatedAt: true,
+  client: { select: PUBLIC_USER_SELECT },
+  booking: {
+    select: {
+      id: true,
+      bookingServices: {
+        select: { service: { select: { id: true, name: true } } },
       },
-      orderBy: { createdAt: 'desc' }
-    });
+    },
+  },
+};
 
-    const total = await prisma.review.count({
-      where: whereClause
-    });
+const httpError = (statusCode, code, message) => Object.assign(new Error(message), {
+  statusCode,
+  code,
+});
 
-    const averageRating = await prisma.review.aggregate({
-      where: { professionalId },
-      _avg: { rating: true }
+const handleError = (req, next, error, message) => {
+  logError(req, error, message);
+  next(error);
+};
+
+exports.getProfessionalReviews = async (req, res, next) => {
+  try {
+    const profileId = uuid.parse(req.params.professionalId);
+    const query = pageQuerySchema.parse(req.query);
+    const profile = await prisma.professionalProfile.findFirst({
+      where: { id: profileId, status: 'APPROVED', user: { isActive: true } },
+      select: { userId: true },
     });
+    if (!profile) throw httpError(404, 'PROFESSIONAL_NOT_FOUND', 'Professional not found.');
+
+    const where = {
+      professionalId: profile.userId,
+      isVisible: true,
+      ...(query.rating ? { rating: query.rating } : {}),
+    };
+    const [reviews, total, ratingSummary] = await prisma.$transaction([
+      prisma.review.findMany({
+        where,
+        skip: (query.page - 1) * query.limit,
+        take: query.limit,
+        select: reviewSelect,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      }),
+      prisma.review.count({ where }),
+      prisma.review.aggregate({
+        where: { professionalId: profile.userId, isVisible: true },
+        _avg: { rating: true },
+        _count: { id: true },
+      }),
+    ]);
 
     res.json({
       success: true,
       reviews,
-      averageRating: averageRating._avg.rating || 0,
+      averageRating: ratingSummary._avg.rating || 0,
+      reviewCount: ratingSummary._count.id,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: query.page,
+        limit: query.limit,
         total,
-        pages: Math.ceil(total / limit)
-      }
-    });
-
-  } catch (error) {
-    logError(req, error, 'Review query failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error obteniendo reviews',
-      error: error.message 
-    });
-  }
-};
-
-/**
- * Crear una review para un profesional
- */
-exports.createReview = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { professionalId, bookingId, rating, comment, serviceQuality, punctuality, professionalism } = req.body;
-
-    // Validaciones
-    if (!rating || rating < 1 || rating > 5) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'El rating debe ser entre 1 y 5' 
-      });
-    }
-
-    // Verificar que el booking existe y pertenece al usuario
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: { professional: true }
-    });
-
-    if (!booking) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Reserva no encontrada' 
-      });
-    }
-
-    if (booking.userId !== userId) {
-      return res.status(403).json({ 
-        success: false, 
-        message: 'No tienes permiso para revisar esta reserva' 
-      });
-    }
-
-    if (booking.professionalId !== professionalId) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'El profesional no corresponde a esta reserva' 
-      });
-    }
-
-    // Verificar si ya existe una review para este booking
-    const existingReview = await prisma.review.findFirst({
-      where: { bookingId }
-    });
-
-    if (existingReview) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Ya has dejado una review para esta reserva' 
-      });
-    }
-
-    // Crear la review
-    const review = await prisma.review.create({
-      data: {
-        userId,
-        professionalId,
-        bookingId,
-        rating,
-        comment,
-        serviceQuality,
-        punctuality,
-        professionalism
+        pages: Math.ceil(total / query.limit),
       },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            profileImage: true
-          }
-        }
-      }
     });
-
-    // Actualizar el rating promedio del profesional
-    const stats = await prisma.review.aggregate({
-      where: { professionalId },
-      _avg: { rating: true },
-      _count: { id: true }
-    });
-
-    await prisma.professional.update({
-      where: { id: professionalId },
-      data: {
-        rating: stats._avg.rating || 0,
-        reviewCount: stats._count.id
-      }
-    });
-
-    // Crear notificación para el profesional
-    await prisma.notification.create({
-      data: {
-        userId: professionalId,
-        type: 'NEW_REVIEW',
-        title: '¡Nueva review recibida!',
-        message: `Has recibido una nueva review de ${rating} estrellas`,
-        bookingId,
-        isRead: false
-      }
-    });
-
-    res.json({
-      success: true,
-      message: 'Review creada exitosamente',
-      review
-    });
-
   } catch (error) {
-    logError(req, error, 'Review creation failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error creando review',
-      error: error.message 
-    });
+    handleError(req, next, error, 'Review query failed');
   }
 };
 
-/**
- * Responder a una review (solo el profesional)
- */
-exports.respondToReview = async (req, res) => {
+exports.createReview = async (req, res, next) => {
   try {
-    const professionalId = req.user.id; // El usuario autenticado es el profesional
-    const { reviewId } = req.params;
-    const { response } = req.body;
-
-    if (!response || response.trim().length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'La respuesta no puede estar vacía' 
-      });
-    }
-
-    const review = await prisma.review.findUnique({
-      where: { id: reviewId },
-      include: { professional: true }
-    });
-
-    if (!review) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Review no encontrada' 
-      });
-    }
-
-    if (review.professionalId !== professionalId) {
-      return res.status(403).json({ 
-        success: false, 
-        message: 'No tienes permiso para responder a esta review' 
-      });
-    }
-
-    const updatedReview = await prisma.review.update({
-      where: { id: reviewId },
-      data: { professionalResponse: response, respondedAt: new Date() }
-    });
-
-    // Crear notificación para el usuario que dejó la review
-    await prisma.notification.create({
-      data: {
-        userId: review.userId,
-        type: 'REVIEW_RESPONSE',
-        title: 'El profesional respondió a tu review',
-        message: `${review.professional.firstName} ha respondido a tu comentario`,
-        isRead: false
-      }
-    });
-
-    res.json({
-      success: true,
-      message: 'Respuesta agregada exitosamente',
-      review: updatedReview
-    });
-
-  } catch (error) {
-    logError(req, error, 'Review response failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error respondiendo review',
-      error: error.message 
-    });
-  }
-};
-
-/**
- * Obtener mis reviews como profesional
- */
-exports.getMyReviews = async (req, res) => {
-  try {
-    const professionalId = req.user.id;
-    const { page = 1, limit = 10, rating } = req.query;
-
-    const whereClause = {
-      professionalId,
-      ...(rating ? { rating: parseInt(rating) } : {})
-    };
-
-    const reviews = await prisma.review.findMany({
-      where: whereClause,
-      skip: (page - 1) * limit,
-      take: parseInt(limit),
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            profileImage: true
-          }
+    const input = reviewSchema.strict().parse(req.body);
+    const review = await prisma.$transaction(async (tx) => {
+      const booking = await tx.booking.findUnique({
+        where: { id: input.bookingId },
+        select: {
+          id: true,
+          status: true,
+          client: { select: { userId: true } },
+          professional: { select: { userId: true } },
         },
-        booking: {
-          select: {
-            id: true,
-            service: {
-              select: {
-                name: true
-              }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
+      });
+      if (!booking) throw httpError(404, 'BOOKING_NOT_FOUND', 'Booking not found.');
+      if (booking.client.userId !== req.user.id) {
+        throw httpError(403, 'BOOKING_ACCESS_DENIED', 'You cannot review this booking.');
+      }
+      if (booking.status !== 'COMPLETED' || !booking.professional) {
+        throw httpError(409, 'BOOKING_NOT_REVIEWABLE', 'Only completed professional bookings can be reviewed.');
+      }
+
+      const created = await tx.review.create({
+        data: {
+          bookingId: booking.id,
+          clientId: req.user.id,
+          professionalId: booking.professional.userId,
+          rating: input.rating,
+          comment: input.comment,
+        },
+        select: reviewSelect,
+      });
+
+      await tx.$executeRaw(Prisma.sql`
+        UPDATE "ProfessionalProfile"
+        SET
+          "averageRating" = (("averageRating" * "totalReviews") + ${input.rating}) / ("totalReviews" + 1),
+          "totalReviews" = "totalReviews" + 1,
+          "updatedAt" = NOW()
+        WHERE "userId" = ${booking.professional.userId}
+      `);
+      await tx.notification.create({
+        data: {
+          userId: booking.professional.userId,
+          bookingId: booking.id,
+          type: 'SYSTEM',
+          title: 'Nueva reseña recibida',
+          message: `Has recibido una reseña de ${input.rating} estrellas.`,
+          data: { kind: 'REVIEW_CREATED', reviewId: created.id },
+        },
+      });
+      return created;
     });
 
-    const total = await prisma.review.count({
-      where: { professionalId }
+    res.status(201).json({ success: true, review });
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return next(httpError(409, 'REVIEW_ALREADY_EXISTS', 'This booking has already been reviewed.'));
+    }
+    handleError(req, next, error, 'Review creation failed');
+  }
+};
+
+exports.respondToReview = async (req, res, next) => {
+  try {
+    const reviewId = uuid.parse(req.params.reviewId);
+    const { response } = responseSchema.parse(req.body);
+    const result = await prisma.$transaction(async (tx) => {
+      const review = await tx.review.findFirst({
+        where: { id: reviewId, professionalId: req.user.id },
+        select: { id: true, clientId: true, bookingId: true, response: true },
+      });
+      if (!review) throw httpError(404, 'REVIEW_NOT_FOUND', 'Review not found.');
+      if (review.response) throw httpError(409, 'REVIEW_ALREADY_RESPONDED', 'The review already has a response.');
+
+      const updated = await tx.review.updateMany({
+        where: { id: review.id, professionalId: req.user.id, response: null },
+        data: { response, responseAt: new Date() },
+      });
+      if (updated.count !== 1) {
+        throw httpError(409, 'REVIEW_ALREADY_RESPONDED', 'The review already has a response.');
+      }
+      await tx.notification.create({
+        data: {
+          userId: review.clientId,
+          bookingId: review.bookingId,
+          type: 'SYSTEM',
+          title: 'Respuesta a tu reseña',
+          message: 'El profesional ha respondido a tu reseña.',
+          data: { kind: 'REVIEW_RESPONSE', reviewId: review.id },
+        },
+      });
+      return tx.review.findUnique({ where: { id: review.id }, select: reviewSelect });
     });
 
+    res.json({ success: true, review: result });
+  } catch (error) {
+    handleError(req, next, error, 'Review response failed');
+  }
+};
+
+exports.getMyReviews = async (req, res, next) => {
+  try {
+    const query = pageQuerySchema.parse(req.query);
+    const where = {
+      professionalId: req.user.id,
+      ...(query.rating ? { rating: query.rating } : {}),
+    };
+    const [reviews, total] = await prisma.$transaction([
+      prisma.review.findMany({
+        where,
+        skip: (query.page - 1) * query.limit,
+        take: query.limit,
+        select: reviewSelect,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      }),
+      prisma.review.count({ where }),
+    ]);
     res.json({
       success: true,
       reviews,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: query.page,
+        limit: query.limit,
         total,
-        pages: Math.ceil(total / limit)
-      }
+        pages: Math.ceil(total / query.limit),
+      },
     });
-
   } catch (error) {
-    logError(req, error, 'Owned review query failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error obteniendo reviews',
-      error: error.message 
-    });
+    handleError(req, next, error, 'Owned review query failed');
   }
 };

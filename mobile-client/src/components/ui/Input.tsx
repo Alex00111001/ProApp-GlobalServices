@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   inputContainer: {
+    minHeight: 54,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -99,7 +100,11 @@ const styles = StyleSheet.create({
     paddingLeft: SPACING.md,
   },
   rightIconContainer: {
+    minWidth: 44,
+    minHeight: 44,
     paddingRight: SPACING.md,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   input: {
     flex: 1,

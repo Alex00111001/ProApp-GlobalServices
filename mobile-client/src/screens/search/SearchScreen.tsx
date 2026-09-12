@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 import { ProfessionalCard } from '@/components/ui';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS, SHADOWS } from '@/constants/theme';
+import { COLORS, SPACING, FONTS, BORDER_RADIUS, LAYOUT, SHADOWS } from '@/constants/theme';
 import { apiClient } from '@/services/api';
 import { ProfessionalProfile } from '@/types';
 import { useTranslation } from 'react-i18next';
@@ -108,6 +108,8 @@ export const SearchScreen: React.FC = () => {
     <TouchableOpacity
       style={[styles.filterChip, value && styles.filterChipActive]}
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityState={{ selected: Boolean(value) }}
     >
       <Text style={[styles.filterChipText, value && styles.filterChipTextActive]}>
         {label}
@@ -134,6 +136,9 @@ export const SearchScreen: React.FC = () => {
         <TouchableOpacity 
           style={styles.filterToggleButton}
           onPress={() => setShowFilters(!showFilters)}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: showFilters }}
+          accessibilityLabel={t('search.sortBy')}
         >
           <Ionicons 
             name={showFilters ? 'close' : 'filter'} 
@@ -152,6 +157,7 @@ export const SearchScreen: React.FC = () => {
           value={searchQuery}
           onChangeText={handleSearchChange}
           placeholderTextColor={COLORS.gray400}
+          accessibilityRole="search"
         />
         {searchQuery.length > 0 && (
           <TouchableOpacity onPress={() => setSearchQuery('')}>
@@ -246,9 +252,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
-    backgroundColor: COLORS.surface,
+    paddingHorizontal: LAYOUT.screenPadding,
+    paddingVertical: SPACING.lg,
+    backgroundColor: COLORS.background,
   },
   backButton: {
     width: 40,
@@ -270,15 +276,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchContainer: {
+    minHeight: 56,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.surface,
-    marginHorizontal: SPACING.lg,
-    marginVertical: SPACING.md,
+    marginHorizontal: LAYOUT.screenPadding,
+    marginBottom: SPACING.lg,
     paddingHorizontal: SPACING.md,
-    borderRadius: BORDER_RADIUS.md,
+    borderRadius: BORDER_RADIUS.lg,
     borderWidth: 1,
     borderColor: COLORS.border,
+    ...SHADOWS.sm,
   },
   searchInput: {
     flex: 1,
@@ -289,10 +297,12 @@ const styles = StyleSheet.create({
   },
   filtersPanel: {
     backgroundColor: COLORS.surface,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    marginHorizontal: LAYOUT.screenPadding,
+    padding: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: BORDER_RADIUS.lg,
+    marginBottom: SPACING.md,
   },
   filterSection: {
     marginBottom: SPACING.md,
@@ -306,14 +316,19 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   filterChip: {
+    minHeight: LAYOUT.touchTarget,
+    justifyContent: 'center',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     borderRadius: BORDER_RADIUS.full,
-    backgroundColor: COLORS.gray100,
+    backgroundColor: COLORS.surfaceMuted,
+    borderWidth: 1,
+    borderColor: COLORS.border,
     marginRight: SPACING.sm,
   },
   filterChipActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.ink,
+    borderColor: COLORS.ink,
   },
   filterChipText: {
     fontSize: FONTS.sizes.sm,
@@ -330,7 +345,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   resultsHeader: {
-    paddingHorizontal: SPACING.lg,
+    paddingHorizontal: LAYOUT.screenPadding,
     paddingVertical: SPACING.sm,
   },
   resultsCount: {
@@ -338,7 +353,7 @@ const styles = StyleSheet.create({
     color: COLORS.textTertiary,
   },
   listContent: {
-    paddingHorizontal: SPACING.lg,
+    paddingHorizontal: LAYOUT.screenPadding,
     paddingBottom: SPACING.xxl,
   },
   emptyContainer: {

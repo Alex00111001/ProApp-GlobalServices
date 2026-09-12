@@ -1,6 +1,5 @@
 const prisma = require('../config/prisma');
 const { normalizeBookingPayload } = require('../shared/http/compatibility');
-const { CLIENT_PLATFORM_FEE_PERCENTAGE, PROFESSIONAL_COMMISSION_PERCENTAGE, PAYMENT_CURRENCY } = require('../config/business');
 const { createBookingSchema } = require('../validators/auth.validators');
 const { calculateQuote, decimalToMinor } = require('../modules/billing/pricing/pricing.service');
 const env = require('../config/env');
@@ -8,6 +7,17 @@ const { telemetryMetadata } = require('../modules/observability/context');
 const { logError } = require('../modules/observability/safe-log');
 const { createPayoutRequestForCompletedBookingInTx } = require('../modules/billing/payouts/payout-request.service');
 const { createCancellationRefundRequestInTx } = require('../modules/billing/refunds/refund-request.service');
+const {
+  claimBookingCreation,
+  completeBookingCreation,
+  findCompletedBookingCreation,
+  parseIdempotencyKey,
+  requestDigest,
+  schedulingWindow,
+} = require('../modules/bookings/booking-creation.service');
+const { resolveBookingCommercialPolicy } = require('../modules/bookings/booking-commercial-policy.service');
+const { assertBookingPaymentSettled, claimBookingTransition } = require('../modules/bookings/booking-lifecycle.service');
+const { BOOKING_READ_INCLUDE } = require('../shared/http/public-projections');
 
 // Crear reserva
 exports.createBooking = async (req, res) => {
@@ -71,6 +81,39 @@ exports.createBooking = async (req, res) => {
       serviceAmountMinor += decimalToMinor(service.basePrice) * serviceItem.quantity;
     }
 
+    const idempotencyKey = parseIdempotencyKey(req.get('idempotency-key'));
+    const window = schedulingWindow({
+      scheduledDate,
+      bookingServices,
+      servicesById,
+    });
+
+    const creationRequestHash = requestDigest({
+      actorUserId: req.user.id,
+      professionalId,
+      addressId: addressId || null,
+      scheduledDate: window.start.toISOString(),
+      address,
+      city,
+      state,
+      postalCode,
+      latitude: latitude ?? null,
+      longitude: longitude ?? null,
+      notes: notes || null,
+      services: bookingServices,
+    });
+    const replayBookingId = await findCompletedBookingCreation({
+      client: prisma,
+      actorUserId: req.user.id,
+      idempotencyKey,
+      requestHash: creationRequestHash,
+    });
+    if (replayBookingId) {
+      const replayBooking = await prisma.booking.findUnique({ where: { id: replayBookingId }, include: BOOKING_READ_INCLUDE });
+      if (!replayBooking) throw Object.assign(new Error('Idempotent booking result was not found.'), { code: 'BOOKING_IDEMPOTENT_RESULT_MISSING', statusCode: 500 });
+      return res.status(200).json({ message: 'Booking already created', booking: replayBooking, duplicate: true });
+    }
+
     let normalizedAddress = null;
     if (env.marketsIdentityGeographyEnabled) {
       if (!req.user.marketId || professional.user.marketId !== req.user.marketId || !addressId) return res.status(400).json({ error: 'An owned address in the shared active market is required.', code: 'BOOKING_MARKET_ADDRESS_REQUIRED' });
@@ -83,16 +126,35 @@ exports.createBooking = async (req, res) => {
       if (covered === 0) return res.status(409).json({ error: 'Professional does not cover this address.', code: 'BOOKING_OUTSIDE_SERVICE_AREA' });
     }
 
+    const commercialPolicy = await resolveBookingCommercialPolicy({
+      client: prisma,
+      marketId: req.user.marketId,
+    });
     const quote = calculateQuote({
       serviceAmountMinor,
-      platformFeeBasisPoints: Math.round(CLIENT_PLATFORM_FEE_PERCENTAGE * 10_000),
-      commissionBasisPoints: Math.round(PROFESSIONAL_COMMISSION_PERCENTAGE * 10_000),
-      currency: PAYMENT_CURRENCY.toUpperCase(),
+      platformFeeBasisPoints: commercialPolicy.platformFeeBasisPoints,
+      commissionBasisPoints: commercialPolicy.commissionBasisPoints,
+      currency: commercialPolicy.currency,
     });
     const money = (minor) => (minor / 100).toFixed(2);
 
-    // Crear reserva con transacción
-    const booking = await prisma.$transaction(async (tx) => {
+    // Idempotency and the professional schedule share the same database
+    // transaction, so retries and concurrent clients cannot create duplicates.
+    const creation = await prisma.$transaction(async (tx) => {
+      const claim = await claimBookingCreation({
+        tx,
+        actorUserId: req.user.id,
+        professionalId,
+        idempotencyKey,
+        requestHash: creationRequestHash,
+        start: window.start,
+        end: window.end,
+        ttlHours: env.bookingIdempotencyTtlHours,
+      });
+      if (claim.replayBookingId) {
+        return { bookingId: claim.replayBookingId, duplicate: true };
+      }
+
       // Crear la reserva
       const newBooking = await tx.booking.create({
         data: {
@@ -100,7 +162,8 @@ exports.createBooking = async (req, res) => {
           professionalId,
           marketId: req.user.marketId || undefined,
           addressId: normalizedAddress?.id,
-          scheduledDate: new Date(scheduledDate),
+          scheduledDate: window.start,
+          endDate: window.end,
           address: normalizedAddress?.line1 || address,
           city: normalizedAddress?.locality || normalizedAddress?.divisions.at(-1)?.division.canonicalName || city,
           state: normalizedAddress?.divisions[0]?.division.canonicalName || state,
@@ -114,7 +177,8 @@ exports.createBooking = async (req, res) => {
           professionalCommission: money(quote.professionalCommissionMinor),
           professionalEarnings: money(quote.professionalPayoutMinor),
           currency: quote.currency,
-          pricingSnapshot: quote,
+          pricingPolicyId: commercialPolicy.pricingPolicyId || undefined,
+          pricingSnapshot: { ...commercialPolicy.snapshot, quote },
           status: 'PENDING',
         },
       });
@@ -139,7 +203,6 @@ exports.createBooking = async (req, res) => {
         where: { id: req.user.clientProfile?.id },
         data: {
           totalBookings: { increment: 1 },
-          totalSpent: { increment: money(quote.customerTotalMinor) },
         },
       });
 
@@ -154,30 +217,43 @@ exports.createBooking = async (req, res) => {
         },
       });
 
-      return tx.booking.findUnique({
-        where: { id: newBooking.id },
-        include: {
-          client: {
-            include: { user: true },
-          },
-          professional: {
-            include: { user: true },
-          },
-          bookingServices: {
-            include: { service: true },
-          },
-        },
+      await completeBookingCreation({
+        tx,
+        actorUserId: req.user.id,
+        idempotencyKey,
+        bookingId: newBooking.id,
       });
+
+      return { bookingId: newBooking.id, duplicate: false };
     });
 
-    res.status(201).json({
+    const booking = await prisma.booking.findUnique({
+      where: { id: creation.bookingId },
+      include: BOOKING_READ_INCLUDE,
+    });
+    if (!booking) {
+      throw Object.assign(new Error('Idempotent booking result was not found.'), {
+        code: 'BOOKING_IDEMPOTENT_RESULT_MISSING',
+        statusCode: 500,
+      });
+    }
+
+    res.status(creation.duplicate ? 200 : 201).json({
       message: 'Booking created successfully',
       booking,
+      duplicate: creation.duplicate,
     });
   } catch (error) {
     logError(req, error, 'Booking creation failed');
     if (error.name === 'ZodError') {
       return res.status(400).json({ error: 'Validation error', details: error.issues });
+    }
+    if (error.statusCode || error.status) {
+      return res.status(error.statusCode || error.status).json({
+        error: error.message,
+        code: error.code,
+        correlationId: req.context?.correlationId,
+      });
     }
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -188,15 +264,7 @@ exports.getBookingById = async (req, res) => {
   try {
     const booking = await prisma.booking.findUnique({
       where: { id: req.params.id },
-      include: {
-        client: { include: { user: true } },
-        professional: { include: { user: true } },
-        bookingServices: {
-          include: { service: { include: { category: true, subcategory: true } } },
-        },
-        payment: true,
-        review: true,
-      },
+      include: BOOKING_READ_INCLUDE,
     });
 
     if (!booking) return res.status(404).json({ error: 'Booking not found' });
@@ -228,20 +296,7 @@ exports.getClientBookings = async (req, res) => {
       where,
       skip,
       take: parseInt(limit),
-      include: {
-        professional: {
-          include: {
-            user: {
-              select: { firstName: true, lastName: true, avatarUrl: true },
-            },
-          },
-        },
-        bookingServices: {
-          include: { service: true },
-        },
-        payment: true,
-        review: true,
-      },
+      include: BOOKING_READ_INCLUDE,
       orderBy: { createdAt: 'desc' },
     });
 
@@ -277,20 +332,7 @@ exports.getProfessionalBookings = async (req, res) => {
       where,
       skip,
       take: parseInt(limit),
-      include: {
-        client: {
-          include: {
-            user: {
-              select: { firstName: true, lastName: true, phone: true },
-            },
-          },
-        },
-        bookingServices: {
-          include: { service: true },
-        },
-        payment: true,
-        review: true,
-      },
+      include: BOOKING_READ_INCLUDE,
       orderBy: { scheduledDate: 'asc' },
     });
 
@@ -327,39 +369,55 @@ exports.confirmBooking = async (req, res) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    if (booking.status !== 'PENDING') {
-      return res.status(400).json({ 
-        error: 'Booking cannot be confirmed from current status' 
+    if (!['PENDING', 'CONFIRMED'].includes(booking.status)) {
+      return res.status(409).json({
+        error: 'Booking cannot be confirmed from current status',
+        code: 'BOOKING_TRANSITION_CONFLICT',
       });
     }
 
-    const updated = await prisma.booking.update({
-      where: { id },
-      data: { status: 'CONFIRMED' },
-      include: {
-        client: { include: { user: true } },
-        professional: { include: { user: true } },
-      },
-    });
-
-    // Crear notificación para el cliente
-    await prisma.notification.create({
-      data: {
-        userId: booking.clientId,
-        bookingId: id,
-        type: 'BOOKING_CONFIRMED',
-        title: 'Reserva Confirmada',
-        message: 'Tu reserva ha sido confirmada por el profesional.',
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const transition = await claimBookingTransition({ tx, bookingId: id, transition: 'CONFIRM', include: BOOKING_READ_INCLUDE });
+      if (transition.duplicate) return transition;
+      const confirmed = transition.booking;
+      await tx.notification.create({
+        data: {
+          userId: confirmed.client.userId,
+          bookingId: id,
+          type: 'BOOKING_CONFIRMED',
+          title: 'Reserva Confirmada',
+          message: 'Tu reserva ha sido confirmada por el profesional.',
+        },
+      });
+      await tx.outboxEvent.create({
+        data: {
+          aggregateType: 'Booking', aggregateId: id, eventType: 'booking.confirmed',
+          payload: { bookingId: id, professionalId: booking.professionalId },
+          metadata: telemetryMetadata(req.context),
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorId: req.user.id, action: 'booking.confirmed', resourceType: 'Booking', resourceId: id,
+          outcome: 'SUCCESS', before: { status: transition.from }, after: { status: transition.to },
+          requestId: req.context?.requestId, correlationId: req.context?.correlationId, traceId: req.context?.traceId,
+        },
+      });
+      return transition;
     });
 
     res.json({
       message: 'Booking confirmed successfully',
-      booking: updated,
+      booking: result.booking,
+      duplicate: result.duplicate,
     });
   } catch (error) {
     logError(req, error, 'Booking confirmation failed');
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(error.statusCode || 500).json({
+      error: error.statusCode ? error.message : 'Internal server error',
+      code: error.statusCode ? error.code : undefined,
+      correlationId: req.context?.correlationId,
+    });
   }
 };
 
@@ -481,6 +539,117 @@ exports.cancelBooking = async (req, res) => {
   }
 };
 
+// Rechazar solicitud pendiente (profesional)
+exports.rejectBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim().slice(0, 500) : '';
+    const booking = await prisma.booking.findUnique({ where: { id } });
+    if (!booking) return res.status(404).json({ error: 'Booking not found' });
+    if (booking.professionalId !== req.user.professionalProfile?.id) return res.status(403).json({ error: 'Forbidden' });
+    if (!['PENDING', 'CANCELLED'].includes(booking.status)) {
+      return res.status(409).json({ error: 'Booking cannot be rejected from current status', code: 'BOOKING_TRANSITION_CONFLICT' });
+    }
+
+    const rejectedAt = new Date();
+    const result = await prisma.$transaction(async (tx) => {
+      const transition = await claimBookingTransition({
+        tx,
+        bookingId: id,
+        transition: 'REJECT',
+        data: { cancelledBy: 'PROFESSIONAL', cancellationReason: reason || 'Professional declined request', cancelledAt: rejectedAt },
+        include: BOOKING_READ_INCLUDE,
+        isDuplicate: (current) => current.cancelledBy === 'PROFESSIONAL',
+      });
+      if (transition.duplicate) return transition;
+      await tx.notification.create({
+        data: {
+          userId: transition.booking.client.userId,
+          bookingId: id,
+          type: 'BOOKING_CANCELLED',
+          title: 'Solicitud no aceptada',
+          message: 'El profesional no ha podido aceptar esta solicitud.',
+        },
+      });
+      await tx.outboxEvent.create({
+        data: {
+          aggregateType: 'Booking', aggregateId: id, eventType: 'booking.rejected',
+          payload: { bookingId: id, professionalId: booking.professionalId },
+          metadata: telemetryMetadata(req.context),
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorId: req.user.id, action: 'booking.rejected', resourceType: 'Booking', resourceId: id,
+          outcome: 'SUCCESS', before: { status: transition.from }, after: { status: transition.to, cancelledBy: 'PROFESSIONAL' },
+          requestId: req.context?.requestId, correlationId: req.context?.correlationId, traceId: req.context?.traceId,
+        },
+      });
+      return transition;
+    });
+
+    res.json({ message: 'Booking rejected successfully', booking: result.booking, duplicate: result.duplicate });
+  } catch (error) {
+    logError(req, error, 'Booking rejection failed');
+    res.status(error.statusCode || 500).json({
+      error: error.statusCode ? error.message : 'Internal server error',
+      code: error.statusCode ? error.code : undefined,
+      correlationId: req.context?.correlationId,
+    });
+  }
+};
+
+// Iniciar reserva (profesional)
+exports.startBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await prisma.booking.findUnique({ where: { id } });
+    if (!booking) return res.status(404).json({ error: 'Booking not found' });
+    if (booking.professionalId !== req.user.professionalProfile?.id) return res.status(403).json({ error: 'Forbidden' });
+    if (!['CONFIRMED', 'IN_PROGRESS'].includes(booking.status)) {
+      return res.status(409).json({ error: 'Booking cannot be started from current status', code: 'BOOKING_TRANSITION_CONFLICT' });
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      const transition = await claimBookingTransition({ tx, bookingId: id, transition: 'START', include: BOOKING_READ_INCLUDE });
+      if (transition.duplicate) return transition;
+      await tx.notification.create({
+        data: {
+          userId: transition.booking.client.userId,
+          bookingId: id,
+          type: 'BOOKING_CONFIRMED',
+          title: 'Servicio iniciado',
+          message: 'El profesional ha iniciado el servicio.',
+        },
+      });
+      await tx.outboxEvent.create({
+        data: {
+          aggregateType: 'Booking', aggregateId: id, eventType: 'booking.started',
+          payload: { bookingId: id, professionalId: booking.professionalId },
+          metadata: telemetryMetadata(req.context),
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorId: req.user.id, action: 'booking.started', resourceType: 'Booking', resourceId: id,
+          outcome: 'SUCCESS', before: { status: transition.from }, after: { status: transition.to },
+          requestId: req.context?.requestId, correlationId: req.context?.correlationId, traceId: req.context?.traceId,
+        },
+      });
+      return transition;
+    });
+
+    res.json({ message: 'Booking started successfully', booking: result.booking, duplicate: result.duplicate });
+  } catch (error) {
+    logError(req, error, 'Booking start failed');
+    res.status(error.statusCode || 500).json({
+      error: error.statusCode ? error.message : 'Internal server error',
+      code: error.statusCode ? error.code : undefined,
+      correlationId: req.context?.correlationId,
+    });
+  }
+};
+
 // Completar reserva (profesional)
 exports.completeBooking = async (req, res) => {
   try {
@@ -488,6 +657,7 @@ exports.completeBooking = async (req, res) => {
 
     const booking = await prisma.booking.findUnique({
       where: { id },
+      include: { payment: { select: { id: true, status: true, method: true } } },
     });
 
     if (!booking) {
@@ -498,25 +668,19 @@ exports.completeBooking = async (req, res) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    if (!['CONFIRMED', 'IN_PROGRESS', 'COMPLETED'].includes(booking.status)) {
-      return res.status(400).json({ 
-        error: 'Booking cannot be completed from current status' 
+    if (!['IN_PROGRESS', 'COMPLETED'].includes(booking.status)) {
+      return res.status(409).json({
+        error: 'Booking must be in progress before it can be completed',
+        code: 'BOOKING_TRANSITION_CONFLICT',
       });
     }
+    assertBookingPaymentSettled(booking.payment);
 
     const result = await prisma.$transaction(async (tx) => {
-      const claimed = await tx.booking.updateMany({
-        where: { id, status: { in: ['CONFIRMED', 'IN_PROGRESS'] } },
-        data: { status: 'COMPLETED', completedAt: new Date() },
+      const transition = await claimBookingTransition({
+        tx, bookingId: id, transition: 'COMPLETE', data: { completedAt: new Date() }, include: BOOKING_READ_INCLUDE,
       });
-      if (claimed.count === 0) {
-        const current = await tx.booking.findUnique({
-          where: { id },
-          include: { client: true, professional: { include: { user: true } }, payout: true },
-        });
-        if (current?.status === 'COMPLETED') return { booking: current, payout: current.payout, duplicate: true };
-        throw Object.assign(new Error('Booking cannot be completed from current status'), { status: 409 });
-      }
+      if (transition.duplicate) return { booking: transition.booking, payout: null, duplicate: true };
 
       // Actualizar earnings del profesional
       const earning = await tx.earning.create({
@@ -552,11 +716,7 @@ exports.completeBooking = async (req, res) => {
 
       const completedBooking = await tx.booking.findUnique({
         where: { id },
-        include: {
-          client: { include: { user: true } },
-          professional: { include: { user: true } },
-          payout: true,
-        },
+        include: BOOKING_READ_INCLUDE,
       });
 
       await tx.notification.create({
@@ -584,14 +744,23 @@ exports.completeBooking = async (req, res) => {
           resourceType: 'Booking',
           resourceId: id,
           outcome: 'SUCCESS',
-          before: { status: booking.status },
+          before: { status: transition.from },
           after: { status: 'COMPLETED' },
           requestId: req.context?.requestId,
           correlationId: req.context?.correlationId,
           traceId: req.context?.traceId,
         },
       });
-      return { booking: completedBooking, payout: payoutRequest.payout, duplicate: false };
+      const payout = payoutRequest.payout ? {
+        id: payoutRequest.payout.id,
+        status: payoutRequest.payout.status,
+        amount: payoutRequest.payout.amount,
+        currency: payoutRequest.payout.currency,
+        eligibleAt: payoutRequest.payout.eligibleAt,
+        approvedAt: payoutRequest.payout.approvedAt,
+        processedAt: payoutRequest.payout.processedAt,
+      } : null;
+      return { booking: completedBooking, payout, duplicate: false };
     });
 
     res.json({
@@ -602,7 +771,12 @@ exports.completeBooking = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Booking completion failed');
-    res.status(error.status || 500).json({ error: error.status ? error.message : 'Internal server error' });
+    const status = error.statusCode || error.status;
+    res.status(status || 500).json({
+      error: status ? error.message : 'Internal server error',
+      code: status ? error.code : undefined,
+      correlationId: req.context?.correlationId,
+    });
   }
 };
 

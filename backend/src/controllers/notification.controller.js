@@ -62,7 +62,6 @@ exports.getNotifications = async (req, res) => {
     });
   }
 };
-
 /**
  * Marcar notificación como leída
  */
@@ -109,7 +108,6 @@ exports.markAsRead = async (req, res) => {
     });
   }
 };
-
 /**
  * Marcar todas las notificaciones como leídas
  */
@@ -180,42 +178,6 @@ exports.deleteNotification = async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Error eliminando notificación',
-      error: error.message 
-    });
-  }
-};
-
-/**
- * Crear notificación push (para uso interno o admin)
- */
-exports.createNotification = async (req, res) => {
-  try {
-    const { userId, type, title, message, bookingId } = req.body;
-
-    const notification = await prisma.notification.create({
-      data: {
-        userId,
-        type,
-        title,
-        message,
-        bookingId,
-        isRead: false
-      }
-    });
-
-    // Aquí se podría integrar con Firebase Cloud Messaging o APNs
-    // para enviar la notificación push real al dispositivo móvil
-
-    res.json({
-      success: true,
-      notification
-    });
-
-  } catch (error) {
-    logError(req, error, 'Notification creation failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error creando notificación',
       error: error.message 
     });
   }

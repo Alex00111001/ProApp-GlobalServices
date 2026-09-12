@@ -1,23 +1,38 @@
 const prisma = require('../config/prisma');
 const { logError } = require('../modules/observability/safe-log');
+const { z } = require('zod');
+const { professionalProfileSchema } = require('../validators/auth.validators');
+
+const listQuerySchema = z.object({
+  categoryId: z.string().uuid().optional(),
+  city: z.string().trim().min(2).max(120).optional(),
+  minRating: z.coerce.number().min(0).max(5).optional(),
+  page: z.coerce.number().int().min(1).max(100_000).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  sortBy: z.enum(['averageRating', 'totalReviews', 'hourlyRate', 'createdAt']).default('averageRating'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+}).strict();
+const uuid = z.string().uuid();
+
+const publicReviewSelect = {
+  id: true,
+  rating: true,
+  comment: true,
+  response: true,
+  responseAt: true,
+  createdAt: true,
+  client: { select: { firstName: true, lastName: true, avatarUrl: true } },
+};
 
 // Obtener profesionales con filtros y búsqueda
-exports.getProfessionals = async (req, res) => {
+exports.getProfessionals = async (req, res, next) => {
   try {
-    const { 
-      categoryId, 
-      city, 
-      minRating, 
-      page = 1, 
-      limit = 10,
-      sortBy = 'averageRating',
-      sortOrder = 'desc'
-    } = req.query;
-
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const { categoryId, city, minRating, page, limit, sortBy, sortOrder } = listQuerySchema.parse(req.query);
+    const skip = (page - 1) * limit;
 
     const where = {
       status: 'APPROVED',
+      user: { isActive: true },
     };
 
     if (categoryId) {
@@ -27,9 +42,10 @@ exports.getProfessionals = async (req, res) => {
     }
 
     if (city) {
-      where.user = {
-        clientProfile: {
-          city: { contains: city, mode: 'insensitive' },
+      where.serviceAreas = {
+        some: {
+          lifecycle: 'ACTIVE',
+          division: { canonicalName: { contains: city, mode: 'insensitive' } },
         },
       };
     }
@@ -41,22 +57,18 @@ exports.getProfessionals = async (req, res) => {
     const professionals = await prisma.professionalProfile.findMany({
       where,
       skip,
-      take: parseInt(limit),
+      take: limit,
       include: {
         user: {
           select: {
             firstName: true,
             lastName: true,
             avatarUrl: true,
-            phone: true,
             reviewsReceived: {
+              where: { isVisible: true },
               take: 3,
               orderBy: { createdAt: 'desc' },
-              include: {
-                client: {
-                  select: { firstName: true, lastName: true },
-                },
-              },
+              select: publicReviewSelect,
             },
           },
         },
@@ -80,41 +92,36 @@ exports.getProfessionals = async (req, res) => {
     res.json({
       professionals,
       pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
         totalItems: total,
-        itemsPerPage: parseInt(limit),
+        itemsPerPage: limit,
       },
     });
   } catch (error) {
     logError(req, error, 'Professional list query failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Obtener un profesional por ID
-exports.getProfessionalById = async (req, res) => {
+exports.getProfessionalById = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = uuid.parse(req.params.id);
 
     const professional = await prisma.professionalProfile.findUnique({
-      where: { id },
+      where: { id, status: 'APPROVED', user: { isActive: true } },
       include: {
         user: {
           select: {
             firstName: true,
             lastName: true,
             avatarUrl: true,
-            phone: true,
-            email: true,
             reviewsReceived: {
+              where: { isVisible: true },
               orderBy: { createdAt: 'desc' },
               take: 20,
-              include: {
-                client: {
-                  select: { firstName: true, lastName: true, avatarUrl: true },
-                },
-              },
+              select: publicReviewSelect,
             },
           },
         },
@@ -133,10 +140,6 @@ exports.getProfessionalById = async (req, res) => {
         availability: {
           orderBy: { dayOfWeek: 'asc' },
         },
-        earnings: {
-          orderBy: { createdAt: 'desc' },
-          take: 10,
-        },
       },
     });
 
@@ -144,58 +147,43 @@ exports.getProfessionalById = async (req, res) => {
       return res.status(404).json({ error: 'Professional not found' });
     }
 
-    // Verificar si el profesional está aprobado
-    if (professional.status !== 'APPROVED') {
-      return res.status(403).json({ 
-        error: 'Professional profile is not approved yet' 
-      });
-    }
-
     res.json({ professional });
   } catch (error) {
     logError(req, error, 'Professional lookup failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Actualizar perfil de profesional
-exports.updateProfessionalProfile = async (req, res) => {
+exports.updateProfessionalProfile = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    
-    // Verificar permisos
-    if (req.user.role !== 'ADMIN') {
-      const professional = await prisma.professionalProfile.findUnique({
+    const id = uuid.parse(req.params.id);
+    const input = professionalProfileSchema.strict().parse(req.body);
+    const professional = await prisma.professionalProfile.findFirst({
+      where: { id, userId: req.user.id },
+      select: { id: true },
+    });
+    if (!professional) return res.status(404).json({ error: 'Professional profile not found' });
+    const { categoryIds, ...profileData } = input;
+
+    const updated = await prisma.$transaction(async (tx) => {
+      if (categoryIds !== undefined) {
+        const categoryCount = await tx.category.count({ where: { id: { in: categoryIds }, isActive: true } });
+        if (categoryCount !== new Set(categoryIds).size) {
+          throw Object.assign(new Error('One or more categories are invalid.'), { statusCode: 400, code: 'CATEGORY_INVALID' });
+        }
+        await tx.professionalCategory.deleteMany({ where: { professionalId: id, categoryId: { notIn: categoryIds } } });
+        for (const categoryId of new Set(categoryIds)) {
+          await tx.professionalCategory.upsert({
+            where: { professionalId_categoryId: { professionalId: id, categoryId } },
+            update: {},
+            create: { professionalId: id, categoryId },
+          });
+        }
+      }
+      return tx.professionalProfile.update({
         where: { id },
-      });
-
-      if (!professional) {
-        return res.status(404).json({ error: 'Professional profile not found' });
-      }
-      if (professional.userId !== req.user.id) {
-        return res.status(403).json({ error: 'Forbidden' });
-      }
-    }
-
-    const { 
-      bio, 
-      yearsOfExperience, 
-      hourlyRate, 
-      serviceRadius,
-      latitude,
-      longitude,
-    } = req.body;
-
-    const updated = await prisma.professionalProfile.update({
-      where: { id },
-      data: {
-        bio,
-        yearsOfExperience,
-        hourlyRate,
-        serviceRadius,
-        latitude,
-        longitude,
-      },
+        data: profileData,
       include: {
         user: {
           select: {
@@ -204,7 +192,9 @@ exports.updateProfessionalProfile = async (req, res) => {
             avatarUrl: true,
           },
         },
+        categories: { include: { category: true } },
       },
+      });
     });
 
     res.json({
@@ -213,83 +203,7 @@ exports.updateProfessionalProfile = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Professional update failed');
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-// Aprobar profesional (solo admin)
-exports.approveProfessional = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const professional = await prisma.professionalProfile.update({
-      where: { id },
-      data: {
-        status: 'APPROVED',
-        verifiedAt: new Date(),
-      },
-      include: {
-        user: {
-          select: {
-            email: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-      },
-    });
-
-    // Crear notificación para el profesional
-    await prisma.notification.create({
-      data: {
-        userId: professional.userId,
-        type: 'SYSTEM',
-        title: '¡Perfil Aprobado!',
-        message: `Tu perfil ha sido aprobado. ¡Ya puedes comenzar a recibir reservas!`,
-      },
-    });
-
-    res.json({
-      message: 'Professional approved successfully',
-      professional,
-    });
-  } catch (error) {
-    logError(req, error, 'Professional approval failed');
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-// Rechazar profesional (solo admin)
-exports.rejectProfessional = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { reason } = req.body;
-
-    const professional = await prisma.professionalProfile.update({
-      where: { id },
-      data: {
-        status: 'REJECTED',
-        rejectedReason: reason || 'No cumple con los requisitos',
-      },
-    });
-
-    // Crear notificación para el profesional
-    await prisma.notification.create({
-      data: {
-        userId: professional.userId,
-        type: 'SYSTEM',
-        title: 'Perfil Rechazado',
-        message: `Tu perfil ha sido rechazado. Razón: ${reason || 'No cumple con los requisitos'}`,
-      },
-    });
-
-    res.json({
-      message: 'Professional rejected',
-      professional,
-    });
-  } catch (error) {
-    logError(req, error, 'Professional rejection failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 

@@ -7,6 +7,7 @@ const { decimalToMinor } = require('../modules/billing/pricing/pricing.service')
 const { applySuccessfulPayment } = require('../modules/billing/payments/payment-capture.service');
 const { processStripeEvent } = require('../modules/billing/payments/stripe-webhook.service');
 const { logError } = require('../modules/observability/safe-log');
+const { BOOKING_READ_INCLUDE, PAYMENT_HISTORY_SELECT } = require('../shared/http/public-projections');
 
 const getOwnedBooking = async (bookingId, userId) => {
   const booking = await prisma.booking.findUnique({
@@ -155,11 +156,15 @@ exports.confirmPayment = async (req, res) => {
       ledgerEnabled: env.financialLedgerDualWriteEnabled,
       requestContext: req.context,
     }));
+    const publicBooking = await prisma.booking.findUnique({
+      where: { id: booking.id },
+      include: BOOKING_READ_INCLUDE,
+    });
 
     res.json({
       success: true,
-      payment: result.payment,
-      booking: result.booking,
+      payment: publicBooking.payment,
+      booking: publicBooking,
       duplicate: result.duplicate,
       message: 'Pago confirmado exitosamente',
     });
@@ -179,12 +184,13 @@ exports.confirmCashPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'bookingId es obligatorio' });
     }
     const booking = await getOwnedBooking(bookingId, req.user.id);
-    const amount = Number(booking.totalPrice);
+    const amount = booking.totalPrice;
+    const currency = String(booking.currency).trim().toUpperCase();
     const [payment, updatedBooking] = await prisma.$transaction([
       prisma.payment.upsert({
         where: { bookingId },
-        update: { amount, currency: STRIPE_CURRENCY.toUpperCase(), status: 'PENDING', method: 'CASH' },
-        create: { bookingId, amount, currency: STRIPE_CURRENCY.toUpperCase(), status: 'PENDING', method: 'CASH' },
+        update: { amount, currency, status: 'PENDING', method: 'CASH' },
+        create: { bookingId, amount, currency, status: 'PENDING', method: 'CASH' },
       }),
       prisma.booking.update({ where: { id: bookingId }, data: { status: 'CONFIRMED' } }),
     ]);
@@ -234,14 +240,7 @@ exports.getPaymentHistory = async (req, res) => {
     const [payments, total] = await prisma.$transaction([
       prisma.payment.findMany({
         where,
-        include: {
-          booking: {
-            include: {
-              professional: { include: { user: true } },
-              bookingServices: { include: { service: true } },
-            },
-          },
-        },
+        select: PAYMENT_HISTORY_SELECT,
         orderBy: { createdAt: 'desc' },
         skip: (parsedPage - 1) * parsedLimit,
         take: parsedLimit,

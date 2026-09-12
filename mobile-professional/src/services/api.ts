@@ -42,6 +42,8 @@ export const api = {
     return data;
   },
   async confirmBooking(id: string) { return (await client.post(`/bookings/${id}/confirm`)).data; },
+  async rejectBooking(id: string) { return (await client.post(`/bookings/${id}/reject`)).data; },
+  async startBooking(id: string) { return (await client.post(`/bookings/${id}/start`)).data; },
   async completeBooking(id: string) { return (await client.post(`/bookings/${id}/complete`)).data; },
   async cancelBooking(id: string) { return (await client.post(`/bookings/${id}/cancel`)).data; },
   async consentPolicies(countryCode: string, locale: string) {

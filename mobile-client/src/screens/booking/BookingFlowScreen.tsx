@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -24,6 +24,7 @@ export const BookingFlowScreen: React.FC = () => {
 
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const bookingAttempt = useRef<{ payload: string; key: string } | null>(null);
   
   // Step 1: Service Selection
   const [selectedServices, setSelectedServices] = useState<ServiceItem[]>([]);
@@ -103,7 +104,15 @@ export const BookingFlowScreen: React.FC = () => {
         notes,
       };
 
-      const response = await apiClient.createBooking(bookingData);
+      const payload = JSON.stringify(bookingData);
+      if (bookingAttempt.current?.payload !== payload) {
+        bookingAttempt.current = {
+          payload,
+          key: `client:booking:${Date.now()}:${Math.random().toString(36).slice(2, 14)}`,
+        };
+      }
+      const response = await apiClient.createBooking(bookingData, bookingAttempt.current.key);
+      bookingAttempt.current = null;
       
       // Navigate to checkout
       router.push(`/checkout?bookingId=${response.id}&amount=${total}`);
