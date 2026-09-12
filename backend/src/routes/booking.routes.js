@@ -14,6 +14,8 @@ router.get('/client/my-bookings', authorize('CLIENT'), bookingController.getClie
 router.get('/professional/my-bookings', authorize('PROFESSIONAL'), bookingController.getProfessionalBookings);
 router.get('/:id', bookingController.getBookingById);
 router.post('/:id/confirm', authorize('PROFESSIONAL'), requireApprovedProfessional, bookingController.confirmBooking);
+router.post('/:id/reject', authorize('PROFESSIONAL'), requireApprovedProfessional, bookingController.rejectBooking);
+router.post('/:id/start', authorize('PROFESSIONAL'), requireApprovedProfessional, bookingController.startBooking);
 router.post('/:id/complete', authorize('PROFESSIONAL'), requireApprovedProfessional, bookingController.completeBooking);
 
 // Cancelar reserva (cliente o profesional)

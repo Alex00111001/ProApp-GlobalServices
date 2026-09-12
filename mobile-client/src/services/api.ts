@@ -263,7 +263,7 @@ class ApiClient {
     notes?: string;
     latitude?: number;
     longitude?: number;
-  }) {
+  }, idempotencyKey: string) {
     const scheduledDate = new Date(data.scheduledDate);
     const [hours, minutes] = data.scheduledTime.split(':').map(Number);
     if (!Number.isNaN(scheduledDate.getTime()) && Number.isInteger(hours) && Number.isInteger(minutes)) {
@@ -280,7 +280,7 @@ class ApiClient {
       notes: data.notes,
       latitude: data.latitude,
       longitude: data.longitude,
-    });
+    }, { headers: { 'Idempotency-Key': idempotencyKey } });
     return response.data.booking;
   }
 

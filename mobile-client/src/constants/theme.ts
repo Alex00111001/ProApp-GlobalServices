@@ -1,8 +1,13 @@
 export const COLORS = {
-  // Primary colors
-  primary: '#2563EB',
-  primaryDark: '#1D4ED8',
-  primaryLight: '#3B82F6',
+  // Brand colors. The darker action color keeps white labels above WCAG AA.
+  primary: '#1E56D9',
+  primaryDark: '#153A99',
+  primaryLight: '#5C85EA',
+  primarySoft: '#EAF0FF',
+  ink: '#123247',
+  inkSoft: '#E8F1F5',
+  accent: '#0F8A78',
+  accentSoft: '#E2F5F1',
   
   // Secondary colors
   secondary: '#7C3AED',
@@ -10,50 +15,55 @@ export const COLORS = {
   secondaryLight: '#8B5CF6',
   
   // Status colors
-  success: '#10B981',
-  successDark: '#059669',
-  warning: '#F59E0B',
-  warningDark: '#D97706',
-  error: '#EF4444',
-  errorDark: '#DC2626',
-  info: '#3B82F6',
-  infoDark: '#2563EB',
+  success: '#087B66',
+  successDark: '#065F50',
+  successSoft: '#E2F5F1',
+  warning: '#B56208',
+  warningDark: '#8A4805',
+  warningSoft: '#FFF2D8',
+  error: '#C63C3C',
+  errorDark: '#A62F2F',
+  errorSoft: '#FCE9E7',
+  info: '#1E56D9',
+  infoDark: '#153A99',
   
   // Neutral colors
   white: '#FFFFFF',
   black: '#000000',
-  gray50: '#F9FAFB',
-  gray100: '#F3F4F6',
-  gray200: '#E5E7EB',
-  gray300: '#D1D5DB',
-  gray400: '#9CA3AF',
-  gray500: '#6B7280',
-  gray600: '#4B5563',
-  gray700: '#374151',
-  gray800: '#1F2937',
-  gray900: '#111827',
+  gray50: '#F8FAFB',
+  gray100: '#F0F3F5',
+  gray200: '#E0E6EA',
+  gray300: '#C7D0D7',
+  gray400: '#8A98A3',
+  gray500: '#62717D',
+  gray600: '#485864',
+  gray700: '#344651',
+  gray800: '#213742',
+  gray900: '#102630',
   
   // Background colors
-  background: '#F9FAFB',
-  backgroundDark: '#1F2937',
+  background: '#F5F8F7',
+  backgroundDark: '#102630',
   surface: '#FFFFFF',
-  surfaceDark: '#111827',
+  surfaceMuted: '#F0F5F4',
+  surfaceDark: '#213742',
   
   // Text colors
-  textPrimary: '#111827',
-  textSecondary: '#6B7280',
-  textTertiary: '#9CA3AF',
+  textPrimary: '#102A38',
+  textSecondary: '#52636E',
+  textTertiary: '#778690',
   textInverse: '#FFFFFF',
   
   // Border colors
-  border: '#E5E7EB',
-  borderDark: '#374151',
+  border: '#DDE5E8',
+  borderStrong: '#C7D2D8',
+  borderDark: '#344651',
   
   // Transparent colors
   transparent: 'transparent',
-  primaryTransparent: 'rgba(37, 99, 235, 0.1)',
-  successTransparent: 'rgba(16, 185, 129, 0.1)',
-  errorTransparent: 'rgba(239, 68, 68, 0.1)',
+  primaryTransparent: 'rgba(30, 86, 217, 0.10)',
+  successTransparent: 'rgba(8, 123, 102, 0.11)',
+  errorTransparent: 'rgba(198, 60, 60, 0.10)',
 };
 
 export const SPACING = {
@@ -98,34 +108,41 @@ export const FONTS = {
 
 export const SHADOWS = {
   sm: {
-    shadowColor: '#000',
+    shadowColor: '#102A38',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
   },
   md: {
-    shadowColor: '#000',
+    shadowColor: '#102A38',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   lg: {
-    shadowColor: '#000',
+    shadowColor: '#102A38',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.1,
+    shadowRadius: 14,
+    elevation: 5,
   },
   xl: {
-    shadowColor: '#000',
+    shadowColor: '#102A38',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
     elevation: 8,
   },
 };
+
+export const LAYOUT = {
+  screenPadding: SPACING.xl,
+  contentMaxWidth: 720,
+  touchTarget: 44,
+  tabBarHeight: 72,
+} as const;
 
 export const BORDER_RADIUS = {
   none: 0,

@@ -97,7 +97,12 @@ test('production configuration fails closed and accepts an explicit complete con
     DATABASE_URL: 'postgresql://user:password@database.example:5432/app',
     CORS_ORIGINS: 'https://app.example.com,https://admin.example.com',
     JWT_SECRET: 'a-secure-production-secret-with-32-characters',
+    CUSTOMER_SESSION_PEPPER: 'a-separate-customer-session-pepper-32-characters',
     ADMIN_SESSION_PEPPER: 'a-separate-admin-session-pepper-with-32-characters',
+    ACCOUNT_ACTION_BASE_URL: 'https://app.example.com',
+    EMAIL_PROVIDER: 'http',
+    EMAIL_PROVIDER_URL: 'https://email.example.com/deliver',
+    EMAIL_PROVIDER_API_KEY: 'a-secure-email-provider-key-with-32-characters',
     STRIPE_API_KEY: `rk_live_${'a'.repeat(32)}`,
     STRIPE_WEBHOOK_SECRET: `whsec_${'b'.repeat(32)}`,
     OTEL_ENABLED: 'true',
@@ -118,6 +123,7 @@ test('production configuration fails closed and accepts an explicit complete con
   assert.throws(() => validateEnvironment({ ...valid, CORS_ORIGINS: '*' }), /explicit HTTP/);
   assert.throws(() => validateEnvironment({ ...valid, DATABASE_URL: '' }), /DATABASE_URL/);
   assert.throws(() => validateEnvironment({ ...valid, JWT_SECRET: 'short' }), /JWT_SECRET/);
+  assert.throws(() => validateEnvironment({ ...valid, CUSTOMER_SESSION_PEPPER: 'short' }), /CUSTOMER_SESSION_PEPPER/);
   assert.throws(() => validateEnvironment({ ...valid, ADMIN_SESSION_PEPPER: 'short' }), /ADMIN_SESSION_PEPPER/);
   assert.throws(() => validateEnvironment({ ...valid, CONSENT_ATTRIBUTION_ENABLED: 'true' }), /GROWTH_IDENTITY_PROOF_SECRET/);
   assert.equal(validateEnvironment({ ...valid, CONSENT_ATTRIBUTION_ENABLED: 'true', GROWTH_IDENTITY_PROOF_SECRET: 'i'.repeat(40) }).consentAttributionEnabled, true);

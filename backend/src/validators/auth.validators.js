@@ -7,7 +7,7 @@ const safeText = (min, max) => z.string().transform(cleanText).pipe(z.string().m
 const registerSchema = z.object({
   email: z.string().trim().toLowerCase().email('Invalid email format'),
   phone: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, 'Phone must use international format'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(12, 'Password must be at least 12 characters').max(200),
   firstName: safeText(2, 80),
   lastName: safeText(2, 120),
   role: z.enum(['CLIENT', 'PROFESSIONAL']).default('CLIENT'),
@@ -63,8 +63,22 @@ const updateProfileSchema = z.object({
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1).max(200),
-  newPassword: z.string().min(8).max(200),
+  newPassword: z.string().min(12).max(200),
 }).strict();
+
+const refreshSessionSchema = z.object({
+  refreshToken: z.string().min(32).max(256),
+}).strict();
+
+const passwordRecoveryRequestSchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+  locale: z.string().trim().regex(/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/).max(35).optional(),
+}).strict();
+const passwordResetSchema = z.object({
+  token: z.string().min(32).max(256),
+  newPassword: z.string().min(12).max(200),
+}).strict();
+const accountActionConfirmSchema = z.object({ token: z.string().min(32).max(256) }).strict();
 
 // Schema para perfil de cliente
 const clientProfileSchema = z.object({
@@ -79,14 +93,14 @@ const clientProfileSchema = z.object({
 
 // Schema para perfil de profesional
 const professionalProfileSchema = z.object({
-  bio: z.string().max(500).optional(),
-  yearsOfExperience: z.number().int().positive().optional(),
-  hourlyRate: z.number().positive().optional(),
-  serviceRadius: z.number().int().positive().optional(),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-  categoryIds: z.array(z.string()).optional(),
-});
+  bio: optionalText(500),
+  yearsOfExperience: z.number().int().min(0).max(100).optional(),
+  hourlyRate: z.number().positive().max(1_000_000).optional(),
+  serviceRadius: z.number().int().positive().max(500).optional(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  categoryIds: z.array(z.string().uuid()).max(50).optional(),
+}).strict();
 
 // Schema para crear reserva
 const createBookingSchema = z.object({
@@ -122,4 +136,8 @@ module.exports = {
   reviewSchema,
   updateProfileSchema,
   changePasswordSchema,
+  refreshSessionSchema,
+  passwordRecoveryRequestSchema,
+  passwordResetSchema,
+  accountActionConfirmSchema,
 };

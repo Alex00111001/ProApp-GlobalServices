@@ -1,4 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import { create } from 'zustand';
 import { api, getApiError } from '@/services/api';
 import type { ProfessionalProfile, User } from '@/types';
@@ -22,6 +23,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   loading: false,
   error: null,
   restore: async () => {
+    if (Platform.OS === 'web') {
+      set({ user: null, profile: null, initialized: true });
+      return;
+    }
     try {
       const token = await SecureStore.getItemAsync(api.tokenKey);
       if (!token) return set({ initialized: true });

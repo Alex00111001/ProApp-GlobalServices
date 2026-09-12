@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { logError } = require('../modules/observability/safe-log');
 const prisma = require('../config/prisma');
 const env = require('../config/env');
+const { authenticateCustomerAccessToken } = require('../modules/identity/customer-session.service');
 
 const JWT_SECRET = env.jwtSecret;
 const JWT_EXPIRES_IN = env.jwtExpiresIn;
@@ -12,13 +13,13 @@ if (!JWT_SECRET || JWT_SECRET.length < 32) {
 
 // Generar token JWT
 const generateToken = (payload) => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  return jwt.sign(payload, JWT_SECRET, { algorithm: 'HS256', expiresIn: JWT_EXPIRES_IN });
 };
 
 // Verificar token JWT
 const verifyToken = (token) => {
   try {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
   } catch (error) {
     throw new Error('Invalid or expired token');
   }
@@ -36,16 +37,32 @@ const authenticate = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token);
-    
-    // Buscar usuario en la base de datos
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      include: {
-        clientProfile: true,
-        professionalProfile: true,
-      },
-    });
+    let user;
+    let customerSession;
+    try {
+      const identity = await authenticateCustomerAccessToken(token);
+      user = identity.user;
+      customerSession = identity.session;
+    } catch (sessionError) {
+      const decodedCandidate = jwt.decode(token);
+      if (!env.allowLegacyCustomerJwt || decodedCandidate?.sessionId || decodedCandidate?.kind === 'customer') {
+        throw sessionError;
+      }
+      const decoded = verifyToken(token);
+      user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        select: {
+          id: true,
+          role: true,
+          isActive: true,
+          marketId: true,
+          countryCode: true,
+          registrationLocale: true,
+          clientProfile: { select: { id: true, userId: true } },
+          professionalProfile: { select: { id: true, userId: true, status: true } },
+        },
+      });
+    }
 
     if (!user || !user.isActive) {
       return res.status(401).json({ 
@@ -54,6 +71,7 @@ const authenticate = async (req, res, next) => {
     }
 
     req.user = user;
+    req.customerSession = customerSession;
     next();
   } catch (error) {
     logError(req, error, 'Authentication failed');

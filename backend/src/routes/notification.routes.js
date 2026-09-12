@@ -20,7 +20,4 @@ router.patch('/read-all', notificationController.markAllAsRead);
 // Eliminar una notificación
 router.delete('/:notificationId', notificationController.deleteNotification);
 
-// Crear notificación (solo admin o sistema)
-router.post('/', notificationController.createNotification);
-
 module.exports = router;

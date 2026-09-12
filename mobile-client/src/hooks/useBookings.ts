@@ -52,7 +52,10 @@ export const useBookings = (): UseBookingsResult => {
     setIsLoading(true);
     setError(null);
     try {
-      const booking = await apiClient.createBooking(data);
+      const booking = await apiClient.createBooking(
+        data,
+        `client:booking:${Date.now()}:${Math.random().toString(36).slice(2, 14)}`,
+      );
       setBookings((prev) => [booking, ...prev]);
       setActiveBooking(booking);
       return booking;

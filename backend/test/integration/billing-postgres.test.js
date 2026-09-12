@@ -12,6 +12,7 @@ const { executeApprovedRefund } = require('../../src/modules/billing/refunds/ref
 const { executeApprovedPayout } = require('../../src/modules/billing/payouts/payout-execution.service');
 const { decimalToMinor } = require('../../src/modules/billing/pricing/pricing.service');
 const { claimOutboxBatch, markOutboxProcessed } = require('../../src/modules/events/outbox.service');
+const { claimBookingTransition } = require('../../src/modules/bookings/booking-lifecycle.service');
 
 if (process.env.RUN_DATABASE_INTEGRATION_TESTS !== 'true') {
   throw new Error('Set RUN_DATABASE_INTEGRATION_TESTS=true to run database integration tests deliberately.');
@@ -226,6 +227,7 @@ test('Supabase enforces inbox, capture, payout and refund concurrency invariants
         professionalId: ids.professional,
         status: 'PENDING',
         scheduledDate: new Date(Date.now() + 86_400_000),
+        endDate: new Date(Date.now() + 90_000_000),
         address: 'Integration test only',
         city: 'Madrid',
         state: 'Madrid',
@@ -280,6 +282,19 @@ test('Supabase enforces inbox, capture, payout and refund concurrency invariants
       .reduce((sum, entry) => sum + decimalToMinor(entry.amount), 0);
     assert.equal(captureDebit, captureCredit);
     assert.equal(captureDebit, 10_800);
+
+    const startResults = await usingClients(2, (clients) => Promise.all(clients.map((client) =>
+      client.$transaction((tx) => claimBookingTransition({ tx, bookingId: ids.booking, transition: 'START' }))
+    )));
+    assert.equal(startResults.filter((result) => !result.duplicate).length, 1);
+    assert.equal(startResults.filter((result) => result.duplicate).length, 1);
+    assert.equal((await prisma.booking.findUnique({ where: { id: ids.booking } })).status, 'IN_PROGRESS');
+
+    const completion = await prisma.$transaction((tx) => claimBookingTransition({
+      tx, bookingId: ids.booking, transition: 'COMPLETE', data: { completedAt: new Date() },
+    }));
+    assert.equal(completion.duplicate, false);
+    assert.equal(completion.booking.status, 'COMPLETED');
 
     await prisma.booking.update({ where: { id: ids.booking }, data: { status: 'COMPLETED', completedAt: new Date() } });
     await prisma.earning.create({

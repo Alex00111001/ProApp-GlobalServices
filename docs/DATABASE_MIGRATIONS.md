@@ -1,6 +1,10 @@
 # Database migration procedure
 
-The reviewed history contains 26 migrations after F10. `202609100001_supply_demand_ai_operations` is additive: 20 forced-RLS/default-deny tables, restrictive foreign keys, lifecycle/value/four-eyes constraints, immutable evidence triggers and no cascade deletes. Rollback is application-first; never delete the migration or drop evidence tables after deployment.
+The reviewed history contains 30 migrations after the Spain database/domain slice. `202609100001_supply_demand_ai_operations` is additive: 20 forced-RLS/default-deny tables, restrictive foreign keys, lifecycle/value/four-eyes constraints, immutable evidence triggers and no cascade deletes. Rollback is application-first; never delete the migration or drop evidence tables after deployment.
+
+The Spain-readiness slice adds `202609110001_booking_schedule_integrity`, `202609110002_customer_identity_security` and the security catch-all `202609110003_supabase_current_schema_default_deny`. All three were applied with explicit authorization to project `qwqvzlhxkolgzyaxacfe` on 2026-09-11. The catch-all transactionally reasserts the backend-only boundary after every preceding schema change: public Data API roles (including `service_role`) lose current access to application objects and future-object defaults owned by application table owners, every application table is forced-RLS, and public policies are removed. Supabase-managed defaults remain platform evidence and require the Data API to be disabled. See `docs/security/SUPABASE_PRODUCTION_HARDENING.md` for the complete evidence and remaining manual gates.
+
+`202609120001_remove_legacy_market_defaults` is a non-destructive expand/contract correction. It only drops the `MX`/`MXN`/legacy `EUR` defaults from `ClientProfile.country`, `Booking.currency`, and `Payment.currency`; it does not update historical rows. New writes must provide values from registration market or booking commercial context. It was applied with explicit authorization to project `qwqvzlhxkolgzyaxacfe` on 2026-09-12; Prisma reports all 30 migrations current and the post-deployment SQL audit passes with zero violations.
 
 Prisma CLI uses `DIRECT_URL` when configured and falls back to `DATABASE_URL`. Keep the pooled runtime URL in `DATABASE_URL`; reserve the direct connection for migrations, baseline audits and integration gates.
 
@@ -25,6 +29,7 @@ Do not reset it and do not execute the baseline SQL against populated tables. Be
 5. Scan pending SQL for destructive statements and run `prisma migrate deploy`; never execute the generated baseline SQL over existing tables.
 6. Run `npm run seed:rbac` to synchronize system roles and permissions.
 7. Run `prisma migrate status`, the unit suite and the explicit PostgreSQL integration gate before enabling new flags.
+8. For Supabase production, run the project-ref-guarded read-only `npm run security:audit-supabase-live`, disable the Dashboard Data API for the backend-only architecture, and retain the rerun Security Advisor evidence. Never infer those platform settings from migration files alone.
 
 The database integration gate is deliberate and refuses production mode. F8.5 requires both the full suite and its isolated market/identity/geography fixture:
 

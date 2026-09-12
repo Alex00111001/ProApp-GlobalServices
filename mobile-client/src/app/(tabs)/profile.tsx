@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
+import { COLORS, SPACING, FONTS, BORDER_RADIUS, LAYOUT, SHADOWS } from '@/constants/theme';
 import { Button } from '@/components/ui';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +11,8 @@ import { setAppLanguage } from '@/i18n';
 
 type MenuItemProps = { icon: keyof typeof Ionicons.glyphMap; title: string; value?: string; onPress: () => void };
 const MenuItem = ({ icon, title, value, onPress }: MenuItemProps) => (
-  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-    <View style={styles.menuItemLeft}><Ionicons name={icon} size={22} color={COLORS.textSecondary} /><View style={styles.menuText}><Text style={styles.menuItemTitle}>{title}</Text>{value ? <Text style={styles.menuValue} numberOfLines={2}>{value}</Text> : null}</View></View>
+  <TouchableOpacity style={styles.menuItem} onPress={onPress} accessibilityRole="button" accessibilityLabel={value ? `${title}, ${value}` : title}>
+    <View style={styles.menuItemLeft}><View style={styles.menuIcon}><Ionicons name={icon} size={21} color={COLORS.primary} /></View><View style={styles.menuText}><Text style={styles.menuItemTitle}>{title}</Text>{value ? <Text style={styles.menuValue} numberOfLines={2}>{value}</Text> : null}</View></View>
     <Ionicons name="chevron-forward" size={20} color={COLORS.gray400} />
   </TouchableOpacity>
 );
@@ -35,11 +35,13 @@ export default function ProfileTab() {
     { text: t('profile.logout'), style: 'destructive', onPress: async () => { await logout(); router.replace('/auth/login'); } },
   ]);
 
-  return <SafeAreaView style={styles.container} edges={['top']}><ScrollView>
+  return <SafeAreaView style={styles.container} edges={['top']}><ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
     <View style={styles.header}>
-      {avatarUrl ? <Image source={{ uri: avatarUrl }} style={styles.avatar} /> : <View style={styles.avatarPlaceholder}><Ionicons name="person" size={44} color={COLORS.primary} /></View>}
+      <View style={styles.headerGlow} />
+      <View style={styles.profileEyebrow}><Ionicons name="shield-checkmark" size={15} color={COLORS.successSoft} /><Text style={styles.profileEyebrowText}>{t('home.trustVerified')}</Text></View>
+      {avatarUrl ? <Image source={{ uri: avatarUrl }} style={styles.avatar} /> : <View style={styles.avatarPlaceholder}><Ionicons name="person" size={42} color={COLORS.white} /></View>}
       <Text style={styles.userName}>{name || t('profile.title')}</Text><Text style={styles.userEmail}>{currentUser?.email}</Text>
-      <TouchableOpacity style={styles.editButton} onPress={() => router.push('/profile/edit' as any)}><Ionicons name="pencil" size={17} color={COLORS.primary} /><Text style={styles.editText}>{t('profile.edit')}</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.editButton} onPress={() => router.push('/profile/edit' as any)} accessibilityRole="button"><Ionicons name="pencil" size={17} color={COLORS.primary} /><Text style={styles.editText}>{t('profile.edit')}</Text></TouchableOpacity>
     </View>
     <View style={styles.section}><Text style={styles.sectionTitle}>{t('profile.personalInfo')}</Text><View style={styles.card}>
       <MenuItem icon="call-outline" title={t('profile.phone')} value={currentUser?.phone || t('profile.missing')} onPress={() => router.push('/profile/edit' as any)} />
@@ -58,5 +60,5 @@ export default function ProfileTab() {
 }
 
 const styles = StyleSheet.create({
-  container:{flex:1,backgroundColor:COLORS.background},header:{alignItems:'center',padding:SPACING.xxl},avatar:{width:96,height:96,borderRadius:48},avatarPlaceholder:{width:96,height:96,borderRadius:48,backgroundColor:COLORS.primaryTransparent,alignItems:'center',justifyContent:'center'},userName:{fontSize:FONTS.sizes.xxl,fontWeight:'700',color:COLORS.textPrimary,marginTop:SPACING.md,textAlign:'center'},userEmail:{color:COLORS.textSecondary,marginTop:SPACING.xs,textAlign:'center',flexShrink:1},editButton:{flexDirection:'row',gap:SPACING.xs,marginTop:SPACING.md,paddingHorizontal:SPACING.lg,paddingVertical:SPACING.sm,backgroundColor:COLORS.primaryTransparent,borderRadius:BORDER_RADIUS.full},editText:{color:COLORS.primary,fontWeight:'600'},section:{paddingHorizontal:SPACING.lg,marginBottom:SPACING.lg},sectionTitle:{fontSize:FONTS.sizes.sm,fontWeight:'600',color:COLORS.textSecondary,textTransform:'uppercase',marginBottom:SPACING.sm},card:{backgroundColor:COLORS.surface,borderRadius:BORDER_RADIUS.lg,overflow:'hidden'},menuItem:{minHeight:68,flexDirection:'row',alignItems:'center',justifyContent:'space-between',paddingHorizontal:SPACING.lg,borderBottomWidth:1,borderBottomColor:COLORS.border},menuItemLeft:{flexDirection:'row',alignItems:'center',gap:SPACING.md,flex:1,minWidth:0},menuText:{flex:1,minWidth:0},menuItemTitle:{fontSize:FONTS.sizes.md,color:COLORS.textPrimary,flexShrink:1},menuValue:{fontSize:FONTS.sizes.sm,color:COLORS.textSecondary,marginTop:2,flexShrink:1},logout:{padding:SPACING.lg,marginBottom:100},version:{textAlign:'center',color:COLORS.textTertiary,fontSize:FONTS.sizes.xs,marginTop:SPACING.md}
+  container:{flex:1,backgroundColor:COLORS.background},scrollContent:{width:'100%',maxWidth:LAYOUT.contentMaxWidth,alignSelf:'center',paddingBottom:100},header:{overflow:'hidden',alignItems:'center',margin:LAYOUT.screenPadding,padding:SPACING.xl,borderRadius:BORDER_RADIUS.xxl,backgroundColor:COLORS.ink,...SHADOWS.md},headerGlow:{position:'absolute',width:180,height:180,borderRadius:90,right:-65,top:-90,backgroundColor:'rgba(92,133,234,0.22)'},profileEyebrow:{flexDirection:'row',alignItems:'center',gap:SPACING.xs,alignSelf:'flex-start'},profileEyebrowText:{color:'#DDE9EE',fontSize:FONTS.sizes.xs,fontWeight:'700'},avatar:{width:88,height:88,borderRadius:44,marginTop:SPACING.lg,borderWidth:3,borderColor:'rgba(255,255,255,0.3)'},avatarPlaceholder:{width:88,height:88,borderRadius:44,marginTop:SPACING.lg,backgroundColor:COLORS.primary,alignItems:'center',justifyContent:'center',borderWidth:3,borderColor:'rgba(255,255,255,0.3)'},userName:{fontSize:FONTS.sizes.xxl,fontWeight:'700',color:COLORS.white,marginTop:SPACING.md,textAlign:'center'},userEmail:{color:'#CFE0E8',marginTop:SPACING.xs,textAlign:'center',flexShrink:1},editButton:{minHeight:LAYOUT.touchTarget,flexDirection:'row',alignItems:'center',gap:SPACING.xs,marginTop:SPACING.lg,paddingHorizontal:SPACING.lg,backgroundColor:COLORS.white,borderRadius:BORDER_RADIUS.full},editText:{color:COLORS.primary,fontWeight:'700'},section:{paddingHorizontal:LAYOUT.screenPadding,marginBottom:SPACING.xl},sectionTitle:{fontSize:FONTS.sizes.xs,fontWeight:'700',letterSpacing:.7,color:COLORS.accent,textTransform:'uppercase',marginBottom:SPACING.sm},card:{backgroundColor:COLORS.surface,borderRadius:BORDER_RADIUS.xl,overflow:'hidden',borderWidth:1,borderColor:COLORS.border,...SHADOWS.sm},menuItem:{minHeight:72,flexDirection:'row',alignItems:'center',justifyContent:'space-between',paddingHorizontal:SPACING.md,borderBottomWidth:1,borderBottomColor:COLORS.border},menuItemLeft:{flexDirection:'row',alignItems:'center',gap:SPACING.md,flex:1,minWidth:0},menuIcon:{width:40,height:40,borderRadius:13,backgroundColor:COLORS.primarySoft,alignItems:'center',justifyContent:'center'},menuText:{flex:1,minWidth:0},menuItemTitle:{fontSize:FONTS.sizes.md,fontWeight:'600',color:COLORS.textPrimary,flexShrink:1},menuValue:{fontSize:FONTS.sizes.sm,color:COLORS.textSecondary,marginTop:2,flexShrink:1},logout:{paddingHorizontal:LAYOUT.screenPadding,marginTop:SPACING.sm},version:{textAlign:'center',color:COLORS.textTertiary,fontSize:FONTS.sizes.xs,marginTop:SPACING.md}
 });

@@ -113,6 +113,13 @@ const validateEnvironment = (source = process.env) => {
   const experimentsContentSeoEnabled = parseBoolean('EXPERIMENTS_CONTENT_SEO_ENABLED', source.EXPERIMENTS_CONTENT_SEO_ENABLED, false);
   const experimentsEnabled = parseBoolean('EXPERIMENTS_ENABLED', source.EXPERIMENTS_ENABLED, false);
   const publicSeoEnabled = parseBoolean('PUBLIC_SEO_ENABLED', source.PUBLIC_SEO_ENABLED, false);
+  const emailProvider = parseChoice('EMAIL_PROVIDER', source.EMAIL_PROVIDER, 'disabled', ['disabled', 'http']);
+  const emailProviderUrl = parseHttpUrl('EMAIL_PROVIDER_URL', source.EMAIL_PROVIDER_URL, emailProvider === 'http');
+  const accountActionBaseUrl = parseHttpUrl(
+    'ACCOUNT_ACTION_BASE_URL',
+    source.ACCOUNT_ACTION_BASE_URL || (environment === 'production' ? undefined : 'http://localhost:3001'),
+    true
+  );
   const contentWorkerEnabled = parseBoolean('CONTENT_WORKER_ENABLED', source.CONTENT_WORKER_ENABLED, false);
   const supplyDemandEnabled = parseBoolean('SUPPLY_DEMAND_ENABLED', source.SUPPLY_DEMAND_ENABLED, environment !== 'production');
   const aiOperationsEnabled = parseBoolean('AI_OPERATIONS_ENABLED', source.AI_OPERATIONS_ENABLED, environment !== 'production');
@@ -143,6 +150,8 @@ const validateEnvironment = (source = process.env) => {
   const alertRouteCritical = parseIdentifier('OBSERVABILITY_ALERT_ROUTE_CRITICAL', source.OBSERVABILITY_ALERT_ROUTE_CRITICAL, 'operations-critical');
 
   requireProductionSecret(environment, 'JWT_SECRET', jwtSecret);
+  requireProductionSecret(environment, 'CUSTOMER_SESSION_PEPPER', source.CUSTOMER_SESSION_PEPPER);
+  if (emailProvider === 'http') requireProductionSecret(environment, 'EMAIL_PROVIDER_API_KEY', source.EMAIL_PROVIDER_API_KEY);
   requireProductionSecret(environment, 'ADMIN_SESSION_PEPPER', source.ADMIN_SESSION_PEPPER);
   requireProductionSecret(environment, 'GROWTH_PSEUDONYM_SECRET', source.GROWTH_PSEUDONYM_SECRET);
   if (consentAttributionEnabled) requireProductionSecret(environment, 'GROWTH_IDENTITY_PROOF_SECRET', source.GROWTH_IDENTITY_PROOF_SECRET);
@@ -158,6 +167,9 @@ const validateEnvironment = (source = process.env) => {
   }
 
   if (environment === 'production') {
+    if (emailProvider === 'disabled') throw new Error('EMAIL_PROVIDER must be configured in production.');
+    if (!emailProviderUrl?.startsWith('https://')) throw new Error('EMAIL_PROVIDER_URL must use HTTPS in production.');
+    if (!accountActionBaseUrl.startsWith('https://')) throw new Error('ACCOUNT_ACTION_BASE_URL must use HTTPS in production.');
     if (!/^postgres(?:ql)?:\/\//.test(source.DATABASE_URL || '')) {
       throw new Error('DATABASE_URL must be a PostgreSQL connection URL in production.');
     }
@@ -194,6 +206,19 @@ const validateEnvironment = (source = process.env) => {
     corsOrigins,
     jwtSecret,
     jwtExpiresIn: source.JWT_EXPIRES_IN || '7d',
+    customerAccessTokenMinutes: parseInteger('CUSTOMER_ACCESS_TOKEN_MINUTES', source.CUSTOMER_ACCESS_TOKEN_MINUTES, 15, 5, 30),
+    customerSessionHours: parseInteger('CUSTOMER_SESSION_HOURS', source.CUSTOMER_SESSION_HOURS, 720, 1, 2_160),
+    customerSessionPepper: source.CUSTOMER_SESSION_PEPPER || jwtSecret,
+    allowLegacyCustomerJwt: parseBoolean('ALLOW_LEGACY_CUSTOMER_JWT', source.ALLOW_LEGACY_CUSTOMER_JWT, environment !== 'production'),
+    authRateLimitWindowMinutes: parseInteger('AUTH_RATE_LIMIT_WINDOW_MINUTES', source.AUTH_RATE_LIMIT_WINDOW_MINUTES, 15, 1, 1_440),
+    authLoginRateLimit: parseInteger('AUTH_LOGIN_RATE_LIMIT', source.AUTH_LOGIN_RATE_LIMIT, 10, 1, 1_000),
+    authRegisterRateLimit: parseInteger('AUTH_REGISTER_RATE_LIMIT', source.AUTH_REGISTER_RATE_LIMIT, 5, 1, 1_000),
+    passwordResetTokenMinutes: parseInteger('PASSWORD_RESET_TOKEN_MINUTES', source.PASSWORD_RESET_TOKEN_MINUTES, 30, 5, 180),
+    emailVerificationTokenHours: parseInteger('EMAIL_VERIFICATION_TOKEN_HOURS', source.EMAIL_VERIFICATION_TOKEN_HOURS, 24, 1, 168),
+    accountActionBaseUrl,
+    emailProvider,
+    emailProviderUrl,
+    emailProviderApiKey: source.EMAIL_PROVIDER_API_KEY,
     databaseTransactionMaxWaitMs: parseInteger(
       'DATABASE_TRANSACTION_MAX_WAIT_MS',
       source.DATABASE_TRANSACTION_MAX_WAIT_MS,
@@ -207,6 +232,13 @@ const validateEnvironment = (source = process.env) => {
       10_000,
       1_000,
       60_000
+    ),
+    bookingIdempotencyTtlHours: parseInteger(
+      'BOOKING_IDEMPOTENCY_TTL_HOURS',
+      source.BOOKING_IDEMPOTENCY_TTL_HOURS,
+      24,
+      1,
+      168
     ),
     adminAccessTokenMinutes: parseInteger('ADMIN_ACCESS_TOKEN_MINUTES', source.ADMIN_ACCESS_TOKEN_MINUTES, 15, 5, 30),
     adminSessionHours: parseInteger('ADMIN_SESSION_HOURS', source.ADMIN_SESSION_HOURS, 12, 1, 168),

@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-import { COLORS, SPACING, FONTS } from '@/constants/theme';
+import { BORDER_RADIUS, COLORS, FONTS, LAYOUT, SHADOWS, SPACING } from '@/constants/theme';
 import { useAppStore } from '@/store/appStore';
 import type { Booking } from '@/types';
 import { useTranslation } from 'react-i18next';
@@ -128,6 +128,8 @@ export default function BookingsScreen() {
         <TouchableOpacity
           style={[styles.tab, activeTab === 'upcoming' && styles.activeTab]}
           onPress={() => setActiveTab('upcoming')}
+          accessibilityRole="tab"
+          accessibilityState={{ selected: activeTab === 'upcoming' }}
         >
           <Text
             style={[
@@ -141,6 +143,8 @@ export default function BookingsScreen() {
         <TouchableOpacity
           style={[styles.tab, activeTab === 'past' && styles.activeTab]}
           onPress={() => setActiveTab('past')}
+          accessibilityRole="tab"
+          accessibilityState={{ selected: activeTab === 'past' }}
         >
           <Text
             style={[
@@ -179,29 +183,40 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   header: {
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
+    width: '100%',
+    maxWidth: LAYOUT.contentMaxWidth,
+    alignSelf: 'center',
+    paddingHorizontal: LAYOUT.screenPadding,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.md,
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.textPrimary,
     fontFamily: FONTS.bold,
   },
   tabsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: SPACING.lg,
-    marginBottom: SPACING.md,
+    width: 'auto',
+    maxWidth: LAYOUT.contentMaxWidth - (LAYOUT.screenPadding * 2),
+    marginHorizontal: LAYOUT.screenPadding,
+    marginBottom: SPACING.lg,
+    padding: 4,
+    borderRadius: BORDER_RADIUS.full,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
   },
   tab: {
     flex: 1,
-    paddingVertical: SPACING.sm,
+    minHeight: LAYOUT.touchTarget,
+    justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: COLORS.border,
+    borderRadius: BORDER_RADIUS.full,
   },
   activeTab: {
-    borderBottomColor: COLORS.primary,
+    backgroundColor: COLORS.ink,
   },
   tabText: {
     fontSize: 16,
@@ -209,11 +224,14 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   activeTabText: {
-    color: COLORS.primary,
-    fontWeight: '600',
+    color: COLORS.white,
+    fontWeight: '700',
   },
   listContent: {
-    padding: SPACING.lg,
+    width: '100%',
+    maxWidth: LAYOUT.contentMaxWidth,
+    alignSelf: 'center',
+    padding: LAYOUT.screenPadding,
     paddingTop: 0,
   },
   loadingContainer: {
@@ -222,10 +240,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyState: {
-    flex: 1,
+    alignSelf: 'center',
+    width: '90%',
+    maxWidth: 520,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: SPACING.xl,
+    padding: SPACING.xxl,
+    marginTop: SPACING.xxl,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.xl,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   emptyTitle: {
     fontSize: 18,
@@ -245,7 +270,9 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.xl,
     backgroundColor: COLORS.primary,
-    borderRadius: 8,
+    minHeight: LAYOUT.touchTarget,
+    justifyContent: 'center',
+    borderRadius: BORDER_RADIUS.md,
   },
   browseButtonText: {
     color: COLORS.white,
@@ -254,14 +281,12 @@ const styles = StyleSheet.create({
   },
   bookingCard: {
     backgroundColor: COLORS.white,
-    borderRadius: 12,
-    padding: SPACING.md,
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.lg,
     marginBottom: SPACING.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOWS.sm,
   },
   bookingHeader: {
     flexDirection: 'row',

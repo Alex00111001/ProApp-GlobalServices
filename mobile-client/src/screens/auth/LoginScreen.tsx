@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Button, Input } from '@/components/ui';
 import { useAuthStore } from '@/store/authStore';
-import { COLORS, SPACING, FONTS, BORDER_RADIUS } from '@/constants/theme';
+import { COLORS, SPACING, FONTS, BORDER_RADIUS, LAYOUT, SHADOWS } from '@/constants/theme';
 import { LoginCredentials } from '@/types';
 import { useTranslation } from 'react-i18next';
 
@@ -53,12 +53,15 @@ export const LoginScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent as StyleProp<ViewStyle>} keyboardShouldPersistTaps="handled">
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.header}>
-            <Ionicons name="construct-outline" size={64} color={COLORS.primary} />
+            <View style={styles.brandIcon}><Ionicons name="home" size={28} color={COLORS.white} /><View style={styles.brandVerified}><Ionicons name="checkmark" size={10} color={COLORS.white} /></View></View>
             <Text style={styles.title}>ServicePro</Text>
+            <Text style={styles.eyebrow}>{t('authUi.clientAccess')}</Text>
             <Text style={styles.subtitle}>{t('auth.tagline')}</Text>
           </View>
 
           <View style={styles.form}>
+            <Text style={styles.formTitle}>{t('authUi.welcomeBack')}</Text>
+            <Text style={styles.formSubtitle}>{t('authUi.accessHint')}</Text>
             <Input
               label={t('auth.email')}
               placeholder={t('auth.emailPlaceholder')}
@@ -79,7 +82,7 @@ export const LoginScreen: React.FC = () => {
               autoCapitalize="none"
               icon={<Ionicons name="lock-closed-outline" size={20} color={COLORS.gray400} />}
               rightIcon={
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} accessibilityRole="button" accessibilityLabel={showPassword ? t('authUi.hidePassword') : t('authUi.showPassword')}>
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
@@ -110,6 +113,7 @@ export const LoginScreen: React.FC = () => {
             {isLoading && (
               <ActivityIndicator size="small" color={COLORS.primary} style={styles.loader} />
             )}
+            <View style={styles.securityNote}><Ionicons name="shield-checkmark-outline" size={18} color={COLORS.success} /><Text style={styles.securityText}>{t('authUi.secureAccess')}</Text></View>
           </View>
 
           <View style={styles.footer}>
@@ -134,28 +138,44 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+    width: '100%',
+    maxWidth: LAYOUT.contentMaxWidth,
+    alignSelf: 'center',
   },
   header: {
     alignItems: 'center',
-    paddingVertical: SPACING.xxxx,
-    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.xxxl,
+    paddingBottom: SPACING.xl,
+    paddingHorizontal: LAYOUT.screenPadding,
   },
+  brandIcon: { width: 64, height: 64, borderRadius: 21, backgroundColor: COLORS.ink, alignItems: 'center', justifyContent: 'center', ...SHADOWS.md },
+  brandVerified: { position: 'absolute', width: 20, height: 20, right: -4, bottom: -4, borderRadius: 10, backgroundColor: COLORS.success, borderWidth: 3, borderColor: COLORS.background, alignItems: 'center', justifyContent: 'center' },
   title: {
-    fontSize: FONTS.sizes.xxxl,
+    fontSize: FONTS.sizes.xxl,
     fontWeight: FONTS.weights.bold,
     color: COLORS.textPrimary,
-    marginTop: SPACING.md,
+    marginTop: SPACING.lg,
   },
+  eyebrow: { marginTop: 3, color: COLORS.primary, fontSize: FONTS.sizes.xs, fontWeight: FONTS.weights.bold, letterSpacing: 0.9, textTransform: 'uppercase' },
   subtitle: {
     fontSize: FONTS.sizes.md,
     color: COLORS.textSecondary,
-    marginTop: SPACING.xs,
+    marginTop: SPACING.md,
     textAlign: 'center',
+    lineHeight: 22,
+    maxWidth: 380,
   },
   form: {
-    paddingHorizontal: SPACING.lg,
-    marginTop: SPACING.xl,
+    marginHorizontal: LAYOUT.screenPadding,
+    padding: SPACING.xl,
+    borderRadius: BORDER_RADIUS.xxl,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+    ...SHADOWS.sm,
   },
+  formTitle: { color: COLORS.textPrimary, fontSize: FONTS.sizes.xl, fontWeight: FONTS.weights.bold },
+  formSubtitle: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, lineHeight: 20, marginTop: SPACING.xs, marginBottom: SPACING.xl },
   forgotPassword: {
     alignSelf: 'flex-end',
     marginTop: SPACING.sm,
@@ -169,6 +189,8 @@ const styles = StyleSheet.create({
   loader: {
     marginTop: SPACING.md,
   },
+  securityNote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, marginTop: SPACING.lg },
+  securityText: { color: COLORS.textTertiary, fontSize: FONTS.sizes.xs, flexShrink: 1 },
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',

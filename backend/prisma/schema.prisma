@@ -20,6 +20,8 @@ model User {
   createdAt                  DateTime                       @default(now())
   updatedAt                  DateTime                       @updatedAt
   lastLoginAt                DateTime?
+  emailVerifiedAt            DateTime?
+  phoneVerifiedAt            DateTime?
   countryCode                String                         @default("ES")
   termsAcceptedAt            DateTime?
   termsVersion               String?
@@ -39,6 +41,8 @@ model User {
   errorEvents                ErrorEvent[]
   incidentComments           IncidentComment[]
   adminSessions              AdminSession[]
+  customerSessions           CustomerSession[]
+  accountActionTokens        AccountActionToken[]
   adminRoleTargets           AdminRoleChangeRequest[]       @relation("AdminRoleTarget")
   adminRoleRequests          AdminRoleChangeRequest[]       @relation("AdminRoleRequester")
   adminRoleReviews           AdminRoleChangeRequest[]       @relation("AdminRoleReviewer")
@@ -98,7 +102,7 @@ model ClientProfile {
   address               String?
   city                  String?
   state                 String?
-  country               String                 @default("MX")
+  country               String
   postalCode            String?
   latitude              Float?
   longitude             Float?
@@ -235,7 +239,7 @@ model Booking {
   professionalId         String?
   status                 BookingStatus             @default(PENDING)
   scheduledDate          DateTime
-  endDate                DateTime?
+  endDate                DateTime
   address                String
   city                   String
   state                  String
@@ -249,7 +253,7 @@ model Booking {
   platformFeeState       PlatformFeeState          @default(PENDING)
   professionalCommission Decimal                   @default(0.00) @db.Decimal(10, 2)
   professionalEarnings   Decimal                   @db.Decimal(10, 2)
-  currency               String                    @default("EUR")
+  currency               String
   pricingSnapshot        Json?
   pricingPolicyId        String?
   marketId               String?
@@ -286,6 +290,7 @@ model Booking {
   @@index([scheduledDate])
   @@index([pricingPolicyId])
   @@index([marketId, status, scheduledDate])
+  @@index([professionalId, status, scheduledDate, endDate])
   @@index([addressId])
 }
 
@@ -308,7 +313,7 @@ model Payment {
   id                 String              @id @default(uuid())
   bookingId          String              @unique
   amount             Decimal             @db.Decimal(10, 2)
-  currency           String              @default("MXN")
+  currency           String
   status             PaymentStatus       @default(PENDING)
   method             PaymentMethod
   transactionId      String?
@@ -551,6 +556,64 @@ model AdminSession {
 
   @@index([userId, status, expiresAt])
   @@index([status, expiresAt])
+}
+
+model CustomerSession {
+  id               String                 @id @default(uuid())
+  userId           String
+  status           CustomerSessionStatus  @default(ACTIVE)
+  expiresAt        DateTime
+  lastSeenAt       DateTime               @default(now())
+  revokedAt        DateTime?
+  revocationReason String?
+  userAgentHash    String?
+  ipAddressHash    String?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  user             User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokens    CustomerRefreshToken[]
+
+  @@index([userId, status, expiresAt])
+  @@index([status, expiresAt])
+}
+
+model CustomerRefreshToken {
+  id        String                     @id @default(uuid())
+  sessionId String
+  tokenHash String                     @unique
+  status    CustomerRefreshTokenStatus @default(ACTIVE)
+  expiresAt DateTime
+  usedAt    DateTime?
+  revokedAt DateTime?
+  createdAt DateTime                   @default(now())
+  session   CustomerSession            @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, status, expiresAt])
+}
+
+model AccountActionToken {
+  id         String                   @id @default(uuid())
+  userId     String
+  type       AccountActionTokenType
+  status     AccountActionTokenStatus @default(ACTIVE)
+  tokenHash  String                   @unique
+  expiresAt  DateTime
+  consumedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime                 @default(now())
+  user       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type, status])
+  @@index([type, status, expiresAt])
+}
+
+model RateLimitBucket {
+  key       String   @id
+  count     Int      @default(0)
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
 }
 
 model AdminRoleChangeRequest {
@@ -3196,6 +3259,31 @@ enum RoleAssignmentStatus {
 
 enum AdminSessionStatus {
   ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum CustomerSessionStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum CustomerRefreshTokenStatus {
+  ACTIVE
+  ROTATED
+  REVOKED
+  EXPIRED
+}
+
+enum AccountActionTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum AccountActionTokenStatus {
+  ACTIVE
+  CONSUMED
   REVOKED
   EXPIRED
 }

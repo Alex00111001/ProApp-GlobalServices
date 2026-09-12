@@ -47,6 +47,8 @@ export const Button: React.FC<ButtonProps> = ({
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: disabled || loading, busy: loading }}
     >
       {loading ? (
         <ActivityIndicator color={variant === 'outline' || variant === 'ghost' ? COLORS.primary : COLORS.white} />
@@ -88,14 +90,17 @@ const styles = StyleSheet.create({
   },
   // Sizes
   smallSize: {
+    minHeight: 44,
     paddingVertical: SPACING.xs,
     paddingHorizontal: SPACING.md,
   },
   mediumSize: {
+    minHeight: 50,
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.lg,
   },
   largeSize: {
+    minHeight: 56,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.xl,
   },
