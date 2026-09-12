@@ -1,7 +1,7 @@
 # HomeServices — Plan de ejecución de remediación y preparación para producción
 
 - Fecha: 2026-09-12
-- Estado: **AUTORIZADO — PRR-0 en ejecución; producción no autorizada**
+- Estado: **PRR-0 COMPLETADO — siguientes olas y producción no autorizadas**
 - Fuente de evidencia: `docs/production-readiness/SYSTEMATIC_PROJECT_AUDIT_AND_ROADMAP.md`
 - Baseline de código auditado: `dc338f296ca52097aac1e557f8bfa4522b7fda7c`
 - Rama: `feature/production-control-plane-phase-11`
@@ -9,6 +9,11 @@
 - Notion backlog: `https://app.notion.com/p/fe1259a2c90047788e2430b8644b9768`
 - Notion registro maestro: `https://app.notion.com/p/3d92a44b846d8143a051f75ad428da3a`
 - Decisión actual: **NO-GO**
+
+PRR-0 quedó cerrado el 2026-09-12 con gobernanza versionada, cuarentena CASH fail-closed, inventario
+real de solo lectura con cero filas CASH y CI exitoso para cada SHA entregado. El cierre y sus referencias
+se conservan en `docs/releases/2026-09-12-prr-0-closure.md`. Este resultado no autoriza PRR-1 ni ninguna
+activación de mercado, proveedor financiero o producción.
 
 ## 1. Clasificación
 

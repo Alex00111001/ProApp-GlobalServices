@@ -7,7 +7,9 @@
 - Capability tier / model: DEEP / operator-selected Codex
 - Skills used: payments, booking-engine, security, database-prisma, testing, release
 - Escalated: yes; the user explicitly authorized the aggregate-only live read
-- Implementation commit: pending publication and exact-SHA CI verification
+- Implementation commit: `66a7e9b21a2e8c1b413c414fb28a1529d57fb1a5`
+- Delivery reference: [GitHub commit](https://github.com/Alex00111001/ProApp-GlobalServices/commit/66a7e9b21a2e8c1b413c414fb28a1529d57fb1a5)
+- Exact-SHA CI: [Platform verification #36](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34710944382) — SUCCESS
 - Migration: not applicable; the audit performs no schema or data mutation
 - Rollback: not applicable to data; remove/disable the audit runner without changing evidence or records
 
@@ -44,8 +46,19 @@ The result establishes that the configured target contained no `Payment.method=C
 does not prove historical causation or replace future continuous reconciliation. No automated repair is
 necessary or authorized from this result.
 
+## Verification evidence
+
+- Inventory controls and quarantine regression: 6/6 passed.
+- Full repository verification: passed; backend 253/253, Admin Web 15/15, Public Web 4/4,
+  Client Mobile 4/4, all production builds and both mobile typechecks succeeded.
+- GitHub Actions #36 build/unit/contract: SUCCESS (1m35s).
+- GitHub Actions #36 PostgreSQL migrations/integration: SUCCESS (1m06s).
+- GitHub Actions #36 secret scan: SUCCESS (17s).
+- Gitleaks artifact digest:
+  `sha256:1e367d54e10603ba4a465664a6d24a4c9c3512be3fc68750f9fab54cb2643663`.
+
 ## Acceptance gate
 
-PRR-003 is satisfied when the runner, regression tests and this bounded evidence are committed, pushed and
-the required GitHub CI run succeeds for that exact SHA. PRR-0 may close only after the cash quarantine and
-this inventory have both retained their exact-SHA CI evidence in the repository and Notion tracker.
+PRR-003 is satisfied: the runner, regression tests and bounded evidence are committed and pushed, and the
+required GitHub CI run succeeded for the exact SHA. PRR-0 closes after the final closure record receives its
+own successful exact-SHA CI and the Notion tracker links that evidence.
