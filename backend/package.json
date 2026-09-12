@@ -17,6 +17,7 @@
     "test:connections": "node scripts/test-connections.js",
     "geography:validate": "node scripts/validate-geography-manifests.js",
     "db:audit-baseline": "node scripts/audit-prisma-baseline.js",
+    "db:audit-cash-impact": "node scripts/audit-cash-payment-impact.js",
     "security:audit-supabase-live": "node scripts/audit-supabase-default-deny.js",
     "prisma:gen": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
