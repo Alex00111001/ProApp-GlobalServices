@@ -178,30 +178,15 @@ exports.confirmPayment = async (req, res) => {
 };
 
 exports.confirmCashPayment = async (req, res) => {
-  try {
-    const { bookingId } = req.body;
-    if (!bookingId) {
-      return res.status(400).json({ success: false, message: 'bookingId es obligatorio' });
-    }
-    const booking = await getOwnedBooking(bookingId, req.user.id);
-    const amount = booking.totalPrice;
-    const currency = String(booking.currency).trim().toUpperCase();
-    const [payment, updatedBooking] = await prisma.$transaction([
-      prisma.payment.upsert({
-        where: { bookingId },
-        update: { amount, currency, status: 'PENDING', method: 'CASH' },
-        create: { bookingId, amount, currency, status: 'PENDING', method: 'CASH' },
-      }),
-      prisma.booking.update({ where: { id: bookingId }, data: { status: 'CONFIRMED' } }),
-    ]);
-    res.json({ success: true, payment, booking: updatedBooking });
-  } catch (error) {
-    logError(req, error, 'Cash payment confirmation failed');
-    res.status(error.status || 500).json({
-      success: false,
-      message: error.status ? error.message : 'Error confirmando pago en efectivo',
-    });
-  }
+  req.log?.warn({ code: 'CASH_PAYMENT_DISABLED' }, 'Cash payment request rejected by quarantine');
+  res.set('Cache-Control', 'no-store');
+  return res.status(409).json({
+    success: false,
+    error: 'Cash payment is unavailable',
+    message: 'El pago en efectivo no está disponible',
+    code: 'CASH_PAYMENT_DISABLED',
+    correlationId: req.context?.correlationId,
+  });
 };
 
 exports.stripeWebhook = async (req, res) => {

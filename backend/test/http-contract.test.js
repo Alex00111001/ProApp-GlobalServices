@@ -74,6 +74,22 @@ test('operational telemetry endpoints remain permission protected', async () => 
   assert.equal(body.correlationId, 'ops-auth-1');
 });
 
+test('cash payment quarantine remains behind customer authentication', async () => {
+  const response = await fetch(`${baseUrl}/api/payments/cash`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-correlation-id': 'cash-auth-1',
+    },
+    body: JSON.stringify({ bookingId: 'must-not-be-read' }),
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 401);
+  assert.equal(body.correlationId, 'cash-auth-1');
+  assert.notEqual(body.code, 'CASH_PAYMENT_DISABLED');
+});
+
 test('versioned admin APIs require the dedicated administrative session contract', async () => {
   const response = await fetch(`${baseUrl}/api/v1/admin/users`, {
     headers: { 'x-correlation-id': 'admin-auth-1' },

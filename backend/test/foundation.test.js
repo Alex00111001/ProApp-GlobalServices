@@ -117,6 +117,7 @@ test('production configuration fails closed and accepts an explicit complete con
   assert.equal(parsed.databaseTransactionMaxWaitMs, 10_000);
   assert.equal(parsed.databaseTransactionTimeoutMs, 10_000);
   assert.equal(parsed.trustProxyHops, 0);
+  assert.equal(parsed.cashPaymentEnabled, false);
   assert.equal(validateEnvironment({ ...valid, DATABASE_TRANSACTION_MAX_WAIT_MS: '15000' }).databaseTransactionMaxWaitMs, 15_000);
   assert.throws(() => validateEnvironment({ ...valid, DATABASE_TRANSACTION_TIMEOUT_MS: '0' }), /between 1000 and 60000/);
   assert.throws(() => validateEnvironment({ ...valid, TRUST_PROXY_HOPS: '6' }), /between 0 and 5/);
@@ -128,6 +129,7 @@ test('production configuration fails closed and accepts an explicit complete con
   assert.throws(() => validateEnvironment({ ...valid, CONSENT_ATTRIBUTION_ENABLED: 'true' }), /GROWTH_IDENTITY_PROOF_SECRET/);
   assert.equal(validateEnvironment({ ...valid, CONSENT_ATTRIBUTION_ENABLED: 'true', GROWTH_IDENTITY_PROOF_SECRET: 'i'.repeat(40) }).consentAttributionEnabled, true);
   assert.throws(() => validateEnvironment({ ...valid, FINANCIAL_PAYOUT_EXECUTION_ENABLED: 'yes' }), /either true or false/);
+  assert.throws(() => validateEnvironment({ ...valid, CASH_PAYMENT_ENABLED: 'true' }), /quarantined and must remain false/);
 });
 
 test('error contract adds stable correlation and redacts production failures', () => {

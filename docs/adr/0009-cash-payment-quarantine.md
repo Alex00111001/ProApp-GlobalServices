@@ -29,6 +29,36 @@ payment CAS rules, durable idempotency, audit/outbox evidence, immutable financi
 reconciliation, legal/tax consequences and operational exception handling. Captured, refunded, paid-out
 or disputed provider evidence can never be overwritten by cash.
 
+Cash may be offered only to an eligible professional who has registered a reusable card through the
+payment provider for collection of the platform's approved usage fees. HomeServices stores provider
+references and bounded card display metadata only, never PAN or CVC. Eligibility fails closed unless the
+provider confirms that the payment method is usable, the professional has accepted the current
+market-specific fee and off-session collection terms, any required setup authentication has completed,
+and the account has no blocking debt, dispute or risk restriction. Eligibility must be revalidated when
+cash is selected and before each fee collection; a card on file reduces collection risk but is not treated
+as guaranteed settlement.
+
+The future decision must separately approve when and how the platform fee is authorized or collected,
+limits, retries, insufficient-funds handling, card replacement, professional notice, dispute/refund rules,
+debt recovery and suspension. Provider commands require stable idempotency and signed-webhook
+reconciliation. No fee may be charged merely because a booking was created, cancelled or declared cash
+without the versioned Market Policy, accepted terms and the approved charge-trigger evidence.
+
+Cash may be offered only to an eligible professional who has registered a reusable card through the
+payment provider for collection of the platform's approved usage fees. HomeServices stores provider
+references and bounded card display metadata only, never PAN or CVC. Eligibility fails closed unless the
+provider confirms that the payment method is usable, the professional has accepted the current
+market-specific fee and off-session collection terms, any required setup authentication has completed,
+and the account has no blocking debt, dispute or risk restriction. Eligibility must be revalidated when
+cash is selected and before each fee collection; a card on file reduces collection risk but is not treated
+as guaranteed settlement.
+
+The future decision must separately approve when and how the platform fee is authorized or collected,
+limits, retries, insufficient-funds handling, card replacement, professional notice, dispute/refund rules,
+debt recovery and suspension. Provider commands require stable idempotency and signed-webhook
+reconciliation. No fee may be charged merely because a booking was created, cancelled or declared cash
+without the versioned Market Policy, accepted terms and the approved charge-trigger evidence.
+
 Until that workflow is accepted and fully verified, `CASH_PAYMENT_ENABLED=false` is mandatory and cash
 does not qualify as a completion prerequisite or financial entitlement.
 
@@ -62,12 +92,30 @@ probing. No amount, payment status, ledger row, booking status, notification, au
 mutated on rejection. Production configuration validates that cash is not enabled without an accepted
 workflow version.
 
+Future card registration must use provider-hosted/tokenized collection and a setup flow suitable for the
+approved later charge model. Consent evidence records professional, market, policy/version, locale,
+timestamp and method without copying card data. Legal, privacy, tax, SCA/off-session and card-network
+review remain blocking per market; this ADR does not invent their outcome.
+
+Future card registration must use provider-hosted/tokenized collection and a setup flow suitable for the
+approved later charge model. Consent evidence records professional, market, policy/version, locale,
+timestamp and method without copying card data. Legal, privacy, tax, SCA/off-session and card-network
+review remain blocking per market; this ADR does not invent their outcome.
+
 ## Observability and verification
 
 Tests prove default-disabled behavior, zero mutation, stable error code, ownership protection and absence
 of implicit production enablement. Regression cases cover cancelled/completed bookings, completed Stripe
 payments, replay and concurrent requests. A read-only impact query reports counts/categories without
 exposing unnecessary personal data.
+
+The future workflow additionally requires provider-contract and PostgreSQL tests for missing/expired
+payment methods, revoked consent, authentication-required responses, duplicate fee commands, webhook
+replay, insufficient funds, card replacement, concurrent bookings and suspension/debt recovery.
+
+The future workflow additionally requires provider-contract and PostgreSQL tests for missing/expired
+payment methods, revoked consent, authentication-required responses, duplicate fee commands, webhook
+replay, insufficient funds, card replacement, concurrent bookings and suspension/debt recovery.
 
 ## Rollout and rollback
 

@@ -125,8 +125,12 @@ const validateEnvironment = (source = process.env) => {
   const aiOperationsEnabled = parseBoolean('AI_OPERATIONS_ENABLED', source.AI_OPERATIONS_ENABLED, environment !== 'production');
   const aiProviderExecutionEnabled = parseBoolean('AI_PROVIDER_EXECUTION_ENABLED', source.AI_PROVIDER_EXECUTION_ENABLED, false);
   const aiOperationsWorkerEnabled = parseBoolean('AI_OPERATIONS_WORKER_ENABLED', source.AI_OPERATIONS_WORKER_ENABLED, false);
+  const cashPaymentEnabled = parseBoolean('CASH_PAYMENT_ENABLED', source.CASH_PAYMENT_ENABLED, false);
   if (aiProviderExecutionEnabled && !aiOperationsEnabled) throw new Error('AI_PROVIDER_EXECUTION_ENABLED requires AI_OPERATIONS_ENABLED.');
   if (aiOperationsWorkerEnabled && (!aiOperationsEnabled || !aiProviderExecutionEnabled)) throw new Error('AI_OPERATIONS_WORKER_ENABLED requires AI Operations and provider execution.');
+  if (cashPaymentEnabled) {
+    throw new Error('CASH_PAYMENT_ENABLED is quarantined and must remain false until a governed cash-settlement workflow is accepted.');
+  }
   const logTransport = parseChoice('LOG_TRANSPORT', source.LOG_TRANSPORT, 'stdout', ['stdout', 'file']);
   const logLevel = parseChoice('LOG_LEVEL', source.LOG_LEVEL, environment === 'production' ? 'info' : 'debug', [
     'trace', 'debug', 'info', 'warn', 'error', 'fatal',
@@ -303,6 +307,7 @@ const validateEnvironment = (source = process.env) => {
     financialPayoutExecutionEnabled: parseBoolean('FINANCIAL_PAYOUT_EXECUTION_ENABLED', source.FINANCIAL_PAYOUT_EXECUTION_ENABLED, false),
     financialDisputeRecoveryEnabled: parseBoolean('FINANCIAL_DISPUTE_RECOVERY_ENABLED', source.FINANCIAL_DISPUTE_RECOVERY_ENABLED, false),
     financialReconciliationEnabled: parseBoolean('FINANCIAL_RECONCILIATION_ENABLED', source.FINANCIAL_RECONCILIATION_ENABLED, false),
+    cashPaymentEnabled,
   };
 };
 
