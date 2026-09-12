@@ -297,6 +297,24 @@ F8.5 separates Country from operating Market; adds versioned server-authoritativ
 
 The full acceptance gate is recorded in [the F8.5 architecture](MARKETS_IDENTITY_GEOGRAPHY.md), [ADR 0004](adr/0004-market-identity-geography.md), [the runbook](runbooks/MARKETS_IDENTITY_GEOGRAPHY.md), and [the release evidence](releases/2026-09-09-f8-5-markets-identity-geography.md). Initial ES/BR/CL records remain disabled; architecture/data readiness never activates a market.
 
+### Phase 8.6 — Territorial access without GPS
+
+Status: **AUTHORIZED / NOT IMPLEMENTED — governance accepted on 2026-09-12; production and Markets
+remain inactive**. [ADR 0008](adr/0008-territorial-access-without-gps.md) adds a trusted-ingress,
+server-authoritative eligibility boundary without asking the user for country and without GPS/location
+permissions. The initial intended country is ES, but policy comes from active reviewed Market
+configuration rather than mobile constants.
+
+F8.6 delivers a closed network-country adapter, territorial policy/decision, fail-closed service,
+rate-limited bootstrap contract, route matrix, backend enforcement, customer/professional blocked and
+indeterminate UX, removal of unused location permissions, privacy-minimized telemetry, shadow/canary and
+application-first rollback. Webhooks, workers, health and Admin retain their own trust policies.
+
+Acceptance requires forged/missing/unknown/Tor/provider-outage cases, active/disabled/stale Market cases,
+IPv4/IPv6 and network changes, compatible old/new clients, absence of GPS permissions/calls, mobile E2E,
+real staging ingress evidence and rollback rehearsal. A fake adapter supports deterministic tests but
+cannot close the staging gate.
+
 ### Phase 9 — Experiments, content and SEO
 
 Status: **HECHO; verified locally, on the configured Supabase test environment and by Platform verification `34476722673` on 2026-09-10**. F9 was resumed explicitly from F8.5 SHA `0c1f088c863ca1f058263d8de714bb932953d02b`. The earlier F9 stash was inspected and remains preserved; valid work was adapted manually to the final Market/Policy/geography authority rather than applied blindly.
@@ -312,6 +330,22 @@ Status: **HECHO — verified locally, in Supabase test and remotely on 2026-09-1
 Readiness never activates a Market; expansion review never executes an expansion; AI output is never authoritative. F3 remains financial authority and F8.5 remains Market activation authority. All F10 and provider-execution flags remain disabled in production, and Markets remain inactive. Evidence is root verification green; backend 218/218; focused F10 43/43; Admin Web 15/15 plus lint/build; public web 4/4 plus SSR production build; Client/Professional green; PostgreSQL/Supabase integration 24/24 including focused F10 4/4; 26 clean/current migrations; Prisma format/validate/generate; RBAC synchronization; baseline compatibility; zero dependency vulnerabilities on all six package surfaces; exact Gitleaks negative controls; tracked-tree scan green; and 124-commit full-history scan green. [Platform verification `34518351719`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34518351719) passed build/unit/contracts/audits, clean PostgreSQL 17 migration replay/RBAC/integration/concurrency and full-history Secret Scan. See [F10 architecture](SUPPLY_DEMAND_AI_OPERATIONS.md), [the runbook](runbooks/SUPPLY_DEMAND_AI_OPERATIONS.md) and [release evidence](releases/2026-09-10-f10-supply-demand-ai-operations.md).
 
 External provider execution is not authorized by F10. A future reviewer must close the independent [AI provider go-live gate](runbooks/AI_PROVIDER_GO_LIVE_GATE.md), including named human owners, privacy/legal and data-residency review, production secret-store/rotation, exact model routing, evaluation regression, measured cost ceilings, load/soak/provider-failure evidence, observability, staged rollout and rehearsed rollback. Missing or expired evidence is an automatic NO-GO.
+
+### Production Readiness Remediation Program
+
+Status: **PRR-0 AUTHORIZED / NO-GO**. The systematic audit at commit
+`dc338f296ca52097aac1e557f8bfa4522b7fda7c` found release-blocking gaps that are not waived by prior
+phase completion. The authoritative finding set and the executable PRR-0 through PRR-8 backlog are:
+
+- [Systematic project audit and roadmap](production-readiness/SYSTEMATIC_PROJECT_AUDIT_AND_ROADMAP.md)
+- [Production remediation execution plan](production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md)
+- [ADR 0009 cash quarantine](adr/0009-cash-payment-quarantine.md)
+
+PRR precedes F11 runtime implementation: contain unsafe cash mutation; repair domain/API integrity;
+implement F8.6; close identity/privacy/legal/professional/storage/financial gaps; complete frontend and
+E2E journeys; establish reproducible infrastructure, restore and staging; then execute F11 and a fresh
+independent release audit. Notion tracks progress but cannot make a task complete without Git and CI
+evidence for the exact SHA.
 
 ### Phase 11 — Production Control Plane and Go-Live Orchestrator
 
@@ -334,13 +368,18 @@ Acceptance: all gates in the [F11 implementation plan](PRODUCTION_CONTROL_PLANE.
 
 ## 16. Immediate delivery slices
 
-1. Correlation/request context, structured errors, validated configuration and app/server separation.
-2. Backend test harness and compatibility tests for existing customer flows; fix contract mismatches without breaking accepted payloads.
-3. Add the first reviewed Prisma foundation migration (RBAC, feature flags, idempotency/outbox, generalized audit) only after database baseline confirmation.
-4. Implement RBAC services/middleware and migrate current admin routes behind permissions.
-5. Introduce event taxonomy and transactional outbox; instrument signup/request/booking/payment/job/review milestones.
-6. Begin observability persistence and health registry.
+1. Commit and remotely verify the accepted PRR governance/ADR baseline.
+2. Quarantine CASH behind a default-off validated flag with a stable compatibility error and zero mutation.
+3. Execute a reviewed read-only impact inventory without automatic financial correction.
+4. Close PRR-0 only when the exact SHAs have required remote CI evidence.
+5. Begin PRR-1 domain integrity and API contracts; do not start F11 runtime first.
 
 ## 17. Global definition of done
 
 A capability is complete only when its schema migration, domain logic, API authorization/validation, audit/telemetry, automated tests, documentation, operational runbook and feature-flag/rollback strategy are present. Financial work additionally requires idempotency, transaction boundaries, reconciliation and immutable correction entries. Legal policy content remains placeholder/configuration pending qualified review; the platform records exactly which version, country, language and acceptance timestamp applied.
+
+Completion also requires an immutable delivery reference, required CI success for the exact commit SHA,
+and linked migration/integration/E2E/staging/rehearsal evidence appropriate to risk. Historical CI,
+different-SHA results, skipped required jobs, generated-only code, mocks that substitute for required
+integration, or a tracker status are not completion evidence. Missing or expired external evidence is
+fail-closed. Production activation remains a separate explicit GO for the exact release digest.

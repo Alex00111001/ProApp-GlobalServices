@@ -46,6 +46,19 @@ For non-trivial changes:
 
 Create an ADR for a new/changed bounded context, system of record, framework or provider strategy, public compatibility rule, financial invariant, identity/security boundary, data retention model, or irreversible migration strategy. Use `docs/adr/README.md`.
 
+### Evidence-based closure
+
+Git commit history, required CI for the exact SHA, migration/rehearsal output, release records, and
+applicable human approvals are the authoritative completion evidence. Planning systems such as Notion
+are projections for coordination and never override repository or CI state.
+
+A task or capability may be marked complete only when its acceptance criteria link the exact delivered
+revision to all required successful checks. Historical CI, a different SHA, skipped required jobs,
+generated code, mocks without required integration, screenshots without reproducible execution, or an
+unverified narrative are insufficient. If Git/CI evidence is unavailable, stale, failed, or cannot be
+read, the state remains pending, blocked, or in review. External legal, provider, store, infrastructure,
+backup, staging, and production approvals remain independently required and time-bounded.
+
 ## Shared skill architecture
 
 - Canonical skills: `.agents/skills/<name>/SKILL.md`.

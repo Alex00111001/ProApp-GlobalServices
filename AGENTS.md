@@ -32,7 +32,7 @@ Before substantial implementation, record:
 
 ```text
 Task classification
-- Phase: F1-F10
+- Phase: F1-F11 or approved PRR wave
 - Domain: <bounded context>
 - Risk: LOW | MEDIUM | HIGH | CRITICAL
 - Capability tier: FAST | STANDARD | DEEP
@@ -59,6 +59,12 @@ A capability is complete only when the applicable schema migration, domain logic
 Financial work additionally requires Decimal/minor-unit arithmetic, explicit transaction boundaries, durable idempotency, balanced immutable ledger entries, replay/concurrency tests, and reconciliation evidence.
 
 Report exact checks executed and unverified areas. Do not weaken tests to match an implementation or claim completion from generated code alone.
+
+Every completed stage must identify its commit SHA, PR or delivery reference, required CI run for that
+exact SHA, and release/evidence record. Historical or different-SHA CI does not close current work.
+Notion and other trackers are coordination projections, not sources of technical truth; they may move to
+`HECHO` only after repository, CI, migration/rehearsal, and applicable human evidence are linked and
+verified. Missing, skipped, failed, inaccessible, or expired required evidence keeps the work open.
 
 ## Safety and repository hygiene
 
