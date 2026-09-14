@@ -165,6 +165,12 @@ debe dividirse antes de entrar en `EN CURSO`.
 | PRR-105 | Publicar OpenAPI/contrato v1 compatible | PRR-103/104 | diff y consumer tests verdes |
 | PRR-106 | Cubrir HTTP payment/booking/auth/upload/notification/admin | PRR-102/105 | umbrales críticos acordados |
 
+PRR-101 dispone desde 2026-09-14 de un [ADR propuesto](../adr/0010-governed-cash-payment-workflow.md),
+[matriz de decisión](PRR-101-CASH-DECISION.md) y
+[paquete de aprobación](PRR-101-APPROVAL-PACKET.md). Su estado es **AWAITING HUMAN APPROVAL**: CASH,
+ES/BR/CL y PRR-102 continúan bloqueados; la documentación técnica y el CI no sustituyen las aprobaciones
+Product, Finance, Security y Legal/Privacy exigidas.
+
 ### PRR-2 — Elegibilidad territorial F8.6 sin GPS
 
 | ID | Entregable | Depende de | Gate |

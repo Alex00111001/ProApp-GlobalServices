@@ -37,3 +37,4 @@ An accepted ADR must remain within `docs/IMPLEMENTATION_PLAN.md` or update it in
 - [ADR 0007 — Production Control Plane and Go-Live Orchestrator](0007-production-control-plane.md)
 - [ADR 0008 — Territorial access without GPS](0008-territorial-access-without-gps.md)
 - [ADR 0009 — Cash payment quarantine](0009-cash-payment-quarantine.md)
+- [ADR 0010 — Governed cash payment workflow and professional fee collection](0010-governed-cash-payment-workflow.md)
