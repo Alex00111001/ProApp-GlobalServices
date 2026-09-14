@@ -169,7 +169,8 @@ PRR-101 dispone desde 2026-09-14 de un [ADR propuesto](../adr/0010-governed-cash
 [matriz de decisión](PRR-101-CASH-DECISION.md) y
 [paquete de aprobación](PRR-101-APPROVAL-PACKET.md). Su estado es **AWAITING HUMAN APPROVAL**: CASH,
 ES/BR/CL y PRR-102 continúan bloqueados; la documentación técnica y el CI no sustituyen las aprobaciones
-Product, Finance, Security y Legal/Privacy exigidas.
+Product, Finance, Security y Legal/Privacy exigidas. La evidencia reproducible del gate está en el
+[registro PRR-101](../releases/2026-09-14-prr-101-decision-gate.md).
 
 ### PRR-2 — Elegibilidad territorial F8.6 sin GPS
 
