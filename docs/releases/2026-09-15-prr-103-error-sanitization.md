@@ -5,7 +5,7 @@ Branch: `feature/production-control-plane-phase-11`
 Base SHA: `407c0390792e75f2d19171d8c6c8d3aedcb62fe9`  
 Implementation SHA: `ce994e8b`  
 Security-test SHA: `07ff623d`  
-Status: **HECHO when the final evidence commit has exact-SHA CI SUCCESS; otherwise PARCIAL**  
+Status: **HECHO when the final evidence commit has exact-SHA CI SUCCESS; otherwise PARCIAL**
 Migration: **NONE**
 
 ## Classification and authority
