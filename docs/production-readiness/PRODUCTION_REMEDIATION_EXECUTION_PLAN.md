@@ -165,6 +165,13 @@ debe dividirse antes de entrar en `EN CURSO`.
 | PRR-105 | Publicar OpenAPI/contrato v1 compatible | PRR-103/104 | diff y consumer tests verdes |
 | PRR-106 | Cubrir HTTP payment/booking/auth/upload/notification/admin | PRR-102/105 | umbrales críticos acordados |
 
+PRR-103 está implementado en la rama de control de producción. La autoridad pública única es
+`backend/src/shared/http/error-contract.js`, el boundary terminal es
+`backend/src/shared/http/global-error-handler.js` y los controllers sólo conservan respuestas 4xx
+demostradas. El registro reproducible, mapa de superficies, compatibilidad, operación y rollback está en
+[PRR-103 error sanitization](../releases/2026-09-15-prr-103-error-sanitization.md). Hasta que el SHA final
+del registro obtenga Platform verification completamente verde, su estado permanece **PARCIAL**.
+
 PRR-101 dispone desde 2026-09-14 de un [ADR propuesto](../adr/0010-governed-cash-payment-workflow.md),
 [matriz de decisión](PRR-101-CASH-DECISION.md) y
 [paquete de aprobación](PRR-101-APPROVAL-PACKET.md). Su estado es **AWAITING HUMAN APPROVAL**: CASH,
