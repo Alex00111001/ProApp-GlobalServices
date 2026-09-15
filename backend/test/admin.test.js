@@ -66,7 +66,38 @@ test('admin login requires an explicit active RBAC assignment', async () => {
     },
     userRoleAssignment: { findMany: async () => [] },
   };
-  await assert.rejects(() => createAdminSession({ email: 'admin@example.com', password: 'correct-password' }, client), (error) => error.code === 'ADMIN_ACCESS_DENIED');
+  await assert.rejects(() => createAdminSession({ email: 'admin@example.com', password: 'correct-password' }, client), (error) => (
+    error.statusCode === 401
+    && error.code === 'INVALID_ADMIN_CREDENTIALS'
+    && error.message === 'Invalid administrative credentials.'
+  ));
+});
+
+test('admin login does not reveal whether account, activation, password or RBAC assignment failed', async () => {
+  const passwordHash = await hashPassword('correct-password');
+  const scenarios = [
+    { user: null, assignments: [] },
+    { user: { id: 'user-1', isActive: false, passwordHash }, assignments: [] },
+    { user: { id: 'user-1', isActive: true, passwordHash }, password: 'wrong-password', assignments: [] },
+    { user: { id: 'user-1', isActive: true, passwordHash }, assignments: [] },
+  ];
+  const observed = [];
+  for (const scenario of scenarios) {
+    const client = {
+      user: {
+        findUnique: async (input) => input.select
+          ? (scenario.user && { ...scenario.user, email: 'admin@example.com' })
+          : scenario.user,
+      },
+      userRoleAssignment: { findMany: async () => scenario.assignments },
+    };
+    await assert.rejects(
+      () => createAdminSession({ email: 'admin@example.com', password: scenario.password || 'correct-password' }, client),
+      (error) => { observed.push([error.statusCode, error.code, error.message]); return true; }
+    );
+  }
+  assert.deepEqual(new Set(observed.map(JSON.stringify)).size, 1);
+  assert.deepEqual(observed[0], [401, 'INVALID_ADMIN_CREDENTIALS', 'Invalid administrative credentials.']);
 });
 
 test('admin login persists only hashed refresh context and returns effective permissions', async () => {

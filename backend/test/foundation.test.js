@@ -132,25 +132,27 @@ test('production configuration fails closed and accepts an explicit complete con
   assert.throws(() => validateEnvironment({ ...valid, CASH_PAYMENT_ENABLED: 'true' }), /quarantined and must remain false/);
 });
 
-test('error contract adds stable correlation and redacts production failures', () => {
+test('error contract adds stable request correlation and always redacts server failures', () => {
   assert.deepEqual(normalizeErrorBody({
     body: { error: 'Missing token' },
     statusCode: 401,
+    requestId: 'request-1',
     correlationId: 'journey-1',
-    isProduction: true,
   }), {
     error: 'Missing token',
     code: 'AUTHENTICATION_REQUIRED',
+    requestId: 'request-1',
     correlationId: 'journey-1',
   });
   assert.deepEqual(normalizeErrorBody({
     body: { error: 'database password leaked', message: 'stack detail', details: ['secret'] },
     statusCode: 500,
+    requestId: 'request-2',
     correlationId: 'journey-2',
-    isProduction: true,
   }), {
-    error: 'Internal server error',
+    error: 'An unexpected error occurred.',
     code: 'INTERNAL_ERROR',
+    requestId: 'request-2',
     correlationId: 'journey-2',
   });
 });
