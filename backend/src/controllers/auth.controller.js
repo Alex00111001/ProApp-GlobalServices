@@ -38,7 +38,7 @@ const DUMMY_PASSWORD_HASH = '$2b$12$wkoWUlaQnGviXbjEqvHrkeuD0QEIyDxGmt8f8vHhE4mC
 const notificationService = new NotificationService();
 
 // Registrar usuario
-exports.register = async (req, res) => {
+exports.register = async (req, res, next) => {
   try {
     // Validar datos de entrada
     const validatedData = registerSchema.parse(normalizeRegistrationPayload(req.body));
@@ -204,11 +204,8 @@ exports.register = async (req, res) => {
       return res.status(409).json({ error: 'Registration data conflicts with an existing account.', code: 'REGISTRATION_CONFLICT', correlationId: req.context?.correlationId });
     }
 
-    res.status(error.statusCode || 500).json({
-      error: error.statusCode ? error.message : 'Internal server error',
-      code: error.statusCode ? error.code : undefined,
-      correlationId: req.context?.correlationId,
-    });
+    if (error.statusCode && error.statusCode < 500) return res.status(error.statusCode).json({ error: error.message, code: error.code, correlationId: req.context?.correlationId });
+    return next(error);
   }
 };
 
@@ -414,7 +411,7 @@ exports.revokeSession = async (req, res, next) => {
 };
 
 // Obtener perfil del usuario autenticado
-exports.getProfile = async (req, res) => {
+exports.getProfile = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
@@ -452,12 +449,12 @@ exports.getProfile = async (req, res) => {
     res.json({ user: userWithoutPassword, profile });
   } catch (error) {
     logError(req, error, 'Profile lookup failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Actualizar perfil
-exports.updateProfile = async (req, res) => {
+exports.updateProfile = async (req, res, next) => {
   try {
     const { firstName, lastName, phone, avatarUrl, address, city, state, postalCode, country } = updateProfileSchema.parse(req.body);
 
@@ -508,12 +505,12 @@ exports.updateProfile = async (req, res) => {
     if (error.name === 'ZodError') {
       return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Cambiar contraseña
-exports.changePassword = async (req, res) => {
+exports.changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = changePasswordSchema.parse(req.body);
 
@@ -551,6 +548,6 @@ exports.changePassword = async (req, res) => {
     if (error.name === 'ZodError') {
       return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };

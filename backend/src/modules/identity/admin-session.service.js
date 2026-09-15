@@ -6,6 +6,7 @@ const { comparePassword } = require('../../utils/password');
 
 const ACCESS_AUDIENCE = 'homeservices-admin';
 const ACCESS_ISSUER = 'homeservices-core-api';
+const DUMMY_PASSWORD_HASH = '$2b$12$wkoWUlaQnGviXbjEqvHrkeuD0QEIyDxGmt8f8vHhE4mClLkrkHDKi';
 
 const httpError = (statusCode, code, message) => Object.assign(new Error(message), { statusCode, code });
 const opaqueToken = () => crypto.randomBytes(32).toString('base64url');
@@ -91,11 +92,20 @@ const buildSessionResponse = (identity, session, accessToken, refreshToken, csrf
 
 const createAdminSession = async ({ email, password, userAgent, ipAddress }, client = prisma) => {
   const user = await client.user.findUnique({ where: { email: email.toLowerCase() } });
-  if (!user || !user.isActive || !await comparePassword(password, user.passwordHash)) {
+  const passwordMatches = await comparePassword(password, user?.passwordHash || DUMMY_PASSWORD_HASH);
+  if (!user || !user.isActive || !passwordMatches) {
     throw httpError(401, 'INVALID_ADMIN_CREDENTIALS', 'Invalid administrative credentials.');
   }
 
-  const identity = await loadAdminIdentity(user.id, client);
+  let identity;
+  try {
+    identity = await loadAdminIdentity(user.id, client);
+  } catch (error) {
+    if (error?.statusCode === 401 || error?.statusCode === 403) {
+      throw httpError(401, 'INVALID_ADMIN_CREDENTIALS', 'Invalid administrative credentials.');
+    }
+    throw error;
+  }
   const refreshToken = opaqueToken();
   const csrfToken = opaqueToken();
   const expiresAt = new Date(Date.now() + env.adminSessionHours * 60 * 60 * 1000);

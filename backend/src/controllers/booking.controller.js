@@ -20,7 +20,7 @@ const { assertBookingPaymentSettled, claimBookingTransition } = require('../modu
 const { BOOKING_READ_INCLUDE } = require('../shared/http/public-projections');
 
 // Crear reserva
-exports.createBooking = async (req, res) => {
+exports.createBooking = async (req, res, next) => {
   try {
     const { 
       professionalId, 
@@ -248,19 +248,19 @@ exports.createBooking = async (req, res) => {
     if (error.name === 'ZodError') {
       return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
-    if (error.statusCode || error.status) {
+    if ((error.statusCode || error.status) && (error.statusCode || error.status) < 500) {
       return res.status(error.statusCode || error.status).json({
         error: error.message,
         code: error.code,
         correlationId: req.context?.correlationId,
       });
     }
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Obtener una reserva concreta, limitada al cliente o profesional propietario.
-exports.getBookingById = async (req, res) => {
+exports.getBookingById = async (req, res, next) => {
   try {
     const booking = await prisma.booking.findUnique({
       where: { id: req.params.id },
@@ -276,12 +276,12 @@ exports.getBookingById = async (req, res) => {
     res.json({ booking });
   } catch (error) {
     logError(req, error, 'Booking lookup failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Obtener reservas del cliente autenticado
-exports.getClientBookings = async (req, res) => {
+exports.getClientBookings = async (req, res, next) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -312,12 +312,12 @@ exports.getClientBookings = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Client booking query failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Obtener reservas del profesional autenticado
-exports.getProfessionalBookings = async (req, res) => {
+exports.getProfessionalBookings = async (req, res, next) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -348,12 +348,12 @@ exports.getProfessionalBookings = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Professional booking query failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Confirmar reserva (profesional)
-exports.confirmBooking = async (req, res) => {
+exports.confirmBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -413,16 +413,13 @@ exports.confirmBooking = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Booking confirmation failed');
-    res.status(error.statusCode || 500).json({
-      error: error.statusCode ? error.message : 'Internal server error',
-      code: error.statusCode ? error.code : undefined,
-      correlationId: req.context?.correlationId,
-    });
+    if (error.statusCode && error.statusCode < 500) return res.status(error.statusCode).json({ error: error.message, code: error.code, correlationId: req.context?.correlationId });
+    return next(error);
   }
 };
 
 // Cancelar reserva
-exports.cancelBooking = async (req, res) => {
+exports.cancelBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
@@ -535,12 +532,13 @@ exports.cancelBooking = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Booking cancellation failed');
-    res.status(error.status || 500).json({ error: error.status ? error.message : 'Internal server error' });
+    if (error.status && error.status < 500) return res.status(error.status).json({ error: error.message });
+    return next(error);
   }
 };
 
 // Rechazar solicitud pendiente (profesional)
-exports.rejectBooking = async (req, res) => {
+exports.rejectBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
     const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim().slice(0, 500) : '';
@@ -591,16 +589,13 @@ exports.rejectBooking = async (req, res) => {
     res.json({ message: 'Booking rejected successfully', booking: result.booking, duplicate: result.duplicate });
   } catch (error) {
     logError(req, error, 'Booking rejection failed');
-    res.status(error.statusCode || 500).json({
-      error: error.statusCode ? error.message : 'Internal server error',
-      code: error.statusCode ? error.code : undefined,
-      correlationId: req.context?.correlationId,
-    });
+    if (error.statusCode && error.statusCode < 500) return res.status(error.statusCode).json({ error: error.message, code: error.code, correlationId: req.context?.correlationId });
+    return next(error);
   }
 };
 
 // Iniciar reserva (profesional)
-exports.startBooking = async (req, res) => {
+exports.startBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
     const booking = await prisma.booking.findUnique({ where: { id } });
@@ -642,16 +637,13 @@ exports.startBooking = async (req, res) => {
     res.json({ message: 'Booking started successfully', booking: result.booking, duplicate: result.duplicate });
   } catch (error) {
     logError(req, error, 'Booking start failed');
-    res.status(error.statusCode || 500).json({
-      error: error.statusCode ? error.message : 'Internal server error',
-      code: error.statusCode ? error.code : undefined,
-      correlationId: req.context?.correlationId,
-    });
+    if (error.statusCode && error.statusCode < 500) return res.status(error.statusCode).json({ error: error.message, code: error.code, correlationId: req.context?.correlationId });
+    return next(error);
   }
 };
 
 // Completar reserva (profesional)
-exports.completeBooking = async (req, res) => {
+exports.completeBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -772,11 +764,8 @@ exports.completeBooking = async (req, res) => {
   } catch (error) {
     logError(req, error, 'Booking completion failed');
     const status = error.statusCode || error.status;
-    res.status(status || 500).json({
-      error: status ? error.message : 'Internal server error',
-      code: status ? error.code : undefined,
-      correlationId: req.context?.correlationId,
-    });
+    if (status && status < 500) return res.status(status).json({ error: error.message, code: error.code, correlationId: req.context?.correlationId });
+    return next(error);
   }
 };
 

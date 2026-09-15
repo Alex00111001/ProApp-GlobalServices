@@ -32,7 +32,7 @@ const getOwnedBooking = async (bookingId, userId) => {
   return booking;
 };
 
-exports.createPaymentIntent = async (req, res) => {
+exports.createPaymentIntent = async (req, res, next) => {
   try {
     const { bookingId } = req.body;
     if (!bookingId) {
@@ -113,14 +113,12 @@ exports.createPaymentIntent = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Payment intent creation failed');
-    res.status(error.status || 500).json({
-      success: false,
-      message: error.status ? error.message : 'Error procesando el pago',
-    });
+    if (error.status && error.status < 500) return res.status(error.status).json({ success: false, message: error.message });
+    return next(error);
   }
 };
 
-exports.confirmPayment = async (req, res) => {
+exports.confirmPayment = async (req, res, next) => {
   try {
     const { paymentIntentId, bookingId } = req.body;
     if (!paymentIntentId || !bookingId) {
@@ -170,10 +168,8 @@ exports.confirmPayment = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Payment confirmation failed');
-    res.status(error.status || 500).json({
-      success: false,
-      message: error.status ? error.message : 'Error confirmando el pago',
-    });
+    if (error.status && error.status < 500) return res.status(error.status).json({ success: false, message: error.message });
+    return next(error);
   }
 };
 
@@ -189,7 +185,7 @@ exports.confirmCashPayment = async (req, res) => {
   });
 };
 
-exports.stripeWebhook = async (req, res) => {
+exports.stripeWebhook = async (req, res, next) => {
   const signature = req.headers['stripe-signature'];
   const webhookSecret =
     process.env.STRIPE_WEBHOOK_SECRET_CURRENT || process.env.STRIPE_WEBHOOK_SECRET;
@@ -202,7 +198,7 @@ exports.stripeWebhook = async (req, res) => {
     event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
   } catch (error) {
     logError(req, error, 'Stripe webhook signature verification failed');
-    return res.status(400).send('Firma de webhook no válida');
+    return res.status(400).json({ error: 'Invalid webhook signature', code: 'WEBHOOK_SIGNATURE_INVALID' });
   }
 
   try {
@@ -213,11 +209,11 @@ exports.stripeWebhook = async (req, res) => {
     res.json({ received: true, duplicate: result.duplicate, status: result.status });
   } catch (error) {
     req.log?.error({ err: error, stripeEventId: event.id }, 'Stripe webhook processing failed');
-    res.status(500).json({ error: 'No se pudo procesar el webhook' });
+    next(error);
   }
 };
 
-exports.getPaymentHistory = async (req, res) => {
+exports.getPaymentHistory = async (req, res, next) => {
   try {
     const parsedPage = Math.max(1, parseInt(req.query.page || 1));
     const parsedLimit = Math.min(50, Math.max(1, parseInt(req.query.limit || 10)));
@@ -239,6 +235,6 @@ exports.getPaymentHistory = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Payment history query failed');
-    res.status(500).json({ success: false, message: 'Error obteniendo historial de pagos' });
+    next(error);
   }
 };

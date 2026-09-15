@@ -4,6 +4,7 @@ const env = require('./config/env');
 const prisma = require('./config/prisma');
 const { requestContext } = require('./middleware/request-context');
 const { errorContract } = require('./shared/http/error-contract');
+const { createGlobalErrorHandler } = require('./shared/http/global-error-handler');
 const helmet = require('helmet');
 const { rateLimit } = require('express-rate-limit');
 const { httpLogger } = require('./modules/observability/logger');
@@ -78,6 +79,7 @@ app.get('/health/live', (req, res) => res.status(200).json({
 
 app.get(['/health', '/health/ready'], async (req, res) => {
   const health = await getReadiness(prisma);
+  res.locals.publicOperationalResponse = true;
   res.status(health.status === 'OUTAGE' ? 503 : 200).json({
     ...health,
     correlationId: req.context.correlationId,
@@ -111,39 +113,6 @@ app.use((req, res) => {
   });
 });
 
-app.use(async (err, req, res, next) => {
-  req.log?.error({ err, correlationId: req.context?.correlationId }, 'Unhandled request error');
-  const correlationId = req.context?.correlationId;
-  const explicitStatus = Number(err.statusCode || err.status);
-  const statusCode = Number.isInteger(explicitStatus) && explicitStatus >= 400 && explicitStatus <= 599
-    ? explicitStatus
-    : err.name === 'ValidationError' || err.name === 'ZodError'
-      ? 400
-      : 500;
-
-  if (statusCode >= 500) {
-    try {
-      const errorReport = await reportError(err, req);
-      await ensureIncidentForError(errorReport);
-    } catch (reportingError) {
-      req.log?.error({ err: reportingError }, 'Error reporting failed');
-    }
-  }
-
-  if (statusCode < 500) {
-    return res.status(statusCode).json({
-      error: err.message,
-      code: err.code || (statusCode === 400 ? 'VALIDATION_ERROR' : undefined),
-      correlationId,
-    });
-  }
-
-  return res.status(500).json({
-    error: 'Internal server error',
-    code: 'INTERNAL_ERROR',
-    correlationId,
-    message: env.isProduction ? undefined : err.message,
-  });
-});
+app.use(createGlobalErrorHandler({ reportError, ensureIncidentForError }));
 
 module.exports = app;

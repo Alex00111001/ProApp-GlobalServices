@@ -1,5 +1,6 @@
 const { authenticateAdminToken } = require('../modules/identity/admin-session.service');
 const { logError } = require('../modules/observability/safe-log');
+const { classifyException } = require('../shared/http/error-contract');
 
 const bearerToken = (header) => {
   if (!header || !header.startsWith('Bearer ')) return null;
@@ -25,6 +26,7 @@ const createAuthenticateAdmin = (authenticate = authenticateAdminToken) => async
     return next();
   } catch (error) {
     logError(req, error, 'Administrative authentication failed');
+    if (classifyException(error).statusCode >= 500) return next(error);
     return res.status(error.statusCode || 401).json({
       error: error.statusCode === 403 ? error.message : 'Administrative session is invalid or expired.',
       code: error.code || 'ADMIN_SESSION_INVALID',

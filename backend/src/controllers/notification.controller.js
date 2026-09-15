@@ -4,7 +4,7 @@ const { logError } = require('../modules/observability/safe-log');
 /**
  * Obtener notificaciones del usuario
  */
-exports.getNotifications = async (req, res) => {
+exports.getNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { page = 1, limit = 20, unreadOnly = false } = req.query;
@@ -55,17 +55,13 @@ exports.getNotifications = async (req, res) => {
 
   } catch (error) {
     logError(req, error, 'Notification query failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error obteniendo notificaciones',
-      error: error.message 
-    });
+    next(error);
   }
 };
 /**
  * Marcar notificación como leída
  */
-exports.markAsRead = async (req, res) => {
+exports.markAsRead = async (req, res, next) => {
   try {
     const { notificationId } = req.params;
     const userId = req.user.id;
@@ -101,17 +97,13 @@ exports.markAsRead = async (req, res) => {
 
   } catch (error) {
     logError(req, error, 'Notification update failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error actualizando notificación',
-      error: error.message 
-    });
+    next(error);
   }
 };
 /**
  * Marcar todas las notificaciones como leídas
  */
-exports.markAllAsRead = async (req, res) => {
+exports.markAllAsRead = async (req, res, next) => {
   try {
     const userId = req.user.id;
 
@@ -130,18 +122,14 @@ exports.markAllAsRead = async (req, res) => {
 
   } catch (error) {
     logError(req, error, 'Bulk notification update failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error actualizando notificaciones',
-      error: error.message 
-    });
+    next(error);
   }
 };
 
 /**
  * Eliminar una notificación
  */
-exports.deleteNotification = async (req, res) => {
+exports.deleteNotification = async (req, res, next) => {
   try {
     const { notificationId } = req.params;
     const userId = req.user.id;
@@ -175,10 +163,6 @@ exports.deleteNotification = async (req, res) => {
 
   } catch (error) {
     logError(req, error, 'Notification deletion failed');
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error eliminando notificación',
-      error: error.message 
-    });
+    next(error);
   }
 };

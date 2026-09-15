@@ -1,7 +1,7 @@
 const prisma = require('../config/prisma');
 const { logError } = require('../modules/observability/safe-log');
 
-exports.getServiceById = async (req, res) => {
+exports.getServiceById = async (req, res, next) => {
   try {
     const service = await prisma.service.findFirst({
       where: {
@@ -21,12 +21,12 @@ exports.getServiceById = async (req, res) => {
     res.json({ service });
   } catch (error) {
     logError(req, error, 'Service lookup failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Obtener todas las categorías activas
-exports.getCategories = async (req, res) => {
+exports.getCategories = async (req, res, next) => {
   try {
     const categories = await prisma.category.findMany({
       where: { isActive: true },
@@ -44,12 +44,12 @@ exports.getCategories = async (req, res) => {
     res.json({ categories });
   } catch (error) {
     logError(req, error, 'Category list query failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Obtener una categoría por ID
-exports.getCategoryById = async (req, res) => {
+exports.getCategoryById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -89,12 +89,12 @@ exports.getCategoryById = async (req, res) => {
     res.json({ category });
   } catch (error) {
     logError(req, error, 'Category lookup failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Crear categoría (solo admin)
-exports.createCategory = async (req, res) => {
+exports.createCategory = async (req, res, next) => {
   try {
     const { name, slug, description, iconUrl } = req.body;
 
@@ -120,12 +120,12 @@ exports.createCategory = async (req, res) => {
       });
     }
 
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Actualizar categoría (solo admin)
-exports.updateCategory = async (req, res) => {
+exports.updateCategory = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, slug, description, iconUrl, isActive } = req.body;
@@ -147,12 +147,12 @@ exports.updateCategory = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Category update failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Eliminar categoría (solo admin - soft delete)
-exports.deleteCategory = async (req, res) => {
+exports.deleteCategory = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -164,7 +164,7 @@ exports.deleteCategory = async (req, res) => {
     res.json({ message: 'Category deactivated successfully' });
   } catch (error) {
     logError(req, error, 'Category deletion failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 

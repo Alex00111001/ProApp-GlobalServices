@@ -9,7 +9,7 @@ const { PERMISSIONS } = require('../modules/identity/permission-catalog');
 const { logError } = require('../modules/observability/safe-log');
 
 // Subir archivo a Cloudinary
-router.post('/upload', authenticate, upload.single('file'), async (req, res) => {
+router.post('/upload', authenticate, upload.single('file'), async (req, res, next) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
@@ -27,12 +27,12 @@ router.post('/upload', authenticate, upload.single('file'), async (req, res) => 
     });
   } catch (error) {
     logError(req, error, 'File upload failed');
-    res.status(500).json({ error: 'Failed to upload file' });
+    next(error);
   }
 });
 
 // Subir múltiples archivos (para portafolio)
-router.post('/upload-multiple', authenticate, upload.array('files', 10), async (req, res) => {
+router.post('/upload-multiple', authenticate, upload.array('files', 10), async (req, res, next) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'No files uploaded' });
@@ -52,12 +52,12 @@ router.post('/upload-multiple', authenticate, upload.array('files', 10), async (
     });
   } catch (error) {
     logError(req, error, 'Multi-file upload failed');
-    res.status(500).json({ error: 'Failed to upload files' });
+    next(error);
   }
 });
 
 // Subir documento de profesional (antecedentes, certificación, etc.)
-router.post('/professional/document', authenticate, authorize('PROFESSIONAL'), upload.single('document'), async (req, res) => {
+router.post('/professional/document', authenticate, authorize('PROFESSIONAL'), upload.single('document'), async (req, res, next) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No document uploaded' });
@@ -102,12 +102,12 @@ router.post('/professional/document', authenticate, authorize('PROFESSIONAL'), u
     });
   } catch (error) {
     logError(req, error, 'Document upload failed');
-    res.status(500).json({ error: 'Failed to upload document' });
+    next(error);
   }
 });
 
 // Subir foto al portafolio del profesional
-router.post('/professional/portfolio', authenticate, authorize('PROFESSIONAL'), upload.single('image'), async (req, res) => {
+router.post('/professional/portfolio', authenticate, authorize('PROFESSIONAL'), upload.single('image'), async (req, res, next) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No image uploaded' });
@@ -150,12 +150,12 @@ router.post('/professional/portfolio', authenticate, authorize('PROFESSIONAL'), 
     });
   } catch (error) {
     logError(req, error, 'Portfolio upload failed');
-    res.status(500).json({ error: 'Failed to upload portfolio image' });
+    next(error);
   }
 });
 
 // Eliminar archivo de Cloudinary
-router.delete('/delete/:publicId', authenticate, requirePermission(PERMISSIONS.SETTINGS_MANAGE), async (req, res) => {
+router.delete('/delete/:publicId', authenticate, requirePermission(PERMISSIONS.SETTINGS_MANAGE), async (req, res, next) => {
   try {
     const { publicId } = req.params;
 
@@ -168,7 +168,7 @@ router.delete('/delete/:publicId', authenticate, requirePermission(PERMISSIONS.S
     }
   } catch (error) {
     logError(req, error, 'File deletion failed');
-    res.status(500).json({ error: 'Failed to delete file' });
+    next(error);
   }
 });
 

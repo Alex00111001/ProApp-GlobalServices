@@ -3,6 +3,7 @@ const { logError } = require('../modules/observability/safe-log');
 const prisma = require('../config/prisma');
 const env = require('../config/env');
 const { authenticateCustomerAccessToken } = require('../modules/identity/customer-session.service');
+const { classifyException } = require('../shared/http/error-contract');
 
 const JWT_SECRET = env.jwtSecret;
 const JWT_EXPIRES_IN = env.jwtExpiresIn;
@@ -75,6 +76,7 @@ const authenticate = async (req, res, next) => {
     next();
   } catch (error) {
     logError(req, error, 'Authentication failed');
+    if (classifyException(error).statusCode >= 500) return next(error);
     return res.status(401).json({ 
       error: 'Invalid or expired token.' 
     });

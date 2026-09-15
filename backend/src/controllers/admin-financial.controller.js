@@ -44,7 +44,7 @@ const handleError = (error, res, next) => {
       issues: error.issues.map((issue) => ({ path: issue.path.join('.'), message: issue.message })),
     });
   }
-  if (error.status) return res.status(error.status).json({ error: error.message });
+  if (error.status && error.status < 500) return res.status(error.status).json({ error: error.message });
   return next(error);
 };
 

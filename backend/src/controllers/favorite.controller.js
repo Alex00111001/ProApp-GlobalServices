@@ -13,7 +13,7 @@ const getClient = (req, res) => {
   return null;
 };
 
-exports.getFavorites = async (req, res) => {
+exports.getFavorites = async (req, res, next) => {
   try {
     const client = getClient(req, res);
     if (!client) return;
@@ -36,11 +36,11 @@ exports.getFavorites = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Favorite list query failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
-exports.addFavorite = async (req, res) => {
+exports.addFavorite = async (req, res, next) => {
   try {
     const client = getClient(req, res);
     if (!client) return;
@@ -59,11 +59,11 @@ exports.addFavorite = async (req, res) => {
     return res.status(201).json({ favorite: professional, isFavorite: true });
   } catch (error) {
     logError(req, error, 'Favorite creation failed');
-    return res.status(500).json({ error: 'Internal server error' });
+    return next(error);
   }
 };
 
-exports.removeFavorite = async (req, res) => {
+exports.removeFavorite = async (req, res, next) => {
   try {
     const client = getClient(req, res);
     if (!client) return;
@@ -73,11 +73,11 @@ exports.removeFavorite = async (req, res) => {
     return res.json({ isFavorite: false });
   } catch (error) {
     logError(req, error, 'Favorite deletion failed');
-    return res.status(500).json({ error: 'Internal server error' });
+    return next(error);
   }
 };
 
-exports.checkFavorite = async (req, res) => {
+exports.checkFavorite = async (req, res, next) => {
   try {
     const client = getClient(req, res);
     if (!client) return;
@@ -92,11 +92,11 @@ exports.checkFavorite = async (req, res) => {
     return res.json({ isFavorite: Boolean(favorite) });
   } catch (error) {
     logError(req, error, 'Favorite status query failed');
-    return res.status(500).json({ error: 'Internal server error' });
+    return next(error);
   }
 };
 
-exports.toggleFavorite = async (req, res) => {
+exports.toggleFavorite = async (req, res, next) => {
   try {
     const client = getClient(req, res);
     if (!client) return;
@@ -114,6 +114,6 @@ exports.toggleFavorite = async (req, res) => {
     return res.status(201).json({ isFavorite: true });
   } catch (error) {
     logError(req, error, 'Favorite toggle failed');
-    return res.status(500).json({ error: 'Internal server error' });
+    return next(error);
   }
 };

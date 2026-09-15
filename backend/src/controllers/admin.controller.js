@@ -3,7 +3,7 @@ const { logError } = require('../modules/observability/safe-log');
 const { writeAuditLog } = require('../modules/audit/audit.service');
 
 // Obtener dashboard con KPIs generales (solo admin)
-exports.getDashboard = async (req, res) => {
+exports.getDashboard = async (req, res, next) => {
   try {
     // Contadores generales
     const totalUsers = await prisma.user.count();
@@ -98,12 +98,12 @@ exports.getDashboard = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Admin dashboard query failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Obtener documentos pendientes de revisión (solo admin)
-exports.getPendingDocuments = async (req, res) => {
+exports.getPendingDocuments = async (req, res, next) => {
   try {
     const { page = 1, limit = 20 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -145,12 +145,12 @@ exports.getPendingDocuments = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Pending document query failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
 // Aprobar documento (solo admin)
-exports.approveDocument = async (req, res) => {
+exports.approveDocument = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -179,16 +179,13 @@ exports.approveDocument = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Document approval failed');
-    res.status(error.statusCode || 500).json({
-      error: error.statusCode ? error.message : 'Internal server error',
-      code: error.code,
-      correlationId: req.context?.correlationId,
-    });
+    if (error.statusCode && error.statusCode < 500) return res.status(error.statusCode).json({ error: error.message, code: error.code, correlationId: req.context?.correlationId });
+    return next(error);
   }
 };
 
 // Rechazar documento (solo admin)
-exports.rejectDocument = async (req, res) => {
+exports.rejectDocument = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
@@ -221,16 +218,13 @@ exports.rejectDocument = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Document rejection failed');
-    res.status(error.statusCode || 500).json({
-      error: error.statusCode ? error.message : 'Internal server error',
-      code: error.code,
-      correlationId: req.context?.correlationId,
-    });
+    if (error.statusCode && error.statusCode < 500) return res.status(error.statusCode).json({ error: error.message, code: error.code, correlationId: req.context?.correlationId });
+    return next(error);
   }
 };
 
 // Obtener logs de auditoría (solo admin)
-exports.getAuditLogs = async (req, res) => {
+exports.getAuditLogs = async (req, res, next) => {
   try {
     const { page = 1, limit = 50, adminId, entityType } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -258,7 +252,7 @@ exports.getAuditLogs = async (req, res) => {
     });
   } catch (error) {
     logError(req, error, 'Audit log query failed');
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 };
 
