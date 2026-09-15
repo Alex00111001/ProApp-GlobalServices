@@ -169,8 +169,9 @@ PRR-103 está implementado en la rama de control de producción. La autoridad p�
 `backend/src/shared/http/error-contract.js`, el boundary terminal es
 `backend/src/shared/http/global-error-handler.js` y los controllers sólo conservan respuestas 4xx
 demostradas. El registro reproducible, mapa de superficies, compatibilidad, operación y rollback está en
-[PRR-103 error sanitization](../releases/2026-09-15-prr-103-error-sanitization.md). Hasta que el SHA final
-del registro obtenga Platform verification completamente verde, su estado permanece **PARCIAL**.
+[PRR-103 error sanitization](../releases/2026-09-15-prr-103-error-sanitization.md). Su cierre es condicional:
+**HECHO** sólo cuando el SHA final del registro tenga Platform verification completamente verde; en
+cualquier otro caso permanece **PARCIAL**.
 
 PRR-101 dispone desde 2026-09-14 de un [ADR propuesto](../adr/0010-governed-cash-payment-workflow.md),
 [matriz de decisión](PRR-101-CASH-DECISION.md) y

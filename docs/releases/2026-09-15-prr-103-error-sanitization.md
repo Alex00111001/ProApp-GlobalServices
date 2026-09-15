@@ -5,7 +5,7 @@ Branch: `feature/production-control-plane-phase-11`
 Base SHA: `407c0390792e75f2d19171d8c6c8d3aedcb62fe9`  
 Implementation SHA: `ce994e8b`  
 Security-test SHA: `07ff623d`  
-Status: **PARCIAL — final exact-SHA CI evidence pending**  
+Status: **HECHO when the final evidence commit has exact-SHA CI SUCCESS; otherwise PARCIAL**  
 Migration: **NONE**
 
 ## Classification and authority
@@ -72,7 +72,24 @@ Local evidence completed before this record:
 - Consumer source audit: Client, Professional, Admin Web and Public Web compatible without changes.
 - Static 5xx response audit: no remaining direct `res.status(500)` in backend source; unexpected catches forward to the terminal boundary.
 
-Final repository, database, security and exact-SHA CI results are appended only after they run; missing evidence keeps the status PARCIAL.
+Completed verification on implementation/evidence SHA `25d5fa586dcf93c11de26f3fdc81dd6a35f204e7`:
+
+- full `npm run verify`: PASS;
+- Backend: 264 passed, 0 failed; syntax passed for 196 files;
+- Admin Web: lint PASS, 15/15 tests PASS, production build PASS;
+- Public Web: lint PASS, 4/4 tests PASS, production build PASS;
+- Client: typecheck PASS, 4/4 tests PASS;
+- Professional: typecheck PASS;
+- Prisma 7.10.0: format PASS, validate PASS, generate PASS;
+- dependency audits: root, Backend, Admin Web, Public Web, Client and Professional each reported 0 vulnerabilities;
+- tracked-tree archive scan: 0 findings with checksum-verified Gitleaks 8.30.1;
+- full-history scan: 0 findings with checksum-verified Gitleaks 8.30.1;
+- [Platform verification #40](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/34966391589): SUCCESS for exact SHA `25d5fa586dcf93c11de26f3fdc81dd6a35f204e7`;
+- CI Build/unit/contract gate: SUCCESS;
+- CI PostgreSQL 17 clean migration replay, Prisma generation, reviewed migration deploy, migration status/baseline audit, RBAC synchronization and integration/concurrency suite: SUCCESS;
+- CI full-history secret scan: SUCCESS, no leaks detected.
+
+The local machine had no running Docker engine, so no local database target was used. The required clean database evidence comes from the isolated PostgreSQL 17 CI service above; no unknown, shared or production database was touched.
 
 ## Debugging and rollback
 
@@ -80,12 +97,6 @@ For an incident, search authorized telemetry by the returned `requestId` or `cor
 
 Rollback is application-only: revert the PRR-103 implementation and test commits together, retain all error/incident evidence, and redeploy only through the normal reviewed release path. There is no schema rollback because Migration is NONE. Production, Markets and CASH remain OFF; this work grants no activation authority.
 
-## Open closure gates
+## Final closure gate
 
-- full `npm run verify`;
-- Prisma format, validate and generate;
-- clean PostgreSQL migration replay, RBAC sync, integration and concurrency evidence;
-- dependency audit with zero unresolved HIGH/CRITICAL findings;
-- tracked-tree and full-history secret scans;
-- Platform verification green for the final evidence SHA;
-- tracker projection updated only after the exact-SHA evidence is verified.
+This record update creates the final evidence commit. PRR-103 remains PARCIAL until Platform verification is green for that exact final SHA. Once verified, the conditional status above becomes HECHO without changing code, schema, runtime flags or production state. The tracker projection may then move to 100%/HECHO and must link the exact run.
