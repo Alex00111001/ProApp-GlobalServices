@@ -55,9 +55,15 @@ credential. Rotation of any live secret remains a separate human-authorized oper
 
 ## Remote evidence
 
-Commit SHA, push reference, exact-SHA GitHub Actions run, and final alert disposition are appended
-only after those external states are verified. Until then the remediation remains delivered locally
-but not closed.
+- Implementation commit: `5779a9b4f49f1057e36a77a9de7061d9473b5bfc`.
+- Push: `origin/feature/production-control-plane-phase-11` verified at the implementation commit.
+- GitHub Actions: [Platform verification #43](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/35066387108), SUCCESS for the exact implementation SHA.
+- Required jobs: build/unit/contracts SUCCESS; clean PostgreSQL migration/integration SUCCESS;
+  full-history secret scan SUCCESS with `No leaks detected`.
+- Alert disposition: pending explicit human authorization to close GitHub alert 2 as a false positive.
+
+The repository remediation and exact-SHA verification are complete. The alert remains open only as
+an external administrative state and must not be interpreted as evidence of a live credential.
 
 ## Rollback
 

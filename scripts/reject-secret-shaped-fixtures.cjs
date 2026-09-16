@@ -1,6 +1,7 @@
 const { readFileSync } = require('node:fs');
 const { resolve } = require('node:path');
 const { spawnSync } = require('node:child_process');
+const assert = require('node:assert/strict');
 
 const repository = resolve(__dirname, '..');
 const secretShapes = [
@@ -21,6 +22,17 @@ for (const { category, pattern, control } of secretShapes) {
   pattern.lastIndex = 0;
 }
 
+const prohibitedPathCategory = (relativePath) => {
+  if (/(^|\/)(node_modules|\.expo)\//.test(relativePath)) return 'prohibited dependency/cache artifact';
+  if (/(^|\/)\.env(?:$|\.)/.test(relativePath) && !relativePath.endsWith('.env.example')) return 'prohibited environment file';
+  return null;
+};
+assert.ok(prohibitedPathCategory('node_modules/example.js'));
+assert.ok(prohibitedPathCategory('mobile-client/.expo/devices.json'));
+assert.ok(prohibitedPathCategory('backend/.env'));
+assert.equal(prohibitedPathCategory('backend/.env.example'), null);
+assert.equal(prohibitedPathCategory('backend/src/app.js'), null);
+
 const tracked = spawnSync('git', ['ls-files', '-z'], {
   cwd: repository,
   encoding: 'utf8',
@@ -32,11 +44,16 @@ if (tracked.status !== 0) {
 
 const findings = [];
 for (const relativePath of tracked.stdout.split('\0').filter(Boolean)) {
+  const prohibitedCategory = prohibitedPathCategory(relativePath);
+  if (prohibitedCategory) {
+    findings.push(`${relativePath} (${prohibitedCategory})`);
+    continue;
+  }
   let content;
   try {
     content = readFileSync(resolve(repository, relativePath), 'utf8');
   } catch {
-    continue;
+    throw new Error(`Unable to inspect tracked file: ${relativePath}`);
   }
   if (content.includes('\0')) continue;
 
@@ -53,4 +70,4 @@ if (findings.length > 0) {
   throw new Error(`Secret-shaped literals are prohibited:\n${findings.join('\n')}`);
 }
 
-console.log('Secret fixture guard passed: no tracked Stripe webhook or Google API key-shaped literals.');
+console.log('Repository hygiene guard passed: no prohibited tracked artifacts or secret-shaped literals.');
