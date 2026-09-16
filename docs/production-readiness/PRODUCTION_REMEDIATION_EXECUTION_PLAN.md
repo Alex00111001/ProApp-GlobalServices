@@ -183,9 +183,11 @@ decisión de producción. La evidencia reproducible del gate se amplía en el
 [registro PRR-101](../releases/2026-09-14-prr-101-decision-gate.md).
 
 PRR-104 tiene el commit de entrega `c05c3b8141c76af8a2f203606065811178a57b67` validado por
-[Platform verification #59](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/35100210708).
-El commit documental de evidencia sigue pendiente de su propio CI exacto antes de cerrar técnicamente el
-ítem. La corrección valida y acota las entradas de las rutas heredadas de reservas, pagos de tarjeta, notificaciones,
+[Platform verification #59](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/35100210708), y el
+commit de evidencia `4ccde5d2fad9a7f5b1d5cc54f55b06ad6c6daf7e` confirmado por
+[Platform verification #60](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/35100505394).
+El ítem se cierra técnicamente sólo cuando CI confirme el SHA exacto de este marcador de cierre. La corrección
+valida y acota las entradas de las rutas heredadas de reservas, pagos de tarjeta, notificaciones,
 favoritos, categorías y administración antes de acceder a Prisma o Stripe; conserva paths y respuestas
 legacy ya observables. El registro de cambios, límites, tests negativos y rollback se mantiene en
 [PRR-104 legacy input hardening](../releases/2026-09-16-prr-104-legacy-input-hardening.md). No incluye

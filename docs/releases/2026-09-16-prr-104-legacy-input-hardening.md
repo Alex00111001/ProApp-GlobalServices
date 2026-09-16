@@ -2,7 +2,7 @@
 
 - Date: 2026-09-16
 - Branch: `feature/production-control-plane-phase-11`
-- Status: **DELIVERY VERIFIED — FINAL EVIDENCE CI PENDING**
+- Status: **HECHO when the final closure commit has exact-SHA CI SUCCESS; otherwise PARCIAL**
 - Phase: PRR-1 / PRR-104
 - Domain: Legacy Express HTTP input boundary, booking/payment compatibility, administration
 - Risk: HIGH
@@ -48,6 +48,7 @@ The Admin Web production build retains a pre-existing non-blocking Vite warning 
 
 - Delivery commit: `c05c3b8141c76af8a2f203606065811178a57b67` (`fix(prr): harden legacy request inputs`).
 - Exact-SHA CI: [Platform verification #59](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/35100210708), **Success** on 2026-09-16. Build/unit/contract gates, PostgreSQL migrations/integration gates and secret scan all passed; the scan reported no leaks.
+- Evidence commit: `4ccde5d2fad9a7f5b1d5cc54f55b06ad6c6daf7e` is verified by [Platform verification #60](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/35100505394), **Success** on 2026-09-16, with the same three CI gates green and no leaks.
 - No deployment, production database operation, Market activation, provider configuration change or live financial action was performed.
 
 ## Compatibility, rollout and rollback
@@ -58,4 +59,4 @@ Rollback is an application revert of this commit set. It must be considered only
 
 ## Closure gate
 
-The delivery implementation is verified. This evidence-only commit must itself receive exact-SHA CI before PRR-104 can be marked technically complete. PRR-105 and PRR-106 remain independent open gates and this does not certify the complete product for production.
+The delivery and its evidence are verified. This final closure marker is documentation-only: PRR-104 becomes **HECHO** only when CI succeeds for its exact SHA. PRR-105 and PRR-106 remain independent open gates and this does not certify the complete product for production.
