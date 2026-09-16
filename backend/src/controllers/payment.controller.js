@@ -173,8 +173,11 @@ exports.confirmPayment = async (req, res, next) => {
   }
 };
 
-exports.confirmCashPayment = async (req, res) => {
-  req.log?.warn({ code: 'CASH_PAYMENT_DISABLED' }, 'Cash payment request rejected by quarantine');
+exports.rejectRetiredCashPayment = async (req, res) => {
+  req.log?.warn(
+    { code: 'CASH_PAYMENT_DISABLED', retirement: 'CASH_RETIRED_V1' },
+    'Cash payment request rejected by compatibility retirement'
+  );
   res.set('Cache-Control', 'no-store');
   return res.status(409).json({
     success: false,

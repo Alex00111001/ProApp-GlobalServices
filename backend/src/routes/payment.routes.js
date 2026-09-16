@@ -12,8 +12,8 @@ router.post('/create-intent', paymentController.createPaymentIntent);
 // Confirmar pago
 router.post('/confirm', paymentController.confirmPayment);
 
-// Confirmar una reserva que se pagará en efectivo
-router.post('/cash', paymentController.confirmCashPayment);
+// Legacy compatibility only. This is not an offered payment method and cannot mutate data.
+router.post('/cash', paymentController.rejectRetiredCashPayment);
 
 // Obtener historial de pagos
 router.get('/history', paymentController.getPaymentHistory);

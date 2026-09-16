@@ -5,9 +5,9 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const prisma = require('../src/config/prisma');
 const stripe = require('../src/config/stripe');
-const { confirmCashPayment } = require('../src/controllers/payment.controller');
+const { rejectRetiredCashPayment } = require('../src/controllers/payment.controller');
 
-test('cash payment quarantine returns a stable non-success response without database or provider access', async (t) => {
+test('retired cash compatibility endpoint returns a stable non-success response without database or provider access', async (t) => {
   const originalFindUnique = prisma.booking.findUnique;
   const originalBookingUpdate = prisma.booking.update;
   const originalPaymentUpsert = prisma.payment.upsert;
@@ -54,7 +54,7 @@ test('cash payment quarantine returns a stable non-success response without data
   };
   const warnings = [];
 
-  await confirmCashPayment({
+  await rejectRetiredCashPayment({
     body: { bookingId: 'booking-that-must-not-be-read' },
     user: { id: 'authenticated-user' },
     context: { correlationId: 'cash-quarantine-1' },
@@ -73,9 +73,10 @@ test('cash payment quarantine returns a stable non-success response without data
   assert.equal(sideEffectCalls, 0);
   assert.equal(warnings.length, 1);
   assert.equal(warnings[0][0].code, 'CASH_PAYMENT_DISABLED');
+  assert.equal(warnings[0][0].retirement, 'CASH_RETIRED_V1');
 });
 
-test('cash payment enablement fails closed in every environment', () => {
+test('retired cash enablement fails closed in every environment', () => {
   const { validateEnvironment } = require('../src/config/env');
 
   assert.equal(validateEnvironment({
@@ -86,5 +87,5 @@ test('cash payment enablement fails closed in every environment', () => {
     NODE_ENV: 'development',
     DATABASE_URL: 'postgresql://user:password@localhost:5432/test',
     CASH_PAYMENT_ENABLED: 'true',
-  }), /quarantined and must remain false/);
+  }), /permanently retired and must remain false/);
 });

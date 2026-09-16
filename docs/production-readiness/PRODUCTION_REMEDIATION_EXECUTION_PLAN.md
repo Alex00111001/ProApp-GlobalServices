@@ -173,11 +173,13 @@ demostradas. El registro reproducible, mapa de superficies, compatibilidad, oper
 **HECHO** sólo cuando el SHA final del registro tenga Platform verification completamente verde; en
 cualquier otro caso permanece **PARCIAL**.
 
-PRR-101 dispone desde 2026-09-14 de un [ADR propuesto](../adr/0010-governed-cash-payment-workflow.md),
-[matriz de decisión](PRR-101-CASH-DECISION.md) y
-[paquete de aprobación](PRR-101-APPROVAL-PACKET.md). Su estado es **AWAITING HUMAN APPROVAL**: CASH,
-ES/BR/CL y PRR-102 continúan bloqueados; la documentación técnica y el CI no sustituyen las aprobaciones
-Product, Finance, Security y Legal/Privacy exigidas. La evidencia reproducible del gate está en el
+PRR-101 dispone desde 2026-09-16 de un [ADR aceptado para Option B](../adr/0010-governed-cash-payment-workflow.md),
+[matriz de decisión](PRR-101-CASH-DECISION.md), [plan de retirada](PRR-101-CASH-RETIREMENT.md) y
+[paquete de aprobación](PRR-101-APPROVAL-PACKET.md). El usuario eligió retirada permanente: CASH no se
+ofrece en ningún cliente, ES/BR/CL siguen OFF y PRR-102 queda rechazado para este alcance. El rechazo
+autenticado permanece como compatibilidad hasta una versión mínima, ventana de soporte y comunicación
+aprobadas. La documentación técnica y CI no sustituyen revisión Legal/Privacy de la comunicación ni una
+decisión de producción. La evidencia reproducible del gate se amplía en el
 [registro PRR-101](../releases/2026-09-14-prr-101-decision-gate.md).
 
 ### PRR-2 — Elegibilidad territorial F8.6 sin GPS

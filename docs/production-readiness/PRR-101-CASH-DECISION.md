@@ -1,13 +1,13 @@
 # PRR-101 — CASH decision record
 
-- Status: **AWAITING HUMAN APPROVAL**
-- Date: 2026-09-14
+- Status: **OPTION B SELECTED — COMPATIBILITY RETIREMENT IN PROGRESS**
+- Date: 2026-09-16
 - Baseline: `d74b27c2b6378e4207a2264b234148e9b53cdcc0`
 - Governing proposal: [ADR 0010](../adr/0010-governed-cash-payment-workflow.md)
 - Existing containment: [ADR 0009](../adr/0009-cash-payment-quarantine.md)
 - Migration: **NONE**
 - PostgreSQL behavioral change: **NONE**
-- PRR-102: **NOT STARTED / BLOCKED**
+- PRR-102: **REJECTED FOR THIS SCOPE — governed-CASH implementation will not start**
 
 ## Recommendation
 
@@ -15,9 +15,19 @@ Recommend **permanent removal of CASH for the initial production scope (Option B
 collection, debt, dispute, support, security and jurisdictional risk, while the repository contains no
 approved business case demonstrating that CASH benefit pays for the continuing control plane.
 
-Option A remains a viable, implementation-ready architecture if Product and Finance explicitly accept
-the operating cost/risk and Security plus qualified Legal/Privacy approve every Market gate. The
-recommendation is not an approval. CASH stays OFF in ES, BR and CL under either undecided state.
+Option A remains documented as a rejected alternative. CASH stays permanently unavailable in ES, BR and
+CL; any later return requires a new accepted ADR and the complete Option A approval gate.
+
+## Recorded resolution
+
+Alejandro explicitly selected **Option B — permanent removal** in the repository work session on
+2026-09-16. This is sufficient authority for the safe implementation work: remove CASH from active client
+contracts and retain the authenticated, no-store rejection for legacy clients. It is not evidence of a
+qualified Legal/Privacy review or a production/Market release decision.
+
+The detailed Option A rows below are retained as decision evidence only. They do not block Option B
+retirement work. Residual Legal/Privacy and support-communication evidence remains required before any
+public release or route deletion.
 
 ## Decision matrix
 
@@ -27,7 +37,7 @@ business, financial, security, legal, release or production authority.
 
 | Decision | Recommended option | Alternatives | Technical rationale | Financial impact | Security impact | Legal/Privacy review | Business approval | Status |
 |---|---|---|---|---|---|---|---|---|
-| D01 Keep or remove CASH | Remove for initial production | Governed Option A after all gates | Lowest-complexity production-safe contract; Option A remains specified | avoids receivable/loss; may reduce conversion | removes cash/token/debt abuse surface | REQUIRED for removal messaging and any future retention | REQUIRED: Product + Finance | HUMAN_APPROVAL_REQUIRED |
+| D01 Keep or remove CASH | Remove permanently | Governed Option A is rejected for current scope | Lowest-complexity production-safe contract; Option A remains specified as historical architecture | avoids receivable/loss; may reduce conversion | removes cash/token/debt abuse surface | REQUIRED for removal messaging and any future retention | User decision recorded; organization role not independently asserted | REJECTED |
 | D02 Eligible professional definition | all server-derived gates in ADR 0010 | narrower Market-specific gates only if stricter | one `ProfessionalCashEligibility`; deny on any unknown | prevents exposure to ineligible/debtor supply | no client boolean or stale cache authority | review verification, debt and suspension effects | Product/Finance thresholds REQUIRED | TECHNICALLY_RESOLVED |
 | D03 Tokenized payment method authority | verified Stripe SetupIntent/Customer/PaymentMethod binding | approved PSP adapter equivalent | provider-hosted capture; opaque refs only | setup cost; no collection guarantee | prevents PAN/CVC scope and arbitrary token use | purpose/disclosure/retention REQUIRED | provider strategy REQUIRED | HUMAN_APPROVAL_REQUIRED |
 | D04 Fee trigger | canonical committed Booking `COMPLETED` transition | approved partial-service adjustment; never declaration | strongest existing service-delivery authority; atomic obligation | avoids charging accepted/cancelled work | CAS prevents forged/duplicate trigger | service/fee terms REQUIRED | Product/Finance REQUIRED | HUMAN_APPROVAL_REQUIRED |
@@ -50,7 +60,8 @@ business, financial, security, legal, release or production authority.
 - Selecting **Option A** requires explicit acceptance of D01 and every `HUMAN_APPROVAL_REQUIRED` row by
   the named owners, plus recorded legal sources/reviewer/date for ES, BR and CL or an explicit decision to
   keep a Market OFF.
-- Selecting **Option B** requires Product and Finance approval of permanent removal and versioned contract/
-  support retirement. Security and Legal/Privacy confirm the residual data/communication treatment.
+- Selecting **Option B** requires a recorded product decision and a versioned contract/support retirement.
+  Security and Legal/Privacy must confirm the residual data/communication treatment before public release
+  or endpoint deletion. The user decision is recorded above; those specialist reviews are not claimed.
 - No response, partial approval or CI success is an approval. In those cases PRR-101 remains
   `AWAITING HUMAN APPROVAL`, CASH remains quarantined and PRR-102 remains blocked.

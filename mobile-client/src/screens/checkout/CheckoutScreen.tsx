@@ -20,7 +20,6 @@ export const CheckoutScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isBookingLoading, setIsBookingLoading] = useState(true);
   const [booking, setBooking] = useState<any>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'CARD' | 'CASH'>('CARD');
 
   useEffect(() => {
     let active = true;
@@ -40,19 +39,7 @@ export const CheckoutScreen: React.FC = () => {
   const bookingAddress = [booking?.address, booking?.city, booking?.state, booking?.postalCode].filter(Boolean).join(', ');
 
   const handlePayment = async () => {
-    if (paymentMethod === 'CASH') {
-      // Handle cash payment
-      try {
-        await apiClient.confirmCashPayment(bookingId);
-        Alert.alert('Success', 'Booking confirmed! Pay the professional in cash.');
-        router.push(`/booking/${bookingId}`);
-      } catch (error) {
-        Alert.alert('Error', 'Failed to confirm booking');
-      }
-      return;
-    }
-
-    // Handle card payment with Stripe
+    // Provider-backed card payment is the only supported checkout method.
     setIsLoading(true);
     try {
       // Fetch payment intent from backend
@@ -142,47 +129,27 @@ export const CheckoutScreen: React.FC = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Payment Method</Text>
           
-          <TouchableOpacity
-            style={[styles.paymentOption, paymentMethod === 'CARD' && styles.paymentOptionSelected]}
-            onPress={() => setPaymentMethod('CARD')}
+          <View
+            style={[styles.paymentOption, styles.paymentOptionSelected]}
+            accessible
+            accessibilityLabel="Payment method: credit or debit card"
           >
             <View style={styles.paymentOptionLeft}>
               <Ionicons 
                 name="card-outline" 
                 size={24} 
-                color={paymentMethod === 'CARD' ? COLORS.primary : COLORS.gray400} 
+                color={COLORS.primary}
               />
-              <Text style={[styles.paymentOptionText, paymentMethod === 'CARD' && styles.paymentOptionTextSelected]}>
+              <Text style={[styles.paymentOptionText, styles.paymentOptionTextSelected]}>
                 Credit/Debit Card
               </Text>
             </View>
             <Ionicons 
-              name={paymentMethod === 'CARD' ? 'radio-button-on' : 'radio-button-off'} 
+              name="radio-button-on"
               size={24} 
-              color={paymentMethod === 'CARD' ? COLORS.primary : COLORS.gray400} 
+              color={COLORS.primary}
             />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.paymentOption, paymentMethod === 'CASH' && styles.paymentOptionSelected]}
-            onPress={() => setPaymentMethod('CASH')}
-          >
-            <View style={styles.paymentOptionLeft}>
-              <Ionicons 
-                name="cash-outline" 
-                size={24} 
-                color={paymentMethod === 'CASH' ? COLORS.primary : COLORS.gray400} 
-              />
-              <Text style={[styles.paymentOptionText, paymentMethod === 'CASH' && styles.paymentOptionTextSelected]}>
-                Cash on Delivery
-              </Text>
-            </View>
-            <Ionicons 
-              name={paymentMethod === 'CASH' ? 'radio-button-on' : 'radio-button-off'} 
-              size={24} 
-              color={paymentMethod === 'CASH' ? COLORS.primary : COLORS.gray400} 
-            />
-          </TouchableOpacity>
+          </View>
         </View>
 
         {/* Price Breakdown */}
@@ -223,7 +190,7 @@ export const CheckoutScreen: React.FC = () => {
           <Text style={styles.totalValueSmall}>{money.format(total)}</Text>
         </View>
         <Button
-          title={paymentMethod === 'CARD' ? 'Pay Now' : 'Confirm Booking'}
+          title="Pay Now"
           onPress={handlePayment}
           disabled={isLoading || isBookingLoading || !booking}
           style={styles.payButton}

@@ -129,7 +129,7 @@ test('production configuration fails closed and accepts an explicit complete con
   assert.throws(() => validateEnvironment({ ...valid, CONSENT_ATTRIBUTION_ENABLED: 'true' }), /GROWTH_IDENTITY_PROOF_SECRET/);
   assert.equal(validateEnvironment({ ...valid, CONSENT_ATTRIBUTION_ENABLED: 'true', GROWTH_IDENTITY_PROOF_SECRET: 'i'.repeat(40) }).consentAttributionEnabled, true);
   assert.throws(() => validateEnvironment({ ...valid, FINANCIAL_PAYOUT_EXECUTION_ENABLED: 'yes' }), /either true or false/);
-  assert.throws(() => validateEnvironment({ ...valid, CASH_PAYMENT_ENABLED: 'true' }), /quarantined and must remain false/);
+  assert.throws(() => validateEnvironment({ ...valid, CASH_PAYMENT_ENABLED: 'true' }), /permanently retired and must remain false/);
 });
 
 test('error contract adds stable request correlation and always redacts server failures', () => {

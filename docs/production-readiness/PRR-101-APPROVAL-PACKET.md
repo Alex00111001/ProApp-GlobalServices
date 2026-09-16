@@ -1,6 +1,6 @@
 # PRR-101 — Human approval packet
 
-- Status: **PENDING — NO APPROVAL RECORDED**
+- Status: **OPTION B SELECTED — RESIDUAL REVIEW OPEN**
 - Decision proposal: [ADR 0010](../adr/0010-governed-cash-payment-workflow.md)
 - Decision matrix: [PRR-101 CASH decision](PRR-101-CASH-DECISION.md)
 - Current safe state: CASH OFF; ES/BR/CL OFF; PRR-102 not started; production and live money unauthorized
@@ -12,11 +12,13 @@ Exactly one option may be selected for this decision revision:
 - [ ] **OPTION A — APPROVE CASH WORKFLOW FOR IMPLEMENTATION** under every condition below. This
   authorizes a separately planned PRR-102 implementation/test slice only; it does not activate CASH,
   Markets, Stripe live, production or real-money collection.
-- [ ] **OPTION B — REMOVE CASH PERMANENTLY** through a versioned compatibility-retirement plan. This
+- [x] **OPTION B — REMOVE CASH PERMANENTLY** through a versioned compatibility-retirement plan. This
   does not authorize deletion or rewriting of historical payment/audit evidence.
 - [ ] **NO DECISION — KEEP QUARANTINED** and retain `AWAITING HUMAN APPROVAL`.
 
-Decision revision/digest: `PENDING`
+Decision source: `Alejandro, explicit repository instruction on 2026-09-16; organizational role not independently asserted`
+
+Decision revision/digest: `recorded by ADR 0010; delivery SHA remains pending CI`
 
 ## PRODUCT approval
 
@@ -164,11 +166,10 @@ PRR-102 may become dependency-ready only when all of the following are true:
 
 ## Approval outcome record
 
-- Selected option: `PENDING`
-- Product: `REQUIRED`
-- Finance: `REQUIRED`
-- Security: `REQUIRED`
-- Legal/Privacy: `REQUIRED`
-- PRR-101 status: `AWAITING HUMAN APPROVAL`
-- PRR-102 status: `BLOCKED / NOT STARTED`
+- Selected option: `OPTION B — REMOVE CASH PERMANENTLY`
+- Product/Finance decision: `repository instruction recorded; organizational roles not independently asserted`
+- Security: `legacy endpoint and no-mutation regression evidence required in the exact-SHA CI`
+- Legal/Privacy: `REQUIRED before public communication, Market activation or endpoint deletion`
+- PRR-101 status: `COMPATIBILITY RETIREMENT IN PROGRESS`
+- PRR-102 status: `REJECTED FOR THIS SCOPE / NOT STARTED`
 - Production/Markets/CASH: `OFF / NOT AUTHORIZED`

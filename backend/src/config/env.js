@@ -129,7 +129,7 @@ const validateEnvironment = (source = process.env) => {
   if (aiProviderExecutionEnabled && !aiOperationsEnabled) throw new Error('AI_PROVIDER_EXECUTION_ENABLED requires AI_OPERATIONS_ENABLED.');
   if (aiOperationsWorkerEnabled && (!aiOperationsEnabled || !aiProviderExecutionEnabled)) throw new Error('AI_OPERATIONS_WORKER_ENABLED requires AI Operations and provider execution.');
   if (cashPaymentEnabled) {
-    throw new Error('CASH_PAYMENT_ENABLED is quarantined and must remain false until a governed cash-settlement workflow is accepted.');
+    throw new Error('CASH_PAYMENT_ENABLED is permanently retired and must remain false. A future CASH capability requires a new accepted ADR and implementation.');
   }
   const logTransport = parseChoice('LOG_TRANSPORT', source.LOG_TRANSPORT, 'stdout', ['stdout', 'file']);
   const logLevel = parseChoice('LOG_LEVEL', source.LOG_LEVEL, environment === 'production' ? 'info' : 'debug', [

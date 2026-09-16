@@ -1,12 +1,12 @@
 # ADR 0010 — Governed cash payment workflow and professional fee collection
 
-- Status: **PROPOSED / HUMAN APPROVAL REQUIRED**
-- Date: 2026-09-14
+- Status: **ACCEPTED — OPTION B COMPATIBILITY RETIREMENT**
+- Date: 2026-09-16
 - Owners: Product, Finance, Billing, Marketplace, Professional Experience, Security, Legal/Privacy and Operations
 - Supersedes: none; extends [ADR 0009](0009-cash-payment-quarantine.md), which remains accepted and in force
 - Governing architecture: [Billing](../BILLING_SYSTEM.md), [Markets](../MARKETS_IDENTITY_GEOGRAPHY.md), [PRR execution plan](../production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md)
-- Scope: PRR-101 decision gate only
-- Runtime/schema/migration change: **NONE**
+- Scope: PRR-101 Option B decision and compatibility retirement only
+- Runtime/schema/migration change: legacy rejection only; no schema or migration change
 
 ## Context and non-authorizations
 
@@ -23,13 +23,15 @@ This ADR compares two valid product decisions:
   a versioned compatibility retirement, while retaining historical evidence and the fail-closed legacy
   response during the announced migration window.
 
-This proposal does not approve either option. It does not start PRR-102, alter Prisma, activate a Market,
-enable CASH, create a SetupIntent, charge a card or move real money.
+The repository owner selected Option B on 2026-09-16. This authorizes the compatibility-retirement
+implementation only. It does not activate a Market, enable CASH, create a SetupIntent, charge a card,
+move real money, or alter Prisma data.
 
-## Decision sought
+## Decision
 
-The required human decision is either `APPROVE CASH WORKFLOW FOR IMPLEMENTATION` or
-`PERMANENTLY REMOVE CASH FROM PRODUCT`.
+The recorded human decision is `PERMANENTLY REMOVE CASH FROM PRODUCT` (Option B). Option A is rejected
+for the current product scope and its detailed design remains historical context, not an implementation
+authorization.
 
 The architecture recommendation is **Option B for the initial production scope**, because no reviewed
 business evidence currently demonstrates that incremental CASH conversion outweighs collection loss,
@@ -466,7 +468,9 @@ return of CASH requires a new accepted ADR and full Option A gates.
 
 ## Approval evidence
 
-None. This ADR is a technical proposal prepared under PRR-101. Approval requires explicit recorded
-decisions from Product, Finance, Security and qualified Legal/Privacy reviewers using the companion
-[approval packet](../production-readiness/PRR-101-APPROVAL-PACKET.md). Until then PRR-101 is
-`AWAITING HUMAN APPROVAL`, ADR 0009 remains in force and PRR-102 is blocked.
+Alejandro selected Option B explicitly in the repository work session on 2026-09-16. That instruction
+authorizes this code and contract-retirement work, not a claim of qualified Legal/Privacy review or a
+production/Market release decision. The companion [approval packet](../production-readiness/PRR-101-APPROVAL-PACKET.md)
+records the remaining support-communication and residual-data review evidence. ADR 0009 remains in force
+throughout the compatibility window. PRR-102 (the governed-CASH implementation) is rejected for this
+scope; a future return of CASH requires a new accepted ADR and all Option A gates.

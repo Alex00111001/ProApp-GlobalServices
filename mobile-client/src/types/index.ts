@@ -118,6 +118,7 @@ export interface Payment {
   id: string;
   bookingId: string;
   amount: number;
+  // CASH is retained only to display historical payment evidence; checkout cannot create it.
   method: 'STRIPE' | 'PAYPAL' | 'CASH';
   status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
   transactionId?: string;

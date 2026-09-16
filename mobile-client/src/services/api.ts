@@ -333,11 +333,6 @@ class ApiClient {
     return response.data;
   }
 
-  async confirmCashPayment(bookingId: string) {
-    const response = await this.client.post('/payments/cash', { bookingId });
-    return response.data;
-  }
-
   // Notifications
   async getNotifications() {
     const response = await this.client.get('/notifications');
