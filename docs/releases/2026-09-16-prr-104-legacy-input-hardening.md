@@ -2,7 +2,7 @@
 
 - Date: 2026-09-16
 - Branch: `feature/production-control-plane-phase-11`
-- Status: **IMPLEMENTED — EXACT-SHA CI PENDING**
+- Status: **DELIVERY VERIFIED — FINAL EVIDENCE CI PENDING**
 - Phase: PRR-1 / PRR-104
 - Domain: Legacy Express HTTP input boundary, booking/payment compatibility, administration
 - Risk: HIGH
@@ -44,6 +44,12 @@ Invalid input terminates before a Prisma operation; invalid card payment input t
 
 The Admin Web production build retains a pre-existing non-blocking Vite warning that its main JavaScript bundle is slightly above 500 kB. The build succeeds; bundle splitting remains a separately tracked performance concern and is not hidden by this delivery.
 
+## Delivery CI evidence
+
+- Delivery commit: `c05c3b8141c76af8a2f203606065811178a57b67` (`fix(prr): harden legacy request inputs`).
+- Exact-SHA CI: [Platform verification #59](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/35100210708), **Success** on 2026-09-16. Build/unit/contract gates, PostgreSQL migrations/integration gates and secret scan all passed; the scan reported no leaks.
+- No deployment, production database operation, Market activation, provider configuration change or live financial action was performed.
+
 ## Compatibility, rollout and rollback
 
 This is an application-only, fail-closed hardening change. No schema, migration, data backfill, feature flag, provider configuration, Stripe command or financial state is modified. Invalid clients receive `400`; valid clients keep the same paths and successful response shapes. The only intentional restriction is that previously malformed, oversized or unknown input is rejected instead of reaching an internal Prisma/provider failure.
@@ -52,4 +58,4 @@ Rollback is an application revert of this commit set. It must be considered only
 
 ## Closure gate
 
-This record remains open until the delivery commit SHA and its successful Platform verification run are added. A later evidence-only commit must itself receive exact-SHA CI before the technical stage can be marked complete.
+The delivery implementation is verified. This evidence-only commit must itself receive exact-SHA CI before PRR-104 can be marked technically complete. PRR-105 and PRR-106 remain independent open gates and this does not certify the complete product for production.
