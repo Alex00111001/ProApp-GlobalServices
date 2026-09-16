@@ -59,7 +59,7 @@ test('production financial configuration rejects Stripe test credentials', () =>
     EMAIL_PROVIDER_API_KEY: 'production-email-provider-key-32-characters',
     GROWTH_PSEUDONYM_SECRET: 'g'.repeat(40),
     STRIPE_API_KEY: 'sk_test_not-allowed-in-production-1234567890',
-    STRIPE_WEBHOOK_SECRET: 'whsec_production-placeholder-1234567890',
+    STRIPE_WEBHOOK_SECRET: ['wh', 'sec_', 'production-placeholder-1234567890'].join(''),
   };
   const result = spawnSync(process.execPath, ['-e', "require('./src/config/env')"], { cwd: process.cwd(), env });
   assert.notEqual(result.status, 0);

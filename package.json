@@ -5,7 +5,8 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "verify:backend": "npm --prefix backend run geography:validate && npm --prefix backend run build && npm --prefix backend test",
+    "verify:secret-fixtures": "node scripts/reject-secret-shaped-fixtures.cjs",
+    "verify:backend": "npm run verify:secret-fixtures && npm --prefix backend run geography:validate && npm --prefix backend run build && npm --prefix backend test",
     "verify:admin": "npm --prefix admin-web run lint && npm --prefix admin-web run test && npm --prefix admin-web run build",
     "verify:public-web": "npm --prefix public-web run lint && npm --prefix public-web run test && npm --prefix public-web run build",
     "verify:mobile-client": "npm --prefix mobile-client run typecheck && npm --prefix mobile-client run test:ci",

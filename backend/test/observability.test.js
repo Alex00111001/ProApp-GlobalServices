@@ -23,7 +23,8 @@ test('central telemetry sanitization removes secrets, payment data and PII recur
     nested: { email: 'person@example.com', cardNumber: '4242424242424242', safe: 'ok' },
   });
   assert.deepEqual(sanitized, { operation: 'capture', nested: { safe: 'ok' } });
-  const text = redactText('whsec_abcdefghijklmnopqrstuvwxyz012345 person@example.com 4242 4242 4242 4242 +34 612 345 678 10.1.2.3');
+  const webhookSecretFixture = ['wh', 'sec_', 'abcdefghijklmnopqrstuvwxyz012345'].join('');
+  const text = redactText(`${webhookSecretFixture} person@example.com 4242 4242 4242 4242 +34 612 345 678 10.1.2.3`);
   assert.doesNotMatch(text, /whsec_|person@|4242|612|10\.1\.2\.3/);
 });
 
