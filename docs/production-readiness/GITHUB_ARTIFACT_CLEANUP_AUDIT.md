@@ -64,3 +64,11 @@ found in repository documentation.
 
 Production, Markets and CASH remain OFF; F11 runtime and PRR-102 remain unstarted. This audit is not
 a completed historical purge and does not close the independent GitHub Support gate.
+
+## CI reader correction
+
+Platform verification #45 correctly failed because the new filesystem reader attempted to read a
+tracked directory symlink as an ordinary file on Linux. The two `backend/.claude/skills` links point
+to registered skill directories inside the repository; they are not dependency/cache artifacts.
+The reader now inspects the symlink target text with `readlinkSync` and never dereferences it.
+Unreadable ordinary tracked files still fail closed; no path or secret allowlist was added.

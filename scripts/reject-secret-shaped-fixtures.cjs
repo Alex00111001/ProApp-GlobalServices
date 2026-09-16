@@ -1,4 +1,4 @@
-const { readFileSync } = require('node:fs');
+const { lstatSync, readFileSync, readlinkSync } = require('node:fs');
 const { resolve } = require('node:path');
 const { spawnSync } = require('node:child_process');
 const assert = require('node:assert/strict');
@@ -51,7 +51,10 @@ for (const relativePath of tracked.stdout.split('\0').filter(Boolean)) {
   }
   let content;
   try {
-    content = readFileSync(resolve(repository, relativePath), 'utf8');
+    const absolutePath = resolve(repository, relativePath);
+    content = lstatSync(absolutePath).isSymbolicLink()
+      ? readlinkSync(absolutePath, 'utf8')
+      : readFileSync(absolutePath, 'utf8');
   } catch {
     throw new Error(`Unable to inspect tracked file: ${relativePath}`);
   }
