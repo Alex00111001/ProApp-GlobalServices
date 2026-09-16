@@ -3,13 +3,23 @@ const { resolve } = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const repository = resolve(__dirname, '..');
-const stripeWebhookSecret = /whsec_[A-Za-z0-9]{24,}/g;
-const syntheticControl = ['wh', 'sec_', 'abcdefghijklmnopqrstuvwxyz012345'].join('');
+const secretShapes = [
+  {
+    category: 'Stripe webhook signing secret',
+    pattern: /whsec_[A-Za-z0-9]{24,}/g,
+    control: ['wh', 'sec_', 'abcdefghijklmnopqrstuvwxyz012345'].join(''),
+  },
+  {
+    category: 'Google API key',
+    pattern: /AIza[0-9A-Za-z_-]{35}/g,
+    control: ['AI', 'za', 'Sy', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789'].join('').slice(0, 39),
+  },
+];
 
-if (!stripeWebhookSecret.test(syntheticControl)) {
-  throw new Error('Stripe webhook secret negative control is not detected.');
+for (const { category, pattern, control } of secretShapes) {
+  if (!pattern.test(control)) throw new Error(`${category} negative control is not detected.`);
+  pattern.lastIndex = 0;
 }
-stripeWebhookSecret.lastIndex = 0;
 
 const tracked = spawnSync('git', ['ls-files', '-z'], {
   cwd: repository,
@@ -30,15 +40,17 @@ for (const relativePath of tracked.stdout.split('\0').filter(Boolean)) {
   }
   if (content.includes('\0')) continue;
 
-  for (const match of content.matchAll(stripeWebhookSecret)) {
-    const line = content.slice(0, match.index).split(/\r?\n/).length;
-    findings.push(`${relativePath}:${line}`);
+  for (const { category, pattern } of secretShapes) {
+    for (const match of content.matchAll(pattern)) {
+      const line = content.slice(0, match.index).split(/\r?\n/).length;
+      findings.push(`${relativePath}:${line} (${category})`);
+    }
+    pattern.lastIndex = 0;
   }
-  stripeWebhookSecret.lastIndex = 0;
 }
 
 if (findings.length > 0) {
-  throw new Error(`Secret-shaped Stripe webhook fixtures are prohibited:\n${findings.join('\n')}`);
+  throw new Error(`Secret-shaped literals are prohibited:\n${findings.join('\n')}`);
 }
 
-console.log('Secret fixture guard passed: no tracked Stripe webhook secret-shaped literals.');
+console.log('Secret fixture guard passed: no tracked Stripe webhook or Google API key-shaped literals.');
