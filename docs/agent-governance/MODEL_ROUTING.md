@@ -28,6 +28,42 @@ The installed Claude Code 2.1.251 CLI advertises `fable`, `sonnet`, and `opus` a
 
 `docs/CODEX_MODEL_ROUTING.md` remains the detailed Codex phase matrix. If it conflicts with this document, use the stricter risk tier and update both in the same change.
 
+## Task-specific selection layer
+
+Before substantive work, split a delivery into independently verifiable sub-tasks and record a routing
+decision for each one. The objective is to use the least costly eligible model, not the least capable one.
+Unknown provider pricing must never be guessed; the tier map and observed verification effort are the
+cost-control inputs.
+
+| Sub-task shape | Required model | Credit-efficient use |
+|---|---|---|
+| Read-only inventory, deterministic documentation, formatting, repetitive fixture or mechanical rename | Luna / `gpt-5.6-luna` | Use only after the contract and acceptance check are explicit. |
+| Isolated implementation, bounded validation, ordinary test or compatible API work with approved design | Terra / `gpt-5.6-terra` | Keep the scope to one bounded context and reuse the established tests/contracts. |
+| Security, payments, privacy, authorization, public compatibility, migration, production-readiness design or final review | Sol / `gpt-5.6-sol` | Use Sol for the design/final review; hand a fully specified, non-sensitive mechanical slice down only when its gate remains unchanged. |
+| A Sol review cannot resolve an exceptional cross-cutting ambiguity after its escalation criteria are met | Astra / `gpt-6-astra` | Exceptional escalation only; record why Sol was insufficient and what evidence is required. |
+
+For every meaningful sub-task, record:
+
+```text
+Model routing decision
+- Task and bounded context:
+- Risk and mandatory tier:
+- Selected model and reasoning effort:
+- Why a lower-cost model is insufficient or safe:
+- Escalation trigger and failure budget:
+- Required evidence:
+- Resolved execution model: <actual model, or NOT SELECTABLE BY THIS RUNNER>
+```
+
+The task owner must distinguish the **selected/required** model from the **resolved execution** model.
+If the runner cannot choose a model for the current turn, it records the required model and does not claim
+that it switched models. A higher-tier design/review can still define a later lower-tier implementation
+slice, but the higher-tier acceptance gate remains mandatory.
+
+Do not mix unrelated sub-tasks merely to save a model invocation. It hides risk, increases rework, and
+usually consumes more credits than an explicit handoff. Reuse the prior task's audited context and tests
+instead of repeating broad repository discovery.
+
 ## Escalation
 
 Escalate one tier or to DEEP when:

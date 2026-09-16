@@ -102,6 +102,37 @@ Mandatory or strongly preferred for:
 | Production-readiness review | Sol | — |
 | AI Operations / approval guardrails | Sol | — |
 
+### Exact-model selection record
+
+For every meaningful sub-task, select one concrete model at planning time and write both the required and
+actual execution model in the evidence record:
+
+| Required tier | Default concrete model | Use only when |
+|---|---|---|
+| Luna | `gpt-5.6-luna` | the work is deterministic, low-risk and cheaply verified. |
+| Terra | `gpt-5.6-terra` | a bounded implementation has an approved contract and no DEEP trigger. |
+| Sol | `gpt-5.6-sol` | the task affects security, money, privacy, authorization, public compatibility, migrations or production readiness. |
+| Exceptional escalation | `gpt-6-astra` | a Sol review cannot safely resolve an evidenced cross-cutting ambiguity. |
+
+The goal is not to choose the highest model by default. Choose the lowest model that meets the mandatory
+risk tier, then escalate immediately when the rules below apply. Provider pricing can change; do not invent
+relative price claims. Record the decision in this form:
+
+```text
+Model routing decision
+- Task / bounded context:
+- Risk / mandatory tier:
+- Selected model and reasoning effort:
+- Lower-tier exclusion or approved handoff boundary:
+- Escalation trigger and failure budget:
+- Acceptance evidence:
+- Resolved execution model: <actual model, or NOT SELECTABLE BY THIS RUNNER>
+```
+
+If the current runner cannot switch its model, it must record that fact and never imply that a model change
+occurred. A Sol/Astra design or final review may hand a fully specified mechanical slice to Terra or Luna,
+but cannot lower the final acceptance tier.
+
 ---
 
 ## 4. Automatic escalation rules

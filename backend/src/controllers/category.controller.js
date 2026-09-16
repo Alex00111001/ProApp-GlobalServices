@@ -1,11 +1,17 @@
 const prisma = require('../config/prisma');
 const { logError } = require('../modules/observability/safe-log');
+const {
+  categoryCreateBody,
+  categoryIdParams,
+  categoryUpdateBody,
+} = require('../validators/legacy-request.validators');
 
 exports.getServiceById = async (req, res, next) => {
   try {
+    const { id } = categoryIdParams.parse(req.params);
     const service = await prisma.service.findFirst({
       where: {
-        id: req.params.id,
+        id,
         isActive: true,
         OR: [{ professionalId: null }, { professional: { status: 'APPROVED' } }],
       },
@@ -51,7 +57,7 @@ exports.getCategories = async (req, res, next) => {
 // Obtener una categoría por ID
 exports.getCategoryById = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = categoryIdParams.parse(req.params);
 
     const category = await prisma.category.findUnique({
       where: { id },
@@ -96,7 +102,7 @@ exports.getCategoryById = async (req, res, next) => {
 // Crear categoría (solo admin)
 exports.createCategory = async (req, res, next) => {
   try {
-    const { name, slug, description, iconUrl } = req.body;
+    const { name, slug, description, iconUrl } = categoryCreateBody.parse(req.body);
 
     const category = await prisma.category.create({
       data: {
@@ -127,8 +133,8 @@ exports.createCategory = async (req, res, next) => {
 // Actualizar categoría (solo admin)
 exports.updateCategory = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { name, slug, description, iconUrl, isActive } = req.body;
+    const { id } = categoryIdParams.parse(req.params);
+    const { name, slug, description, iconUrl, isActive } = categoryUpdateBody.parse(req.body);
 
     const category = await prisma.category.update({
       where: { id },
@@ -154,7 +160,7 @@ exports.updateCategory = async (req, res, next) => {
 // Eliminar categoría (solo admin - soft delete)
 exports.deleteCategory = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = categoryIdParams.parse(req.params);
 
     await prisma.category.update({
       where: { id },

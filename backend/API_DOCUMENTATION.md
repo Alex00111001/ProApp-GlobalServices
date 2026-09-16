@@ -145,6 +145,25 @@ Listar profesionales con filtros
 ### GET /professionals/:id
 Obtener profesional por ID
 
+### Límites de entradas heredadas
+
+Las rutas heredadas conservan sus paths y campos de respuesta, pero validan sus entradas antes de
+consultar la base de datos o un proveedor. Los identificadores de recursos son UUID; una entrada inválida
+devuelve `400` con el contrato de error/correlación habitual.
+
+- Listas de reservas: `page` entero entre `1` y `100000`; `limit` entero entre `1` y `50`; `status`, si
+  se envía, es uno de `PENDING`, `CONFIRMED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED` o `NO_SHOW`.
+- Historial de pagos y notificaciones: el máximo de `limit` es `50`; `unreadOnly` acepta sólo `true` o
+  `false` cuando se envía.
+- Favoritos y las colas administrativas de documentos/auditoría: el máximo de `limit` es `100`.
+- Las operaciones de tarjeta requieren `bookingId` UUID; la confirmación exige además un identificador de
+  PaymentIntent de Stripe. Una entrada inválida no abre una operación Stripe ni cambia datos.
+
+Los cuerpos de creación/actualización de categoría se validan de forma estricta: `name` y `slug` son
+obligatorios al crear; `slug` usa minúsculas y guiones; y `iconUrl`, si existe, debe ser HTTPS. La ruta
+administrativa de rechazo de documento conserva `REJECTION_REASON_REQUIRED` cuando falta o es inválida una
+razón de al menos diez caracteres.
+
 ### POST /professionals/:id/approve
 Aprobar profesional (ADMIN)
 

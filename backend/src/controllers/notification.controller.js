@@ -1,5 +1,6 @@
 const prisma = require('../config/prisma');
 const { logError } = require('../modules/observability/safe-log');
+const { notificationIdParams, notificationListQuery } = require('../validators/legacy-request.validators');
 
 /**
  * Obtener notificaciones del usuario
@@ -7,7 +8,7 @@ const { logError } = require('../modules/observability/safe-log');
 exports.getNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const { page = 1, limit = 20, unreadOnly = false } = req.query;
+    const { page, limit, unreadOnly } = notificationListQuery.parse(req.query);
 
     const whereClause = {
       userId,
@@ -18,7 +19,7 @@ exports.getNotifications = async (req, res, next) => {
       where: whereClause,
       orderBy: { createdAt: 'desc' },
       skip: (page - 1) * limit,
-      take: parseInt(limit),
+      take: limit,
       include: {
         booking: {
           select: {
@@ -46,8 +47,8 @@ exports.getNotifications = async (req, res, next) => {
       notifications,
       unreadCount,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page,
+        limit,
         total,
         pages: Math.ceil(total / limit)
       }
@@ -63,7 +64,7 @@ exports.getNotifications = async (req, res, next) => {
  */
 exports.markAsRead = async (req, res, next) => {
   try {
-    const { notificationId } = req.params;
+    const { notificationId } = notificationIdParams.parse(req.params);
     const userId = req.user.id;
 
     // Verificar que la notificación pertenece al usuario
@@ -131,7 +132,7 @@ exports.markAllAsRead = async (req, res, next) => {
  */
 exports.deleteNotification = async (req, res, next) => {
   try {
-    const { notificationId } = req.params;
+    const { notificationId } = notificationIdParams.parse(req.params);
     const userId = req.user.id;
 
     const notification = await prisma.notification.findUnique({

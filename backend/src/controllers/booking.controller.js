@@ -18,6 +18,12 @@ const {
 const { resolveBookingCommercialPolicy } = require('../modules/bookings/booking-commercial-policy.service');
 const { assertBookingPaymentSettled, claimBookingTransition } = require('../modules/bookings/booking-lifecycle.service');
 const { BOOKING_READ_INCLUDE } = require('../shared/http/public-projections');
+const {
+  bookingCancellationBody,
+  bookingIdParams,
+  bookingListQuery,
+  bookingRejectionBody,
+} = require('../validators/legacy-request.validators');
 
 // Crear reserva
 exports.createBooking = async (req, res, next) => {
@@ -262,8 +268,9 @@ exports.createBooking = async (req, res, next) => {
 // Obtener una reserva concreta, limitada al cliente o profesional propietario.
 exports.getBookingById = async (req, res, next) => {
   try {
+    const { id } = bookingIdParams.parse(req.params);
     const booking = await prisma.booking.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: BOOKING_READ_INCLUDE,
     });
 
@@ -283,8 +290,8 @@ exports.getBookingById = async (req, res, next) => {
 // Obtener reservas del cliente autenticado
 exports.getClientBookings = async (req, res, next) => {
   try {
-    const { status, page = 1, limit = 10 } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const { status, page, limit } = bookingListQuery.parse(req.query);
+    const skip = (page - 1) * limit;
 
     const where = { clientId: req.user.clientProfile?.id };
 
@@ -295,7 +302,7 @@ exports.getClientBookings = async (req, res, next) => {
     const bookings = await prisma.booking.findMany({
       where,
       skip,
-      take: parseInt(limit),
+      take: limit,
       include: BOOKING_READ_INCLUDE,
       orderBy: { createdAt: 'desc' },
     });
@@ -305,8 +312,8 @@ exports.getClientBookings = async (req, res, next) => {
     res.json({
       bookings,
       pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
         totalItems: total,
       },
     });
@@ -319,8 +326,8 @@ exports.getClientBookings = async (req, res, next) => {
 // Obtener reservas del profesional autenticado
 exports.getProfessionalBookings = async (req, res, next) => {
   try {
-    const { status, page = 1, limit = 10 } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const { status, page, limit } = bookingListQuery.parse(req.query);
+    const skip = (page - 1) * limit;
 
     const where = { professionalId: req.user.professionalProfile?.id };
 
@@ -331,7 +338,7 @@ exports.getProfessionalBookings = async (req, res, next) => {
     const bookings = await prisma.booking.findMany({
       where,
       skip,
-      take: parseInt(limit),
+      take: limit,
       include: BOOKING_READ_INCLUDE,
       orderBy: { scheduledDate: 'asc' },
     });
@@ -341,8 +348,8 @@ exports.getProfessionalBookings = async (req, res, next) => {
     res.json({
       bookings,
       pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
         totalItems: total,
       },
     });
@@ -355,7 +362,7 @@ exports.getProfessionalBookings = async (req, res, next) => {
 // Confirmar reserva (profesional)
 exports.confirmBooking = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = bookingIdParams.parse(req.params);
 
     const booking = await prisma.booking.findUnique({
       where: { id },
@@ -421,9 +428,8 @@ exports.confirmBooking = async (req, res, next) => {
 // Cancelar reserva
 exports.cancelBooking = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { reason } = req.body;
-    const cancellationReason = typeof reason === 'string' ? reason.trim().slice(0, 500) : null;
+    const { id } = bookingIdParams.parse(req.params);
+    const { reason: cancellationReason } = bookingCancellationBody.parse(req.body);
 
     const booking = await prisma.booking.findUnique({
       where: { id },
@@ -540,8 +546,8 @@ exports.cancelBooking = async (req, res, next) => {
 // Rechazar solicitud pendiente (profesional)
 exports.rejectBooking = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const reason = typeof req.body?.reason === 'string' ? req.body.reason.trim().slice(0, 500) : '';
+    const { id } = bookingIdParams.parse(req.params);
+    const reason = bookingRejectionBody.parse(req.body).reason || '';
     const booking = await prisma.booking.findUnique({ where: { id } });
     if (!booking) return res.status(404).json({ error: 'Booking not found' });
     if (booking.professionalId !== req.user.professionalProfile?.id) return res.status(403).json({ error: 'Forbidden' });
@@ -597,7 +603,7 @@ exports.rejectBooking = async (req, res, next) => {
 // Iniciar reserva (profesional)
 exports.startBooking = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = bookingIdParams.parse(req.params);
     const booking = await prisma.booking.findUnique({ where: { id } });
     if (!booking) return res.status(404).json({ error: 'Booking not found' });
     if (booking.professionalId !== req.user.professionalProfile?.id) return res.status(403).json({ error: 'Forbidden' });
@@ -645,7 +651,7 @@ exports.startBooking = async (req, res, next) => {
 // Completar reserva (profesional)
 exports.completeBooking = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = bookingIdParams.parse(req.params);
 
     const booking = await prisma.booking.findUnique({
       where: { id },

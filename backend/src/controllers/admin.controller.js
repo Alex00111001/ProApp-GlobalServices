@@ -1,6 +1,12 @@
 const prisma = require('../config/prisma');
 const { logError } = require('../modules/observability/safe-log');
 const { writeAuditLog } = require('../modules/audit/audit.service');
+const {
+  auditLogQuery,
+  documentIdParams,
+  documentRejectionBody,
+  pendingDocumentQuery,
+} = require('../validators/legacy-request.validators');
 
 // Obtener dashboard con KPIs generales (solo admin)
 exports.getDashboard = async (req, res, next) => {
@@ -105,13 +111,13 @@ exports.getDashboard = async (req, res, next) => {
 // Obtener documentos pendientes de revisión (solo admin)
 exports.getPendingDocuments = async (req, res, next) => {
   try {
-    const { page = 1, limit = 20 } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const { page, limit } = pendingDocumentQuery.parse(req.query);
+    const skip = (page - 1) * limit;
 
     const documents = await prisma.document.findMany({
       where: { status: 'PENDING_REVIEW' },
       skip,
-      take: parseInt(limit),
+      take: limit,
       include: {
         professional: {
           include: {
@@ -132,14 +138,14 @@ exports.getPendingDocuments = async (req, res, next) => {
       req,
       action: 'ADMIN_DOCUMENT_QUEUE_READ',
       resourceType: 'DOCUMENT',
-      metadata: { page: parseInt(page), returnedItems: documents.length },
+      metadata: { page, returnedItems: documents.length },
     });
 
     res.json({
       documents,
       pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
         totalItems: total,
       },
     });
@@ -152,7 +158,7 @@ exports.getPendingDocuments = async (req, res, next) => {
 // Aprobar documento (solo admin)
 exports.approveDocument = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = documentIdParams.parse(req.params);
 
     const document = await prisma.$transaction(async (tx) => {
       const before = await tx.document.findUnique({
@@ -187,12 +193,12 @@ exports.approveDocument = async (req, res, next) => {
 // Rechazar documento (solo admin)
 exports.rejectDocument = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { reason } = req.body;
-
-    if (!reason || String(reason).trim().length < 10) {
+    const { id } = documentIdParams.parse(req.params);
+    const input = documentRejectionBody.safeParse(req.body);
+    if (!input.success) {
       return res.status(400).json({ error: 'A rejection reason of at least 10 characters is required.', code: 'REJECTION_REASON_REQUIRED' });
     }
+    const { reason } = input.data;
     const document = await prisma.$transaction(async (tx) => {
       const before = await tx.document.findUnique({
         where: { id },
@@ -226,8 +232,8 @@ exports.rejectDocument = async (req, res, next) => {
 // Obtener logs de auditoría (solo admin)
 exports.getAuditLogs = async (req, res, next) => {
   try {
-    const { page = 1, limit = 50, adminId, entityType } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const { page, limit, adminId, entityType } = auditLogQuery.parse(req.query);
+    const skip = (page - 1) * limit;
 
     const where = {};
     if (adminId) where.adminId = adminId;
@@ -236,7 +242,7 @@ exports.getAuditLogs = async (req, res, next) => {
     const logs = await prisma.adminAuditLog.findMany({
       where,
       skip,
-      take: parseInt(limit),
+      take: limit,
       orderBy: { createdAt: 'desc' },
     });
 
@@ -245,8 +251,8 @@ exports.getAuditLogs = async (req, res, next) => {
     res.json({
       logs,
       pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
         totalItems: total,
       },
     });

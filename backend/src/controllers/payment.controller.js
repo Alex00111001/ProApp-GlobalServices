@@ -8,6 +8,11 @@ const { applySuccessfulPayment } = require('../modules/billing/payments/payment-
 const { processStripeEvent } = require('../modules/billing/payments/stripe-webhook.service');
 const { logError } = require('../modules/observability/safe-log');
 const { BOOKING_READ_INCLUDE, PAYMENT_HISTORY_SELECT } = require('../shared/http/public-projections');
+const {
+  paymentConfirmationBody,
+  paymentHistoryQuery,
+  paymentIntentBody,
+} = require('../validators/legacy-request.validators');
 
 const getOwnedBooking = async (bookingId, userId) => {
   const booking = await prisma.booking.findUnique({
@@ -34,10 +39,11 @@ const getOwnedBooking = async (bookingId, userId) => {
 
 exports.createPaymentIntent = async (req, res, next) => {
   try {
-    const { bookingId } = req.body;
-    if (!bookingId) {
+    const input = paymentIntentBody.safeParse(req.body);
+    if (!input.success) {
       return res.status(400).json({ success: false, message: 'bookingId es obligatorio' });
     }
+    const { bookingId } = input.data;
 
     const booking = await getOwnedBooking(bookingId, req.user.id);
     const amountMinor = decimalToMinor(booking.totalPrice);
@@ -120,10 +126,11 @@ exports.createPaymentIntent = async (req, res, next) => {
 
 exports.confirmPayment = async (req, res, next) => {
   try {
-    const { paymentIntentId, bookingId } = req.body;
-    if (!paymentIntentId || !bookingId) {
+    const input = paymentConfirmationBody.safeParse(req.body);
+    if (!input.success) {
       return res.status(400).json({ success: false, message: 'Datos de pago incompletos' });
     }
+    const { paymentIntentId, bookingId } = input.data;
 
     const booking = await getOwnedBooking(bookingId, req.user.id);
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
@@ -218,8 +225,7 @@ exports.stripeWebhook = async (req, res, next) => {
 
 exports.getPaymentHistory = async (req, res, next) => {
   try {
-    const parsedPage = Math.max(1, parseInt(req.query.page || 1));
-    const parsedLimit = Math.min(50, Math.max(1, parseInt(req.query.limit || 10)));
+    const { page: parsedPage, limit: parsedLimit } = paymentHistoryQuery.parse(req.query);
     const where = { booking: { client: { userId: req.user.id } } };
     const [payments, total] = await prisma.$transaction([
       prisma.payment.findMany({

@@ -1,5 +1,10 @@
 const prisma = require('../config/prisma');
 const { logError } = require('../modules/observability/safe-log');
+const {
+  favoriteListQuery,
+  favoriteProfessionalBody,
+  favoriteProfessionalParams,
+} = require('../validators/legacy-request.validators');
 
 const professionalInclude = {
   user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
@@ -17,8 +22,7 @@ exports.getFavorites = async (req, res, next) => {
   try {
     const client = getClient(req, res);
     if (!client) return;
-    const page = Math.max(Number.parseInt(req.query.page || '1', 10), 1);
-    const limit = Math.min(Math.max(Number.parseInt(req.query.limit || '20', 10), 1), 100);
+    const { page, limit } = favoriteListQuery.parse(req.query);
     const where = { clientId: client.id };
     const [favorites, total] = await prisma.$transaction([
       prisma.favoriteProfessional.findMany({
@@ -44,8 +48,9 @@ exports.addFavorite = async (req, res, next) => {
   try {
     const client = getClient(req, res);
     if (!client) return;
-    const { professionalId } = req.body;
-    if (!professionalId) return res.status(400).json({ error: 'professionalId is required' });
+    const input = favoriteProfessionalBody.safeParse(req.body);
+    if (!input.success) return res.status(400).json({ error: 'professionalId is required' });
+    const { professionalId } = input.data;
     const professional = await prisma.professionalProfile.findUnique({
       where: { id: professionalId },
       include: professionalInclude,
@@ -68,7 +73,7 @@ exports.removeFavorite = async (req, res, next) => {
     const client = getClient(req, res);
     if (!client) return;
     await prisma.favoriteProfessional.deleteMany({
-      where: { clientId: client.id, professionalId: req.params.professionalId },
+      where: { clientId: client.id, professionalId: favoriteProfessionalParams.parse(req.params).professionalId },
     });
     return res.json({ isFavorite: false });
   } catch (error) {
@@ -85,7 +90,7 @@ exports.checkFavorite = async (req, res, next) => {
       where: {
         clientId_professionalId: {
           clientId: client.id,
-          professionalId: req.params.professionalId,
+          professionalId: favoriteProfessionalParams.parse(req.params).professionalId,
         },
       },
     });
@@ -100,8 +105,9 @@ exports.toggleFavorite = async (req, res, next) => {
   try {
     const client = getClient(req, res);
     if (!client) return;
-    const { professionalId } = req.body;
-    if (!professionalId) return res.status(400).json({ error: 'professionalId is required' });
+    const input = favoriteProfessionalBody.safeParse(req.body);
+    if (!input.success) return res.status(400).json({ error: 'professionalId is required' });
+    const { professionalId } = input.data;
     const key = { clientId_professionalId: { clientId: client.id, professionalId } };
     const existing = await prisma.favoriteProfessional.findUnique({ where: key });
     if (existing) {
