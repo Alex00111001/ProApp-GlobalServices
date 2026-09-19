@@ -52,4 +52,13 @@ Local evidence on 2026-09-19:
 - Confirmed financial invariant breach: `statusAfterIntent=PROCESSING` (expected `COMPLETED`), `replayDuplicate=false` (expected `true`) and `completionEvents=2` (expected `1`). This is real PostgreSQL/application-service evidence with external Stripe I/O replaced; no live charge occurred.
 - Exact-SHA SUCCESS: NONE. The failure is acceptance evidence and must remain blocking. Fixing this financial race is outside this PRR-105 contract-publication slice and requires a separately reviewed DEEP payments change.
 
+## Financial blocker resolution, 2026-09-19
+
+- Authorized DEEP payments fix: `7d91469bc3021cbeb029798c749e9ccc6665b584`.
+- The intent-preparation write is now conditional on payment status not being `COMPLETED`; a concurrent first-row creation resolves through the unique booking payment and preserves a completed winner.
+- The API returns the existing stable `409` already-paid response when capture wins the race. No provider charge, production configuration or migration was executed.
+- Local `npm run verify`: PASS (backend 277/277, Admin 15/15 and build, Public Web 4/4 and build, Customer 5/5 and typecheck, Professional typecheck).
+- Platform verification #64 / run `35469399339`: SUCCESS for exact implementation SHA `7d91469bc3021cbeb029798c749e9ccc6665b584`, including PostgreSQL clean migration replay, RBAC synchronization, integration/concurrency acceptance, quality and full-history secret scan.
+- The financial blocker is CLOSED. PRR-105 remains PARCIAL for the separately listed OpenAPI/runtime/consumer parity gaps; this payment fix does not imply API-contract closure.
+
 OpenAPI version: NOT PUBLISHED. Closure SHA: NONE. Production activated: NO. Markets activated: NO. CASH active: NO. F11 runtime started: NO. Missing acceptance evidence keeps this work open.
