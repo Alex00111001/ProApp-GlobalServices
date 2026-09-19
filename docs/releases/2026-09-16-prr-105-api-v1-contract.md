@@ -48,6 +48,8 @@ Local evidence on 2026-09-19:
 - Repository secret-shaped fixture/artifact hygiene guard: PASS.
 - Route inventory: 251 operations: 29 CANONICAL_V1, 51 LEGACY_SUPPORTED, 163 ADMIN, 6 INTERNAL, 1 WEBHOOK, 1 DEPRECATED, 0 REMOVAL_CANDIDATE.
 - Consumer inventory: 139 calls; 9 dynamic calls unresolved. Schema bindings: 329; wire parity unproven for 242.
-- PostgreSQL migration replay, RBAC, integration/concurrency acceptance, tracked/full-history secret scan and exact-SHA CI: PENDING REMOTE CI.
+- Platform verification #62 / run `35468639125` for exact SHA `9cd4c8e839988a29f53dc8370372fc318b65db23`: EXPECTED BLOCKING FAILURE. Quality PASS; full-history secret scan PASS; migration replay, RBAC and prior PostgreSQL integration gates PASS; the new financial acceptance gate FAILS.
+- Confirmed financial invariant breach: `statusAfterIntent=PROCESSING` (expected `COMPLETED`), `replayDuplicate=false` (expected `true`) and `completionEvents=2` (expected `1`). This is real PostgreSQL/application-service evidence with external Stripe I/O replaced; no live charge occurred.
+- Exact-SHA SUCCESS: NONE. The failure is acceptance evidence and must remain blocking. Fixing this financial race is outside this PRR-105 contract-publication slice and requires a separately reviewed DEEP payments change.
 
 OpenAPI version: NOT PUBLISHED. Closure SHA: NONE. Production activated: NO. Markets activated: NO. CASH active: NO. F11 runtime started: NO. Missing acceptance evidence keeps this work open.
