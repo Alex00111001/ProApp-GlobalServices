@@ -24,8 +24,8 @@ const bookingIdParams = z.object({ id: uuid }).strict();
 const bookingListQuery = pagination({ defaultLimit: 10, maxLimit: 50 }).extend({
   status: z.enum(bookingStatuses).optional(),
 }).strict();
-const bookingCancellationBody = z.object({ reason: legacyReason }).strip();
-const bookingRejectionBody = z.object({ reason: legacyReason }).strip();
+const bookingCancellationBody = z.object({ reason: legacyReason }).strip().default({ reason: null });
+const bookingRejectionBody = z.object({ reason: legacyReason }).strip().default({ reason: null });
 
 const notificationIdParams = z.object({ notificationId: uuid }).strict();
 const notificationListQuery = pagination({ defaultLimit: 20, maxLimit: 50 }).extend({

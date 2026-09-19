@@ -4,15 +4,19 @@ const splitFullName = (name) => {
 };
 
 const normalizeRegistrationPayload = (payload = {}) => {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return payload;
   const legacyName = payload.name ? splitFullName(payload.name) : {};
+  const { name, ...canonical } = payload;
   return {
-    ...payload,
+    ...canonical,
     firstName: payload.firstName ?? legacyName.firstName,
     lastName: payload.lastName ?? legacyName.lastName,
   };
 };
 
 const normalizeBookingPayload = (payload = {}) => {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return payload;
+  const { zipCode, scheduledTime, ...canonical } = payload;
   let scheduledDate = payload.scheduledDate;
   if (scheduledDate && payload.scheduledTime) {
     const date = new Date(scheduledDate);
@@ -22,7 +26,7 @@ const normalizeBookingPayload = (payload = {}) => {
       scheduledDate = date.toISOString();
     }
   }
-  return { ...payload, scheduledDate, postalCode: payload.postalCode ?? payload.zipCode };
+  return { ...canonical, scheduledDate, postalCode: payload.postalCode ?? zipCode };
 };
 
 module.exports = { normalizeBookingPayload, normalizeRegistrationPayload, splitFullName };
