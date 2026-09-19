@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "a543ea122f7c586d01602492a73564f9eaedc4cf88b69458f06a74e75cc473e7",
+  "sourceFingerprint": "33b335203a730cfaf43863e81f453143d09aa235f1911eec95f3ec8408315d37",
   "routes": [
     {
       "method": "GET",
@@ -4394,7 +4394,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 189
+          "line": 181
         }
       ],
       "ownershipEvidence": [],
@@ -4429,7 +4429,7 @@
         {
           "input": "req.body",
           "schema": "paymentConfirmationBody",
-          "line": 129
+          "line": 121
         }
       ],
       "response": [
@@ -4442,7 +4442,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 131
+          "line": 123
         },
         {
           "statuses": [
@@ -4453,7 +4453,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 142
+          "line": 134
         },
         {
           "statuses": [
@@ -4464,7 +4464,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 145
+          "line": 137
         },
         {
           "statuses": [
@@ -4478,7 +4478,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 169
+          "line": 161
         },
         {
           "statuses": [
@@ -4489,7 +4489,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 178
+          "line": 170
         }
       ],
       "ownershipEvidence": [
@@ -4528,7 +4528,7 @@
         {
           "input": "req.body",
           "schema": "paymentIntentBody",
-          "line": 42
+          "line": 43
         }
       ],
       "response": [
@@ -4541,7 +4541,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 44
+          "line": 45
         },
         {
           "statuses": [
@@ -4552,7 +4552,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 51
+          "line": 52
         },
         {
           "statuses": [
@@ -4563,7 +4563,18 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 55
+          "line": 56
+        },
+        {
+          "statuses": [
+            409
+          ],
+          "fields": [
+            "message",
+            "success"
+          ],
+          "completeSchema": false,
+          "line": 102
         },
         {
           "statuses": [
@@ -4577,7 +4588,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 113
+          "line": 105
         },
         {
           "statuses": [
@@ -4588,7 +4599,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 122
+          "line": 114
         }
       ],
       "ownershipEvidence": [
@@ -4627,7 +4638,7 @@
         {
           "input": "req.query",
           "schema": "paymentHistoryQuery",
-          "line": 228
+          "line": 220
         }
       ],
       "response": [
@@ -4641,7 +4652,7 @@
             "success"
           ],
           "completeSchema": false,
-          "line": 240
+          "line": 232
         }
       ],
       "ownershipEvidence": [
@@ -4686,7 +4697,7 @@
             "error"
           ],
           "completeSchema": false,
-          "line": 203
+          "line": 195
         },
         {
           "statuses": [
@@ -4697,7 +4708,7 @@
             "error"
           ],
           "completeSchema": false,
-          "line": 211
+          "line": 203
         },
         {
           "statuses": [
@@ -4709,7 +4720,7 @@
             "status"
           ],
           "completeSchema": false,
-          "line": 219
+          "line": 211
         }
       ],
       "ownershipEvidence": [],

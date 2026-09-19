@@ -5,6 +5,7 @@ const { PAYMENT_CURRENCY: STRIPE_CURRENCY } = require('../config/business');
 const env = require('../config/env');
 const { decimalToMinor } = require('../modules/billing/pricing/pricing.service');
 const { applySuccessfulPayment } = require('../modules/billing/payments/payment-capture.service');
+const { persistPreparedPaymentIntent } = require('../modules/billing/payments/payment-intent-preparation.service');
 const { processStripeEvent } = require('../modules/billing/payments/stripe-webhook.service');
 const { logError } = require('../modules/observability/safe-log');
 const { BOOKING_READ_INCLUDE, PAYMENT_HISTORY_SELECT } = require('../shared/http/public-projections');
@@ -90,25 +91,16 @@ exports.createPaymentIntent = async (req, res, next) => {
       });
     }
 
-    await prisma.payment.upsert({
-      where: { bookingId: booking.id },
-      update: {
-        amount: (amountMinor / 100).toFixed(2),
-        currency: paymentIntent.currency.toUpperCase(),
-        status: 'PROCESSING',
-        method: 'STRIPE',
-        transactionId: paymentIntent.id,
-        failedReason: null,
-      },
-      create: {
-        bookingId: booking.id,
-        amount: (amountMinor / 100).toFixed(2),
-        currency: paymentIntent.currency.toUpperCase(),
-        status: 'PROCESSING',
-        method: 'STRIPE',
-        transactionId: paymentIntent.id,
-      },
+    const persisted = await persistPreparedPaymentIntent({
+      db: prisma,
+      bookingId: booking.id,
+      amountMinor,
+      currency: paymentIntent.currency,
+      paymentIntentId: paymentIntent.id,
     });
+    if (persisted.completed) {
+      return res.status(409).json({ success: false, message: 'La reserva ya está pagada' });
+    }
 
     res.json({
       success: true,

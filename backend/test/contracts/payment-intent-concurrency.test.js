@@ -67,6 +67,8 @@ test('API v1 acceptance: an in-flight intent request cannot roll back a complete
     await createPaymentIntent({ body: { bookingId }, user: { id: userId }, log: { error() {} } }, res, (error) => { failure = error; });
     assert.equal(failure, undefined);
     assert.equal(captureCommitted, true);
+    assert.equal(res.statusCode, 409);
+    assert.deepEqual(res.body, { success: false, message: 'La reserva ya está pagada' });
     const afterIntent = await captureClient.payment.findUnique({ where: { id: paymentId } });
     const replay = await capture();
     const eventCount = await captureClient.outboxEvent.count({ where: { aggregateId: paymentId, eventType: 'payment.completed' } });
