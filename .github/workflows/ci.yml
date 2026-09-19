@@ -50,6 +50,8 @@ jobs:
           JWT_SECRET: ci-only-jwt-secret-with-at-least-32-characters
           ADMIN_SESSION_PEPPER: ci-only-admin-session-pepper-at-least-32-characters
         run: npm run verify
+      - name: Reject stale API source inventory
+        run: npm --prefix backend run api:inventory:check
       - name: Reject high or critical dependency advisories
         run: |
           npm audit --audit-level=high
@@ -112,6 +114,8 @@ jobs:
           npm run db:audit-baseline
       - name: Run PostgreSQL integration and concurrency suite
         run: npm run test:integration
+      - name: API financial idempotency acceptance (PRR-105)
+        run: npm run test:api-financial-acceptance
 
   secrets:
     name: Secret scan
