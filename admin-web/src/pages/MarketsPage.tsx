@@ -27,12 +27,13 @@ export function MarketsPage() {
   const changePolicy = useMutation({
     mutationFn: () => {
       if (!policyAction) throw new Error('Selecciona una acción de policy.')
-      const isReview = policyAction.action === 'review'
-      return api(`/v1/admin/identity/policies/${policyAction.id}/${isReview ? 'review' : 'status'}`, {
-        method: isReview ? 'POST' : 'PATCH',
-        body: JSON.stringify(isReview
-          ? { decision: policyAction.next, reviewReference, reason: policyReason }
-          : { status: policyAction.next, reason: policyReason }),
+      if (policyAction.action === 'review') {
+        return api(`/v1/admin/identity/policies/${policyAction.id}/review`, {
+          method: 'POST', body: JSON.stringify({ decision: policyAction.next, reviewReference, reason: policyReason }),
+        })
+      }
+      return api(`/v1/admin/identity/policies/${policyAction.id}/status`, {
+        method: 'PATCH', body: JSON.stringify({ status: policyAction.next, reason: policyReason }),
       })
     },
     onSuccess: async () => {

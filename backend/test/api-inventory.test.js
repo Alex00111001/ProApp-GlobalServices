@@ -68,6 +68,7 @@ test('real consumer inventory covers every product without equating path matches
   assert.deepEqual([...new Set(calls.map((call) => call.consumer))].sort(), ['Admin Web', 'Customer mobile', 'Professional mobile', 'Public Web']);
   assert.ok(calls.some((call) => call.operation === 'POST /api/bookings/{id}/cancel'));
   assert.ok(calls.some((call) => call.operation === 'GET /api/v1/markets'));
+  assert.deepEqual(calls.filter((call) => call.status !== 'PATH_METHOD_MATCH'), []);
   assert.ok(calls.every((call) => call.requestResponseCompatibility === 'NOT_PROVEN_BY_PATH_MATCH'));
 });
 

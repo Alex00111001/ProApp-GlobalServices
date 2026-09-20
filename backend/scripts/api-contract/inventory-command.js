@@ -23,6 +23,10 @@ function main(args = process.argv.slice(2)) {
     if (!fs.existsSync(output) || fs.readFileSync(output, 'utf8').replace(/\r\n/g, '\n') !== serialize(document)) {
       throw new Error('Route inventory is stale. Regenerate and review the runtime and consumer differences.');
     }
+    const unresolved = document.consumers.filter((call) => call.status !== 'PATH_METHOD_MATCH');
+    if (unresolved.length) {
+      throw new Error(`Consumer inventory contains ${unresolved.length} unresolved path/method call(s).`);
+    }
   }
   console.log(JSON.stringify({ routes: document.routes.length,
     classifications: Object.fromEntries(Object.entries(Object.groupBy(document.routes, (r) => r.classification)).map(([key, value]) => [key, value.length])),

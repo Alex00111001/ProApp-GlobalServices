@@ -53,7 +53,9 @@ function DefinitionsPanel() {
 }
 
 function ExecutionsPanel({ deadLetter = false }: { deadLetter?: boolean }) {
-  const state = usePage(deadLetter ? [] : ['PENDING', 'RUNNING', 'SUCCEEDED', 'SKIPPED', 'FAILED', 'EXHAUSTED']); const path = deadLetter ? 'dead-letter' : 'executions'; const query = useQuery({ queryKey: [`f8-${path}`, state.query], queryFn: () => api(`/v1/admin/automation/${path}?${state.query}`, { schema: automationExecutionListSchema }) })
+  const state = usePage(deadLetter ? [] : ['PENDING', 'RUNNING', 'SUCCEEDED', 'SKIPPED', 'FAILED', 'EXHAUSTED']); const path = deadLetter ? 'dead-letter' : 'executions'; const query = useQuery({ queryKey: [`f8-${path}`, state.query], queryFn: () => deadLetter
+    ? api(`/v1/admin/automation/dead-letter?${state.query}`, { schema: automationExecutionListSchema })
+    : api(`/v1/admin/automation/executions?${state.query}`, { schema: automationExecutionListSchema }) })
   return <>{state.filters}<div className="freshness"><strong>Replay manual desactivado</strong><span>Las ejecuciones agotadas requieren investigación y una nueva señal autoritativa.</span></div><QueryState loading={query.isLoading} error={query.error} empty={!query.data?.items.length}>{query.data && <article className="panel table-panel"><div className="table-scroll"><table><thead><tr><th>Creado</th><th>Definición</th><th>Estado</th><th>Intentos</th><th>Evento</th><th>Correlación</th><th>Error seguro</th></tr></thead><tbody>{query.data.items.map((item) => <tr key={item.id}><td>{dateTime(item.createdAt)}</td><td>{item.automationVersion.definition.name}<small>v{item.automationVersion.version}</small></td><td><StatusBadge value={item.status} /></td><td>{item.attemptCount}<small>{item.steps.length} pasos</small></td><td><code>{item.triggerEventId}</code></td><td><code>{item.correlationId || item.traceId || '—'}</code></td><td>{item.lastError || '—'}</td></tr>)}</tbody></table></div><Pagination value={query.data.pagination} onChange={state.setPage} /></article>}</QueryState></>
 }
 

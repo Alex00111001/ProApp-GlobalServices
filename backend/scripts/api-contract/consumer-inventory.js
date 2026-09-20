@@ -31,10 +31,12 @@ function consumerInventory(routes) {
       const method = property(node.callee);
       const axios = METHODS.has(method) && /(?:^client|^this\.client|apiClient\.getClient\(\))/.test(member(node.callee.object));
       const admin = surface.name === 'Admin Web' && fn === 'api';
+      const adminAuth = surface.name === 'Admin Web' && fn === 'authRequest';
       const fetchCall = fn === 'fetch';
-      if (!axios && !admin && !fetchCall) return;
+      if (!axios && !admin && !adminAuth && !fetchCall) return;
       // The central transports receive arbitrary paths from their callers; inspect callers, not the transport twice.
       if (['admin-web/src/lib/api.ts'].includes(relative(file))) return;
+      if (relative(file) === 'admin-web/src/state/session.ts' && fetchCall && node.loc.start.line === 39) return;
       const options = node.arguments[1];
       const methodOption = options?.type === 'ObjectExpression'
         ? options.properties.find((p) => (p.key?.name || p.key?.value) === 'method')?.value : null;

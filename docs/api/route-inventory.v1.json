@@ -6344,7 +6344,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "POST",
@@ -6538,7 +6540,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -6633,7 +6637,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "POST",
@@ -6763,7 +6769,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -6893,7 +6901,9 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -7126,7 +7136,9 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -8797,7 +8809,9 @@
         "req.user.id"
       ],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "PATCH",
@@ -8852,7 +8866,9 @@
         "req.user.id"
       ],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -10075,7 +10091,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -10121,7 +10139,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "POST",
@@ -10365,7 +10385,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -10411,7 +10433,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -11377,7 +11401,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "POST",
@@ -11425,7 +11451,9 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "consumers": []
+      "consumers": [
+        "Admin Web"
+      ]
     },
     {
       "method": "GET",
@@ -13581,10 +13609,20 @@
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/MarketsPage.tsx",
       "line": 31,
-      "method": "UNRESOLVED",
-      "path": "/api/v1/admin/identity/policies/{parameter}/{parameter}",
-      "operation": null,
-      "status": "DYNAMIC_REVIEW_REQUIRED",
+      "method": "POST",
+      "path": "/api/v1/admin/identity/policies/{parameter}/review",
+      "operation": "POST /api/v1/admin/identity/policies/{id}/review",
+      "status": "PATH_METHOD_MATCH",
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+    },
+    {
+      "consumer": "Admin Web",
+      "file": "admin-web/src/pages/MarketsPage.tsx",
+      "line": 35,
+      "method": "PATCH",
+      "path": "/api/v1/admin/identity/policies/{parameter}/status",
+      "operation": "PATCH /api/v1/admin/identity/policies/{id}/status",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
@@ -13732,9 +13770,9 @@
       "file": "admin-web/src/pages/PrivacyAttributionPage.tsx",
       "line": 23,
       "method": "GET",
-      "path": null,
-      "operation": null,
-      "status": "DYNAMIC_REVIEW_REQUIRED",
+      "path": "/api/v1/admin/privacy/policies?{parameter}",
+      "operation": "GET /api/v1/admin/privacy/policies",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
@@ -13770,37 +13808,47 @@
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/PrivacyAttributionPage.tsx",
-      "line": 37,
+      "line": 38,
       "method": "GET",
-      "path": null,
-      "operation": null,
-      "status": "DYNAMIC_REVIEW_REQUIRED",
+      "path": "/api/v1/admin/privacy/withdrawals?{parameter}",
+      "operation": "GET /api/v1/admin/privacy/withdrawals",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/PrivacyAttributionPage.tsx",
-      "line": 42,
+      "line": 39,
       "method": "GET",
-      "path": null,
-      "operation": null,
-      "status": "DYNAMIC_REVIEW_REQUIRED",
+      "path": "/api/v1/admin/privacy/consents?{parameter}",
+      "operation": "GET /api/v1/admin/privacy/consents",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/PrivacyAttributionPage.tsx",
-      "line": 48,
+      "line": 44,
       "method": "GET",
-      "path": null,
-      "operation": null,
-      "status": "DYNAMIC_REVIEW_REQUIRED",
+      "path": "/api/v1/admin/privacy/touchpoints?{parameter}",
+      "operation": "GET /api/v1/admin/privacy/touchpoints",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/PrivacyAttributionPage.tsx",
-      "line": 49,
+      "line": 50,
+      "method": "GET",
+      "path": "/api/v1/admin/attribution/models?{parameter}",
+      "operation": "GET /api/v1/admin/attribution/models",
+      "status": "PATH_METHOD_MATCH",
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+    },
+    {
+      "consumer": "Admin Web",
+      "file": "admin-web/src/pages/PrivacyAttributionPage.tsx",
+      "line": 51,
       "method": "POST",
       "path": "/api/v1/admin/attribution/models",
       "operation": "POST /api/v1/admin/attribution/models",
@@ -13810,7 +13858,7 @@
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/PrivacyAttributionPage.tsx",
-      "line": 50,
+      "line": 52,
       "method": "PATCH",
       "path": "/api/v1/admin/attribution/models/{parameter}/status",
       "operation": "PATCH /api/v1/admin/attribution/models/{id}/status",
@@ -13820,11 +13868,11 @@
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/PrivacyAttributionPage.tsx",
-      "line": 55,
+      "line": 57,
       "method": "GET",
-      "path": null,
-      "operation": null,
-      "status": "DYNAMIC_REVIEW_REQUIRED",
+      "path": "/api/v1/admin/attribution/results?{parameter}",
+      "operation": "GET /api/v1/admin/attribution/results",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
@@ -13910,11 +13958,21 @@
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/ReferralsAutomationPage.tsx",
-      "line": 56,
+      "line": 57,
       "method": "GET",
-      "path": "/api/v1/admin/automation/{parameter}?{parameter}",
-      "operation": null,
-      "status": "NO_UNIQUE_OPERATION",
+      "path": "/api/v1/admin/automation/dead-letter?{parameter}",
+      "operation": "GET /api/v1/admin/automation/dead-letter",
+      "status": "PATH_METHOD_MATCH",
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+    },
+    {
+      "consumer": "Admin Web",
+      "file": "admin-web/src/pages/ReferralsAutomationPage.tsx",
+      "line": 58,
+      "method": "GET",
+      "path": "/api/v1/admin/automation/executions?{parameter}",
+      "operation": "GET /api/v1/admin/automation/executions",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
@@ -13970,11 +14028,21 @@
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/pages/SettingsPage.tsx",
-      "line": 28,
+      "line": 29,
       "method": "POST",
-      "path": "/api/v1/admin/role-change-requests/{parameter}/{parameter}",
-      "operation": null,
-      "status": "NO_UNIQUE_OPERATION",
+      "path": "/api/v1/admin/role-change-requests/{parameter}/approve",
+      "operation": "POST /api/v1/admin/role-change-requests/{id}/approve",
+      "status": "PATH_METHOD_MATCH",
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+    },
+    {
+      "consumer": "Admin Web",
+      "file": "admin-web/src/pages/SettingsPage.tsx",
+      "line": 30,
+      "method": "POST",
+      "path": "/api/v1/admin/role-change-requests/{parameter}/reject",
+      "operation": "POST /api/v1/admin/role-change-requests/{id}/reject",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
@@ -14150,11 +14218,21 @@
     {
       "consumer": "Admin Web",
       "file": "admin-web/src/state/session.ts",
-      "line": 39,
-      "method": "GET",
-      "path": null,
-      "operation": null,
-      "status": "DYNAMIC_REVIEW_REQUIRED",
+      "line": 47,
+      "method": "POST",
+      "path": "/api/v1/admin/auth/refresh",
+      "operation": "POST /api/v1/admin/auth/refresh",
+      "status": "PATH_METHOD_MATCH",
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+    },
+    {
+      "consumer": "Admin Web",
+      "file": "admin-web/src/state/session.ts",
+      "line": 60,
+      "method": "POST",
+      "path": "/api/v1/admin/auth/login",
+      "operation": "POST /api/v1/admin/auth/login",
+      "status": "PATH_METHOD_MATCH",
       "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
     },
     {
