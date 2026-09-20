@@ -11,6 +11,7 @@ const { buildInventory, serialize } = require('../scripts/api-contract/inventory
 const { projectSchema } = require('../scripts/api-contract/schema-catalog');
 const { consumerInventory } = require('../scripts/api-contract/consumer-inventory');
 const { breakingChanges, schemaChanges } = require('../scripts/api-contract/breaking-changes');
+const { buildOpenApi } = require('../scripts/api-contract/openapi-command');
 
 test('inventory is deterministic and classifies mounted internal, webhook, admin and mobile surfaces', () => {
   const first = buildInventory();
@@ -86,4 +87,21 @@ test('breaking detector blocks endpoint/auth/status/required/type/enum/output re
   const next = structuredClone(input); next.properties.optional = { type: 'string' };
   const changes = []; schemaChanges(input, next, 'request', 'input', changes); assert.deepEqual(changes, []);
   const output = []; schemaChanges(input, { ...input, required: [] }, 'response', 'output', output); assert.ok(output.length);
+});
+
+test('OpenAPI 3.1 candidate is source-derived, safe, and refuses to claim publication completeness', () => {
+  const contract = buildOpenApi(buildInventory());
+  assert.equal(contract.openapi, '3.1.0');
+  assert.equal(contract['x-homeservices-contract-status'], 'CANDIDATE_NOT_PUBLISHED');
+  assert.equal(contract['x-homeservices-completeness'].unresolvedConsumerCalls, 0);
+  assert.ok(contract['x-homeservices-completeness'].unprovenWireSchemas > 0);
+  assert.ok(contract['x-homeservices-completeness'].operationsWithoutCompleteResponseSchema > 0);
+  assert.equal(contract.paths['/health'], undefined);
+  assert.ok(contract.paths['/api/v1/markets']?.get);
+  assert.ok(contract.paths['/api/admin/audit-logs']?.get);
+  assert.ok(contract.paths['/api/payments/webhook']?.post);
+  const serialized = JSON.stringify(contract);
+  assert.doesNotMatch(serialized, /postgres(?:ql)?:\/\//i);
+  assert.doesNotMatch(serialized, /[A-Z][A-Z0-9_]*(?:SECRET|TOKEN|PASSWORD|DATABASE_URL)/);
+  assert.doesNotMatch(serialized, /[A-Z]:\\|\/home\//);
 });

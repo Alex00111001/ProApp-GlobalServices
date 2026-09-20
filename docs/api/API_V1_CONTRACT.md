@@ -9,11 +9,16 @@ From the repository root:
 ```sh
 npm --prefix backend run api:inventory:generate
 npm --prefix backend run api:inventory:check
+npm --prefix backend run api:breaking:check
+npm --prefix backend run api:openapi:generate
+npm --prefix backend run api:openapi:check
 npm --prefix backend test
 npm run verify
 ```
 
 `route-inventory.v1.json` is deterministic source-derived evidence. It includes route classifications, validation bindings, middleware, response observations and consumer call sites. `completeSchema: false`, `UNPROVEN` and `NOT_PROVEN_BY_PATH_MATCH` are intentional blockers, not warnings that establish compatibility. A matching path/method does not prove response, enum or pagination compatibility.
+
+`openapi.v1.candidate.json` is a deterministic, OpenAPI 3.1-valid review artifact generated from that runtime inventory. It is deliberately named `candidate`, carries `CANDIDATE_NOT_PUBLISHED`, excludes INTERNAL routes and exposes machine-readable completeness counters. It must not be served, used for production client generation, renamed to `openapi.v1.json`, or described as the v1 authority while any counter is non-zero. This fail-closed state prevents structurally valid but semantically incomplete output from becoming a second source of truth.
 
 CI rejects a stale inventory and exercises source-inventory tests. The isolated PostgreSQL job additionally exercises payment-intent/capture concurrency using real application services and database transactions; only external provider I/O is replaced. This acceptance check must not be skipped or softened to close PRR-105.
 

@@ -54,6 +54,7 @@ jobs:
         run: |
           npm --prefix backend run api:inventory:check
           npm --prefix backend run api:breaking:check
+          npm --prefix backend run api:openapi:check
       - name: Reject high or critical dependency advisories
         run: |
           npm audit --audit-level=high

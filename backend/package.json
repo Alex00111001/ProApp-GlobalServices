@@ -17,6 +17,8 @@
     "api:inventory:generate": "node scripts/api-contract/inventory-command.js --write",
     "api:inventory:check": "node scripts/api-contract/inventory-command.js --check",
     "api:breaking:check": "node scripts/api-contract/breaking-command.js --check",
+    "api:openapi:generate": "node scripts/api-contract/openapi-command.js --write",
+    "api:openapi:check": "node scripts/api-contract/openapi-command.js --check && node scripts/api-contract/openapi-command.js --validate",
     "test:api-financial-acceptance": "node --test test/contracts/payment-intent-concurrency.test.js",
     "test:connections": "node scripts/test-connections.js",
     "geography:validate": "node scripts/validate-geography-manifests.js",
@@ -76,6 +78,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^12.1.0",
     "@babel/parser": "7.29.8",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^24.13.3",
