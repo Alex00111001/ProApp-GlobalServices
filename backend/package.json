@@ -16,6 +16,7 @@
     "test:integration": "node --test --test-concurrency=1 test/integration/*.test.js",
     "api:inventory:generate": "node scripts/api-contract/inventory-command.js --write",
     "api:inventory:check": "node scripts/api-contract/inventory-command.js --check",
+    "api:breaking:check": "node scripts/api-contract/breaking-command.js --check",
     "test:api-financial-acceptance": "node --test test/contracts/payment-intent-concurrency.test.js",
     "test:connections": "node scripts/test-connections.js",
     "geography:validate": "node scripts/validate-geography-manifests.js",

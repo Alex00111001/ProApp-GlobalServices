@@ -51,7 +51,9 @@ jobs:
           ADMIN_SESSION_PEPPER: ci-only-admin-session-pepper-at-least-32-characters
         run: npm run verify
       - name: Reject stale API source inventory
-        run: npm --prefix backend run api:inventory:check
+        run: |
+          npm --prefix backend run api:inventory:check
+          npm --prefix backend run api:breaking:check
       - name: Reject high or critical dependency advisories
         run: |
           npm audit --audit-level=high
