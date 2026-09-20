@@ -2,7 +2,7 @@
 
 - Status: PARCIAL; no production-readiness claim.
 - Branch: `feature/production-control-plane-phase-11`
-- Base SHA: `1ce3bf1f3ce131da01809583d19ac6d9d029afe3`
+- Authorized continuation base SHA: `620733a6385f10b0c77e269e087322e6eea8da0c` (platform verification #65 / run `35469532696`: SUCCESS).
 - Phase/domain: PRR-105, API transport contracts and four supported consumers.
 - Risk/tier: HIGH / DEEP for public compatibility, authentication and financial contract review.
 - Migration: NONE.
@@ -62,3 +62,24 @@ Local evidence on 2026-09-19:
 - The financial blocker is CLOSED. PRR-105 remains PARCIAL for the separately listed OpenAPI/runtime/consumer parity gaps; this payment fix does not imply API-contract closure.
 
 OpenAPI version: NOT PUBLISHED. Closure SHA: NONE. Production activated: NO. Markets activated: NO. CASH active: NO. F11 runtime started: NO. Missing acceptance evidence keeps this work open.
+
+## Contract projection tranche, 2026-09-20
+
+This tranche closes deterministic route discovery and path/method matching without misrepresenting source inspection as full wire compatibility.
+
+- Four-consumer path/method resolution: commit `4d94d5a9`; 144 observed calls across Customer, Professional, Admin and Public Web, 0 unresolved. CI now rejects every status other than `PATH_METHOD_MATCH`.
+- Protected source-inventory baseline: commit `86e0445b`; 251 mounted operations, 0 detected breaking changes against `docs/api/route-inventory.baseline.v1.json`. This gate covers endpoint, auth/middleware, status, request required/type/enum narrowing and observed output-field removal. It is not a substitute for complete OpenAPI breaking analysis.
+- Deterministic OpenAPI 3.1 candidate: commit `68833ad0`; 215 paths and 245 operations. It excludes INTERNAL and REMOVAL_CANDIDATE routes, validates with Swagger Parser and is marked `CANDIDATE_NOT_PUBLISHED` / `1.0.0-candidate`.
+- Candidate completeness counters: 0 unresolved consumer calls, 242 unproven wire-input schemas and 239 operations without complete runtime-authoritative response schemas.
+- The candidate must not be used as a production client-generation authority. Response shapes currently reflect safely observed fields and remain explicitly marked pending runtime output-schema parity.
+
+Local evidence on 2026-09-20:
+
+- `npm run verify`: PASS (backend 278/278; Admin 15/15 plus production build; Public Web 4/4 plus production build; Customer 5/5 plus typecheck; Professional typecheck).
+- `npm --prefix backend run api:inventory:check`, `api:breaking:check` and `api:openapi:check`: PASS as part of the full verification.
+- Prisma format check, validate and generate: PASS. Migration: NONE.
+- All six npm audit scopes: 0 vulnerabilities.
+- Repository fixture/artifact hygiene, generated-artifact freshness and secret-history gates: locally applicable checks PASS.
+- Admin build retains a non-blocking warning for one minified JavaScript chunk above 500 kB; build succeeds.
+
+PRR-105 remains **PARCIAL**. Publication requires shared runtime-authoritative response schemas for the 239 incomplete operations, deliberate resolution of 242 non-equivalent input projections (normalization, transforms and refinements), request/response/enum/pagination/auth semantic parity for the four consumers, a complete OpenAPI breaking baseline, and SUCCESS CI for the final exact evidence SHA. OpenAPI version: NOT PUBLISHED. Closure SHA: NONE.
