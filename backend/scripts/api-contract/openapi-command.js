@@ -4,6 +4,8 @@ const { createHash } = require('node:crypto');
 const SwaggerParser = require('@apidevtools/swagger-parser');
 const { ROOT } = require('./source-inventory');
 const { buildInventory, serialize } = require('./inventory-command');
+const { safeErrorSchema } = require('../../src/contracts/error.responses');
+const { projectSchema } = require('./schema-catalog');
 
 const OUTPUT = path.join(ROOT, 'docs/api/openapi.v1.candidate.json');
 const supported = (route) => route.classification !== 'INTERNAL' && route.classification !== 'REMOVAL_CANDIDATE';
@@ -30,6 +32,8 @@ const successSchema = (fields) => ({ type: 'object', properties: Object.fromEntr
   'x-homeservices-response-parity': 'PENDING_RUNTIME_OUTPUT_SCHEMA' });
 
 function buildOpenApi(inventoryDocument = buildInventory()) {
+  const safeErrorProjection = projectSchema(safeErrorSchema, 'output');
+  if (!safeErrorProjection.jsonSchema || safeErrorProjection.gaps.length) throw new Error('Safe error schema is not completely projectable.');
   const paths = {};
   for (const route of inventoryDocument.routes.filter(supported)) {
     const parameters = [];
@@ -97,9 +101,7 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
       providerSignature: { type: 'apiKey', in: 'header', name: 'stripe-signature' },
       adminRefreshCookie: { type: 'apiKey', in: 'cookie', name: 'admin_refresh' },
       adminCsrfHeader: { type: 'apiKey', in: 'header', name: 'x-admin-csrf-token' },
-    }, schemas: { SafeError: { type: 'object', additionalProperties: false,
-      properties: { error: { type: 'string' }, code: { type: 'string' }, correlationId: { type: 'string' } },
-      required: ['error', 'code', 'correlationId'] } } },
+    }, schemas: { SafeError: cleanSchema(safeErrorProjection.jsonSchema) } },
     'x-homeservices-contract-status': 'CANDIDATE_NOT_PUBLISHED',
     'x-homeservices-completeness': {
       unresolvedConsumerCalls: inventoryDocument.consumers.filter((call) => call.status !== 'PATH_METHOD_MATCH').length,

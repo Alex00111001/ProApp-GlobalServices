@@ -120,6 +120,16 @@ test('internal-looking details are removed even from nominal 4xx messages', () =
   assertSafeBody(body);
 });
 
+test('safe error authority removes undeclared fields from every public failure', () => {
+  const body = normalizeErrorBody({
+    body: { error: 'Invalid input', code: 'VALIDATION_ERROR', providerRequest: 'private', stack: 'private', details: { field: 'email' } },
+    statusCode: 400, requestId: 'req-safe', correlationId: 'corr-safe',
+  });
+  assert.deepEqual(body, {
+    error: 'Invalid input', code: 'VALIDATION_ERROR', details: { field: 'email' }, requestId: 'req-safe', correlationId: 'corr-safe',
+  });
+});
+
 test('real Express response middleware sanitizes direct 5xx bodies', async () => {
   const app = express();
   app.use(requestContext);

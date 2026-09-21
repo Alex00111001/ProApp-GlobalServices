@@ -1,4 +1,5 @@
 const { sanitizeTelemetry, redactText } = require('../../modules/observability/redaction');
+const { safeErrorSchema } = require('../../contracts/error.responses');
 
 const STATUS_CODES = Object.freeze({
   400: 'BAD_REQUEST', 401: 'AUTHENTICATION_REQUIRED', 403: 'FORBIDDEN', 404: 'NOT_FOUND',
@@ -99,23 +100,23 @@ const normalizeErrorBody = ({ body, statusCode, requestId, correlationId }) => {
     : { error: typeof body === 'string' ? body : undefined };
   if (statusCode >= 500) {
     const unavailable = statusCode >= 502 && statusCode <= 504;
-    return {
+    return safeErrorSchema.parse({
       ...(source.success === false ? { success: false } : {}),
       error: genericMessage(statusCode),
       code: unavailable ? 'SERVICE_UNAVAILABLE' : 'INTERNAL_ERROR',
       ...(requestId ? { requestId } : {}),
       ...(correlationId ? { correlationId } : {}),
-    };
+    });
   }
   const safeSource = scrubInternalPublicDetails(sanitizeTelemetry(source));
-  return {
+  return safeErrorSchema.parse({
     ...safeSource,
     ...(Object.hasOwn(source, 'message') ? { message: sanitizePublicMessage(source.message, statusCode) } : {}),
     error: sanitizePublicMessage(source.error || source.message, statusCode),
     code: stableCode(source.code) || codeForStatus(statusCode),
     ...(requestId ? { requestId } : {}),
     ...(correlationId ? { correlationId } : {}),
-  };
+  });
 };
 
 const publicErrorFromException = ({ thrown, requestId, correlationId }) => {

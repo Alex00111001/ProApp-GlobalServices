@@ -27343,23 +27343,40 @@
     "schemas": {
       "SafeError": {
         "type": "object",
-        "additionalProperties": false,
         "properties": {
+          "success": {
+            "type": "boolean",
+            "const": false
+          },
           "error": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
           },
           "code": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{1,79}$"
+          },
+          "details": {},
+          "requestId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
           },
           "correlationId": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
           }
         },
         "required": [
           "error",
-          "code",
-          "correlationId"
-        ]
+          "code"
+        ],
+        "additionalProperties": false
       }
     }
   },
