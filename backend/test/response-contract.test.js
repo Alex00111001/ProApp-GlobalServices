@@ -8,6 +8,7 @@ const { createGlobalErrorHandler } = require('../src/shared/http/global-error-ha
 const { errorContract } = require('../src/shared/http/error-contract');
 const { defineResponseContract, outputObject, responseContract } = require('../src/shared/http/response-contract');
 const { catalogSchemas } = require('../src/contracts/catalog.responses');
+const { favoriteSchemas } = require('../src/contracts/favorite.responses');
 
 const request = async (handler) => {
   const app = express();
@@ -33,6 +34,21 @@ test('response contract strips undeclared fields at the runtime serialization bo
   }));
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', name: 'Safe' });
+});
+
+test('favorite professional DTO retains consumer fields while removing provider internals', () => {
+  const result = favoriteSchemas.favoriteProfessional.safeParse({
+    id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', userId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', status: 'APPROVED',
+    bio: null, yearsOfExperience: null, hourlyRate: null, serviceRadius: null, latitude: null, longitude: null,
+    totalBookings: 0, averageRating: 0, totalReviews: 0, verifiedAt: null,
+    createdAt: '2026-09-21T00:00:00.000Z', updatedAt: '2026-09-21T00:00:00.000Z',
+    user: { id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', firstName: 'Safe', lastName: 'User', avatarUrl: null },
+    categories: [], services: [], stripeAccountId: 'acct_private', totalEarnings: '100.00',
+  });
+  assert.equal(result.success, true);
+  assert.equal(result.data.stripeAccountId, undefined);
+  assert.equal(result.data.totalEarnings, undefined);
+  assert.equal(result.data.user.id, 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');
 });
 
 test('response contract fails closed on schema or success-status drift', async () => {
