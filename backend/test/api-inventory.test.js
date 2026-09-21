@@ -84,6 +84,9 @@ test('breaking detector blocks endpoint/auth/status/required/type/enum/output re
     (r) => { r.auth = 'PUBLIC'; }, (r) => { r.middleware = []; },
     (r) => { r.response[0].statuses = [201]; }, (r) => { r.response[0].fields = ['items']; },
   ]) { const next = structuredClone(prior); mutation(next.routes[0]); assert.ok(breakingChanges(prior, next).length); }
+  const serializerOnly = structuredClone(prior);
+  serializerOnly.routes[0].middleware.push('responseContract(exampleResponses.list)');
+  assert.deepEqual(breakingChanges(prior, serializerOnly), []);
   const input = { type: 'object', properties: { count: { type: 'number' }, status: { enum: ['A', 'B'] } }, required: ['count'] };
   for (const mutation of [
     (s) => { s.required.push('status'); }, (s) => { s.properties.count.type = 'string'; }, (s) => { s.properties.status.enum = ['A']; },

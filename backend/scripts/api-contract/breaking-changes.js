@@ -1,6 +1,9 @@
 // Directional compatibility: callers must retain accepted inputs and guaranteed outputs.
 // Unhandled schema changes are review-required, never silently declared compatible.
 const stable = (value) => JSON.stringify(value);
+// Response serializers strengthen the output boundary and are compared through
+// response schemas/statuses below. They are not request/auth middleware.
+const requestMiddleware = (items = []) => items.filter((item) => !item.startsWith('responseContract('));
 function schemaChanges(before, after, direction, location, changes) {
   if (stable(before) === stable(after)) return;
   if (!before || !after) { changes.push(`${location}: schema removed or added without compatibility proof`); return; }
@@ -37,7 +40,9 @@ function breakingChanges(baseline, candidate) {
     const after = current.get(key);
     if (!after) { changes.push(`${key}: supported operation removed`); continue; }
     for (const field of ['auth', 'middleware', 'classification']) {
-      if (stable(before[field]) !== stable(after[field])) changes.push(`${key}: ${field} contract changed`);
+      const beforeValue = field === 'middleware' ? requestMiddleware(before[field]) : before[field];
+      const afterValue = field === 'middleware' ? requestMiddleware(after[field]) : after[field];
+      if (stable(beforeValue) !== stable(afterValue)) changes.push(`${key}: ${field} contract changed`);
     }
     const beforeStatuses = new Set(before.response.flatMap((response) => response.statuses));
     const afterStatuses = new Set(after.response.flatMap((response) => response.statuses));
