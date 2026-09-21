@@ -13,7 +13,7 @@ const request = async (handler) => {
   app.use((req, res, next) => { req.context = { requestId: 'req-test', correlationId: 'corr-test' }; next(); });
   app.use(errorContract);
   app.get('/test', responseContract(defineResponseContract({
-    operationId: 'test.response',
+    method: 'GET', path: '/test', operationId: 'test.response',
     responses: { 200: outputObject({ id: z.string().uuid(), name: z.string() }), 204: null },
   })), handler);
   app.use(createGlobalErrorHandler({ reportError: async () => ({}), ensureIncidentForError: async () => {} }));

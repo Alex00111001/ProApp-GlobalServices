@@ -5,14 +5,14 @@ const { z } = require('zod');
 const { ROOT, readSource, walk, member } = require('./source-inventory');
 
 // Schemas may contain custom predicates/normalizers. JSON Schema cannot silently erase them.
-function projectSchema(schema) {
+function projectSchema(schema, io = 'input') {
   const gaps = new Set();
   const seen = new WeakSet();
   const inspect = (value) => {
     if (!value || typeof value !== 'object' || seen.has(value)) return;
     seen.add(value);
     const def = value._zod?.def;
-    if (def?.type === 'transform') gaps.add('TRANSFORM_REQUIRES_WIRE_CONTRACT');
+    if (def?.type === 'transform' && io === 'input') gaps.add('TRANSFORM_REQUIRES_WIRE_CONTRACT');
     if (def?.check === 'custom' || def?.type === 'custom') gaps.add('CUSTOM_REFINEMENT_REQUIRES_WIRE_CONTRACT');
     if (def?.check === 'overwrite') gaps.add('NORMALIZATION_REQUIRES_WIRE_CONTRACT');
     // Coercion is an HTTP parser concern. A query parameter is serialized as a string,
@@ -24,7 +24,7 @@ function projectSchema(schema) {
   };
   inspect(schema);
   let jsonSchema = null;
-  try { jsonSchema = z.toJSONSchema(schema, { io: 'input', target: 'draft-2020-12' }); }
+  try { jsonSchema = z.toJSONSchema(schema, { io, target: 'draft-2020-12' }); }
   catch { gaps.add('ZOD_TYPE_NOT_REPRESENTABLE'); }
   return { jsonSchema, wireParity: gaps.size ? 'UNPROVEN' : 'STRUCTURAL', gaps: [...gaps].sort() };
 }

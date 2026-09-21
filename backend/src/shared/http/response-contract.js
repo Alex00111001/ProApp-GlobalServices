@@ -4,8 +4,11 @@ const RESPONSE_CONTRACT = Symbol.for('homeservices.http.responseContract');
 
 const isZodSchema = (value) => Boolean(value && value._zod && typeof value.safeParse === 'function');
 
-const defineResponseContract = ({ operationId, responses }) => {
+const defineResponseContract = ({ method, path, operationId, responses }) => {
   if (!operationId || typeof operationId !== 'string') throw new TypeError('A stable response-contract operationId is required.');
+  if (!/^(GET|POST|PUT|PATCH|DELETE)$/.test(method) || typeof path !== 'string' || !path.startsWith('/')) {
+    throw new TypeError(`Response contract ${operationId} requires an absolute path and uppercase HTTP method.`);
+  }
   if (!responses || typeof responses !== 'object' || Array.isArray(responses)) throw new TypeError('Response contracts require a status map.');
 
   const normalized = {};
@@ -19,11 +22,15 @@ const defineResponseContract = ({ operationId, responses }) => {
       normalized[status] = null;
       continue;
     }
-    if (!isZodSchema(definition)) throw new TypeError(`Response contract ${operationId} status ${status} is not a Zod schema.`);
-    normalized[status] = definition;
+    const schema = isZodSchema(definition) ? definition : definition?.schema;
+    const serialize = isZodSchema(definition) ? (value) => value : definition?.serialize;
+    if (!isZodSchema(schema) || typeof serialize !== 'function') {
+      throw new TypeError(`Response contract ${operationId} status ${status} requires a Zod schema and serializer.`);
+    }
+    normalized[status] = Object.freeze({ schema, serialize });
   }
   if (!Object.keys(normalized).length) throw new TypeError(`Response contract ${operationId} has no success responses.`);
-  return Object.freeze({ operationId, responses: Object.freeze(normalized) });
+  return Object.freeze({ method, path, operationId, responses: Object.freeze(normalized) });
 };
 
 const responseContract = (contract) => {
@@ -36,11 +43,11 @@ const responseContract = (contract) => {
 
     res.json = (body) => {
       if (res.statusCode >= 400) return originalJson(body);
-      const schema = contract.responses[res.statusCode];
-      if (!schema) throw Object.assign(new Error(`Undeclared success status ${res.statusCode} for ${contract.operationId}.`), {
+      const definition = contract.responses[res.statusCode];
+      if (!definition) throw Object.assign(new Error(`Undeclared success status ${res.statusCode} for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_STATUS_MISMATCH', statusCode: 500,
       });
-      const result = schema.safeParse(body);
+      const result = definition.schema.safeParse(definition.serialize(body));
       if (!result.success) throw Object.assign(new Error(`Response serialization failed for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_VIOLATION', statusCode: 500, cause: result.error,
       });
@@ -73,5 +80,7 @@ const responseContract = (contract) => {
 };
 
 const outputObject = (shape) => z.object(shape);
+const serializeJson = (value) => JSON.parse(JSON.stringify(value));
+const serialized = (schema, serialize = serializeJson) => ({ schema, serialize });
 
-module.exports = { RESPONSE_CONTRACT, defineResponseContract, outputObject, responseContract };
+module.exports = { RESPONSE_CONTRACT, defineResponseContract, outputObject, responseContract, serializeJson, serialized };

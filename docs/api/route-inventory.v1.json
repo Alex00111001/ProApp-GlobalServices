@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "33b335203a730cfaf43863e81f453143d09aa235f1911eec95f3ec8408315d37",
+  "sourceFingerprint": "4c2a46dca7e7b76dfd96c2f7c84d269c02f3831f5aa2ad854868d6b6fab6b71e",
   "routes": [
     {
       "method": "GET",
@@ -52,6 +52,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -101,6 +102,7 @@
         "{ totalEarnings: 'desc' }",
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -152,6 +154,7 @@
       "ordering": [
         "{ openedAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -210,6 +213,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -273,6 +277,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -352,6 +357,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -403,6 +409,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -454,6 +461,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -505,6 +513,7 @@
       "ordering": [
         "{ lastSeenAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -568,6 +577,7 @@
         "{ occurredAt: 'desc' }",
         "{ detectedAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -622,6 +632,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -664,6 +675,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -715,6 +727,7 @@
       "ordering": [
         "{ checkedAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -766,6 +779,7 @@
       "ordering": [
         "{ detectedAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -828,6 +842,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -884,6 +899,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -938,6 +954,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -970,6 +987,7 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1021,6 +1039,7 @@
       "ordering": [
         "{ requestedAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1079,6 +1098,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1130,6 +1150,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1192,6 +1213,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1243,6 +1265,7 @@
       "ordering": [
         "{ startedAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1302,6 +1325,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1360,6 +1384,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1411,6 +1436,7 @@
       "ordering": [
         "{ requestedAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1469,6 +1495,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1520,6 +1547,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1584,6 +1612,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1640,6 +1669,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -1648,7 +1678,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(authResponses.changePassword)"
       ],
       "rateLimit": {
         "global": {
@@ -1659,7 +1690,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 18
+        "line": 20
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -1710,6 +1741,30 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerPassword.change",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Customer mobile"
       ]
@@ -1720,7 +1775,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "PUBLIC",
       "middleware": [
-        "verificationLimiter"
+        "verificationLimiter",
+        "responseContract(authResponses.confirmEmailVerification)"
       ],
       "rateLimit": {
         "global": {
@@ -1733,7 +1789,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 13
+        "line": 15
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -1761,6 +1817,31 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerEmail.confirmVerification",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "verified": {
+                  "type": "boolean",
+                  "const": true
+                }
+              },
+              "required": [
+                "verified"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -1770,7 +1851,8 @@
       "auth": "CUSTOMER_BEARER",
       "middleware": [
         "verificationLimiter",
-        "authenticate"
+        "authenticate",
+        "responseContract(authResponses.requestEmailVerification)"
       ],
       "rateLimit": {
         "global": {
@@ -1783,7 +1865,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 19
+        "line": 21
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -1808,6 +1890,34 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerEmail.requestVerification",
+        "complete": true,
+        "responses": {
+          "202": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "accepted": {
+                  "type": "boolean"
+                },
+                "alreadyVerified": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "accepted",
+                "alreadyVerified"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -1829,7 +1939,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 9
+        "line": 11
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -1883,6 +1993,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -1894,7 +2005,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(authResponses.logout)"
       ],
       "rateLimit": {
         "global": {
@@ -1905,7 +2017,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 20
+        "line": 22
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -1938,6 +2050,18 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerSession.logout",
+        "complete": true,
+        "responses": {
+          "204": {
+            "empty": true,
+            "jsonSchema": null,
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -1946,7 +2070,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "PUBLIC",
       "middleware": [
-        "recoveryLimiter"
+        "recoveryLimiter",
+        "responseContract(authResponses.confirmPasswordRecovery)"
       ],
       "rateLimit": {
         "global": {
@@ -1959,7 +2084,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 12
+        "line": 14
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -1987,6 +2112,30 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerPassword.confirmRecovery",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -1995,7 +2144,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "PUBLIC",
       "middleware": [
-        "recoveryLimiter"
+        "recoveryLimiter",
+        "responseContract(authResponses.requestPasswordRecovery)"
       ],
       "rateLimit": {
         "global": {
@@ -2008,7 +2158,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 11
+        "line": 13
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -2053,6 +2203,30 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerPassword.requestRecovery",
+        "complete": true,
+        "responses": {
+          "202": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -2072,7 +2246,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 16
+        "line": 18
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -2109,6 +2283,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -2131,7 +2306,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 17
+        "line": 19
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -2175,6 +2350,7 @@
         "req.user.role"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -2184,7 +2360,9 @@
       "path": "/api/auth/refresh",
       "classification": "LEGACY_SUPPORTED",
       "auth": "PUBLIC",
-      "middleware": [],
+      "middleware": [
+        "responseContract(authResponses.refresh)"
+      ],
       "rateLimit": {
         "global": {
           "requests": 300,
@@ -2194,7 +2372,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 10
+        "line": 12
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -2225,6 +2403,94 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerSession.refresh",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "accessToken": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "refreshToken": {
+                  "type": "string",
+                  "minLength": 32
+                },
+                "session": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE",
+                        "REVOKED",
+                        "EXPIRED"
+                      ]
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "lastSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "current": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "expiresAt",
+                    "lastSeenAt",
+                    "createdAt",
+                    "current"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "token",
+                "accessToken",
+                "refreshToken",
+                "session"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -2246,7 +2512,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 8
+        "line": 10
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -2326,6 +2592,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -2337,7 +2604,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(authResponses.listSessions)"
       ],
       "rateLimit": {
         "global": {
@@ -2348,7 +2616,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 21
+        "line": 23
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -2383,6 +2651,83 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerSession.list",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "sessions": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "ACTIVE",
+                          "REVOKED",
+                          "EXPIRED"
+                        ]
+                      },
+                      "expiresAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "lastSeenAt": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "current": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "status",
+                      "expiresAt",
+                      "lastSeenAt",
+                      "createdAt",
+                      "current"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "sessions"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -2391,7 +2736,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(authResponses.revokeSession)"
       ],
       "rateLimit": {
         "global": {
@@ -2402,7 +2748,7 @@
       },
       "registration": {
         "file": "backend/src/routes/auth.routes.js",
-        "line": 22
+        "line": 24
       },
       "handler": {
         "file": "backend/src/controllers/auth.controller.js",
@@ -2452,6 +2798,18 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": {
+        "operationId": "customerSession.revoke",
+        "complete": true,
+        "responses": {
+          "204": {
+            "empty": true,
+            "jsonSchema": null,
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -2618,6 +2976,7 @@
       "ordering": [
         "{ level: 'asc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -2689,6 +3048,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -2789,6 +3149,7 @@
         "req.user.role"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -2891,6 +3252,7 @@
         "req.user.professionalProfile.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -2992,6 +3354,7 @@
         "req.user.professionalProfile.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -3098,6 +3461,7 @@
         "req.user.professionalProfile.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Professional mobile"
       ]
@@ -3198,6 +3562,7 @@
         "req.user.professionalProfile.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Professional mobile"
       ]
@@ -3254,6 +3619,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -3310,6 +3676,7 @@
       "ordering": [
         "{ scheduledDate: 'asc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Professional mobile"
       ]
@@ -3353,6 +3720,7 @@
       "ordering": [
         "{ name: 'asc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -3414,6 +3782,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -3462,6 +3831,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -3517,6 +3887,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -3573,6 +3944,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -3628,6 +4000,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -3697,6 +4070,7 @@
         "req.user.professionalProfile.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -3747,6 +4121,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -3817,6 +4192,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -3864,6 +4240,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -3911,6 +4288,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -3988,6 +4366,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -4044,6 +4423,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -4118,6 +4498,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -4190,6 +4571,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -4264,6 +4646,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -4308,6 +4691,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -4354,6 +4738,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -4399,6 +4784,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -4496,6 +4882,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -4606,6 +4993,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -4661,6 +5049,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -4725,6 +5114,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -4775,6 +5165,7 @@
         "{ displayOrder: 'asc' }",
         "{ [sortBy]: sortOrder }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -4836,6 +5227,7 @@
         "{ displayOrder: 'asc' }",
         "{ dayOfWeek: 'asc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -4904,6 +5296,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -4955,6 +5348,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5011,6 +5405,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5065,6 +5460,7 @@
       "ordering": [
         "[{ createdAt: 'desc' }, { id: 'desc' }]"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5121,6 +5517,7 @@
       "ordering": [
         "[{ createdAt: 'desc' }, { id: 'desc' }]"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5173,6 +5570,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5249,6 +5647,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5315,6 +5714,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5370,6 +5770,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5423,6 +5824,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5469,6 +5871,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -5517,6 +5920,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5563,6 +5967,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -5620,6 +6025,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -5677,6 +6083,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5732,6 +6139,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5785,6 +6193,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5831,6 +6240,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -5881,6 +6291,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5936,6 +6347,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -5989,6 +6401,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6044,6 +6457,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6090,6 +6504,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6142,6 +6557,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6197,6 +6613,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6252,6 +6669,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6298,6 +6716,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6344,6 +6763,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6394,6 +6814,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6444,6 +6865,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6492,6 +6914,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6540,6 +6963,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6588,6 +7012,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6637,6 +7062,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6681,6 +7107,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6728,6 +7155,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6769,6 +7197,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6817,6 +7246,7 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6870,6 +7300,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -6901,6 +7332,7 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -6953,6 +7385,7 @@
         "{ version: 'desc' }",
         "{ position: 'asc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -7005,6 +7438,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7055,6 +7489,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7105,6 +7540,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7136,6 +7572,7 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -7184,6 +7621,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -7229,6 +7667,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7275,6 +7714,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -7327,6 +7767,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7382,6 +7823,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7437,6 +7879,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7492,6 +7935,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7547,6 +7991,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7597,6 +8042,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7643,6 +8089,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -7691,6 +8138,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -7743,6 +8191,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7796,6 +8245,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7851,6 +8301,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -7897,6 +8348,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -7949,6 +8401,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -8002,6 +8455,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -8057,6 +8511,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8114,6 +8569,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -8160,6 +8616,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -8206,6 +8663,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8256,6 +8714,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -8302,6 +8761,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8354,6 +8814,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8411,6 +8872,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8466,6 +8928,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8514,6 +8977,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8562,6 +9026,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8610,6 +9075,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8658,6 +9124,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8706,6 +9173,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -8752,6 +9220,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8809,6 +9278,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8866,6 +9336,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8914,6 +9385,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -8969,6 +9441,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9017,6 +9490,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9065,6 +9539,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9115,6 +9590,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9170,6 +9646,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9212,6 +9689,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9255,6 +9733,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9303,6 +9782,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9351,6 +9831,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9401,6 +9882,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9458,6 +9940,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9513,6 +9996,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9561,6 +10045,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9609,6 +10094,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9642,6 +10128,7 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -9682,6 +10169,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9730,6 +10218,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9782,6 +10271,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9832,6 +10322,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9887,6 +10378,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9944,6 +10436,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -9999,6 +10492,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10043,6 +10537,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10091,6 +10586,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10139,6 +10635,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10189,6 +10686,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10239,6 +10737,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -10287,6 +10786,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10337,6 +10837,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10385,6 +10886,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10433,6 +10935,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10481,6 +10984,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10526,6 +11030,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -10574,6 +11079,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10622,6 +11128,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10672,6 +11179,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -10718,6 +11226,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -10768,6 +11277,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -10823,6 +11333,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -10878,6 +11389,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -10909,6 +11421,7 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10942,6 +11455,7 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -10993,6 +11507,7 @@
         "{ updatedAt: 'desc' }",
         "{ version: 'desc' }"
       ],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11045,6 +11560,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11095,6 +11611,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11145,6 +11662,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11176,6 +11694,7 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11209,6 +11728,7 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11259,6 +11779,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11301,6 +11822,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11351,6 +11873,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11401,6 +11924,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11451,6 +11975,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11495,6 +12020,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11543,6 +12069,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11595,6 +12122,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11641,6 +12169,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11687,6 +12216,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11739,6 +12269,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11785,6 +12316,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11829,6 +12361,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11877,6 +12410,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Admin Web"
       ]
@@ -11927,6 +12461,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -11975,6 +12510,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12016,6 +12552,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile",
@@ -12072,6 +12609,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -12127,6 +12665,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -12171,6 +12710,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12214,6 +12754,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12264,6 +12805,7 @@
         "req.user.marketId"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12307,6 +12849,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12360,6 +12903,7 @@
         "req.user.marketId"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12401,6 +12945,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Professional mobile"
       ]
@@ -12450,6 +12995,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Professional mobile"
       ]
@@ -12509,6 +13055,7 @@
       "ordering": [
         "[{ calculatedAt: 'desc' }, { id: 'desc' }]"
       ],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12558,6 +13105,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12603,6 +13151,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -12655,6 +13204,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -12701,6 +13251,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12751,6 +13302,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12797,6 +13349,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -12850,6 +13403,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -12897,6 +13451,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Public Web"
       ]
@@ -12958,6 +13513,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Public Web"
       ]
@@ -13007,6 +13563,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Public Web"
       ]
@@ -13057,6 +13614,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -13103,6 +13661,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -13154,6 +13713,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -13205,6 +13765,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile"
       ]
@@ -13254,6 +13815,7 @@
         "req.user.id"
       ],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -13298,6 +13860,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": [
         "Customer mobile",
         "Professional mobile"
@@ -13338,6 +13901,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -13374,6 +13938,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     },
     {
@@ -13411,6 +13976,7 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
+      "responseAuthority": null,
       "consumers": []
     }
   ],
@@ -27943,6 +28509,322 @@
       },
       "wireParity": "STRUCTURAL",
       "gaps": []
+    }
+  },
+  "responseContracts": {
+    "POST /api/auth/change-password": {
+      "operationId": "customerPassword.change",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "POST /api/auth/email-verification/confirm": {
+      "operationId": "customerEmail.confirmVerification",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "verified": {
+                "type": "boolean",
+                "const": true
+              }
+            },
+            "required": [
+              "verified"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "POST /api/auth/email-verification/request": {
+      "operationId": "customerEmail.requestVerification",
+      "complete": true,
+      "responses": {
+        "202": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "accepted": {
+                "type": "boolean"
+              },
+              "alreadyVerified": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "accepted",
+              "alreadyVerified"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "POST /api/auth/logout": {
+      "operationId": "customerSession.logout",
+      "complete": true,
+      "responses": {
+        "204": {
+          "empty": true,
+          "jsonSchema": null,
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "POST /api/auth/password-recovery/confirm": {
+      "operationId": "customerPassword.confirmRecovery",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "POST /api/auth/password-recovery/request": {
+      "operationId": "customerPassword.requestRecovery",
+      "complete": true,
+      "responses": {
+        "202": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "POST /api/auth/refresh": {
+      "operationId": "customerSession.refresh",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "minLength": 1
+              },
+              "accessToken": {
+                "type": "string",
+                "minLength": 1
+              },
+              "refreshToken": {
+                "type": "string",
+                "minLength": 32
+              },
+              "session": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ACTIVE",
+                      "REVOKED",
+                      "EXPIRED"
+                    ]
+                  },
+                  "expiresAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "lastSeenAt": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "current": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "id",
+                  "status",
+                  "expiresAt",
+                  "lastSeenAt",
+                  "createdAt",
+                  "current"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "token",
+              "accessToken",
+              "refreshToken",
+              "session"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/auth/sessions": {
+      "operationId": "customerSession.list",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "sessions": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE",
+                        "REVOKED",
+                        "EXPIRED"
+                      ]
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "lastSeenAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "current": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "expiresAt",
+                    "lastSeenAt",
+                    "createdAt",
+                    "current"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "sessions"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "POST /api/auth/sessions/{sessionId}/revoke": {
+      "operationId": "customerSession.revoke",
+      "complete": true,
+      "responses": {
+        "204": {
+          "empty": true,
+          "jsonSchema": null,
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
     }
   }
 }

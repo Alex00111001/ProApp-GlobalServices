@@ -58,10 +58,16 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
       }
     }
     const responses = {};
+    for (const [status, response] of Object.entries(route.responseAuthority?.responses || {})) {
+      responses[status] = response.empty
+        ? { description: 'No content' }
+        : { description: 'Runtime-authoritative serialized response', content: { 'application/json': { schema: cleanSchema(response.jsonSchema) } },
+          'x-homeservices-response-parity': response.wireParity };
+    }
     for (const response of route.response) for (const status of response.statuses) {
       const key = String(status);
       if (Number(status) >= 400) responses[key] = errorResponse;
-      else {
+      else if (!responses[key]) {
         const fields = [...new Set([...(responses[key]?.['x-observed-fields'] || []), ...response.fields])].sort();
         responses[key] = { description: 'Observed runtime response', 'x-observed-fields': fields,
           content: { 'application/json': { schema: successSchema(fields) } } };
@@ -98,7 +104,7 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
     'x-homeservices-completeness': {
       unresolvedConsumerCalls: inventoryDocument.consumers.filter((call) => call.status !== 'PATH_METHOD_MATCH').length,
       unprovenWireSchemas: Object.values(inventoryDocument.schemas).filter((schema) => schema.wireParity !== 'STRUCTURAL').length,
-      operationsWithoutCompleteResponseSchema: inventoryDocument.routes.filter(supported).filter((route) => route.response.some((response) => !response.completeSchema)).length,
+      operationsWithoutCompleteResponseSchema: inventoryDocument.routes.filter(supported).filter((route) => !route.responseAuthority?.complete).length,
     },
   };
 }

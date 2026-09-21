@@ -26,6 +26,10 @@ test('inventory is deterministic and classifies mounted internal, webhook, admin
   assert.equal(first.routes.find((r) => r.path === '/api/v1/markets').classification, 'CANONICAL_V1');
   const serialized = serialize(first);
   assert.doesNotMatch(serialized, /(?:postgres(?:ql)?:\/\/|[A-Z]:\\|sk_live_|sk_test_|DATABASE_URL|JWT_SECRET)/);
+  const refresh = first.routes.find((r) => r.method === 'POST' && r.path === '/api/auth/refresh');
+  assert.equal(refresh.responseAuthority.operationId, 'customerSession.refresh');
+  assert.equal(refresh.responseAuthority.complete, true);
+  assert.equal(refresh.responseAuthority.responses['200'].wireParity, 'RUNTIME_AUTHORITATIVE');
 });
 
 test('source inventory matches real Express router registrations including compatibility method aliases', () => {
@@ -100,6 +104,7 @@ test('OpenAPI 3.1 candidate is source-derived, safe, and refuses to claim public
   assert.ok(contract.paths['/api/v1/markets']?.get);
   assert.ok(contract.paths['/api/admin/audit-logs']?.get);
   assert.ok(contract.paths['/api/payments/webhook']?.post);
+  assert.equal(contract.paths['/api/auth/refresh'].post.responses['200']['x-homeservices-response-parity'], 'RUNTIME_AUTHORITATIVE');
   const serialized = JSON.stringify(contract);
   assert.doesNotMatch(serialized, /postgres(?:ql)?:\/\//i);
   assert.doesNotMatch(serialized, /[A-Z][A-Z0-9_]*(?:SECRET|TOKEN|PASSWORD|DATABASE_URL)/);

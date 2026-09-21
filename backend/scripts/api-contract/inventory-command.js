@@ -3,13 +3,16 @@ const path = require('node:path');
 const { ROOT, inventory, sourceFingerprint } = require('./source-inventory');
 const { consumerInventory } = require('./consumer-inventory');
 const { schemaCatalog } = require('./schema-catalog');
+const { responseCatalog } = require('./response-catalog');
 
 function buildInventory() {
   const routes = inventory();
+  const responseContracts = responseCatalog(routes);
+  for (const route of routes) route.responseAuthority = responseContracts[`${route.method} ${route.path}`] || null;
   const consumers = consumerInventory(routes);
   for (const route of routes) route.consumers = [...new Set(consumers.filter((call) => call.operation === `${route.method} ${route.path}`).map((call) => call.consumer))].sort();
   return { formatVersion: 1, status: 'AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI',
-    sourceFingerprint: sourceFingerprint(), routes, consumers, schemas: schemaCatalog(routes) };
+    sourceFingerprint: sourceFingerprint(), routes, consumers, schemas: schemaCatalog(routes), responseContracts };
 }
 const serialize = (document) => `${JSON.stringify(document, null, 2)}\n`;
 function main(args = process.argv.slice(2)) {
@@ -34,6 +37,7 @@ function main(args = process.argv.slice(2)) {
     unresolvedConsumers: document.consumers.filter((c) => c.status !== 'PATH_METHOD_MATCH').length,
     schemaBindings: Object.keys(document.schemas).length,
     unprovenWireSchemas: Object.values(document.schemas).filter((s) => s.wireParity !== 'STRUCTURAL').length,
+    completeResponseContracts: Object.values(document.responseContracts).filter((contract) => contract.complete).length,
     output: 'docs/api/route-inventory.v1.json', openApiPublication: 'BLOCKED_PENDING_COMPLETE_PARITY',
   }));
 }

@@ -443,10 +443,7 @@
           "200": {
             "description": "Observed runtime response",
             "x-observed-fields": [
-              "code",
-              "correlationId",
               "document",
-              "error",
               "message"
             ],
             "content": {
@@ -454,17 +451,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": {},
-                    "correlationId": {},
                     "document": {},
-                    "error": {},
                     "message": {}
                   },
                   "required": [
-                    "code",
-                    "correlationId",
                     "document",
-                    "error",
                     "message"
                   ],
                   "additionalProperties": true,
@@ -557,10 +548,7 @@
           "200": {
             "description": "Observed runtime response",
             "x-observed-fields": [
-              "code",
-              "correlationId",
               "document",
-              "error",
               "message"
             ],
             "content": {
@@ -568,17 +556,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": {},
-                    "correlationId": {},
                     "document": {},
-                    "error": {},
                     "message": {}
                   },
                   "required": [
-                    "code",
-                    "correlationId",
                     "document",
-                    "error",
                     "message"
                   ],
                   "additionalProperties": true,
@@ -2885,25 +2867,24 @@
         },
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "message"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {}
+                    "message": {
+                      "type": "string"
+                    }
                   },
                   "required": [
                     "message"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "400": {
             "description": "Safe error envelope",
@@ -2938,7 +2919,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(authResponses.changePassword)"
         ],
         "x-homeservices-consumers": [
           "Customer mobile"
@@ -2953,7 +2935,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 18
+          "line": 20
         }
       }
     },
@@ -2990,25 +2972,25 @@
         },
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "verified"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "verified": {}
+                    "verified": {
+                      "type": "boolean",
+                      "const": true
+                    }
                   },
                   "required": [
                     "verified"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -3023,7 +3005,8 @@
         },
         "x-homeservices-auth": "PUBLIC",
         "x-homeservices-middleware": [
-          "verificationLimiter"
+          "verificationLimiter",
+          "responseContract(authResponses.confirmEmailVerification)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/auth.controller.js",
@@ -3038,7 +3021,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 13
+          "line": 15
         }
       }
     },
@@ -3057,28 +3040,28 @@
         "parameters": [],
         "responses": {
           "202": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "accepted",
-              "alreadyVerified"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accepted": {},
-                    "alreadyVerified": {}
+                    "accepted": {
+                      "type": "boolean"
+                    },
+                    "alreadyVerified": {
+                      "type": "boolean"
+                    }
                   },
                   "required": [
                     "accepted",
                     "alreadyVerified"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -3094,7 +3077,8 @@
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
           "verificationLimiter",
-          "authenticate"
+          "authenticate",
+          "responseContract(authResponses.requestEmailVerification)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/auth.controller.js",
@@ -3109,7 +3093,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 19
+          "line": 21
         }
       }
     },
@@ -3239,7 +3223,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 9
+          "line": 11
         }
       }
     },
@@ -3258,19 +3242,7 @@
         "parameters": [],
         "responses": {
           "204": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
-                }
-              }
-            }
+            "description": "No content"
           },
           "409": {
             "description": "Safe error envelope",
@@ -3295,7 +3267,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(authResponses.logout)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/auth.controller.js",
@@ -3308,7 +3281,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 20
+          "line": 22
         }
       }
     },
@@ -3351,25 +3324,24 @@
         },
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "message"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {}
+                    "message": {
+                      "type": "string"
+                    }
                   },
                   "required": [
                     "message"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -3384,7 +3356,8 @@
         },
         "x-homeservices-auth": "PUBLIC",
         "x-homeservices-middleware": [
-          "recoveryLimiter"
+          "recoveryLimiter",
+          "responseContract(authResponses.confirmPasswordRecovery)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/auth.controller.js",
@@ -3399,7 +3372,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 12
+          "line": 14
         }
       }
     },
@@ -3444,19 +3417,24 @@
         },
         "responses": {
           "202": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "400": {
             "description": "Safe error envelope",
@@ -3481,7 +3459,8 @@
         },
         "x-homeservices-auth": "PUBLIC",
         "x-homeservices-middleware": [
-          "recoveryLimiter"
+          "recoveryLimiter",
+          "responseContract(authResponses.requestPasswordRecovery)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/auth.controller.js",
@@ -3496,7 +3475,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 11
+          "line": 13
         }
       }
     },
@@ -3577,7 +3556,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 16
+          "line": 18
         }
       },
       "put": {
@@ -3706,7 +3685,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 17
+          "line": 19
         }
       }
     },
@@ -3743,34 +3722,88 @@
         },
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "accessToken",
-              "refreshToken",
-              "session",
-              "token"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accessToken": {},
-                    "refreshToken": {},
-                    "session": {},
-                    "token": {}
+                    "token": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "accessToken": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "minLength": 32
+                    },
+                    "session": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ACTIVE",
+                            "REVOKED",
+                            "EXPIRED"
+                          ]
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "lastSeenAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "current": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "status",
+                        "expiresAt",
+                        "lastSeenAt",
+                        "createdAt",
+                        "current"
+                      ],
+                      "additionalProperties": false
+                    }
                   },
                   "required": [
+                    "token",
                     "accessToken",
                     "refreshToken",
-                    "session",
-                    "token"
+                    "session"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -3784,7 +3817,9 @@
           }
         },
         "x-homeservices-auth": "PUBLIC",
-        "x-homeservices-middleware": [],
+        "x-homeservices-middleware": [
+          "responseContract(authResponses.refresh)"
+        ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/auth.controller.js",
         "x-homeservices-rate-limit": {
@@ -3796,7 +3831,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 10
+          "line": 12
         }
       }
     },
@@ -4083,7 +4118,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 8
+          "line": 10
         }
       }
     },
@@ -4102,25 +4137,77 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "sessions"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "sessions": {}
+                    "sessions": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "ACTIVE",
+                              "REVOKED",
+                              "EXPIRED"
+                            ]
+                          },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          "lastSeenAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          "current": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "status",
+                          "expiresAt",
+                          "lastSeenAt",
+                          "createdAt",
+                          "current"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
                   },
                   "required": [
                     "sessions"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "409": {
             "description": "Safe error envelope",
@@ -4145,7 +4232,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(authResponses.listSessions)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/auth.controller.js",
@@ -4158,7 +4246,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 21
+          "line": 23
         }
       }
     },
@@ -4189,19 +4277,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
-                }
-              }
-            }
+            "description": "No content"
           },
           "400": {
             "description": "Safe error envelope",
@@ -4236,7 +4312,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(authResponses.revokeSession)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/auth.controller.js",
@@ -4249,7 +4326,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/auth.routes.js",
-          "line": 22
+          "line": 24
         }
       }
     },
@@ -4362,10 +4439,7 @@
             "description": "Observed runtime response",
             "x-observed-fields": [
               "booking",
-              "code",
-              "correlationId",
               "duplicate",
-              "error",
               "message"
             ],
             "content": {
@@ -4374,18 +4448,12 @@
                   "type": "object",
                   "properties": {
                     "booking": {},
-                    "code": {},
-                    "correlationId": {},
                     "duplicate": {},
-                    "error": {},
                     "message": {}
                   },
                   "required": [
                     "booking",
-                    "code",
-                    "correlationId",
                     "duplicate",
-                    "error",
                     "message"
                   ],
                   "additionalProperties": true,
@@ -4624,7 +4692,6 @@
             "x-observed-fields": [
               "booking",
               "duplicate",
-              "error",
               "message",
               "refundRequest"
             ],
@@ -4635,14 +4702,12 @@
                   "properties": {
                     "booking": {},
                     "duplicate": {},
-                    "error": {},
                     "message": {},
                     "refundRequest": {}
                   },
                   "required": [
                     "booking",
                     "duplicate",
-                    "error",
                     "message",
                     "refundRequest"
                   ],
@@ -4744,10 +4809,7 @@
             "description": "Observed runtime response",
             "x-observed-fields": [
               "booking",
-              "code",
-              "correlationId",
               "duplicate",
-              "error",
               "message",
               "payout"
             ],
@@ -4757,19 +4819,13 @@
                   "type": "object",
                   "properties": {
                     "booking": {},
-                    "code": {},
-                    "correlationId": {},
                     "duplicate": {},
-                    "error": {},
                     "message": {},
                     "payout": {}
                   },
                   "required": [
                     "booking",
-                    "code",
-                    "correlationId",
                     "duplicate",
-                    "error",
                     "message",
                     "payout"
                   ],
@@ -4873,10 +4929,7 @@
             "description": "Observed runtime response",
             "x-observed-fields": [
               "booking",
-              "code",
-              "correlationId",
               "duplicate",
-              "error",
               "message"
             ],
             "content": {
@@ -4885,18 +4938,12 @@
                   "type": "object",
                   "properties": {
                     "booking": {},
-                    "code": {},
-                    "correlationId": {},
                     "duplicate": {},
-                    "error": {},
                     "message": {}
                   },
                   "required": [
                     "booking",
-                    "code",
-                    "correlationId",
                     "duplicate",
-                    "error",
                     "message"
                   ],
                   "additionalProperties": true,
@@ -5021,10 +5068,7 @@
             "description": "Observed runtime response",
             "x-observed-fields": [
               "booking",
-              "code",
-              "correlationId",
               "duplicate",
-              "error",
               "message"
             ],
             "content": {
@@ -5033,18 +5077,12 @@
                   "type": "object",
                   "properties": {
                     "booking": {},
-                    "code": {},
-                    "correlationId": {},
                     "duplicate": {},
-                    "error": {},
                     "message": {}
                   },
                   "required": [
                     "booking",
-                    "code",
-                    "correlationId",
                     "duplicate",
-                    "error",
                     "message"
                   ],
                   "additionalProperties": true,
@@ -5146,10 +5184,7 @@
             "description": "Observed runtime response",
             "x-observed-fields": [
               "booking",
-              "code",
-              "correlationId",
               "duplicate",
-              "error",
               "message"
             ],
             "content": {
@@ -5158,18 +5193,12 @@
                   "type": "object",
                   "properties": {
                     "booking": {},
-                    "code": {},
-                    "correlationId": {},
                     "duplicate": {},
-                    "error": {},
                     "message": {}
                   },
                   "required": [
                     "booking",
-                    "code",
-                    "correlationId",
                     "duplicate",
-                    "error",
                     "message"
                   ],
                   "additionalProperties": true,
@@ -7559,7 +7588,6 @@
               "amount",
               "clientSecret",
               "currency",
-              "message",
               "paymentIntentId",
               "success"
             ],
@@ -7571,7 +7599,6 @@
                     "amount": {},
                     "clientSecret": {},
                     "currency": {},
-                    "message": {},
                     "paymentIntentId": {},
                     "success": {}
                   },
@@ -7579,7 +7606,6 @@
                     "amount",
                     "clientSecret",
                     "currency",
-                    "message",
                     "paymentIntentId",
                     "success"
                   ],
@@ -26358,6 +26384,6 @@
   "x-homeservices-completeness": {
     "unresolvedConsumerCalls": 0,
     "unprovenWireSchemas": 242,
-    "operationsWithoutCompleteResponseSchema": 239
+    "operationsWithoutCompleteResponseSchema": 236
   }
 }
