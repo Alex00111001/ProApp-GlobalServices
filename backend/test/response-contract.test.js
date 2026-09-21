@@ -7,6 +7,7 @@ const { z } = require('zod');
 const { createGlobalErrorHandler } = require('../src/shared/http/global-error-handler');
 const { errorContract } = require('../src/shared/http/error-contract');
 const { defineResponseContract, outputObject, responseContract } = require('../src/shared/http/response-contract');
+const { catalogSchemas } = require('../src/contracts/catalog.responses');
 
 const request = async (handler) => {
   const app = express();
@@ -51,4 +52,17 @@ test('empty 204 responses are explicitly contracted', async () => {
   const response = await request((req, res) => res.status(204).send());
   assert.equal(response.status, 204);
   assert.equal(await response.text(), '');
+});
+
+test('public catalog serialization removes professional payment and private review fields', () => {
+  const safe = catalogSchemas.publicProfessional.parse({
+    id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', userId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', status: 'APPROVED',
+    bio: null, yearsOfExperience: 5, hourlyRate: '25.00', serviceRadius: 10, latitude: 1, longitude: 2,
+    totalBookings: 3, averageRating: 4.5, totalReviews: 2, verifiedAt: null,
+    createdAt: '2026-09-21T00:00:00.000Z', updatedAt: '2026-09-21T00:00:00.000Z',
+    stripeAccountId: 'acct_private', totalEarnings: '999.00', rejectedReason: 'private',
+  });
+  assert.equal(safe.stripeAccountId, undefined);
+  assert.equal(safe.totalEarnings, undefined);
+  assert.equal(safe.rejectedReason, undefined);
 });
