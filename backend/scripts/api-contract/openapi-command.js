@@ -53,7 +53,13 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
     return rewrite(schema);
   };
   const paths = {};
-  for (const route of inventoryDocument.routes.filter(supported)) {
+  const publishedRoutes = inventoryDocument.routes.filter(supported);
+  const inputBindings = publishedRoutes.flatMap((route) => route.validation.map((validation) => ({
+    operation: `${route.method} ${route.path}`,
+    key: `${route.handler.file}#${validation.schema}`,
+  })));
+  const unresolvedInputBindings = inputBindings.filter((binding) => inventoryDocument.schemas[binding.key]?.wireParity !== 'STRUCTURAL');
+  for (const route of publishedRoutes) {
     const parameters = [];
     let requestBody;
     for (const name of [...route.path.matchAll(/\{([^}]+)\}/g)].map((match) => match[1])) {
@@ -125,7 +131,10 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
     'x-homeservices-contract-status': 'CANDIDATE_NOT_PUBLISHED',
     'x-homeservices-completeness': {
       unresolvedConsumerCalls: inventoryDocument.consumers.filter((call) => call.status !== 'PATH_METHOD_MATCH').length,
-      unprovenWireSchemas: Object.values(inventoryDocument.schemas).filter((schema) => schema.wireParity !== 'STRUCTURAL').length,
+      routeInputBindings: inputBindings.length,
+      uniqueRouteInputSchemas: new Set(inputBindings.map((binding) => binding.key)).size,
+      unresolvedRouteInputProjections: unresolvedInputBindings.length,
+      unprovenCatalogSchemas: Object.values(inventoryDocument.schemas).filter((schema) => schema.wireParity !== 'STRUCTURAL').length,
       operationsWithoutCompleteResponseSchema: inventoryDocument.routes.filter(supported).filter((route) => !route.responseAuthority?.complete).length,
     },
   };

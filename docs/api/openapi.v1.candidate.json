@@ -29269,7 +29269,10 @@
   "x-homeservices-contract-status": "CANDIDATE_NOT_PUBLISHED",
   "x-homeservices-completeness": {
     "unresolvedConsumerCalls": 0,
-    "unprovenWireSchemas": 242,
+    "routeInputBindings": 247,
+    "uniqueRouteInputSchemas": 176,
+    "unresolvedRouteInputProjections": 142,
+    "unprovenCatalogSchemas": 242,
     "operationsWithoutCompleteResponseSchema": 215
   }
 }

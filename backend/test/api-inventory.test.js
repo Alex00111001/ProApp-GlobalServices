@@ -98,7 +98,11 @@ test('OpenAPI 3.1 candidate is source-derived, safe, and refuses to claim public
   assert.equal(contract.openapi, '3.1.0');
   assert.equal(contract['x-homeservices-contract-status'], 'CANDIDATE_NOT_PUBLISHED');
   assert.equal(contract['x-homeservices-completeness'].unresolvedConsumerCalls, 0);
-  assert.ok(contract['x-homeservices-completeness'].unprovenWireSchemas > 0);
+  assert.ok(contract['x-homeservices-completeness'].unresolvedRouteInputProjections > 0);
+  assert.ok(contract['x-homeservices-completeness'].unprovenCatalogSchemas
+    >= contract['x-homeservices-completeness'].unresolvedRouteInputProjections);
+  assert.ok(contract['x-homeservices-completeness'].routeInputBindings
+    >= contract['x-homeservices-completeness'].uniqueRouteInputSchemas);
   assert.ok(contract['x-homeservices-completeness'].operationsWithoutCompleteResponseSchema > 0);
   assert.equal(contract.paths['/health'], undefined);
   assert.ok(contract.paths['/api/v1/markets']?.get);
