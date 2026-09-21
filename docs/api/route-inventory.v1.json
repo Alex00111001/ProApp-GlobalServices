@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "5670b2a4a4655fa28622a835c9d93722d10f45e82179a2fca83e5a84948d87b0",
+  "sourceFingerprint": "46e9895ad2e8e631eed7cfb2353a4b535b8eb60e537e176e04e1da44734ac154",
   "routes": [
     {
       "method": "GET",
@@ -5510,7 +5510,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(notificationResponses.list)"
       ],
       "rateLimit": {
         "global": {
@@ -5521,7 +5522,7 @@
       },
       "registration": {
         "file": "backend/src/routes/notification.routes.js",
-        "line": 10
+        "line": 12
       },
       "handler": {
         "file": "backend/src/controllers/notification.controller.js",
@@ -5556,7 +5557,234 @@
       "ordering": [
         "{ createdAt: 'desc' }"
       ],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "notifications.list",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "notifications": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "userId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "bookingId": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "BOOKING_REQUEST",
+                          "BOOKING_CONFIRMED",
+                          "BOOKING_CANCELLED",
+                          "PAYMENT_RECEIVED",
+                          "REMINDER",
+                          "PROMOTION",
+                          "SYSTEM"
+                        ]
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/__schema0"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "isRead": {
+                        "type": "boolean"
+                      },
+                      "readAt": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "booking": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "PENDING",
+                                  "CONFIRMED",
+                                  "IN_PROGRESS",
+                                  "COMPLETED",
+                                  "CANCELLED",
+                                  "NO_SHOW"
+                                ]
+                              },
+                              "scheduledDate": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "status",
+                              "scheduledDate"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "userId",
+                      "bookingId",
+                      "type",
+                      "title",
+                      "message",
+                      "data",
+                      "isRead",
+                      "readAt",
+                      "createdAt"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "unreadCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "pagination": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "pages": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "page",
+                    "limit",
+                    "total",
+                    "pages"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "success",
+                "notifications",
+                "unreadCount",
+                "pagination"
+              ],
+              "additionalProperties": false,
+              "$defs": {
+                "__schema0": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Customer mobile"
       ]
@@ -5567,7 +5795,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(notificationResponses.delete)"
       ],
       "rateLimit": {
         "global": {
@@ -5578,7 +5807,7 @@
       },
       "registration": {
         "file": "backend/src/routes/notification.routes.js",
-        "line": 21
+        "line": 23
       },
       "handler": {
         "file": "backend/src/controllers/notification.controller.js",
@@ -5631,7 +5860,35 @@
         "req.user.id"
       ],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "notifications.delete",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "success",
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -5640,7 +5897,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(notificationResponses.markReadPatch)"
       ],
       "rateLimit": {
         "global": {
@@ -5651,7 +5909,7 @@
       },
       "registration": {
         "file": "backend/src/routes/notification.routes.js",
-        "line": 14
+        "line": 16
       },
       "handler": {
         "file": "backend/src/controllers/notification.controller.js",
@@ -5704,7 +5962,192 @@
         "req.user.id"
       ],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "notifications.markRead.patch",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "notification": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "bookingId": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "BOOKING_REQUEST",
+                        "BOOKING_CONFIRMED",
+                        "BOOKING_CANCELLED",
+                        "PAYMENT_RECEIVED",
+                        "REMINDER",
+                        "PROMOTION",
+                        "SYSTEM"
+                      ]
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/__schema0"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "isRead": {
+                      "type": "boolean"
+                    },
+                    "readAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "booking": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "PENDING",
+                                "CONFIRMED",
+                                "IN_PROGRESS",
+                                "COMPLETED",
+                                "CANCELLED",
+                                "NO_SHOW"
+                              ]
+                            },
+                            "scheduledDate": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "status",
+                            "scheduledDate"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "bookingId",
+                    "type",
+                    "title",
+                    "message",
+                    "data",
+                    "isRead",
+                    "readAt",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "success",
+                "notification"
+              ],
+              "additionalProperties": false,
+              "$defs": {
+                "__schema0": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Customer mobile"
       ]
@@ -5715,7 +6158,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(notificationResponses.markReadPut)"
       ],
       "rateLimit": {
         "global": {
@@ -5726,7 +6170,7 @@
       },
       "registration": {
         "file": "backend/src/routes/notification.routes.js",
-        "line": 13
+        "line": 15
       },
       "handler": {
         "file": "backend/src/controllers/notification.controller.js",
@@ -5779,7 +6223,192 @@
         "req.user.id"
       ],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "notifications.markRead.put",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "notification": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "bookingId": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "BOOKING_REQUEST",
+                        "BOOKING_CONFIRMED",
+                        "BOOKING_CANCELLED",
+                        "PAYMENT_RECEIVED",
+                        "REMINDER",
+                        "PROMOTION",
+                        "SYSTEM"
+                      ]
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/__schema0"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "isRead": {
+                      "type": "boolean"
+                    },
+                    "readAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "booking": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "PENDING",
+                                "CONFIRMED",
+                                "IN_PROGRESS",
+                                "COMPLETED",
+                                "CANCELLED",
+                                "NO_SHOW"
+                              ]
+                            },
+                            "scheduledDate": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "status",
+                            "scheduledDate"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "bookingId",
+                    "type",
+                    "title",
+                    "message",
+                    "data",
+                    "isRead",
+                    "readAt",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "success",
+                "notification"
+              ],
+              "additionalProperties": false,
+              "$defs": {
+                "__schema0": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -5788,7 +6417,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(notificationResponses.markAllReadPatch)"
       ],
       "rateLimit": {
         "global": {
@@ -5799,7 +6429,7 @@
       },
       "registration": {
         "file": "backend/src/routes/notification.routes.js",
-        "line": 18
+        "line": 20
       },
       "handler": {
         "file": "backend/src/controllers/notification.controller.js",
@@ -5824,7 +6454,35 @@
         "req.user.id"
       ],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "notifications.markAllRead.patch",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "success",
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Customer mobile"
       ]
@@ -5835,7 +6493,8 @@
       "classification": "LEGACY_SUPPORTED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "responseContract(notificationResponses.markAllReadPut)"
       ],
       "rateLimit": {
         "global": {
@@ -5846,7 +6505,7 @@
       },
       "registration": {
         "file": "backend/src/routes/notification.routes.js",
-        "line": 17
+        "line": 19
       },
       "handler": {
         "file": "backend/src/controllers/notification.controller.js",
@@ -5871,7 +6530,35 @@
         "req.user.id"
       ],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "notifications.markAllRead.put",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "success",
+                "message"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -31081,6 +31768,693 @@
             },
             "required": [
               "service"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/notifications": {
+      "operationId": "notifications.list",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "const": true
+              },
+              "notifications": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "bookingId": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "BOOKING_REQUEST",
+                        "BOOKING_CONFIRMED",
+                        "BOOKING_CANCELLED",
+                        "PAYMENT_RECEIVED",
+                        "REMINDER",
+                        "PROMOTION",
+                        "SYSTEM"
+                      ]
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/__schema0"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "isRead": {
+                      "type": "boolean"
+                    },
+                    "readAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "booking": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "PENDING",
+                                "CONFIRMED",
+                                "IN_PROGRESS",
+                                "COMPLETED",
+                                "CANCELLED",
+                                "NO_SHOW"
+                              ]
+                            },
+                            "scheduledDate": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "status",
+                            "scheduledDate"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "bookingId",
+                    "type",
+                    "title",
+                    "message",
+                    "data",
+                    "isRead",
+                    "readAt",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "unreadCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "total": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "pages": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "page",
+                  "limit",
+                  "total",
+                  "pages"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "success",
+              "notifications",
+              "unreadCount",
+              "pagination"
+            ],
+            "additionalProperties": false,
+            "$defs": {
+              "__schema0": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "DELETE /api/notifications/{notificationId}": {
+      "operationId": "notifications.delete",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "const": true
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "success",
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "PATCH /api/notifications/{notificationId}/read": {
+      "operationId": "notifications.markRead.patch",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "const": true
+              },
+              "notification": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "bookingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "BOOKING_REQUEST",
+                      "BOOKING_CONFIRMED",
+                      "BOOKING_CANCELLED",
+                      "PAYMENT_RECEIVED",
+                      "REMINDER",
+                      "PROMOTION",
+                      "SYSTEM"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/__schema0"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "isRead": {
+                    "type": "boolean"
+                  },
+                  "readAt": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "booking": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "CONFIRMED",
+                              "IN_PROGRESS",
+                              "COMPLETED",
+                              "CANCELLED",
+                              "NO_SHOW"
+                            ]
+                          },
+                          "scheduledDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "status",
+                          "scheduledDate"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "userId",
+                  "bookingId",
+                  "type",
+                  "title",
+                  "message",
+                  "data",
+                  "isRead",
+                  "readAt",
+                  "createdAt"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "success",
+              "notification"
+            ],
+            "additionalProperties": false,
+            "$defs": {
+              "__schema0": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "PUT /api/notifications/{notificationId}/read": {
+      "operationId": "notifications.markRead.put",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "const": true
+              },
+              "notification": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "bookingId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "BOOKING_REQUEST",
+                      "BOOKING_CONFIRMED",
+                      "BOOKING_CANCELLED",
+                      "PAYMENT_RECEIVED",
+                      "REMINDER",
+                      "PROMOTION",
+                      "SYSTEM"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/__schema0"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "isRead": {
+                    "type": "boolean"
+                  },
+                  "readAt": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "booking": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "CONFIRMED",
+                              "IN_PROGRESS",
+                              "COMPLETED",
+                              "CANCELLED",
+                              "NO_SHOW"
+                            ]
+                          },
+                          "scheduledDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "status",
+                          "scheduledDate"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "userId",
+                  "bookingId",
+                  "type",
+                  "title",
+                  "message",
+                  "data",
+                  "isRead",
+                  "readAt",
+                  "createdAt"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "success",
+              "notification"
+            ],
+            "additionalProperties": false,
+            "$defs": {
+              "__schema0": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "PATCH /api/notifications/read-all": {
+      "operationId": "notifications.markAllRead.patch",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "const": true
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "success",
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "PUT /api/notifications/read-all": {
+      "operationId": "notifications.markAllRead.put",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "const": true
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "success",
+              "message"
             ],
             "additionalProperties": false
           },

@@ -34,6 +34,24 @@ const successSchema = (fields) => ({ type: 'object', properties: Object.fromEntr
 function buildOpenApi(inventoryDocument = buildInventory()) {
   const safeErrorProjection = projectSchema(safeErrorSchema, 'output');
   if (!safeErrorProjection.jsonSchema || safeErrorProjection.gaps.length) throw new Error('Safe error schema is not completely projectable.');
+  const componentSchemas = { SafeError: cleanSchema(safeErrorProjection.jsonSchema) };
+  const externalizeDefinitions = (input, prefix) => {
+    const schema = cleanSchema(input);
+    const definitions = schema.$defs || {};
+    const names = Object.fromEntries(Object.keys(definitions).map((name) => [name, `${prefix}_${name}`.replace(/[^A-Za-z0-9._-]/g, '_')]));
+    const rewrite = (value) => {
+      if (Array.isArray(value)) return value.map(rewrite);
+      if (!value || typeof value !== 'object') return value;
+      if (typeof value.$ref === 'string' && value.$ref.startsWith('#/$defs/')) {
+        const name = value.$ref.slice('#/$defs/'.length);
+        if (!names[name]) throw new Error(`Unresolved local response schema definition: ${name}.`);
+        return { ...value, $ref: `#/components/schemas/${names[name]}` };
+      }
+      return Object.fromEntries(Object.entries(value).filter(([key]) => key !== '$defs').map(([key, item]) => [key, rewrite(item)]));
+    };
+    for (const [name, definition] of Object.entries(definitions)) componentSchemas[names[name]] = rewrite(definition);
+    return rewrite(schema);
+  };
   const paths = {};
   for (const route of inventoryDocument.routes.filter(supported)) {
     const parameters = [];
@@ -65,7 +83,9 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
     for (const [status, response] of Object.entries(route.responseAuthority?.responses || {})) {
       responses[status] = response.empty
         ? { description: 'No content' }
-        : { description: 'Runtime-authoritative serialized response', content: { 'application/json': { schema: cleanSchema(response.jsonSchema) } },
+        : { description: 'Runtime-authoritative serialized response', content: { 'application/json': {
+          schema: externalizeDefinitions(response.jsonSchema, `${route.responseAuthority.operationId}_${status}`),
+        } },
           'x-homeservices-response-parity': response.wireParity };
     }
     for (const response of route.response) for (const status of response.statuses) {
@@ -101,7 +121,7 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
       providerSignature: { type: 'apiKey', in: 'header', name: 'stripe-signature' },
       adminRefreshCookie: { type: 'apiKey', in: 'cookie', name: 'admin_refresh' },
       adminCsrfHeader: { type: 'apiKey', in: 'header', name: 'x-admin-csrf-token' },
-    }, schemas: { SafeError: cleanSchema(safeErrorProjection.jsonSchema) } },
+    }, schemas: componentSchemas },
     'x-homeservices-contract-status': 'CANDIDATE_NOT_PUBLISHED',
     'x-homeservices-completeness': {
       unresolvedConsumerCalls: inventoryDocument.consumers.filter((call) => call.status !== 'PATH_METHOD_MATCH').length,

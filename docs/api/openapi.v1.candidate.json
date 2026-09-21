@@ -7851,34 +7851,195 @@
         ],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "notifications",
-              "pagination",
-              "success",
-              "unreadCount"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "notifications": {},
-                    "pagination": {},
-                    "success": {},
-                    "unreadCount": {}
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "notifications": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "userId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "bookingId": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "BOOKING_REQUEST",
+                              "BOOKING_CONFIRMED",
+                              "BOOKING_CANCELLED",
+                              "PAYMENT_RECEIVED",
+                              "REMINDER",
+                              "PROMOTION",
+                              "SYSTEM"
+                            ]
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "data": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/components/schemas/notifications.list_200___schema0"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "isRead": {
+                            "type": "boolean"
+                          },
+                          "readAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          "booking": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                  },
+                                  "status": {
+                                    "type": "string",
+                                    "enum": [
+                                      "PENDING",
+                                      "CONFIRMED",
+                                      "IN_PROGRESS",
+                                      "COMPLETED",
+                                      "CANCELLED",
+                                      "NO_SHOW"
+                                    ]
+                                  },
+                                  "scheduledDate": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "status",
+                                  "scheduledDate"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "userId",
+                          "bookingId",
+                          "type",
+                          "title",
+                          "message",
+                          "data",
+                          "isRead",
+                          "readAt",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "unreadCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "pages": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "limit",
+                        "total",
+                        "pages"
+                      ],
+                      "additionalProperties": false
+                    }
                   },
                   "required": [
-                    "notifications",
-                    "pagination",
                     "success",
-                    "unreadCount"
+                    "notifications",
+                    "unreadCount",
+                    "pagination"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -7893,7 +8054,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(notificationResponses.list)"
         ],
         "x-homeservices-consumers": [
           "Customer mobile"
@@ -7908,7 +8070,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/notification.routes.js",
-          "line": 10
+          "line": 12
         }
       }
     },
@@ -7938,28 +8100,29 @@
         ],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "message",
-              "success"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {},
-                    "success": {}
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
                   },
                   "required": [
-                    "message",
-                    "success"
+                    "success",
+                    "message"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "403": {
             "description": "Safe error envelope",
@@ -7994,7 +8157,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(notificationResponses.delete)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/notification.controller.js",
@@ -8007,7 +8171,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/notification.routes.js",
-          "line": 21
+          "line": 23
         }
       }
     },
@@ -8037,28 +8201,153 @@
         ],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "notification",
-              "success"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "notification": {},
-                    "success": {}
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "notification": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "userId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "bookingId": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "BOOKING_REQUEST",
+                            "BOOKING_CONFIRMED",
+                            "BOOKING_CANCELLED",
+                            "PAYMENT_RECEIVED",
+                            "REMINDER",
+                            "PROMOTION",
+                            "SYSTEM"
+                          ]
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/components/schemas/notifications.markRead.patch_200___schema0"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "isRead": {
+                          "type": "boolean"
+                        },
+                        "readAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "booking": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "status": {
+                                  "type": "string",
+                                  "enum": [
+                                    "PENDING",
+                                    "CONFIRMED",
+                                    "IN_PROGRESS",
+                                    "COMPLETED",
+                                    "CANCELLED",
+                                    "NO_SHOW"
+                                  ]
+                                },
+                                "scheduledDate": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "status",
+                                "scheduledDate"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "userId",
+                        "bookingId",
+                        "type",
+                        "title",
+                        "message",
+                        "data",
+                        "isRead",
+                        "readAt",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
                   },
                   "required": [
-                    "notification",
-                    "success"
+                    "success",
+                    "notification"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "403": {
             "description": "Safe error envelope",
@@ -8093,7 +8382,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(notificationResponses.markReadPatch)"
         ],
         "x-homeservices-consumers": [
           "Customer mobile"
@@ -8108,7 +8398,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/notification.routes.js",
-          "line": 14
+          "line": 16
         }
       },
       "put": {
@@ -8136,28 +8426,153 @@
         ],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "notification",
-              "success"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "notification": {},
-                    "success": {}
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "notification": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "userId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "bookingId": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "BOOKING_REQUEST",
+                            "BOOKING_CONFIRMED",
+                            "BOOKING_CANCELLED",
+                            "PAYMENT_RECEIVED",
+                            "REMINDER",
+                            "PROMOTION",
+                            "SYSTEM"
+                          ]
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/components/schemas/notifications.markRead.put_200___schema0"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "isRead": {
+                          "type": "boolean"
+                        },
+                        "readAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "booking": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid",
+                                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                },
+                                "status": {
+                                  "type": "string",
+                                  "enum": [
+                                    "PENDING",
+                                    "CONFIRMED",
+                                    "IN_PROGRESS",
+                                    "COMPLETED",
+                                    "CANCELLED",
+                                    "NO_SHOW"
+                                  ]
+                                },
+                                "scheduledDate": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "status",
+                                "scheduledDate"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "userId",
+                        "bookingId",
+                        "type",
+                        "title",
+                        "message",
+                        "data",
+                        "isRead",
+                        "readAt",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
                   },
                   "required": [
-                    "notification",
-                    "success"
+                    "success",
+                    "notification"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "403": {
             "description": "Safe error envelope",
@@ -8192,7 +8607,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(notificationResponses.markReadPut)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/notification.controller.js",
@@ -8205,7 +8621,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/notification.routes.js",
-          "line": 13
+          "line": 15
         }
       }
     },
@@ -8224,28 +8640,29 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "message",
-              "success"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {},
-                    "success": {}
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
                   },
                   "required": [
-                    "message",
-                    "success"
+                    "success",
+                    "message"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -8260,7 +8677,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(notificationResponses.markAllReadPatch)"
         ],
         "x-homeservices-consumers": [
           "Customer mobile"
@@ -8275,7 +8693,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/notification.routes.js",
-          "line": 18
+          "line": 20
         }
       },
       "put": {
@@ -8292,28 +8710,29 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "message",
-              "success"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {},
-                    "success": {}
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
                   },
                   "required": [
-                    "message",
-                    "success"
+                    "success",
+                    "message"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -8328,7 +8747,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "responseContract(notificationResponses.markAllReadPut)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/notification.controller.js",
@@ -8341,7 +8761,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/notification.routes.js",
-          "line": 17
+          "line": 19
         }
       }
     },
@@ -27377,6 +27797,99 @@
           "code"
         ],
         "additionalProperties": false
+      },
+      "notifications.list_200___schema0": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/notifications.list_200___schema0"
+            }
+          },
+          {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/notifications.list_200___schema0"
+            }
+          }
+        ]
+      },
+      "notifications.markRead.patch_200___schema0": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/notifications.markRead.patch_200___schema0"
+            }
+          },
+          {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/notifications.markRead.patch_200___schema0"
+            }
+          }
+        ]
+      },
+      "notifications.markRead.put_200___schema0": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/notifications.markRead.put_200___schema0"
+            }
+          },
+          {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/notifications.markRead.put_200___schema0"
+            }
+          }
+        ]
       }
     }
   },
@@ -27384,6 +27897,6 @@
   "x-homeservices-completeness": {
     "unresolvedConsumerCalls": 0,
     "unprovenWireSchemas": 242,
-    "operationsWithoutCompleteResponseSchema": 230
+    "operationsWithoutCompleteResponseSchema": 224
   }
 }

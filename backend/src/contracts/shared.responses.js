@@ -11,5 +11,8 @@ const customerSession = outputObject({
   createdAt: dateTime,
   current: z.boolean(),
 });
+const pagination = outputObject({
+  page: z.number().int().min(1), limit: z.number().int().min(1), total: z.number().int().nonnegative(), pages: z.number().int().nonnegative(),
+});
 
-module.exports = { customerSession, dateTime, messageResponse };
+module.exports = { customerSession, dateTime, messageResponse, pagination };
