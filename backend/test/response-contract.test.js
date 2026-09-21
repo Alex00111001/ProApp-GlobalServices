@@ -9,6 +9,7 @@ const { errorContract } = require('../src/shared/http/error-contract');
 const { defineResponseContract, outputObject, responseContract } = require('../src/shared/http/response-contract');
 const { catalogSchemas } = require('../src/contracts/catalog.responses');
 const { favoriteSchemas } = require('../src/contracts/favorite.responses');
+const { experimentSchemas } = require('../src/contracts/experiment.responses');
 
 const request = async (handler) => {
   const app = express();
@@ -81,4 +82,24 @@ test('public catalog serialization removes professional payment and private revi
   assert.equal(safe.stripeAccountId, undefined);
   assert.equal(safe.totalEarnings, undefined);
   assert.equal(safe.rejectedReason, undefined);
+});
+
+test('experiment exposure DTO removes consent, allocation and tracing internals', () => {
+  const safe = experimentSchemas.exposure.parse({
+    id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    eventId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    assignmentId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+    versionId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+    variantId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+    consentDecisionId: 'ffffffff-ffff-4fff-8fff-ffffffffffff',
+    surface: 'booking.checkout', context: { placement: 'summary' },
+    requestId: 'private-request', correlationId: 'private-correlation', traceId: 'private-trace',
+    exposedAt: '2026-09-21T00:00:00.000Z',
+  });
+  assert.deepEqual(safe, {
+    id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    eventId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    assignmentId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+    surface: 'booking.checkout', context: { placement: 'summary' }, exposedAt: '2026-09-21T00:00:00.000Z',
+  });
 });
