@@ -41,7 +41,10 @@ Reglas del programa:
 
 1. No se marca una tarea `HECHO` por código generado, simulaciones, mocks aislados o relato manual.
 2. Toda tarea incluye implementación real, pruebas proporcionales al riesgo, documentación y rollback.
-3. CI debe ejecutar el commit exacto entregado; un CI histórico no acredita un commit nuevo.
+3. CI debe ejecutar el commit exacto entregado al cierre de cada bloque coherente; un CI histórico no
+   acredita un commit nuevo. Los pushes intermedios de `feature/**` usan verificación local enfocada y no
+   disparan Platform verification completa; el cierre requiere despacho manual `block-closure` sobre el
+   SHA final o CI automático del PR hacia `main`.
 4. Las integraciones se prueban con PostgreSQL efímero y, cuando aplique, proveedor sandbox/staging
    real. Los fakes sólo complementan, nunca sustituyen, la integración.
 5. Ninguna suite se debilita para acomodar una implementación defectuosa.

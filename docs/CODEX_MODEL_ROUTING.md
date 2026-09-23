@@ -218,6 +218,27 @@ Do not spend significant implementation effort before this classification for no
 6. For high-risk work, use Sol for design/review and Terra for implementation where practical.
 7. Record significant routing decisions in PR descriptions when a higher-tier model was required.
 
+### Verification cadence
+
+Verification must remain risk-proportionate, but the expensive full remote workflow is evidence for a
+coherent delivery block, not a substitute for local iteration. The required cadence is:
+
+1. Before each isolated change, run the focused test, contract check or syntax/type check that directly
+   exercises the changed behavior.
+2. Before committing a completed coherent block, run its affected workspace verification and every
+   generated-artifact freshness check it changes.
+3. At block closure, run the full local verification applicable to the changed surfaces, commit the final
+   evidence SHA, push it, then manually dispatch `Platform verification` with
+   `evidence_scope=block-closure` for that exact branch head. A PR into `main` also receives automatic
+   verification.
+4. Never mark a block complete until the remote result for its final SHA is successful. If a corrective
+   commit is necessary, it begins a new closure cycle; historical CI does not transfer.
+
+This reduces duplicate remote runs from intermediate feature-branch pushes without reducing unit,
+contract, integration, migration, dependency or secret-scan gates. Do not batch unrelated domains merely
+to save a run, and do not defer a security, financial, migration, public-contract or production-risk
+failure to block closure.
+
 ---
 
 ## 8. Phase-specific routing guidance

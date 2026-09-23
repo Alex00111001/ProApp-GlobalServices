@@ -2,11 +2,21 @@ name: Platform verification
 
 on:
   pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
-      - "feature/**"
   workflow_dispatch:
+    inputs:
+      evidence_scope:
+        description: "Reason for the exact-SHA verification run"
+        required: true
+        default: "block-closure"
+        type: choice
+        options:
+          - block-closure
+          - release-evidence
 
 permissions:
   contents: read
