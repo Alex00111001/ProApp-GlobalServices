@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - "ci/closure/**"
   workflow_dispatch:
     inputs:
       evidence_scope:

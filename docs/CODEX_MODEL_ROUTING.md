@@ -227,10 +227,11 @@ coherent delivery block, not a substitute for local iteration. The required cade
    exercises the changed behavior.
 2. Before committing a completed coherent block, run its affected workspace verification and every
    generated-artifact freshness check it changes.
-3. At block closure, run the full local verification applicable to the changed surfaces, commit the final
-   evidence SHA, push it, then manually dispatch `Platform verification` with
-   `evidence_scope=block-closure` for that exact branch head. A PR into `main` also receives automatic
-   verification.
+3. At block closure, run the full local verification applicable to the changed surfaces, commit and push
+   the final evidence SHA, then publish a temporary `ci/closure/<short-sha>` reference pointing to that
+   same SHA. It activates `Platform verification` exactly once without changing the delivery branch. A PR
+   into `main` also receives automatic verification. `workflow_dispatch` remains available for block
+   closure and release evidence once the trigger exists on the default branch.
 4. Never mark a block complete until the remote result for its final SHA is successful. If a corrective
    commit is necessary, it begins a new closure cycle; historical CI does not transfer.
 
