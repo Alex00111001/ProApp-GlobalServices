@@ -86,7 +86,9 @@ PRR-105 remains **PARCIAL**. Publication requires shared runtime-authoritative r
 
 ## Public-content response-authority tranche, 2026-09-23
 
-- Implementation SHA: pending commit.
+- Implementation SHA: `25969c38623ebb935d59bb552e43ad4697cb669f`.
+- Evidence SHA: `25969c38623ebb935d59bb552e43ad4697cb669f`; [Platform verification #81](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/35849897296): SUCCESS (1m55s).
+- Closure SHA: NONE — this is a partial response-authority tranche, not PRR-105 closure.
 - Scope: the three public-content operations (`content`, `sitemap`, `redirect`) now use explicit safe serializers and runtime-authoritative output schemas. The serializers admit only rendered public content, public sitemap fields and bounded redirect fields; internal review, persistence and snapshot fields are not projected.
 - Candidate remains `CANDIDATE_NOT_PUBLISHED` / `1.0.0-candidate`; this change creates no publication, market activation, migration or feature activation authority.
 - Current executable counters before closure CI: 251 mounted operations; 245 candidate operations; 0 published operations; 0 unresolved consumer path/method calls; 142 unresolved route-input projections; 242 catalog schemas with non-structural wire parity; 210 operations without complete runtime-authoritative response schemas; 0 detected breaking changes.
