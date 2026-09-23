@@ -10,6 +10,7 @@ const { defineResponseContract, outputObject, responseContract } = require('../s
 const { catalogSchemas } = require('../src/contracts/catalog.responses');
 const { favoriteSchemas } = require('../src/contracts/favorite.responses');
 const { experimentSchemas } = require('../src/contracts/experiment.responses');
+const { publicContentResponses } = require('../src/contracts/public-content.responses');
 
 const request = async (handler) => {
   const app = express();
@@ -102,4 +103,25 @@ test('experiment exposure DTO removes consent, allocation and tracing internals'
     assignmentId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
     surface: 'booking.checkout', context: { placement: 'summary' }, exposedAt: '2026-09-21T00:00:00.000Z',
   });
+});
+
+test('public content serializers expose only the rendered page and sitemap contract', () => {
+  const page = publicContentResponses.content.responses[200];
+  const safePage = page.schema.parse(page.serialize({
+    key: 'home-cleaning', type: 'SERVICE_PAGE', marketCode: 'ES', locale: 'es-ES',
+    title: 'Home cleaning', summary: 'Reviewed public content.', body: [{ type: 'paragraph', text: 'Safe copy.' }],
+    seo: { title: 'Home cleaning', description: 'Reviewed public content.', canonical: 'https://public.example/es/es-es/service-page/home-cleaning', robots: 'index,follow', openGraph: { title: 'Home cleaning' }, structuredData: { '@type': 'Service' }, internalReview: 'do-not-publish' },
+    publishedAt: new Date('2026-09-23T00:00:00.000Z'), etag: 'digest', contentDigest: 'private', authorId: 'private-author',
+  }));
+  assert.equal(safePage.authorId, undefined);
+  assert.equal(safePage.seo.internalReview, undefined);
+  assert.equal(safePage.publishedAt, '2026-09-23T00:00:00.000Z');
+
+  const sitemap = publicContentResponses.sitemap.responses[200];
+  const safeSitemap = sitemap.schema.parse(sitemap.serialize({
+    marketCode: 'ES', locale: 'es-ES', digest: 'digest', internalSnapshotId: 'private',
+    urls: [{ location: 'https://public.example/es/es-es/service-page/home-cleaning', lastModified: new Date('2026-09-23T00:00:00.000Z'), rowId: 'private' }],
+  }));
+  assert.equal(safeSitemap.internalSnapshotId, undefined);
+  assert.equal(safeSitemap.urls[0].rowId, undefined);
 });

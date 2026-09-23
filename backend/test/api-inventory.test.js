@@ -111,6 +111,11 @@ test('OpenAPI 3.1 candidate is source-derived, safe, and refuses to claim public
   assert.ok(contract.paths['/api/v1/markets']?.get);
   assert.ok(contract.paths['/api/admin/audit-logs']?.get);
   assert.ok(contract.paths['/api/payments/webhook']?.post);
+  for (const path of [
+    '/api/v1/public/content/{marketCode}/{locale}/{type}/{slug}',
+    '/api/v1/public/sitemap/{marketCode}/{locale}',
+    '/api/v1/public/redirect',
+  ]) assert.equal(contract.paths[path].get.responses['200']['x-homeservices-response-parity'], 'RUNTIME_AUTHORITATIVE');
   assert.equal(contract.paths['/api/auth/refresh'].post.responses['200']['x-homeservices-response-parity'], 'RUNTIME_AUTHORITATIVE');
   const serialized = JSON.stringify(contract);
   assert.doesNotMatch(serialized, /postgres(?:ql)?:\/\//i);

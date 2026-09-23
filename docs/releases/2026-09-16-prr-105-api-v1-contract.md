@@ -83,3 +83,14 @@ Local evidence on 2026-09-20:
 - Admin build retains a non-blocking warning for one minified JavaScript chunk above 500 kB; build succeeds.
 
 PRR-105 remains **PARCIAL**. Publication requires shared runtime-authoritative response schemas for the 239 incomplete operations, deliberate resolution of 242 non-equivalent input projections (normalization, transforms and refinements), request/response/enum/pagination/auth semantic parity for the four consumers, a complete OpenAPI breaking baseline, and SUCCESS CI for the final exact evidence SHA. OpenAPI version: NOT PUBLISHED. Closure SHA: NONE.
+
+## Public-content response-authority tranche, 2026-09-23
+
+- Implementation SHA: pending commit.
+- Scope: the three public-content operations (`content`, `sitemap`, `redirect`) now use explicit safe serializers and runtime-authoritative output schemas. The serializers admit only rendered public content, public sitemap fields and bounded redirect fields; internal review, persistence and snapshot fields are not projected.
+- Candidate remains `CANDIDATE_NOT_PUBLISHED` / `1.0.0-candidate`; this change creates no publication, market activation, migration or feature activation authority.
+- Current executable counters before closure CI: 251 mounted operations; 245 candidate operations; 0 published operations; 0 unresolved consumer path/method calls; 142 unresolved route-input projections; 242 catalog schemas with non-structural wire parity; 210 operations without complete runtime-authoritative response schemas; 0 detected breaking changes.
+- Consumer semantic parity is **not yet measured**: all 144 observations remain `NOT_PROVEN_BY_PATH_MATCH`. Therefore runtime request/response, error, validation/pagination, auth, OLD and NEW consumer mismatch counters must remain pending rather than being reported as zero.
+- Local evidence: focused response/inventory suite 13/13 PASS; backend suite 287/287 PASS; inventory, breaking and OpenAPI candidate checks PASS. Migration: NONE.
+
+PRR-105 remains **PARCIAL**. Outstanding acceptance gates include the 142 deliberate input projections, 210 incomplete output contracts, semantic consumer parity and an exact-SHA closure CI after all required gates are satisfied.

@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "a693b45dc89644e34b5ef6eb4eccd738263f24633720fe875a9e76cafe8a71af",
+  "sourceFingerprint": "736c758a70a9ed58a39dc75411b486abb28115f2601b20f7df5a99c0d66b3ff5",
   "routes": [
     {
       "method": "GET",
@@ -17067,7 +17067,8 @@
       "classification": "CANONICAL_V1",
       "auth": "PUBLIC",
       "middleware": [
-        "limiter"
+        "limiter",
+        "responseContract(publicContentResponses.content)"
       ],
       "rateLimit": {
         "global": {
@@ -17080,7 +17081,7 @@
       },
       "registration": {
         "file": "backend/src/routes/public-content.routes.js",
-        "line": 6
+        "line": 8
       },
       "handler": {
         "file": "backend/src/controllers/public-content.controller.js",
@@ -17106,7 +17107,232 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "publicContent.get",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "marketCode": {
+                  "type": "string"
+                },
+                "locale": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "heading",
+                          "paragraph",
+                          "list",
+                          "faq",
+                          "callout",
+                          "service_summary",
+                          "location_summary"
+                        ]
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "question": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "seo": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "canonical": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "robots": {
+                      "type": "string",
+                      "enum": [
+                        "index,follow",
+                        "noindex,follow",
+                        "noindex,nofollow"
+                      ]
+                    },
+                    "alternates": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    },
+                    "openGraph": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/__schema0"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "structuredData": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/__schema1"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "description",
+                    "canonical",
+                    "robots",
+                    "openGraph",
+                    "structuredData"
+                  ],
+                  "additionalProperties": false
+                },
+                "publishedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                },
+                "etag": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "key",
+                "type",
+                "marketCode",
+                "locale",
+                "title",
+                "summary",
+                "body",
+                "seo",
+                "publishedAt",
+                "etag"
+              ],
+              "additionalProperties": false,
+              "$defs": {
+                "__schema0": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/$defs/__schema0"
+                      }
+                    }
+                  ]
+                },
+                "__schema1": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/__schema1"
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/$defs/__schema1"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Public Web"
       ]
@@ -17117,7 +17343,8 @@
       "classification": "CANONICAL_V1",
       "auth": "PUBLIC",
       "middleware": [
-        "limiter"
+        "limiter",
+        "responseContract(publicContentResponses.redirect)"
       ],
       "rateLimit": {
         "global": {
@@ -17130,7 +17357,7 @@
       },
       "registration": {
         "file": "backend/src/routes/public-content.routes.js",
-        "line": 8
+        "line": 10
       },
       "handler": {
         "file": "backend/src/controllers/public-content.controller.js",
@@ -17168,7 +17395,34 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "publicContent.redirect",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "targetPath": {
+                  "type": "string"
+                },
+                "httpStatus": {
+                  "not": {}
+                }
+              },
+              "required": [
+                "targetPath",
+                "httpStatus"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Public Web"
       ]
@@ -17179,7 +17433,8 @@
       "classification": "CANONICAL_V1",
       "auth": "PUBLIC",
       "middleware": [
-        "limiter"
+        "limiter",
+        "responseContract(publicContentResponses.sitemap)"
       ],
       "rateLimit": {
         "global": {
@@ -17192,7 +17447,7 @@
       },
       "registration": {
         "file": "backend/src/routes/public-content.routes.js",
-        "line": 7
+        "line": 9
       },
       "handler": {
         "file": "backend/src/controllers/public-content.controller.js",
@@ -17218,7 +17473,61 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "publicContent.sitemap",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "marketCode": {
+                  "type": "string"
+                },
+                "locale": {
+                  "type": "string"
+                },
+                "urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "location": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "lastModified": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      }
+                    },
+                    "required": [
+                      "location",
+                      "lastModified"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "digest": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "marketCode",
+                "locale",
+                "urls",
+                "digest"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Public Web"
       ]
@@ -36126,6 +36435,315 @@
                 ]
               }
             }
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/v1/public/content/{marketCode}/{locale}/{type}/{slug}": {
+      "operationId": "publicContent.get",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "marketCode": {
+                "type": "string"
+              },
+              "locale": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "body": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "heading",
+                        "paragraph",
+                        "list",
+                        "faq",
+                        "callout",
+                        "service_summary",
+                        "location_summary"
+                      ]
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "question": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "seo": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "canonical": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "robots": {
+                    "type": "string",
+                    "enum": [
+                      "index,follow",
+                      "noindex,follow",
+                      "noindex,nofollow"
+                    ]
+                  },
+                  "alternates": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  },
+                  "openGraph": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/__schema0"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "structuredData": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/__schema1"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "canonical",
+                  "robots",
+                  "openGraph",
+                  "structuredData"
+                ],
+                "additionalProperties": false
+              },
+              "publishedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              "etag": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "type",
+              "marketCode",
+              "locale",
+              "title",
+              "summary",
+              "body",
+              "seo",
+              "publishedAt",
+              "etag"
+            ],
+            "additionalProperties": false,
+            "$defs": {
+              "__schema0": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "$ref": "#/$defs/__schema0"
+                    }
+                  }
+                ]
+              },
+              "__schema1": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/__schema1"
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "$ref": "#/$defs/__schema1"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/v1/public/redirect": {
+      "operationId": "publicContent.redirect",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "targetPath": {
+                "type": "string"
+              },
+              "httpStatus": {
+                "not": {}
+              }
+            },
+            "required": [
+              "targetPath",
+              "httpStatus"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/v1/public/sitemap/{marketCode}/{locale}": {
+      "operationId": "publicContent.sitemap",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "marketCode": {
+                "type": "string"
+              },
+              "locale": {
+                "type": "string"
+              },
+              "urls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "location": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "lastModified": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    }
+                  },
+                  "required": [
+                    "location",
+                    "lastModified"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "digest": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "marketCode",
+              "locale",
+              "urls",
+              "digest"
+            ],
+            "additionalProperties": false
           },
           "wireParity": "RUNTIME_AUTHORITATIVE",
           "gaps": []

@@ -28481,19 +28481,162 @@
         ],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "marketCode": {
+                      "type": "string"
+                    },
+                    "locale": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "body": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "heading",
+                              "paragraph",
+                              "list",
+                              "faq",
+                              "callout",
+                              "service_summary",
+                              "location_summary"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "question": {
+                            "type": "string"
+                          },
+                          "answer": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "seo": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "canonical": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "robots": {
+                          "type": "string",
+                          "enum": [
+                            "index,follow",
+                            "noindex,follow",
+                            "noindex,nofollow"
+                          ]
+                        },
+                        "alternates": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "string",
+                            "format": "uri"
+                          }
+                        },
+                        "openGraph": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/components/schemas/publicContent.get_200___schema0"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "structuredData": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/components/schemas/publicContent.get_200___schema1"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "description",
+                        "canonical",
+                        "robots",
+                        "openGraph",
+                        "structuredData"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "publishedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "etag": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "type",
+                    "marketCode",
+                    "locale",
+                    "title",
+                    "summary",
+                    "body",
+                    "seo",
+                    "publishedAt",
+                    "etag"
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -28508,7 +28651,8 @@
         },
         "x-homeservices-auth": "PUBLIC",
         "x-homeservices-middleware": [
-          "limiter"
+          "limiter",
+          "responseContract(publicContentResponses.content)"
         ],
         "x-homeservices-consumers": [
           "Public Web"
@@ -28525,7 +28669,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/public-content.routes.js",
-          "line": 6
+          "line": 8
         }
       }
     },
@@ -28550,19 +28694,28 @@
         ],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "properties": {
+                    "targetPath": {
+                      "type": "string"
+                    },
+                    "httpStatus": {
+                      "not": {}
+                    }
+                  },
+                  "required": [
+                    "targetPath",
+                    "httpStatus"
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "404": {
             "description": "Safe error envelope",
@@ -28587,7 +28740,8 @@
         },
         "x-homeservices-auth": "PUBLIC",
         "x-homeservices-middleware": [
-          "limiter"
+          "limiter",
+          "responseContract(publicContentResponses.redirect)"
         ],
         "x-homeservices-consumers": [
           "Public Web"
@@ -28604,7 +28758,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/public-content.routes.js",
-          "line": 8
+          "line": 10
         }
       }
     },
@@ -28639,19 +28793,55 @@
         ],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "properties": {
+                    "marketCode": {
+                      "type": "string"
+                    },
+                    "locale": {
+                      "type": "string"
+                    },
+                    "urls": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "location": {
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "lastModified": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          }
+                        },
+                        "required": [
+                          "location",
+                          "lastModified"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "digest": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "marketCode",
+                    "locale",
+                    "urls",
+                    "digest"
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -28666,7 +28856,8 @@
         },
         "x-homeservices-auth": "PUBLIC",
         "x-homeservices-middleware": [
-          "limiter"
+          "limiter",
+          "responseContract(publicContentResponses.sitemap)"
         ],
         "x-homeservices-consumers": [
           "Public Web"
@@ -28683,7 +28874,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/public-content.routes.js",
-          "line": 7
+          "line": 9
         }
       }
     },
@@ -29420,6 +29611,68 @@
             }
           }
         ]
+      },
+      "publicContent.get_200___schema0": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/publicContent.get_200___schema0"
+            }
+          },
+          {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/publicContent.get_200___schema0"
+            }
+          }
+        ]
+      },
+      "publicContent.get_200___schema1": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/publicContent.get_200___schema1"
+            }
+          },
+          {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/publicContent.get_200___schema1"
+            }
+          }
+        ]
       }
     }
   },
@@ -29430,6 +29683,6 @@
     "uniqueRouteInputSchemas": 176,
     "unresolvedRouteInputProjections": 142,
     "unprovenCatalogSchemas": 242,
-    "operationsWithoutCompleteResponseSchema": 213
+    "operationsWithoutCompleteResponseSchema": 210
   }
 }
