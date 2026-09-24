@@ -100,7 +100,9 @@ PRR-105 remains **PARCIAL**. Outstanding acceptance gates include the 142 delibe
 ## Customer payments response-authority tranche, 2026-09-24
 
 - Base SHA: `47e6b364ce6827e1e2287552524dcb12fe5c5a99`.
-- Implementation/evidence SHA: pending commit and exact-SHA platform verification.
+- Implementation SHA: `c7adb1e79560ad81d4124e964a972dd3f711b298`.
+- Implementation CI: [Platform verification #83](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/36054830633): SUCCESS for that exact SHA.
+- Evidence SHA: pending this documentation commit and its own exact-SHA platform verification.
 - Scope: `POST /api/payments/create-intent`, `POST /api/payments/confirm`, and `GET /api/payments/history` now have runtime-authoritative safe output schemas and serializers. No payment capture, idempotency, concurrency, provider or financial-ledger behavior changed.
 - Shared model: `PaymentSummary`, `CustomerBookingSummary`, professional/service summaries, and the existing `Paginated<T>` shape. The customer booking serializer excludes provider IDs, ledger/audit data, pricing-policy metadata, exact coordinates and professional contact/provider fields.
 - Consumer evidence: Customer mobile checkout sends `{ bookingId }` and consumes `clientSecret` plus `paymentIntentId`; it sends `{ bookingId, paymentIntentId }` to confirmation and does not consume its response body. This is source review of `mobile-client/src/services/api.ts` and `mobile-client/src/screens/checkout/CheckoutScreen.tsx`, not a substitute for global semantic parity.
