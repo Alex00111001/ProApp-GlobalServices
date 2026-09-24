@@ -44,6 +44,19 @@ test('payment webhook and retired cash routes bind their respective runtime resp
   assert.equal(cash.responseAuthority?.responses['409'].wireParity, 'RUNTIME_AUTHORITATIVE');
 });
 
+test('booking read routes bind actor-specific runtime response authorities', () => {
+  const routes = buildInventory().routes;
+  for (const [method, path, operationId] of [
+    ['GET', '/api/bookings/{id}', 'bookings.detail'],
+    ['GET', '/api/bookings/client/my-bookings', 'bookings.customerList'],
+    ['GET', '/api/bookings/professional/my-bookings', 'bookings.professionalList'],
+  ]) {
+    const route = routes.find((candidate) => candidate.method === method && candidate.path === path);
+    assert.equal(route.responseAuthority?.operationId, operationId);
+    assert.equal(route.responseAuthority?.complete, true);
+  }
+});
+
 test('source inventory matches real Express router registrations including compatibility method aliases', () => {
   const routes = inventory();
   const routeFiles = [...new Set(routes.map((r) => r.registration.file).filter((f) => f !== 'backend/src/app.js'))];

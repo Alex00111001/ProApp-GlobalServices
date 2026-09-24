@@ -65,7 +65,7 @@ const responseContract = (contract) => {
       if (!definition) throw Object.assign(new Error(`Undeclared success status ${res.statusCode} for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_STATUS_MISMATCH', statusCode: 500,
       });
-      const result = definition.schema.safeParse(definition.serialize(body));
+      const result = definition.schema.safeParse(definition.serialize(body, req));
       if (!result.success) throw Object.assign(new Error(`Response serialization failed for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_VIOLATION', statusCode: 500, cause: result.error,
       });

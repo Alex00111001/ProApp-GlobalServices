@@ -15,6 +15,7 @@ const filters: Array<{ key: Filter; label: string }> = [
   { key: 'CONFIRMED', label: 'Confirmadas' },
   { key: 'IN_PROGRESS', label: 'En curso' },
   { key: 'COMPLETED', label: 'Completadas' },
+  { key: 'NO_SHOW', label: 'No asistió' },
 ];
 
 const actionFor = (status: BookingStatus) => ({

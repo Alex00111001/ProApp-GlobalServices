@@ -13,6 +13,7 @@ const { favoriteSchemas } = require('../src/contracts/favorite.responses');
 const { experimentSchemas } = require('../src/contracts/experiment.responses');
 const { publicContentResponses } = require('../src/contracts/public-content.responses');
 const { paymentResponses } = require('../src/contracts/payment.responses');
+const { bookingResponses } = require('../src/contracts/booking.responses');
 
 const request = async (handler) => {
   const app = express();
@@ -168,4 +169,69 @@ test('payment serializers retain the customer checkout contract and remove finan
   assert.equal(body.booking.professional.user.phone, undefined);
   assert.equal(body.booking.bookingServices[0].service.internalCost, undefined);
   assert.equal(body.booking.payment.transactionId, undefined);
+});
+
+test('booking detail serializes distinct customer and professional views at the HTTP boundary', async () => {
+  const id = (letter) => `${letter.repeat(8)}-${letter.repeat(4)}-4${letter.repeat(3)}-8${letter.repeat(3)}-${letter.repeat(12)}`;
+  const now = new Date('2026-09-24T12:00:00.000Z');
+  const booking = {
+    id: id('a'), status: 'CONFIRMED', scheduledDate: now, endDate: now,
+    address: 'Calle segura 1', city: 'Madrid', state: 'Madrid', postalCode: '28001', notes: null,
+    totalPrice: '25.00', platformFee: '5.00', professionalEarnings: '17.00', currency: 'EUR',
+    createdAt: now, updatedAt: now, latitude: 40.1, longitude: -3.2,
+    pricingSnapshot: { privateRule: true }, pricingPolicyId: id('b'),
+    bookingServices: [{ id: id('b'), serviceId: id('c'), quantity: 1, price: '20.00', subtotal: '20.00',
+      service: { id: id('c'), name: 'Limpieza', description: 'Servicio', internalCost: '1.00' } }],
+    professional: { id: id('d'), averageRating: 4.5, stripeAccountId: 'acct_private',
+      user: { id: id('e'), firstName: 'Ana', lastName: 'Profesional', avatarUrl: null, phone: 'private-phone' } },
+    client: { id: id('f'), user: { id: id('1'), firstName: 'Luis', lastName: 'Cliente', avatarUrl: null,
+      phone: 'private-phone', passwordHash: 'private-hash' } },
+    payment: { id: id('2'), amount: '25.00', currency: 'EUR', status: 'COMPLETED', method: 'CASH', transactionId: 'private-provider' },
+    review: { id: id('3'), comment: 'private-review', isVisible: false },
+  };
+  for (const role of ['CLIENT', 'PROFESSIONAL']) {
+    const app = express();
+    app.use((req, res, next) => { req.user = { role }; req.context = { requestId: 'req-booking', correlationId: 'corr-booking' }; next(); });
+    app.use(errorContract);
+    app.get('/detail', responseContract(bookingResponses.detail), (req, res) => res.json({ booking }));
+    app.use(createGlobalErrorHandler({ reportError: async () => ({}), ensureIncidentForError: async () => {} }));
+    const server = app.listen(0);
+    try {
+      const response = await fetch(`http://127.0.0.1:${server.address().port}/detail`);
+      assert.equal(response.status, 200);
+      const body = (await response.json()).booking;
+      assert.equal(body.id, booking.id);
+      assert.equal(body.bookingServices[0].service.name, 'Limpieza');
+      assert.equal(body.latitude, undefined);
+      assert.equal(body.pricingSnapshot, undefined);
+      assert.equal(body.bookingServices[0].service.internalCost, undefined);
+      if (role === 'CLIENT') {
+        assert.equal(body.professional.user.firstName, 'Ana');
+        assert.equal(body.professional.user.phone, undefined);
+        assert.equal(body.payment.method, 'CASH');
+        assert.equal(body.payment.transactionId, undefined);
+        assert.equal(body.review.id, id('3'));
+        assert.equal(body.review.comment, undefined);
+        assert.equal(body.client, undefined);
+        assert.equal(body.professionalEarnings, undefined);
+      } else {
+        assert.equal(body.client.user.firstName, 'Luis');
+        assert.equal(body.client.user.phone, undefined);
+        assert.equal(body.client.user.passwordHash, undefined);
+        assert.equal(body.professionalEarnings, '17.00');
+        assert.equal(body.payment, undefined);
+        assert.equal(body.professional, undefined);
+      }
+      const list = role === 'CLIENT' ? bookingResponses.customerList : bookingResponses.professionalList;
+      const listBody = list.responses[200].schema.parse(list.responses[200].serialize({
+        bookings: [booking], pagination: { currentPage: 2, totalPages: 3, totalItems: 21 },
+      }));
+      assert.deepEqual(listBody.pagination, { currentPage: 2, totalPages: 3, totalItems: 21 });
+      assert.equal(listBody.bookings[0].id, booking.id);
+      assert.equal(listBody.bookings[0].client === undefined, role === 'CLIENT');
+      assert.equal(listBody.bookings[0].professional === undefined, role === 'PROFESSIONAL');
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
+  }
 });

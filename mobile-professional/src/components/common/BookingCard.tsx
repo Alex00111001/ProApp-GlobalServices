@@ -9,6 +9,7 @@ const statusMeta: Record<BookingStatus, { label: string; color: string; backgrou
   IN_PROGRESS: { label: 'En curso', color: COLORS.primaryDark, background: COLORS.primarySoft },
   COMPLETED: { label: 'Completada', color: COLORS.success, background: COLORS.successSoft },
   CANCELLED: { label: 'Cancelada', color: COLORS.danger, background: COLORS.dangerSoft },
+  NO_SHOW: { label: 'No asistió', color: COLORS.danger, background: COLORS.dangerSoft },
 };
 
 export function BookingCard({ booking, actionLabel, secondaryActionLabel, actionBusy = false, onAction, onSecondaryAction }: {
