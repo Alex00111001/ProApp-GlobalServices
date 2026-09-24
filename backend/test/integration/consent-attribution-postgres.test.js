@@ -11,6 +11,7 @@ if (!process.env.DIRECT_URL) throw new Error('DIRECT_URL must point to the isola
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const { randomInt } = require('node:crypto');
 const http = require('node:http');
 const prisma = require('../../src/config/prisma');
 const app = require('../../src/app');
@@ -21,12 +22,14 @@ const { createAdminSession } = require('../../src/modules/identity/admin-session
 const { trackEvent } = require('../../src/modules/growth/events/event.service');
 
 const runId = `f7.${Date.now().toString(36)}.${Math.random().toString(36).slice(2, 10)}`;
+const phoneRunPrefix = randomInt(100000, 1000000);
+let nextPhoneSuffix = 0;
 const ids = { users: [], decisions: [], links: [], touchpoints: [], models: [], policies: [], events: [], conversions: [], leads: [], attributions: [] };
 let passwordHash;
 
 const createUser = async (label, roleId) => {
   const user = await prisma.user.create({ data: {
-    email: `${runId}-${label}@example.test`.toLowerCase(), phone: `+349${String(Date.now()).slice(-8)}${Math.floor(Math.random() * 10)}`,
+    email: `${runId}-${label}@example.test`.toLowerCase(), phone: `+349${phoneRunPrefix}${String(nextPhoneSuffix++).padStart(2, '0')}`,
     passwordHash, firstName: label, lastName: 'F7Test', role: 'CLIENT', countryCode: 'ES', registrationLocale: 'es',
   } });
   ids.users.push(user.id);
