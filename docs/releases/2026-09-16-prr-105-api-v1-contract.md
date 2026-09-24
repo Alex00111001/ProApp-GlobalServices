@@ -96,3 +96,19 @@ PRR-105 remains **PARCIAL**. Publication requires shared runtime-authoritative r
 - Local evidence: focused response/inventory suite 13/13 PASS; backend suite 287/287 PASS; inventory, breaking and OpenAPI candidate checks PASS. Migration: NONE.
 
 PRR-105 remains **PARCIAL**. Outstanding acceptance gates include the 142 deliberate input projections, 210 incomplete output contracts, semantic consumer parity and an exact-SHA closure CI after all required gates are satisfied.
+
+## Customer payments response-authority tranche, 2026-09-24
+
+- Base SHA: `47e6b364ce6827e1e2287552524dcb12fe5c5a99`.
+- Implementation/evidence SHA: pending commit and exact-SHA platform verification.
+- Scope: `POST /api/payments/create-intent`, `POST /api/payments/confirm`, and `GET /api/payments/history` now have runtime-authoritative safe output schemas and serializers. No payment capture, idempotency, concurrency, provider or financial-ledger behavior changed.
+- Shared model: `PaymentSummary`, `CustomerBookingSummary`, professional/service summaries, and the existing `Paginated<T>` shape. The customer booking serializer excludes provider IDs, ledger/audit data, pricing-policy metadata, exact coordinates and professional contact/provider fields.
+- Consumer evidence: Customer mobile checkout sends `{ bookingId }` and consumes `clientSecret` plus `paymentIntentId`; it sends `{ bookingId, paymentIntentId }` to confirmation and does not consume its response body. This is source review of `mobile-client/src/services/api.ts` and `mobile-client/src/screens/checkout/CheckoutScreen.tsx`, not a substitute for global semantic parity.
+- Input classification: `create-intent` is structural. `confirm` retains a trim normalization on `paymentIntentId`, so it remains correctly counted among the 142 unresolved wire-input projections as `NORMALIZATION`; it is not claimed equivalent. `history` retains bounded/defaulted query normalization.
+- Baseline before: 251 mounted; 245 candidate; 0 published; 142 unresolved route inputs; 210 incomplete runtime-authoritative outputs; 144 consumer observations, all `NOT_PROVEN_BY_PATH_MATCH`; breaking detector 0.
+- Baseline after: 251 mounted; 245 candidate; 0 published; 142 unresolved route inputs; 207 incomplete runtime-authoritative outputs; 144 consumer observations, all `NOT_PROVEN_BY_PATH_MATCH`; breaking detector 0.
+- Residual within Payments: `POST /api/payments/cash` remains an error-only retired compatibility route governed by the global SafeError contract; `POST /api/payments/webhook` remains mounted directly in `app.js`. The current response-catalog only recognizes router-level response bindings, so neither is falsely marked complete in this tranche.
+- Evidence: focused/runtime serializer negative test PASS; backend suite 288/288 PASS; inventory, breaking and OpenAPI candidate checks PASS; OpenAPI validation PASS; generation twice produced identical SHA-256 hashes for inventory and candidate. Prisma format, validate and generate were invoked through the CLI with a non-production placeholder database URL; migration: NONE. `npm run verify`: PASS.
+- Security review: explicit allowlists prevent `transactionId`, `providerChargeId`, `pricingSnapshot`, coordinates, Stripe account identifiers, contact phone and service internals from crossing these serializers. Dependency/secret/repository-hygiene and exact-SHA CI are still required before any PRR closure claim.
+
+PRR-105 remains **PARCIAL**. Candidate remains `CANDIDATE_NOT_PUBLISHED`; no OpenAPI publication, production/Markets/F11 activation, CASH reintroduction or PRR-106 work is authorized by this tranche.

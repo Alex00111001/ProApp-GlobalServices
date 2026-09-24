@@ -11,6 +11,7 @@ const { catalogSchemas } = require('../src/contracts/catalog.responses');
 const { favoriteSchemas } = require('../src/contracts/favorite.responses');
 const { experimentSchemas } = require('../src/contracts/experiment.responses');
 const { publicContentResponses } = require('../src/contracts/public-content.responses');
+const { paymentResponses } = require('../src/contracts/payment.responses');
 
 const request = async (handler) => {
   const app = express();
@@ -124,4 +125,24 @@ test('public content serializers expose only the rendered page and sitemap contr
   }));
   assert.equal(safeSitemap.internalSnapshotId, undefined);
   assert.equal(safeSitemap.urls[0].rowId, undefined);
+});
+
+test('payment serializers retain the customer checkout contract and remove financial/provider internals', () => {
+  const payment = paymentResponses.confirm.responses[200];
+  const body = payment.schema.parse(payment.serialize({
+    success: true, duplicate: false, message: 'Pago confirmado exitosamente',
+    payment: { id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', bookingId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', amount: '25.00', currency: 'EUR', status: 'COMPLETED', method: 'STRIPE', processedAt: new Date('2026-09-24T00:00:00.000Z'), refundedAt: null, refundAmount: null, createdAt: new Date('2026-09-24T00:00:00.000Z'), updatedAt: new Date('2026-09-24T00:00:00.000Z'), transactionId: 'pi_private', providerChargeId: 'ch_private' },
+    booking: { id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', professionalId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', status: 'CONFIRMED', scheduledDate: new Date('2026-09-25T00:00:00.000Z'), endDate: new Date('2026-09-25T01:00:00.000Z'), address: 'Calle segura 1', city: 'Madrid', state: 'Madrid', postalCode: '28001', notes: null, totalPrice: '25.00', serviceAmount: '20.00', platformFee: '5.00', professionalEarnings: '15.00', currency: 'EUR', cancelledBy: null, cancellationReason: null, cancelledAt: null, completedAt: null, createdAt: new Date('2026-09-24T00:00:00.000Z'), updatedAt: new Date('2026-09-24T00:00:00.000Z'), pricingSnapshot: { internal: true }, latitude: 1, longitude: 2,
+      professional: { id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', stripeAccountId: 'acct_private', user: { id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', firstName: 'Pro', lastName: 'Safe', avatarUrl: null, phone: 'private' } },
+      bookingServices: [{ id: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', serviceId: 'ffffffff-ffff-4fff-8fff-ffffffffffff', quantity: 1, price: '20.00', subtotal: '20.00', service: { id: 'ffffffff-ffff-4fff-8fff-ffffffffffff', name: 'Cleaning', internalCost: '1.00' } }],
+      payment: { id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', bookingId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', amount: '25.00', currency: 'EUR', status: 'COMPLETED', method: 'STRIPE', processedAt: new Date('2026-09-24T00:00:00.000Z'), refundedAt: null, refundAmount: null, createdAt: new Date('2026-09-24T00:00:00.000Z'), updatedAt: new Date('2026-09-24T00:00:00.000Z'), transactionId: 'pi_private' },
+    },
+  }));
+  assert.equal(body.payment.transactionId, undefined);
+  assert.equal(body.booking.pricingSnapshot, undefined);
+  assert.equal(body.booking.latitude, undefined);
+  assert.equal(body.booking.professional.stripeAccountId, undefined);
+  assert.equal(body.booking.professional.user.phone, undefined);
+  assert.equal(body.booking.bookingServices[0].service.internalCost, undefined);
+  assert.equal(body.booking.payment.transactionId, undefined);
 });
