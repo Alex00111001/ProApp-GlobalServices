@@ -114,3 +114,18 @@ PRR-105 remains **PARCIAL**. Outstanding acceptance gates include the 142 delibe
 - Security review: explicit allowlists prevent `transactionId`, `providerChargeId`, `pricingSnapshot`, coordinates, Stripe account identifiers, contact phone and service internals from crossing these serializers. Dependency/secret/repository-hygiene and exact-SHA CI are still required before any PRR closure claim.
 
 PRR-105 remains **PARCIAL**. Candidate remains `CANDIDATE_NOT_PUBLISHED`; no OpenAPI publication, production/Markets/F11 activation, CASH reintroduction or PRR-106 work is authorized by this tranche.
+
+## Payments completion response-authority tranche, 2026-09-24
+
+- Base SHA: `78c328436bb30ed44f92b2dab4cd7dc70cb003ee`.
+- Implementation and evidence SHA: `bba5a5957c54511b8e05983d1e07b18c85c30a91`.
+- Exact-SHA CI: [Platform verification #85](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/36060114507): SUCCESS (1m32s).
+- Scope: the remaining Payments routes now bind runtime-authoritative output contracts: `POST /api/payments/webhook` returns the explicit Stripe event acknowledgement shape, while the retired `POST /api/payments/cash` route binds only its deliberate `409` SafeError. The pre-existing customer payment contracts remain unchanged.
+- The webhook remains raw-body Stripe input processing. CASH remains retired and returns `CASH_PAYMENT_DISABLED`; it is not reintroduced. No capture, idempotency, concurrency, provider, ledger, migration, feature-flag or production behavior changed.
+- The source extractor now recognizes direct `app.js` route bindings and error-only response contracts. The response catalog accepts only imported contract modules and projects them into the generated candidate; it does not infer contracts from controller implementation.
+- Security review: the error-only contract validates the safe-error allowlist before the global error boundary. Its runtime test proves `privateProviderReason` is removed while request and correlation identifiers are preserved. Existing serializers retain explicit output allowlists.
+- Baseline before: 251 mounted; 245 candidate; 0 published; 142 unresolved route inputs; 207 incomplete runtime-authoritative outputs; 144 consumer observations, all `NOT_PROVEN_BY_PATH_MATCH`; breaking detector 0.
+- Baseline after: 251 mounted; 245 candidate; 0 published; 142 unresolved route inputs; 205 incomplete runtime-authoritative outputs; 144 consumer observations, all `NOT_PROVEN_BY_PATH_MATCH`; breaking detector 0. All five mounted Payments operations now have complete response authority.
+- Evidence: `npm run verify` PASS (backend 290/290; Admin 15/15 plus build; Public Web 4/4 plus build; Customer 5/5 plus typecheck; Professional typecheck); Prisma format, validate and generate PASS with a non-production placeholder URL; migration NONE; inventory, OpenAPI candidate validation and breaking detector PASS; repeated inventory/OpenAPI generation yielded identical SHA-256 hashes. Platform verification #85 also passed its dependency, secret/security, PostgreSQL migration/RBAC/integration/concurrency and financial-idempotency gates for this exact SHA.
+
+PRR-105 remains **PARCIAL**. Global consumer semantic parity is not yet proven, all 142 deliberately non-equivalent input projections and 205 incomplete output contracts remain open, and the candidate is `CANDIDATE_NOT_PUBLISHED`. PRR-106, production, Markets, CASH activation and F11 runtime remain OFF.
