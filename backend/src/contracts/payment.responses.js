@@ -1,6 +1,7 @@
 const { z } = require('zod');
-const { defineResponseContract, outputObject, serialized } = require('../shared/http/response-contract');
+const { defineErrorResponseContract, defineResponseContract, outputObject, serialized } = require('../shared/http/response-contract');
 const { dateTime, pagination } = require('./shared.responses');
+const { safeErrorSchema } = require('./error.responses');
 
 // Customer payment contracts intentionally use a narrow booking view.  They do
 // not inherit the Prisma Booking shape, pricing-policy metadata, provider IDs,
@@ -60,6 +61,9 @@ const pickCustomerBooking = (value) => json({
 });
 
 const paymentResponses = Object.freeze({
+  cash: defineErrorResponseContract({
+    method: 'POST', path: '/api/payments/cash', operationId: 'payments.cashRetired', responses: { 409: safeErrorSchema },
+  }),
   createIntent: defineResponseContract({
     method: 'POST', path: '/api/payments/create-intent', operationId: 'payments.createIntent',
     responses: { 200: serialized(outputObject({
@@ -82,6 +86,12 @@ const paymentResponses = Object.freeze({
       payments: (value.payments || []).map((payment) => ({ ...pickPayment(payment), booking: pickCustomerBooking(payment.booking) })),
       pagination: value.pagination,
     })) },
+  }),
+  webhook: defineResponseContract({
+    method: 'POST', path: '/api/payments/webhook', operationId: 'payments.stripeWebhook',
+    responses: { 200: serialized(outputObject({
+      received: z.literal(true), duplicate: z.boolean(), status: z.enum(['PROCESSED', 'PROCESSING', 'DEAD_LETTER']),
+    }), (value) => ({ received: value.received, duplicate: value.duplicate, status: value.status })) },
   }),
 });
 

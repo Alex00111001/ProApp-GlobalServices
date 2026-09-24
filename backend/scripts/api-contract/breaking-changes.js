@@ -3,7 +3,7 @@
 const stable = (value) => JSON.stringify(value);
 // Response serializers strengthen the output boundary and are compared through
 // response schemas/statuses below. They are not request/auth middleware.
-const requestMiddleware = (items = []) => items.filter((item) => !item.startsWith('responseContract('));
+const requestMiddleware = (items = []) => items.filter((item) => !item.startsWith('responseContract(') && !item.startsWith('errorResponseContract('));
 function schemaChanges(before, after, direction, location, changes) {
   if (stable(before) === stable(after)) return;
   if (!before || !after) { changes.push(`${location}: schema removed or added without compatibility proof`); return; }

@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "49e37d3faf1e83dda27698d2d471670b634ab437b3c9fa3ba333dd4c0e4bc665",
+  "sourceFingerprint": "30c6a3724ace6fb9c95363a56da353fb7f8ccef76a4d1e227a8473923d659160",
   "routes": [
     {
       "method": "GET",
@@ -7452,7 +7452,8 @@
       "classification": "DEPRECATED",
       "auth": "CUSTOMER_BEARER",
       "middleware": [
-        "authenticate"
+        "authenticate",
+        "errorResponseContract(paymentResponses.cash)"
       ],
       "rateLimit": {
         "global": {
@@ -7489,7 +7490,55 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "payments.cashRetired",
+        "complete": true,
+        "responses": {
+          "409": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "const": false
+                },
+                "error": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "code": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_]{1,79}$"
+                },
+                "details": {},
+                "requestId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "correlationId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                }
+              },
+              "required": [
+                "error",
+                "code"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -8748,7 +8797,8 @@
       "classification": "WEBHOOK",
       "auth": "SIGNED_PROVIDER_PAYLOAD",
       "middleware": [
-        "express.raw"
+        "express.raw",
+        "responseContract(paymentResponses.webhook)"
       ],
       "rateLimit": {
         "global": {
@@ -8759,7 +8809,7 @@
       },
       "registration": {
         "file": "backend/src/app.js",
-        "line": 66
+        "line": 68
       },
       "handler": {
         "file": "backend/src/controllers/payment.controller.js",
@@ -8804,7 +8854,44 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "payments.stripeWebhook",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "received": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "duplicate": {
+                  "type": "boolean"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "PROCESSED",
+                    "PROCESSING",
+                    "DEAD_LETTER"
+                  ]
+                }
+              },
+              "required": [
+                "received",
+                "duplicate",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": []
     },
     {
@@ -18827,7 +18914,7 @@
       },
       "registration": {
         "file": "backend/src/app.js",
-        "line": 80
+        "line": 83
       },
       "handler": {
         "file": "backend/src/app.js",
@@ -18845,7 +18932,7 @@
             "correlationId"
           ],
           "completeSchema": false,
-          "line": 83
+          "line": 86
         }
       ],
       "ownershipEvidence": [],
@@ -18865,7 +18952,7 @@
       },
       "registration": {
         "file": "backend/src/app.js",
-        "line": 75
+        "line": 78
       },
       "handler": {
         "file": "backend/src/app.js",
@@ -18882,7 +18969,7 @@
             "correlationId"
           ],
           "completeSchema": false,
-          "line": 75
+          "line": 78
         }
       ],
       "ownershipEvidence": [],
@@ -18902,7 +18989,7 @@
       },
       "registration": {
         "file": "backend/src/app.js",
-        "line": 80
+        "line": 83
       },
       "handler": {
         "file": "backend/src/app.js",
@@ -18920,7 +19007,7 @@
             "correlationId"
           ],
           "completeSchema": false,
-          "line": 83
+          "line": 86
         }
       ],
       "ownershipEvidence": [],
@@ -36477,6 +36564,55 @@
         }
       }
     },
+    "POST /api/payments/cash": {
+      "operationId": "payments.cashRetired",
+      "complete": true,
+      "responses": {
+        "409": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "const": false
+              },
+              "error": {
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9_]{1,79}$"
+              },
+              "details": {},
+              "requestId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "correlationId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            },
+            "required": [
+              "error",
+              "code"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
     "POST /api/payments/confirm": {
       "operationId": "payments.confirm",
       "complete": true,
@@ -37454,6 +37590,44 @@
               "success",
               "payments",
               "pagination"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "POST /api/payments/webhook": {
+      "operationId": "payments.stripeWebhook",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "received": {
+                "type": "boolean",
+                "const": true
+              },
+              "duplicate": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "PROCESSED",
+                  "PROCESSING",
+                  "DEAD_LETTER"
+                ]
+              }
+            },
+            "required": [
+              "received",
+              "duplicate",
+              "status"
             ],
             "additionalProperties": false
           },

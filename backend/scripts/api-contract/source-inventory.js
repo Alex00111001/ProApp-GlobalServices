@@ -90,7 +90,7 @@ function inventory() {
     if (['ArrowFunctionExpression', 'FunctionExpression'].includes(node.type)) return 'inline-handler';
     if (node.type === 'CallExpression') {
       const fn = member(node.callee);
-      if (fn === 'requirePermission' || fn === 'authorize' || fn === 'responseContract') return context.text(node);
+      if (fn === 'requirePermission' || fn === 'authorize' || fn === 'responseContract' || fn === 'errorResponseContract') return context.text(node);
       if (fn.startsWith('upload.')) return context.text(node);
       return fn;
     }

@@ -33,6 +33,24 @@ const defineResponseContract = ({ method, path, operationId, responses }) => {
   return Object.freeze({ method, path, operationId, responses: Object.freeze(normalized) });
 };
 
+const defineErrorResponseContract = ({ method, path, operationId, responses }) => {
+  if (!operationId || typeof operationId !== 'string') throw new TypeError('A stable error-response operationId is required.');
+  if (!/^(GET|POST|PUT|PATCH|DELETE)$/.test(method) || typeof path !== 'string' || !path.startsWith('/')) {
+    throw new TypeError(`Error response contract ${operationId} requires an absolute path and uppercase HTTP method.`);
+  }
+  if (!responses || typeof responses !== 'object' || Array.isArray(responses)) throw new TypeError('Error response contracts require a status map.');
+  const normalized = {};
+  for (const [statusValue, schema] of Object.entries(responses)) {
+    const status = Number(statusValue);
+    if (!Number.isInteger(status) || status < 400 || status > 599 || !isZodSchema(schema)) {
+      throw new TypeError(`Error response contract ${operationId} has an invalid error status: ${statusValue}.`);
+    }
+    normalized[status] = Object.freeze({ schema });
+  }
+  if (!Object.keys(normalized).length) throw new TypeError(`Error response contract ${operationId} has no error responses.`);
+  return Object.freeze({ method, path, operationId, kind: 'ERROR_ONLY', responses: Object.freeze(normalized) });
+};
+
 const responseContract = (contract) => {
   if (!contract?.operationId || !contract.responses) throw new TypeError('A defined response contract is required.');
   const middleware = (req, res, next) => {
@@ -79,8 +97,28 @@ const responseContract = (contract) => {
   return middleware;
 };
 
+const errorResponseContract = (contract) => {
+  if (!contract?.operationId || contract.kind !== 'ERROR_ONLY' || !contract.responses) throw new TypeError('A defined error response contract is required.');
+  const middleware = (req, res, next) => {
+    const originalJson = res.json.bind(res);
+    res.json = (body) => {
+      if (res.statusCode < 400) return originalJson(body);
+      const definition = contract.responses[res.statusCode];
+      if (!definition) return originalJson(body);
+      const result = definition.schema.safeParse(body);
+      if (!result.success) return next(Object.assign(new Error(`Error serialization failed for ${contract.operationId}.`), {
+        code: 'RESPONSE_CONTRACT_VIOLATION', statusCode: 500, cause: result.error,
+      }));
+      return originalJson(result.data);
+    };
+    next();
+  };
+  middleware[RESPONSE_CONTRACT] = contract;
+  return middleware;
+};
+
 const outputObject = (shape) => z.object(shape);
 const serializeJson = (value) => JSON.parse(JSON.stringify(value));
 const serialized = (schema, serialize = serializeJson) => ({ schema, serialize });
 
-module.exports = { RESPONSE_CONTRACT, defineResponseContract, outputObject, responseContract, serializeJson, serialized };
+module.exports = { RESPONSE_CONTRACT, defineErrorResponseContract, defineResponseContract, errorResponseContract, outputObject, responseContract, serializeJson, serialized };

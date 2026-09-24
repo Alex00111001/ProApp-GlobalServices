@@ -6,7 +6,8 @@ const express = require('express');
 const { z } = require('zod');
 const { createGlobalErrorHandler } = require('../src/shared/http/global-error-handler');
 const { errorContract } = require('../src/shared/http/error-contract');
-const { defineResponseContract, outputObject, responseContract } = require('../src/shared/http/response-contract');
+const { defineErrorResponseContract, defineResponseContract, errorResponseContract, outputObject, responseContract } = require('../src/shared/http/response-contract');
+const { safeErrorSchema } = require('../src/contracts/error.responses');
 const { catalogSchemas } = require('../src/contracts/catalog.responses');
 const { favoriteSchemas } = require('../src/contracts/favorite.responses');
 const { experimentSchemas } = require('../src/contracts/experiment.responses');
@@ -71,6 +72,28 @@ test('empty 204 responses are explicitly contracted', async () => {
   const response = await request((req, res) => res.status(204).send());
   assert.equal(response.status, 204);
   assert.equal(await response.text(), '');
+});
+
+test('error response contracts enforce the safe-error allowlist before the global error boundary', async () => {
+  const app = express();
+  app.use((req, res, next) => { req.context = { requestId: 'req-error', correlationId: 'corr-error' }; next(); });
+  app.use(errorContract);
+  app.post('/cash', errorResponseContract(defineErrorResponseContract({
+    method: 'POST', path: '/cash', operationId: 'test.cash.retired', responses: { 409: safeErrorSchema },
+  })), (req, res) => res.status(409).json({
+    success: false, error: 'Cash payment is unavailable', code: 'CASH_PAYMENT_DISABLED', privateProviderReason: 'must-not-leave',
+  }));
+  app.use(createGlobalErrorHandler({ reportError: async () => ({}), ensureIncidentForError: async () => {} }));
+  const server = app.listen(0);
+  try {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/cash`, { method: 'POST' });
+    assert.equal(response.status, 409);
+    assert.deepEqual(await response.json(), {
+      success: false, error: 'Cash payment is unavailable', code: 'CASH_PAYMENT_DISABLED', requestId: 'req-error', correlationId: 'corr-error',
+    });
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
 });
 
 test('public catalog serialization removes professional payment and private review fields', () => {

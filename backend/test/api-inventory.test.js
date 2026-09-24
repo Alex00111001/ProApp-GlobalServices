@@ -32,6 +32,18 @@ test('inventory is deterministic and classifies mounted internal, webhook, admin
   assert.equal(refresh.responseAuthority.responses['200'].wireParity, 'RUNTIME_AUTHORITATIVE');
 });
 
+test('payment webhook and retired cash routes bind their respective runtime response authorities', () => {
+  const routes = buildInventory().routes;
+  const webhook = routes.find((route) => route.method === 'POST' && route.path === '/api/payments/webhook');
+  const cash = routes.find((route) => route.method === 'POST' && route.path === '/api/payments/cash');
+  assert.equal(webhook.responseAuthority?.operationId, 'payments.stripeWebhook');
+  assert.equal(webhook.responseAuthority?.complete, true);
+  assert.equal(webhook.responseAuthority?.responses['200'].wireParity, 'RUNTIME_AUTHORITATIVE');
+  assert.equal(cash.responseAuthority?.operationId, 'payments.cashRetired');
+  assert.equal(cash.responseAuthority?.complete, true);
+  assert.equal(cash.responseAuthority?.responses['409'].wireParity, 'RUNTIME_AUTHORITATIVE');
+});
+
 test('source inventory matches real Express router registrations including compatibility method aliases', () => {
   const routes = inventory();
   const routeFiles = [...new Set(routes.map((r) => r.registration.file).filter((f) => f !== 'backend/src/app.js'))];

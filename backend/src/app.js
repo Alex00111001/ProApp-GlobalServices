@@ -32,6 +32,8 @@ const adminV1Routes = require('./routes/admin-v1.routes');
 const experimentsRoutes = require('./routes/experiments.routes');
 const publicContentRoutes = require('./routes/public-content.routes');
 const paymentController = require('./controllers/payment.controller');
+const { responseContract } = require('./shared/http/response-contract');
+const { paymentResponses } = require('./contracts/payment.responses');
 
 const app = express();
 
@@ -66,6 +68,7 @@ app.use(rateLimit({
 app.post(
   '/api/payments/webhook',
   express.raw({ type: 'application/json' }),
+  responseContract(paymentResponses.webhook),
   paymentController.stripeWebhook
 );
 

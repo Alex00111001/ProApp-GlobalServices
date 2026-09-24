@@ -9542,7 +9542,8 @@
         },
         "x-homeservices-auth": "CUSTOMER_BEARER",
         "x-homeservices-middleware": [
-          "authenticate"
+          "authenticate",
+          "errorResponseContract(paymentResponses.cash)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/payment.controller.js",
@@ -10802,31 +10803,38 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "duplicate",
-              "received",
-              "status"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "duplicate": {},
-                    "received": {},
-                    "status": {}
+                    "received": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "duplicate": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "PROCESSED",
+                        "PROCESSING",
+                        "DEAD_LETTER"
+                      ]
+                    }
                   },
                   "required": [
-                    "duplicate",
                     "received",
+                    "duplicate",
                     "status"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "400": {
             "description": "Safe error envelope",
@@ -10861,7 +10869,8 @@
         },
         "x-homeservices-auth": "SIGNED_PROVIDER_PAYLOAD",
         "x-homeservices-middleware": [
-          "express.raw"
+          "express.raw",
+          "responseContract(paymentResponses.webhook)"
         ],
         "x-homeservices-consumers": [],
         "x-homeservices-domain-authority": "backend/src/controllers/payment.controller.js",
@@ -10874,7 +10883,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/app.js",
-          "line": 66
+          "line": 68
         }
       }
     },
@@ -30566,6 +30575,6 @@
     "uniqueRouteInputSchemas": 176,
     "unresolvedRouteInputProjections": 142,
     "unprovenCatalogSchemas": 242,
-    "operationsWithoutCompleteResponseSchema": 207
+    "operationsWithoutCompleteResponseSchema": 205
   }
 }
