@@ -196,3 +196,58 @@ Global request, response, error, validation/pagination, auth and OLD/NEW consume
 Residual PRR-105 gates: 142 inputs, 196 outputs, global semantic parity, publication, complete observability/documentation/rollback acceptance and final global exact-SHA evidence. The global publication target remains open despite this response tranche's CI success. Notion stays EN CURSO; its historical 15% is not increased without an approved progress denominator covering every gate.
 
 PRR-105 closed: **NO**. PRR-106 started: **NO**. Production: **OFF**. Markets: **OFF**. CASH: **RETIRED/OFF**. F11: **PAUSED**. Next: **STOP — await independent verification**, with no new contract family started.
+
+## Runtime input authority / OpenAPI wire projection tranche, 2026-09-29
+
+- Base SHA: `8e88bb3d0485034fa916ae6c819920996863aa75`; exact baseline CI #94 SUCCESS.
+- Initial implementation SHA: `575aee0f21bcf5105cd09a8608cc9ae00abeadc5`; Platform verification #95 completed SUCCESS, but its secrets action reported **No commits to scan**. That result is insufficient full-history evidence and is NOT used to close this tranche's security gate.
+- Verified implementation/security-gate correction SHA: `4668e5142da0165110058bd919612bf51afae037`; [Platform verification #96](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/36566809252): **SUCCESS** for that exact SHA. Quality, PostgreSQL and secrets jobs and every applicable step succeeded, with no skipped gates.
+- Evidence SHA: the immutable commit containing this section, resolved with `git log -1 --format=%H -- docs/releases/2026-09-16-prr-105-api-v1-contract.md`. This document cannot embed its own Git hash. Its own exact-SHA CI on `ci/closure/prr105-input-evidence-20260929` must succeed before tracker projection; #96 is not a substitute. Final report and Notion bind that documentary SHA to its separate run.
+- Scope/classification: approved PRR-105, API input authority with Booking/Identity/Payments wire boundaries, HIGH/DEEP final review; operator-selected runner, no model-switch/delegation claim. Skills: systematic-engineering, api-contract-engineering, repo-auditor, architecture-guardian, booking-engine, payments, security, testing, database-prisma and release; Notion tracking skill projects evidence only. No governance/skill installation changes are committed.
+- Architecture, semantic definitions, wire/domain boundaries, normalization/transforms/refinements, aliases, unknown fields, consumers and rollback: [Input contract authority](../api/INPUT_CONTRACT_AUTHORITY.md). Exact source-derived per-operation inventory: [Input inventory](../api/input-inventory.v1.json).
+
+### Executable inventory and delivered authority
+
+All **251 mounted operations** are inventoried, including all historical input gaps. There are **247 supported route-validator bindings**, 176 unique bindings, and 677 observed operation/source reads: BODY 112, QUERY 68, PARAMS 174, HEADERS 11, SERVER_CONTEXT 312. The 373 additional source-review points (312 derived and 61 other unbound/header reads) overlap operations/bindings; they are not added to the binding counter and are not described as confirmed runtime bugs. Each operation records router/controller, validator/parse source, projection, consumers, auth, domain/risk and legacy classification.
+
+Immutable semantic metadata, accepted-wire projections and executable parity cases retain the real runtime parsers. Inventory generation/check executes declared acceptance, normalized-result and refinement evidence; missing cases, false equivalence, adapter mismatch or narrowed accepted wire fail verification. Required/optional/nullable/types/enums/bounds/arrays/unknown-field/header/query/params drift has negative-control tests. Coercion/default behavior is now visible rather than silently treated as structural equivalence.
+
+**Three validator input surfaces closed:** Booking cancellation reason, Booking rejection reason and payment confirmation. They remain classified NORMALIZATION, not falsely STRUCTURAL_EQUIVALENT. Closure means acceptance-equivalent wire/runtime validator evidence, not ownership, auth or financial/domain proof. Reasons preserve optional bodies, null/absence, trim/truncate500 and unknown-field STRIP. Payment identifiers preserve original trim/ASCII prefix/normalized maximum and strict client keys, including Unicode whitespace and all 128 ASCII-tail cases. No financial command, state, money, currency, provider, idempotency or conflict semantics changed.
+
+**Three declared runtime-refined bindings remain open:** Booking create, login and password recovery. Booking creation projects supported postal/time aliases, wider pre-normalization text/date kinds and the actual required idempotency header; actor/market/pricing/policy remain server-authoritative. Registration retains unresolved semantics, but its representable consent-policy dependencies now use one closed rule authority shared with the runtime predicate and generated conditional/dependentRequired JSON Schema. All eight valid field-presence combinations preserve runtime acceptance, issue messages, paths and order. No identity, role, market or legacy acceptance policy is silently repaired.
+
+Unknown object-field behavior is recorded as STRIP/REJECT/PASSTHROUGH/VALIDATED_CATCHALL. Negative cases cover actor/role/market/currency/price/permission/prototype-shaped injections. The OpenAPI admin-refresh security lookup now matches the actual cookie-plus-CSRF auth class; runtime authorization is unchanged. No internal/service credentials are introduced as ordinary client inputs.
+
+### Rebaseline: historical counter versus stronger semantic coverage
+
+| Counter | Base | After |
+| --- | ---: | ---: |
+| Mounted / candidate / published | 251 / 245 / 0 | 251 / 245 / 0 |
+| Historical structural-only unresolved projections | 142 | 142 |
+| Strengthened unresolved input semantics | 166 | 163 |
+| Executed acceptance-equivalent declared bindings | 0 | 3 |
+| Incomplete / complete output contracts | 196 / 49 | 196 / 49 |
+| Consumer observations | 144 | 144 |
+| Breaking mismatches | 0 | 0 |
+
+The strengthened base is computed from the unchanged runtime using the new coverage rules: **142 historical + 24 previously unproven coercion/default normalization bindings = 166**, then three executed equivalent surfaces close: **163**. This is not 21 new runtime defects or an artificial reduction of semantic debt. The old 142 remains available explicitly for historical comparison. No schema or generated artifact is manually edited to reduce the counter.
+
+Residual primary classes, disjoint: STRUCTURAL_EQUIVALENT **0**; NORMALIZATION **117**; TRANSFORM **22**; REFINEMENT **19**; CROSS_FIELD_VALIDATION **3**; RUNTIME_DERIVED **0 validator bindings**, with **312 separate derived source observations**; LEGACY_COMPATIBILITY **2**. Secondary classes overlap. Provisional source classifications are not acceptance proof.
+
+Eleven actual Customer/Professional request-building methods execute unchanged after type stripping; only transport/device storage are isolated. Serialized fields, optional/bodyless commands, headers, aliases, params and query behavior validate against runtime and OpenAPI. Consumer observations with request-only executable evidence: **11**. This is not mocked production/DB acceptance or full response/auth parity. Supported OLD consumers remain compatible for the tested request cases; NEW/global OLD/NEW parity is **NOT_PROVEN**. Admin/Public have no affected Booking mutation request builders. Global request, response, error, validation/pagination and auth parity remain **NOT_PROVEN**, not zero mismatches.
+
+### Verification, security and immutable closure
+
+- Local `npm run verify`: **PASS**; Backend **390/390**, zero skips; Admin **15/15 + build**; Public Web **4/4 + build**; Customer **5/5 + typecheck**; Professional **typecheck**. Focused new input/consumer tests: **41/41**.
+- Exact-SHA #96: full workspace verification, inventory freshness, generated OpenAPI validation, breaking detector and all six dependency audits **SUCCESS**. PostgreSQL clean replay of 30 reviewed migrations, status/baseline and RBAC synchronization **SUCCESS**; integration/concurrency **40/40**; financial idempotency **1/1**, zero skips. No live charges/refunds/payouts or production database writes were executed.
+- Prisma format/validate/generate: **PASS** with a non-production placeholder configuration; schema unchanged; migration **NONE**. Local Docker PostgreSQL remained unavailable; no local DB PASS is claimed. Actual DB evidence comes from isolated PostgreSQL CI.
+- Determinism: generate → freshness/check/validation → regenerate; all three generated artifact SHA-256 hashes identical and task-scoped artifact diff empty. Breaking detector **0**, no exceptions or approved-baseline rewrite. Enriched future snapshots additionally protect wire narrowing, aliases, required headers, body handling and validator/source semantic digests; final approved-v1 baseline review remains a global gate.
+- Security correction: preserve the existing pinned Gitleaks action/version but require explicit non-shallow/non-empty **all-ref history** and isolated **HEAD archive** scans. #96 actually scanned **233 commits / 307.28 MB** and **11.70 MB tracked tree**, both **no leaks found**. The previous action-only green job was not sufficient. No allowlist, skip, assertion reduction or warning conversion was introduced.
+- Tracked-tree/full-history secret scans, secret-shaped fixture guard and repository artifact hygiene **PASS**. Focused security review covers strict/stripped keys, identity/market/role spoofing, public versus privileged headers, object/prototype keys and financial field manipulation. Runtime auth/ownership/SafeError/Booking state machine and accepted financial guarantees are unchanged; no independent-human-review claim is made.
+- Dependency audits: **0 HIGH/CRITICAL**; the two tracked moderate advisories remain: Backend multer GHSA-3pph-fpjx-jg34 and Admin transitive undici GHSA-3wwx-pv8p-q78v. No claim of zero total vulnerabilities.
+- Unrelated pre-existing governance/skill changes remain DIRTY and preserved outside these commits. Only this tranche's implementation, generated artifacts, necessary security-gate correction and evidence are delivered.
+- Notion synchronization is conditional on the documentary commit's exact-SHA SUCCESS; EN CURSO and historical **15%** stay unchanged because no approved global progress denominator exists. Git and executable evidence remain the technical authority.
+
+Residual PRR-105 gates: **163 strengthened unresolved input bindings**, 373 overlapping source-review points, **196 incomplete outputs**, complete request/response/error/validation/pagination/auth and OLD/NEW semantic parity, final approved v1 publication, full documentation/observability/rollback acceptance and final global exact-SHA verification. OpenAPI remains **CANDIDATE_NOT_PUBLISHED**. Tranche CI does not close global PRR-105.
+
+PRR-105 closed: **NO**. PRR-106 started: **NO**. Production: **OFF**. Markets: **OFF**. CASH: **RETIRED/OFF**. F11: **PAUSED**. Next: **STOP — await independent verification**. No next tranche is started.
