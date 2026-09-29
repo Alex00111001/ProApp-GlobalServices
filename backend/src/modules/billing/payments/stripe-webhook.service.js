@@ -116,23 +116,29 @@ const processStripeEvent = async ({ event, requestContext = {}, correlationId = 
         });
       } else if (bookingId && event.type === 'payment_intent.payment_failed') {
         const payment = await tx.payment.findUnique({ where: { bookingId } });
-        if (payment?.transactionId === providerObject.id && payment.status !== 'COMPLETED') {
-          await tx.payment.update({
-            where: { id: payment.id },
+        if (payment?.transactionId === providerObject.id && ['PENDING', 'PROCESSING'].includes(payment.status)) {
+          const failed = await tx.payment.updateMany({
+            where: {
+              id: payment.id,
+              transactionId: providerObject.id,
+              status: { in: ['PENDING', 'PROCESSING'] },
+            },
             data: {
               status: 'FAILED',
               failedReason: providerObject.last_payment_error?.message || 'Pago rechazado',
             },
           });
-          await tx.outboxEvent.create({
-            data: {
-              aggregateType: 'Payment',
-              aggregateId: payment.id,
-              eventType: 'payment.failed',
-              payload: { bookingId, paymentId: payment.id, source: 'STRIPE_WEBHOOK' },
-              metadata: telemetryMetadata(requestContext, { providerTransactionId: providerObject.id }),
-            },
-          });
+          if (failed.count === 1) {
+            await tx.outboxEvent.create({
+              data: {
+                aggregateType: 'Payment',
+                aggregateId: payment.id,
+                eventType: 'payment.failed',
+                payload: { bookingId, paymentId: payment.id, source: 'STRIPE_WEBHOOK' },
+                metadata: telemetryMetadata(requestContext, { providerTransactionId: providerObject.id }),
+              },
+            });
+          }
         }
       } else if (REFUND_EVENT_TYPES.has(event.type)) {
         result = await reconcileProviderRefundInTx({

@@ -283,6 +283,13 @@ test('Supabase enforces inbox, capture, payout and refund concurrency invariants
     assert.equal(captureDebit, captureCredit);
     assert.equal(captureDebit, 10_800);
 
+    // Financial capture is not professional acceptance of the Booking.
+    assert.equal((await prisma.booking.findUnique({ where: { id: ids.booking } })).status, 'PENDING');
+    const acceptance = await prisma.$transaction((tx) => claimBookingTransition({
+      tx, bookingId: ids.booking, transition: 'CONFIRM',
+    }));
+    assert.equal(acceptance.booking.status, 'CONFIRMED');
+
     const startResults = await usingClients(2, (clients) => Promise.all(clients.map((client) =>
       client.$transaction((tx) => claimBookingTransition({ tx, bookingId: ids.booking, transition: 'START' }))
     )));

@@ -16,7 +16,7 @@ const {
   BOOKING_READ_INCLUDE,
   PAYMENT_HISTORY_SELECT,
 } = require('../src/shared/http/public-projections');
-const { assertBookingPaymentSettled, claimBookingTransition } = require('../src/modules/bookings/booking-lifecycle.service');
+const { assertBookingPaymentSettled, assertBookingCompletionFinanciallyReady, claimBookingTransition } = require('../src/modules/bookings/booking-lifecycle.service');
 const { resolveBookingCommercialPolicy } = require('../src/modules/bookings/booking-commercial-policy.service');
 
 test('booking scheduling window is derived from server-side service durations', () => {
@@ -222,7 +222,34 @@ test('professional rejection is an explicit idempotent pending-to-cancelled tran
 test('booking completion requires durable settled-payment evidence', () => {
   assert.equal(assertBookingPaymentSettled({ id: 'payment-1', status: 'COMPLETED' }).id, 'payment-1');
   assert.throws(() => assertBookingPaymentSettled(null), { code: 'BOOKING_PAYMENT_NOT_SETTLED', statusCode: 409 });
-  assert.throws(() => assertBookingPaymentSettled({ id: 'payment-1', status: 'PENDING', method: 'CASH' }), { code: 'BOOKING_PAYMENT_NOT_SETTLED' });
+  assert.throws(() => assertBookingPaymentSettled({ id: 'payment-1', status: 'PENDING', method: 'STRIPE' }), { code: 'BOOKING_PAYMENT_NOT_SETTLED' });
+  assert.throws(() => assertBookingPaymentSettled({ id: 'payment-1', status: 'COMPLETED', method: 'CASH' }), {
+    code: 'CASH_PAYMENT_DISABLED', statusCode: 409,
+  });
+});
+
+test('cancellation uses domain authority, preserves supported NO_SHOW history and rejects completed state', async () => {
+  for (const status of ['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'NO_SHOW', 'COMPLETED']) {
+    let current = { id: 'booking-1', status };
+    const tx = { booking: {
+      updateMany: async ({ where, data }) => {
+        if (!where.status.in.includes(current.status)) return { count: 0 };
+        current = { ...current, ...data }; return { count: 1 };
+      },
+      findUnique: async () => current,
+    } };
+    const cancel = () => claimBookingTransition({ tx, bookingId: current.id, transition: 'CANCEL' });
+    if (status === 'COMPLETED') await assert.rejects(cancel, { code: 'BOOKING_TRANSITION_CONFLICT', statusCode: 409 });
+    else assert.equal((await cancel()).booking.status, 'CANCELLED');
+  }
+});
+
+test('booking completion blocks a pending refund even when payment remains captured', () => {
+  const payment = { id: 'payment-1', status: 'COMPLETED', method: 'STRIPE' };
+  assert.equal(assertBookingCompletionFinanciallyReady({ payment, activeRefund: null }), payment);
+  assert.throws(() => assertBookingCompletionFinanciallyReady({ payment, activeRefund: { id: 'refund-1' } }), {
+    code: 'BOOKING_REFUND_IN_PROGRESS', statusCode: 409,
+  });
 });
 
 test('market-authoritative booking pricing captures versioned policy evidence', async () => {

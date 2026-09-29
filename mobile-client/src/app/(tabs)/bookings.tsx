@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import type { ViewStyle } from 'react-native';
 import {
   View,
   Text,
@@ -13,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { BORDER_RADIUS, COLORS, FONTS, LAYOUT, SHADOWS, SPACING } from '@/constants/theme';
 import { useAppStore } from '@/store/appStore';
-import type { Booking } from '@/types';
+import type { Booking, BookingStatus } from '@/types';
 import { useTranslation } from 'react-i18next';
 
 // Componente temporal para mostrar reservas (puede ser reemplazado por un componente dedicado)
@@ -29,13 +30,18 @@ const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ book
     bookingData.professional?.user?.firstName,
     bookingData.professional?.user?.lastName,
   ].filter(Boolean).join(' ') || t('common.professional');
-  const statusKey = booking.status.toLowerCase() as 'confirmed'|'pending'|'completed'|'cancelled';
-  const statusStyle = {
+  const statusKey: Record<BookingStatus, string> = {
+    PENDING: 'pending', CONFIRMED: 'confirmed', IN_PROGRESS: 'inProgress',
+    COMPLETED: 'completed', CANCELLED: 'cancelled', NO_SHOW: 'noShow',
+  };
+  const statusStyle: Record<BookingStatus, ViewStyle> = {
     CONFIRMED: styles.statusconfirmed,
     PENDING: styles.statuspending,
+    IN_PROGRESS: styles.statusinProgress,
     COMPLETED: styles.statuscompleted,
     CANCELLED: styles.statuscancelled,
-  }[booking.status as 'CONFIRMED' | 'PENDING' | 'COMPLETED' | 'CANCELLED'] ?? styles.statuspending;
+    NO_SHOW: styles.statusnoShow,
+  };
 
   return (
   <TouchableOpacity style={styles.bookingCard} onPress={onPress}>
@@ -44,8 +50,8 @@ const BookingItem: React.FC<{ booking: Booking; onPress: () => void }> = ({ book
         <Text style={styles.serviceName}>{serviceName}</Text>
         <Text style={styles.professionalName}>{professionalName}</Text>
       </View>
-      <View style={[styles.statusBadge, statusStyle]}>
-        <Text style={styles.statusText}>{t(`bookings.${statusKey}`, { defaultValue: booking.status })}</Text>
+      <View style={[styles.statusBadge, statusStyle[booking.status]]}>
+        <Text style={styles.statusText}>{t(`bookings.${statusKey[booking.status]}`, { defaultValue: booking.status })}</Text>
       </View>
     </View>
     
@@ -318,10 +324,16 @@ const styles = StyleSheet.create({
   statuspending: {
     backgroundColor: '#FEF3C7',
   },
+  statusinProgress: {
+    backgroundColor: '#DBEAFE',
+  },
   statuscompleted: {
     backgroundColor: '#DBEAFE',
   },
   statuscancelled: {
+    backgroundColor: '#FEE2E2',
+  },
+  statusnoShow: {
     backgroundColor: '#FEE2E2',
   },
   statusText: {

@@ -68,6 +68,76 @@ const pickProfessionalBooking = (booking) => toWire({
   client: { id: booking.client?.id, user: pickUser(booking.client?.user) },
 });
 
+const bookingMutationBase = (bookingSchema, pickBooking) => serialized(
+  outputObject({ message: z.string(), booking: bookingSchema, duplicate: z.boolean() }),
+  (body) => ({ message: body.message, booking: pickBooking(body.booking), duplicate: body.duplicate }),
+);
+const payoutSummary = outputObject({
+  id: uuid, status: z.enum(['REQUESTED', 'APPROVED', 'PROCESSING', 'COMPLETED', 'FAILED', 'REVERSED', 'CANCELLED']),
+  amount: money, currency: z.string().length(3), requestedAt: dateTime,
+  approvedAt: dateTime.nullable(), processedAt: dateTime.nullable(),
+});
+const refundSummary = outputObject({
+  id: uuid, status: z.enum(['REQUESTED', 'APPROVED', 'REJECTED', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED']),
+  serviceAmount: money, platformFeeAmount: money, totalAmount: money, currency: z.string().length(3),
+  requestedAt: dateTime, processedAt: dateTime.nullable(),
+});
+const refundRequestSummary = outputObject({
+  outcome: z.enum(['NOT_CAPTURED', 'NO_POLICY', 'EXISTING', 'APPROVED', 'MANUAL_REVIEW', 'REJECTED']),
+  duplicate: z.boolean(), refund: refundSummary.nullable(),
+});
+const pickPayout = (payout) => payout ? toWire({
+  id: payout.id, status: payout.status, amount: payout.amount, currency: payout.currency,
+  requestedAt: payout.requestedAt, approvedAt: payout.approvedAt, processedAt: payout.processedAt,
+}) : null;
+const pickRefundRequest = (request) => request ? toWire({
+  outcome: request.outcome, duplicate: request.duplicate,
+  refund: request.refund ? {
+    id: request.refund.id, status: request.refund.status,
+    serviceAmount: request.refund.serviceAmount, platformFeeAmount: request.refund.platformFeeAmount,
+    totalAmount: request.refund.totalAmount, currency: request.refund.currency,
+    requestedAt: request.refund.requestedAt, processedAt: request.refund.processedAt,
+  } : null,
+}) : null;
+
+const professionalMutation = (name) => defineResponseContract({
+  method: 'POST', path: `/api/bookings/{id}/${name}`, operationId: `bookings.${name}`,
+  responses: { 200: bookingMutationBase(professionalBooking, pickProfessionalBooking) },
+});
+const bookingMutationResponses = Object.freeze({
+  create: defineResponseContract({
+    method: 'POST', path: '/api/bookings', operationId: 'bookings.create',
+    responses: {
+      200: bookingMutationBase(customerBooking, pickCustomerBooking),
+      201: bookingMutationBase(customerBooking, pickCustomerBooking),
+    },
+  }),
+  confirm: professionalMutation('confirm'),
+  reject: professionalMutation('reject'),
+  start: professionalMutation('start'),
+  complete: defineResponseContract({
+    method: 'POST', path: '/api/bookings/{id}/complete', operationId: 'bookings.complete',
+    responses: { 200: serialized(outputObject({
+      message: z.string(), booking: professionalBooking, duplicate: z.boolean(), payout: payoutSummary.nullable(),
+    }), (body) => ({
+      message: body.message, booking: pickProfessionalBooking(body.booking), duplicate: body.duplicate,
+      payout: pickPayout(body.payout),
+    })) },
+  }),
+  cancel: defineResponseContract({
+    method: 'POST', path: '/api/bookings/{id}/cancel', operationId: 'bookings.cancel',
+    responses: { 200: serialized(outputObject({
+      message: z.string(), booking: z.union([customerBooking, professionalBooking]), duplicate: z.boolean(),
+      refundRequest: refundRequestSummary.nullable(),
+    }), (body, req) => ({
+      message: body.message,
+      booking: req.user?.role === 'CLIENT' ? pickCustomerBooking(body.booking)
+        : req.user?.role === 'PROFESSIONAL' ? pickProfessionalBooking(body.booking) : undefined,
+      duplicate: body.duplicate, refundRequest: pickRefundRequest(body.refundRequest),
+    })) },
+  }),
+});
+
 const bookingResponses = Object.freeze({
   detail: defineResponseContract({
     method: 'GET', path: '/api/bookings/{id}', operationId: 'bookings.detail',
@@ -90,4 +160,4 @@ const bookingResponses = Object.freeze({
   }),
 });
 
-module.exports = { bookingResponses, bookingSchemas: { customerBooking, professionalBooking } };
+module.exports = { bookingResponses, bookingMutationResponses, bookingSchemas: { customerBooking, professionalBooking } };

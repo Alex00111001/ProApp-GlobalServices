@@ -40,7 +40,7 @@ export const buildBookingReceiptHtml = async (booking: any, t: Translator, langu
     .filter(Boolean).join(', ');
   const statusKey: Record<string, string> = {
     PENDING: 'pending', CONFIRMED: 'confirmed', IN_PROGRESS: 'inProgress',
-    COMPLETED: 'completed', CANCELLED: 'cancelled',
+    COMPLETED: 'completed', CANCELLED: 'cancelled', NO_SHOW: 'noShow',
   };
   const status = t(`booking.${statusKey[booking.status] ?? 'pending'}`, {
     defaultValue: booking.status,

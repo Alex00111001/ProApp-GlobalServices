@@ -22,7 +22,7 @@ const applyBasisPoints = (amountMinor, basisPoints) => {
 
 const evaluateRefund = ({ rules, context, serviceAmountMinor, platformFeeMinor }) => {
   const rule = (Array.isArray(rules) ? rules : []).find((candidate) => matches(candidate.when, context));
-  if (!rule) return { outcome: 'MANUAL_REVIEW', serviceRefundMinor: 0, platformFeeRefundMinor: 0, matchedRule: null };
+  if (!rule) return { outcome: 'MANUAL_REVIEW', serviceRefundMinor: 0, platformFeeRefundMinor: 0, totalRefundMinor: 0, matchedRule: null };
   const serviceRefundMinor = applyBasisPoints(serviceAmountMinor, percentageToBasisPoints(rule.serviceRefundPercentage));
   const platformFeeRefundMinor = applyBasisPoints(platformFeeMinor, percentageToBasisPoints(rule.platformFeeRefundPercentage));
   return {

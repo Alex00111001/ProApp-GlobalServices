@@ -70,8 +70,8 @@ export const BOOKING_STATUS_CONFIG = {
     color: COLORS.error,
     icon: 'close-circle-outline',
   },
-  REJECTED: {
-    label: 'Rejected',
+  NO_SHOW: {
+    label: 'No-show',
     color: COLORS.error,
     icon: 'close-circle-outline',
   },

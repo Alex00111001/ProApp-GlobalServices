@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { Prisma } = require('@prisma/client');
 const { normalizeBookingPayload } = require('../shared/http/compatibility');
 const { createBookingSchema } = require('../validators/auth.validators');
 const { calculateQuote, decimalToMinor } = require('../modules/billing/pricing/pricing.service');
@@ -6,7 +7,7 @@ const env = require('../config/env');
 const { telemetryMetadata } = require('../modules/observability/context');
 const { logError } = require('../modules/observability/safe-log');
 const { createPayoutRequestForCompletedBookingInTx } = require('../modules/billing/payouts/payout-request.service');
-const { createCancellationRefundRequestInTx } = require('../modules/billing/refunds/refund-request.service');
+const { reconcileCancelledBookingPaymentInTx } = require('../modules/billing/payments/booking-payment-cancellation.service');
 const {
   claimBookingCreation,
   completeBookingCreation,
@@ -16,7 +17,7 @@ const {
   schedulingWindow,
 } = require('../modules/bookings/booking-creation.service');
 const { resolveBookingCommercialPolicy } = require('../modules/bookings/booking-commercial-policy.service');
-const { assertBookingPaymentSettled, claimBookingTransition } = require('../modules/bookings/booking-lifecycle.service');
+const { assertBookingCompletionFinanciallyReady, claimBookingTransition } = require('../modules/bookings/booking-lifecycle.service');
 const { BOOKING_READ_INCLUDE } = require('../shared/http/public-projections');
 const {
   bookingCancellationBody,
@@ -460,26 +461,38 @@ exports.cancelBooking = async (req, res, next) => {
 
     const cancelledAt = new Date();
     const result = await prisma.$transaction(async (tx) => {
-      const claimed = await tx.booking.updateMany({
-        where: { id, status: { notIn: ['CANCELLED', 'COMPLETED'] } },
+      if (booking.payment?.id) {
+        await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Payment" WHERE "id" = ${booking.payment.id} FOR UPDATE`);
+      }
+      await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Booking" WHERE "id" = ${id} FOR UPDATE`);
+      const currentBooking = await tx.booking.findUnique({
+        where: { id },
+        include: {
+          client: { select: { userId: true, country: true } },
+          market: { select: { country: { select: { isoAlpha2: true } } } },
+          professional: { select: { userId: true } },
+          payment: true,
+        },
+      });
+      const transition = await claimBookingTransition({
+        tx, bookingId: id, transition: 'CANCEL', include: BOOKING_READ_INCLUDE,
         data: {
-          status: 'CANCELLED',
           cancelledBy,
           cancellationReason,
           cancelledAt,
         },
+        isDuplicate: async (current) => current.cancelledBy === cancelledBy
+          && current.cancellationReason === cancellationReason
+          && Boolean(await tx.outboxEvent.findFirst({
+            where: { aggregateType: 'Booking', aggregateId: id, eventType: 'booking.cancelled' },
+            select: { id: true },
+          })),
       });
-      if (claimed.count === 0) {
-        const current = await tx.booking.findUnique({ where: { id } });
-        if (current?.status === 'CANCELLED') return { booking: current, refundRequest: null, duplicate: true };
-        const error = new Error('Booking can no longer be cancelled');
-        error.status = 409;
-        throw error;
-      }
+      if (transition.duplicate) return { booking: transition.booking, refundRequest: null, duplicate: true };
 
       const notifyUserId = cancelledBy === 'CLIENT'
-        ? booking.professional?.userId
-        : booking.client.userId;
+        ? currentBooking.professional?.userId
+        : currentBooking.client.userId;
       if (notifyUserId) {
         await tx.notification.create({
           data: {
@@ -492,17 +505,12 @@ exports.cancelBooking = async (req, res, next) => {
         });
       }
 
-      const refundRequest = env.financialRefundRequestsEnabled
-        ? await createCancellationRefundRequestInTx({
-          tx,
-          booking,
-          requestedBy: req.user.id,
-          whoCancelled: cancelledBy,
-          reason: cancellationReason,
-          cancelledAt,
-          requestContext: req.context,
-        })
-        : null;
+      const refundRequest = await reconcileCancelledBookingPaymentInTx({
+        tx,
+        booking: { ...currentBooking, status: 'CANCELLED', cancelledBy, cancellationReason, cancelledAt },
+        requestedBy: req.user.id,
+        requestContext: req.context,
+      });
       await tx.outboxEvent.create({
         data: {
           aggregateType: 'Booking',
@@ -519,14 +527,14 @@ exports.cancelBooking = async (req, res, next) => {
           resourceType: 'Booking',
           resourceId: id,
           outcome: 'SUCCESS',
-          before: { status: booking.status },
+          before: { status: currentBooking.status },
           after: { status: 'CANCELLED', cancelledBy },
           requestId: req.context?.requestId,
           correlationId: req.context?.correlationId,
           traceId: req.context?.traceId,
         },
       });
-      const updated = await tx.booking.findUnique({ where: { id } });
+      const updated = await tx.booking.findUnique({ where: { id }, include: BOOKING_READ_INCLUDE });
       return { booking: updated, refundRequest, duplicate: false };
     });
 
@@ -539,6 +547,7 @@ exports.cancelBooking = async (req, res, next) => {
   } catch (error) {
     logError(req, error, 'Booking cancellation failed');
     if (error.status && error.status < 500) return res.status(error.status).json({ error: error.message });
+    if (error.statusCode && error.statusCode < 500) return res.status(error.statusCode).json({ error: error.message, code: error.code });
     return next(error);
   }
 };
@@ -557,15 +566,37 @@ exports.rejectBooking = async (req, res, next) => {
 
     const rejectedAt = new Date();
     const result = await prisma.$transaction(async (tx) => {
+      const payment = await tx.payment.findUnique({ where: { bookingId: id }, select: { id: true } });
+      if (payment) await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Payment" WHERE "id" = ${payment.id} FOR UPDATE`);
+      await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Booking" WHERE "id" = ${id} FOR UPDATE`);
+      const financialBooking = await tx.booking.findUnique({
+        where: { id },
+        include: {
+          payment: true, client: { select: { country: true } },
+          market: { select: { country: { select: { isoAlpha2: true } } } },
+        },
+      });
       const transition = await claimBookingTransition({
         tx,
         bookingId: id,
         transition: 'REJECT',
         data: { cancelledBy: 'PROFESSIONAL', cancellationReason: reason || 'Professional declined request', cancelledAt: rejectedAt },
         include: BOOKING_READ_INCLUDE,
-        isDuplicate: (current) => current.cancelledBy === 'PROFESSIONAL',
+        isDuplicate: async (current) => current.cancelledBy === 'PROFESSIONAL'
+          && Boolean(await tx.outboxEvent.findFirst({
+            where: { aggregateType: 'Booking', aggregateId: id, eventType: 'booking.rejected' },
+            select: { id: true },
+          })),
       });
       if (transition.duplicate) return transition;
+      await reconcileCancelledBookingPaymentInTx({
+        tx,
+        booking: {
+          ...financialBooking, status: 'CANCELLED', cancelledBy: 'PROFESSIONAL',
+          cancellationReason: reason || 'Professional declined request', cancelledAt: rejectedAt,
+        },
+        requestedBy: req.user.id, requestContext: req.context,
+      });
       await tx.notification.create({
         data: {
           userId: transition.booking.client.userId,
@@ -672,9 +703,21 @@ exports.completeBooking = async (req, res, next) => {
         code: 'BOOKING_TRANSITION_CONFLICT',
       });
     }
-    assertBookingPaymentSettled(booking.payment);
-
     const result = await prisma.$transaction(async (tx) => {
+      if (booking.payment?.id) {
+        await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Payment" WHERE "id" = ${booking.payment.id} FOR UPDATE`);
+      }
+      await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "Booking" WHERE "id" = ${id} FOR UPDATE`);
+      const currentBooking = await tx.booking.findUnique({
+        where: { id }, include: { payment: { select: { id: true, status: true, method: true } } },
+      });
+      if (currentBooking.status !== 'COMPLETED') {
+        const activeRefund = await tx.refund.findFirst({
+          where: { bookingId: id, status: { in: ['REQUESTED', 'APPROVED', 'PROCESSING'] } },
+          select: { id: true },
+        });
+        assertBookingCompletionFinanciallyReady({ payment: currentBooking.payment, activeRefund });
+      }
       const transition = await claimBookingTransition({
         tx, bookingId: id, transition: 'COMPLETE', data: { completedAt: new Date() }, include: BOOKING_READ_INCLUDE,
       });
@@ -683,11 +726,11 @@ exports.completeBooking = async (req, res, next) => {
       // Actualizar earnings del profesional
       const earning = await tx.earning.create({
         data: {
-          professionalId: booking.professionalId,
+          professionalId: currentBooking.professionalId,
           bookingId: id,
-          amount: booking.pricingSnapshot ? booking.serviceAmount : booking.totalPrice,
-          platformFee: booking.pricingSnapshot ? booking.professionalCommission : booking.platformFee,
-          netAmount: booking.professionalEarnings,
+          amount: currentBooking.pricingSnapshot ? currentBooking.serviceAmount : currentBooking.totalPrice,
+          platformFee: currentBooking.pricingSnapshot ? currentBooking.professionalCommission : currentBooking.platformFee,
+          netAmount: currentBooking.professionalEarnings,
           status: 'PENDING',
         },
       });
@@ -695,7 +738,7 @@ exports.completeBooking = async (req, res, next) => {
       const payment = await tx.payment.findUnique({ where: { bookingId: id } });
       const payoutRequest = await createPayoutRequestForCompletedBookingInTx({
         tx,
-        booking,
+        booking: currentBooking,
         payment,
         earning,
         requestedBy: req.user.id,
@@ -705,10 +748,10 @@ exports.completeBooking = async (req, res, next) => {
 
       // Actualizar estadísticas del profesional
       await tx.professionalProfile.update({
-        where: { id: booking.professionalId },
+        where: { id: currentBooking.professionalId },
         data: {
           totalBookings: { increment: 1 },
-          totalEarnings: { increment: booking.professionalEarnings },
+          totalEarnings: { increment: currentBooking.professionalEarnings },
         },
       });
 
@@ -731,7 +774,7 @@ exports.completeBooking = async (req, res, next) => {
           aggregateType: 'Booking',
           aggregateId: id,
           eventType: 'booking.completed',
-          payload: { bookingId: id, professionalId: booking.professionalId },
+          payload: { bookingId: id, professionalId: currentBooking.professionalId },
           metadata: telemetryMetadata(req.context, { payoutRequestsEnabled: env.financialPayoutRequestsEnabled }),
         },
       });
@@ -754,7 +797,7 @@ exports.completeBooking = async (req, res, next) => {
         status: payoutRequest.payout.status,
         amount: payoutRequest.payout.amount,
         currency: payoutRequest.payout.currency,
-        eligibleAt: payoutRequest.payout.eligibleAt,
+        requestedAt: payoutRequest.payout.requestedAt,
         approvedAt: payoutRequest.payout.approvedAt,
         processedAt: payoutRequest.payout.processedAt,
       } : null;

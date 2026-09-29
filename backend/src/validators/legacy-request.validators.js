@@ -26,6 +26,17 @@ const bookingListQuery = pagination({ defaultLimit: 10, maxLimit: 50 }).extend({
 }).strict();
 const bookingCancellationBody = z.object({ reason: legacyReason }).strip().default({ reason: null });
 const bookingRejectionBody = z.object({ reason: legacyReason }).strip().default({ reason: null });
+// Accepted HTTP values and normalized domain values are separate contracts.
+// Runtime still parses the schemas above; this projection cannot erase their
+// normalization classification or close the global structural-equivalence gate.
+const bookingReasonWireSchema = z.object({ reason: z.string().nullable().optional() }).passthrough().default({});
+for (const schema of [bookingCancellationBody, bookingRejectionBody]) {
+  Object.defineProperty(schema, 'homeservicesWireContract', { value: Object.freeze({
+    schema: bookingReasonWireSchema,
+    classification: 'NORMALIZATION',
+    semantics: ['Absent/null reason becomes null', 'String reason is trimmed and truncated to 500 characters', 'Unknown object fields are accepted and discarded'],
+  }) });
+}
 
 const notificationIdParams = z.object({ notificationId: uuid }).strict();
 const notificationListQuery = pagination({ defaultLimit: 20, maxLimit: 50 }).extend({

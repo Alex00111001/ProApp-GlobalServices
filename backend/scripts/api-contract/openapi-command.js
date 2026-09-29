@@ -19,6 +19,8 @@ const schemaFor = (document, route, validation) => {
   const entry = document.schemas[`${route.handler.file}#${validation.schema}`];
   const schema = cleanSchema(entry?.jsonSchema);
   if (entry?.gaps?.length) schema['x-homeservices-runtime-semantics'] = entry.gaps;
+  if (entry?.classification) schema['x-homeservices-input-classification'] = entry.classification;
+  if (entry?.normalization) schema['x-homeservices-normalization'] = entry.normalization;
   schema['x-homeservices-zod-binding'] = `${route.handler.file}#${validation.schema}`;
   return schema;
 };
@@ -69,7 +71,8 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
       const schema = schemaFor(inventoryDocument, route, validation);
       if (validation.input.includes('req.body')) {
         const contentType = route.middleware.some((item) => item.startsWith('upload.')) ? 'multipart/form-data' : 'application/json';
-        requestBody = { required: !schema.default, content: { [contentType]: { schema } } };
+        const binding = inventoryDocument.schemas[`${route.handler.file}#${validation.schema}`];
+        requestBody = { required: binding?.bodyRequired ?? !schema.default, content: { [contentType]: { schema } } };
       } else if (validation.input.includes('req.query') && schema.type === 'object') {
         const required = new Set(schema.required || []);
         for (const [name, propertySchema] of Object.entries(schema.properties || {})) {

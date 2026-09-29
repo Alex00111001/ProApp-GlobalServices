@@ -6,6 +6,20 @@ const { ROOT, readSource, walk, member } = require('./source-inventory');
 
 // Schemas may contain custom predicates/normalizers. JSON Schema cannot silently erase them.
 function projectSchema(schema, io = 'input') {
+  if (io === 'input' && schema?.homeservicesWireContract) {
+    const contract = schema.homeservicesWireContract;
+    const projection = projectSchema(contract.schema, 'input');
+    if (projection.wireParity !== 'STRUCTURAL') throw new Error('Explicit wire schema must be structurally projectable.');
+    // JSON Schema's default is only an annotation, not runtime normalization.
+    // An empty additionalProperties schema is equivalent to its omitted form.
+    const jsonSchema = structuredClone(projection.jsonSchema);
+    delete jsonSchema.default;
+    if (jsonSchema.additionalProperties && Object.keys(jsonSchema.additionalProperties).length === 0) delete jsonSchema.additionalProperties;
+    return {
+      ...projection, jsonSchema, bodyRequired: false, wireParity: 'NORMALIZATION', classification: contract.classification,
+      gaps: ['NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE'], normalization: [...contract.semantics],
+    };
+  }
   const gaps = new Set();
   const seen = new WeakSet();
   const inspect = (value) => {

@@ -5,7 +5,11 @@ const { PAYMENT_CURRENCY: STRIPE_CURRENCY } = require('../config/business');
 const env = require('../config/env');
 const { decimalToMinor } = require('../modules/billing/pricing/pricing.service');
 const { applySuccessfulPayment } = require('../modules/billing/payments/payment-capture.service');
-const { persistPreparedPaymentIntent } = require('../modules/billing/payments/payment-intent-preparation.service');
+const { isBookingPayable, persistPreparedPaymentIntent } = require('../modules/billing/payments/payment-intent-preparation.service');
+const {
+  cleanupRejectedIntent,
+  reconcileUncertainIntentPersistence,
+} = require('../modules/billing/payments/payment-intent-recovery.service');
 const { processStripeEvent } = require('../modules/billing/payments/stripe-webhook.service');
 const { logError } = require('../modules/observability/safe-log');
 const { BOOKING_READ_INCLUDE, PAYMENT_HISTORY_SELECT } = require('../shared/http/public-projections');
@@ -47,6 +51,9 @@ exports.createPaymentIntent = async (req, res, next) => {
     const { bookingId } = input.data;
 
     const booking = await getOwnedBooking(bookingId, req.user.id);
+    if (!isBookingPayable(booking)) {
+      return res.status(409).json({ success: false, message: 'La reserva no admite nuevos pagos' });
+    }
     const amountMinor = decimalToMinor(booking.totalPrice);
     if (amountMinor < 100) {
       return res.status(400).json({ success: false, message: 'El importe de la reserva no es válido' });
@@ -54,6 +61,9 @@ exports.createPaymentIntent = async (req, res, next) => {
     const currency = String(booking.currency || STRIPE_CURRENCY).toLowerCase();
     if (booking.payment?.status === 'COMPLETED') {
       return res.status(409).json({ success: false, message: 'La reserva ya está pagada' });
+    }
+    if (booking.payment?.status === 'REFUNDED') {
+      return res.status(409).json({ success: false, message: 'El pago reembolsado no puede reabrirse' });
     }
 
     let paymentIntent = null;
@@ -91,15 +101,40 @@ exports.createPaymentIntent = async (req, res, next) => {
       });
     }
 
-    const persisted = await persistPreparedPaymentIntent({
+    const preparation = {
       db: prisma,
       bookingId: booking.id,
       amountMinor,
       currency: paymentIntent.currency,
       paymentIntentId: paymentIntent.id,
+      expectedTransactionId: booking.payment?.transactionId || null,
+    };
+    let persisted;
+    try {
+      persisted = await persistPreparedPaymentIntent(preparation);
+    } catch (error) {
+      const recovery = await reconcileUncertainIntentPersistence({
+        bookingId: booking.id,
+        amountMinor,
+        currency: paymentIntent.currency,
+        paymentIntent,
+        expectedTransactionId: booking.payment?.transactionId || null,
+        requestContext: req.context || {},
+        req,
+      });
+      if (!recovery.resolved) throw error;
+      persisted = recovery.persisted;
+    }
+    if (persisted.completed || persisted.blocked) await cleanupRejectedIntent({
+      bookingId: booking.id, paymentIntent, persisted,
+      reason: persisted.reason || (persisted.completed ? 'PAYMENT_ALREADY_COMPLETED' : 'BOOKING_NOT_PAYABLE'),
+      requestContext: req.context || {}, req,
     });
     if (persisted.completed) {
       return res.status(409).json({ success: false, message: 'La reserva ya está pagada' });
+    }
+    if (persisted.blocked) {
+      return res.status(409).json({ success: false, message: 'La reserva no admite nuevos pagos' });
     }
 
     res.json({
@@ -153,6 +188,9 @@ exports.confirmPayment = async (req, res, next) => {
       ledgerEnabled: env.financialLedgerDualWriteEnabled,
       requestContext: req.context,
     }));
+    if (result.payment.status === 'REFUNDED') {
+      return res.status(409).json({ success: false, message: 'El pago ya fue reembolsado' });
+    }
     const publicBooking = await prisma.booking.findUnique({
       where: { id: booking.id },
       include: BOOKING_READ_INCLUDE,

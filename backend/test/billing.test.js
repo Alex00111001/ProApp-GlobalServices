@@ -77,6 +77,8 @@ test('refund rules independently decide service and platform fee', () => {
 
 test('refund defaults to manual review when no versioned rule matches', () => {
   assert.equal(evaluateRefund({ rules: [], context: {}, serviceAmountMinor: 100, platformFeeMinor: 10 }).outcome, 'MANUAL_REVIEW');
+  assert.equal(evaluateRefund({ rules: [], context: {}, serviceAmountMinor: 100, platformFeeMinor: 10 }).totalRefundMinor, 0,
+    'an unmatched policy must produce a persistable zero-amount manual decision');
 });
 
 test('refund percentages use deterministic basis-point arithmetic', () => {
@@ -249,6 +251,7 @@ const createCaptureTx = ({ claimed = 1 } = {}) => {
     bookingId: 'booking-1',
     amount: '108.00',
     currency: 'EUR',
+    method: 'STRIPE',
     status: claimed ? 'PROCESSING' : 'COMPLETED',
     transactionId: 'pi_1',
   };

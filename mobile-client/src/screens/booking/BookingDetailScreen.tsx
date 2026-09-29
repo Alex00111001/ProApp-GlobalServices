@@ -28,7 +28,7 @@ interface BookingService {
 
 interface Booking {
   id: string;
-  status: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  status: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
   scheduledDate: string;
   address: string;
   city: string;
@@ -143,6 +143,7 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
       case 'COMPLETED':
         return COLORS.success;
       case 'CANCELLED':
+      case 'NO_SHOW':
         return COLORS.error;
       default:
         return COLORS.gray400;
@@ -161,6 +162,8 @@ export const BookingDetailScreen: React.FC<{ bookingId?: string }> = ({ bookingI
         return t('booking.completed');
       case 'CANCELLED':
         return t('booking.cancelled');
+      case 'NO_SHOW':
+        return t('booking.noShow');
       default:
         return status;
     }
