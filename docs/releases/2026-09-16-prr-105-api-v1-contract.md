@@ -145,3 +145,54 @@ PRR-105 remains **PARCIAL**. Global consumer semantic parity is not yet proven, 
 - This documentary evidence is valid for tracker projection only when the documentation commit's exact-SHA CI also succeeds. The OpenAPI candidate remains `CANDIDATE_NOT_PUBLISHED`.
 
 PRR-105 remains **PARCIAL**. Request, response, error, validation/pagination and auth semantic parity across all consumers remain unproven globally. PRR-106, production, Markets, CASH activation and F11 runtime remain OFF.
+
+## Booking write/state transition response-authority tranche, 2026-09-29
+
+- Base SHA: `df9115acfccb212775e808fe6268c376641567e9`; baseline Platform verification #89 SUCCESS.
+- Initial implementation: `ba3b7a020e58d12832ad7d58fa7feaa369855116`. PostgreSQL corrections: `29e9f3d3b554b73611d59f0aac25cadc277503dd`, inventory refresh `5a3ad370e807807d9c7a3f25542f242b86cebc1e`, interval fix `9f0ee05dafd896ec8eaedae22e40842145a27764`.
+- Verified implementation SHA: `9f0ee05dafd896ec8eaedae22e40842145a27764`; [Platform verification #93](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/36548314550): **SUCCESS** for that exact SHA. Quality, PostgreSQL and full-history secrets jobs all SUCCESS; no skipped gates.
+- Evidence SHA: the immutable commit containing this section, resolved by `git log -1 --format=%H -- docs/releases/2026-09-16-prr-105-api-v1-contract.md`. A document cannot embed its own Git hash. The final report and Notion projection bind that SHA to its own SUCCESS run on `ci/closure/prr105-booking-evidence-20260929`; #93 does not substitute for the documentary commit's verification. Tracker synchronization is conditional on that separate exact-SHA result.
+- Classification: approved PRR-105; Booking with user-authorized Billing coupling; CRITICAL/DEEP. Skills and routed review details, full mounted inventory, state machine, actor permissions, input classifications, consumer boundaries, concurrency and rollback are recorded in [Booking mutation contracts](../api/booking-mutation-contracts.md). No governance or external skill installation changes are included.
+
+### Delivered response authority and approved semantics
+
+Six mounted POST operations now bind runtime actor-safe serializers and output schemas: create, confirm, reject, start, complete and cancel. Create retains 201/new and 200/replay; other successful commands return 200. Mutation serializers compose the established customer/professional Booking read models, including safe payout/refund summaries. Negative tests exclude credentials, private contacts, coordinates, provider identifiers, internal pricing/ledger/risk/audit/notes and DB-only fields. Required/nullable fields, enums, dates, Decimal money, nested structures and arrays validate against generated OpenAPI.
+
+The user approved **professional-only Booking confirmation**. Stripe records payment and preserves Booking state. Capture/reject/cancel share Payment-before-Booking transaction locks and cancellation reconciliation: accepted versioned refund decision when enabled, one deduplicated HIGH incident, alert and audit. Both forced execution orders and concurrent execution produce one refund decision and preserve CANCELLED. Provider refund execution and four-eyes authorities are unchanged. Completion rechecks settled payment and active refunds before its single earning/statistics writes; historical CASH cannot authorize new completion/earnings.
+
+Intent persistence preserves terminal payments and expected intent identity. Ambiguous persistence retries transactionally; a shared in-flight intent is adopted safely and is never cancelled while persistence is uncertain. Definite terminal/conflict cleanup executes after transaction release; cleanup failure/persistence-unknown outcomes enter separate durable incident paths. Failed webhooks cannot degrade captured/refunded payments or overwrite newer intent identities.
+
+CI #91 exposed an actual Prisma driver failure deserializing advisory-lock `void` results and fixture cleanup missing F8 automation delivery foreign keys. The lock result is now cast to text without changing transaction-scoped locking. Fixture cleanup deletes only its own dependent delivery rows before outbox rows. CI #92 then exposed an invalid `endDate = null` filter against required DateTime; the reviewed scheduling migration already backfills and enforces non-null intervals. The corrected availability query retains actual interval overlap. No assertions, expected outcomes, tests or acceptance gates were weakened. #93 proves the corrections in real PostgreSQL.
+
+### Executable baseline before → after
+
+| Counter | Before | After |
+| --- | ---: | ---: |
+| Mounted operations | 251 | 251 |
+| Candidate operations | 245 | 245 |
+| Published operations | 0 | 0 |
+| Unresolved route-input projections | 142 | 142 |
+| Incomplete runtime-authoritative outputs | 202 | 196 |
+| Complete output contracts | 43 | 49 |
+| Consumer observations | 144 | 144 |
+| Breaking mismatches | 0 | 0 |
+
+Booking mutations inventoried: 6. Output contracts closed: 6. Input projections globally closed: 0. Cancel/reject accepted-wire schemas and optional bodies now project with explicit NORMALIZATION metadata and positive/negative equivalence-of-acceptance tests; normalization is not falsely classified STRUCTURAL. Create remains TRANSFORM/LEGACY_COMPATIBILITY with aliases, text normalization, scheduling and market/domain prerequisites; required header/domain projection remains residual debt. The unchanged global gate continues counting these inputs unresolved.
+
+Focused consumer source compatibility: PASS (7 tests covering active Customer create/cancel, Professional transitions, supported legacy aliases, consumed response fields/types, actor approval and real Booking statuses). The unused Customer confirm/complete helpers remain forbidden; no role privilege is broadened. Admin/Public have no lifecycle mutation consumer. No global semantic observation counter is promoted solely by source/path matching.
+
+Global request, response, error, validation/pagination, auth and OLD/NEW consumer parity: **NOT_PROVEN**, not zero mismatches. Tranche response/schema/OpenAPI parity, actor privacy, ownership/IDOR, invalid transition/conflict and SafeError evidence: PASS. Candidate remains **CANDIDATE_NOT_PUBLISHED**.
+
+### Verification and residual gates
+
+- Local `npm run verify`: PASS; Backend 349/349; Admin 15/15 + build; Public Web 4/4 + build; Customer 5/5 + typecheck; Professional typecheck. An initial local Customer timeout passed on unchanged retry and the subsequent full run; no test timeout/assertion was changed.
+- Exact-SHA #93: full workspace verification, inventory freshness, OpenAPI validation, breaking detector, dependency audit and secrets SUCCESS. PostgreSQL clean migration replay/status/baseline, RBAC sync and integration/concurrency **40/40 PASS**; financial idempotency acceptance **1/1 PASS**, zero skips. Includes real controller DTOs, create replay/slot conflict, concurrent confirm/reject/complete/cancel, duplicate completion, CASH retirement and both paid-rejection/capture orders.
+- Prisma format/validate/generate: PASS; schema unchanged; migration **NONE**. Local PostgreSQL was unavailable (Docker engine not running); no local DB PASS is claimed.
+- Generation: generate → freshness/validation → regenerate; artifact hashes unchanged and task-scoped `git diff` empty. Breaking detector: 0, no exceptions added.
+- Dependency audits: **0 HIGH/CRITICAL** in all six scopes. Two newly reported moderate advisories remain outside this tranche: Backend multer [GHSA-3pph-fpjx-jg34](https://github.com/advisories/GHSA-3pph-fpjx-jg34) and Admin transitive undici [GHSA-3wwx-pv8p-q78v](https://github.com/advisories/GHSA-3wwx-pv8p-q78v). Do not claim zero total vulnerabilities.
+- Tracked-tree/full-history secrets, secret-shaped fixture guard and repository artifact hygiene: PASS via current source guard and exact-SHA CI. Focused security review covers allowlists, IDOR/role/ownership, mass assignment, replay and financial coupling. Independent human verification remains the next action.
+- Unrelated pre-existing governance/skill changes remain uncommitted and preserved; task implementation/generated artifacts are committed. No whole-worktree CLEAN claim is made.
+
+Residual PRR-105 gates: 142 inputs, 196 outputs, global semantic parity, publication, complete observability/documentation/rollback acceptance and final global exact-SHA evidence. The global publication target remains open despite this response tranche's CI success. Notion stays EN CURSO; its historical 15% is not increased without an approved progress denominator covering every gate.
+
+PRR-105 closed: **NO**. PRR-106 started: **NO**. Production: **OFF**. Markets: **OFF**. CASH: **RETIRED/OFF**. F11: **PAUSED**. Next: **STOP — await independent verification**, with no new contract family started.
