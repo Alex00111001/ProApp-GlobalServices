@@ -144,3 +144,16 @@ jobs:
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: 8.24.3
+      - name: Require explicit full-history and tracked-tree secret scans
+        shell: bash
+        run: |
+          set -euo pipefail
+          scanner=/tmp/gitleaks-8.24.3/gitleaks
+          test -x "$scanner"
+          test "$(git rev-parse --is-shallow-repository)" = false
+          test "$(git rev-list --all --count)" -gt 0
+          "$scanner" git --log-opts="--all" --redact --no-banner --config "$GITHUB_WORKSPACE/.gitleaks.toml" .
+          tracked_tree=$(mktemp -d "$RUNNER_TEMP/tracked-tree.XXXXXX")
+          git archive HEAD | tar -x -C "$tracked_tree"
+          "$scanner" dir --redact --no-banner --config "$GITHUB_WORKSPACE/.gitleaks.toml" "$tracked_tree"
