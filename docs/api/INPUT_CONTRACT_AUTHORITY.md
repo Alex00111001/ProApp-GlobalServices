@@ -153,3 +153,109 @@ allowlist or compatibility exception is added.
 Rollback preserves legacy endpoints and validators. Revert only reviewed contract/projection changes;
 never bypass validation, financial idempotency, ownership or SafeError. OpenAPI remains
 CANDIDATE_NOT_PUBLISHED; PRR-106 blocked; Production/Markets/CASH OFF; F11 PAUSED.
+
+## PRR-105.T01: shared bounded-trim authority (2026-09-29)
+
+Classification: approved PRR-105.T01; shared input contracts across seven validator modules;
+HIGH / DEEP final review, operator-selected model. MVP DISCARDED. Target: complete, stable,
+publishable, production-ready. This tranche changes contract representation and shares existing
+runtime normalization; it does not approve a production action or the global PRR acceptance gate.
+Escalation boundaries: any runtime acceptance change, migration, new coercion, domain-policy
+change, publication or activation requires separate scope. No such change is included here.
+
+### Inventory and dependency order
+
+[T01 baseline inventory](normalization-inventory.t01.json) records all **117** unresolved
+NORMALIZATION bindings at `5c534b36988e8c426efb860fda3e215a571a876d`. Each record includes method,
+path, domain, surface, validator/source, fields, operations, wire/normalized representations,
+consumers, risk and primitive candidates. It is a pinned source-analysis snapshot, not acceptance
+evidence; the live input inventory remains generator-owned. There are **71 exact field-semantic
+clusters**. Cluster binding sets overlap: one object can contain defaults, coercion and trim.
+Default values and bounds are part of the cluster identity; counts must not be summed as closures.
+
+| Priority | Demonstrated reuse | Risk / consumers / dependency readiness | Decision |
+| --- | --- | --- | --- |
+| 1 | Bounded trim; 8..500 in 17 baseline bindings and 10..2000 in 16, plus four other bound variants | Seven modules; 19 affected consumer observations; audit reasons, policy reviews, session/role commands and identity proof are security-relevant. Pure trim grammar is ready; select only complete objects without other unresolved semantics | One shared primitive; 29 object authorities / 34 mounted bindings closed |
+| 2 | Integer coercion 1..100 in 36 and positive integer coercion in 30 bindings; default 1 in 41 | High cross-domain/list-consumer reuse, but HTTP query parser, duplicate keys, Number coercion and defaults need their own equivalence proof | Deferred; not mixed into trim |
+| 3 | Trim/uppercase market code in 11; trim/lowercase identifier in 7 for their respective exact grammar | High identity/market and case-confusion risk; most complete objects also contain other semantics | Deferred; preserve server market authority |
+| 4 | Remaining email/locale/date/text/default combinations in snapshot | Different grammar, defaults, refinements, transforms or insufficient standalone reuse | Deferred; no speculative generic normalizers |
+
+### Primitive and wire representation
+
+`backend/src/shared/http/input-normalization.js` owns `trimmedString(minimum, maximum)`.
+Its runtime is exactly `z.string().trim().min(minimum).max(maximum)`, with the existing order,
+values and validation issues. Locked Zod 4 string bounds and JSON Schema count Unicode code
+points. There is no case folding, Unicode normalization, truncation, numeric/boolean coercion,
+empty-to-null conversion or new allowed input type.
+
+The shared bounds generate a wire **string pattern**, not wire minLength/maxLength on the
+untrimmed string: ECMAScript whitespace, then non-whitespace-delimited content within normalized
+bounds, then ECMAScript whitespace. For bounds m..M (M >= 2), the core is
+`\S[\s\S]{max(0,m-2),M-2}\S`, plus the single `\S` alternative when m=1; it is wrapped in
+`^\s*(?:core)\s*$` and evaluated with Unicode semantics. Thus padded maximum-length input is
+accepted and converted to the bounded canonical value. Internal whitespace/control characters,
+case, combining marks and zero-width non-whitespace remain unchanged, as the runtime requires.
+
+`declareTrimmedInput` composes only explicitly selected object authorities. It reuses structural
+siblings and optional/nullable wrappers, and refuses unreviewed coercion, defaults, transformations,
+refinements and validated catchalls. Selected trim fields are required non-null strings. An object
+with unrelated semantic debt stays unresolved even if it reuses a bounded reason primitive.
+
+Flow: accepted JSON wire -> original runtime validator -> ECMAScript trim -> bounded canonical
+domain input. Generated OpenAPI comes from this shared wire metadata. Declaration alone cannot
+close a binding: generation executes independent fixed fixtures, boundaries, negative cases and
+canonical-result assertions. Mounted OpenAPI binding checks execute in the test suite. All 34
+closed bindings retain **NORMALIZATION**, with **ACCEPTANCE_EQUIVALENT** for validator input only.
+
+| Bounds | Canonical purpose | Runtime validator authorities |
+| --- | --- | --- |
+| 1..5000 | Incident/support comment body | admin-operations: incidentCommentSchema, supportCaseCommentSchema |
+| 8..500 | Review reasons/references | markets: marketStatusBody, identityPolicyReviewBody, identityPolicyStatusBody; privacy: policyReviewSchema.reviewReference; supply-demand-ai: reviewBody, activateBody, approvalBody, expansionReviewBody, providerStatusBody; experiments-content-seo: reviewBody, retireBody, experimentStatusBody |
+| 10..500 | User/professional/session/role reason | admin: userStatusSchema, professionalStatusSchema, revokeSessionSchema, roleDecisionSchema |
+| 10..2000 | Operations/privacy/referral/automation reason | admin-operations: errorStatusSchema, incidentStatusSchema, supportCaseStatusSchema, supportCaseAssignmentSchema; privacy: policyReviewSchema, policyStatusSchema, modelStatusSchema; referrals-automation: programStatusSchema, automationStatusSchema, revokeCodeSchema |
+| 12..1000 | Expansion hypothesis | supply-demand-ai: expansionBody |
+| 40..2000 | Identity reconciliation proof text | privacy: reconciliationSchema; proof authenticity remains a separate service authority |
+
+All operation method/path mappings are recorded in the generated [input inventory](input-inventory.v1.json)
+and [route inventory](route-inventory.v1.json), under `trim.*` evidence IDs. The 29 authorities
+cover 34 operations because role decisions and F10 review/activation schemas have multiple mounts.
+
+Unknown fields remain **STRIP** on the six admin-operations commands and **REJECT** on the other
+28 mounted commands. The former project additionalProperties=true because runtime accepts then
+discards extra keys; the latter project false. Neither accepts unknown fields into canonical
+commands. There is no selected PASSTHROUGH runtime object. Metadata preserves the distinction
+between acceptance and output retention.
+
+### Executable proof and limits
+
+- `backend/test/shared-normalization.test.js`: padded-max red regression, 29 authorities,
+  primitive equivalence to the previous parser, generated Unicode/boundary cases, composition
+  refusal, 34 mounted OpenAPI bindings and breaking negative controls.
+- `backend/test/helpers/normalization-cases.js`: independent command fixtures, min/max +/-1,
+  astral characters, whitespace, null/absence/empty, invalid JSON types, canonical output,
+  unknown identity/role/market/currency/header/prototype-shaped keys. Booleans and row versions
+  do not acquire coercion. Existing content acceptance is not tightened to repair unrelated risk.
+- `backend/test/normalization-consumer.test.js`: 18 actual Admin expressions plus the actual
+  Admin API serializer execute with isolated fetch/session/UI values; the actual Customer
+  revokeReferralCode method executes with isolated transport. Seventeen builders execute four
+  text variants (canonical, padded/Unicode and invalid); two synthesize fixed reasons and execute
+  both ACTIVE/RETIRED request branches with exact text assertions. Paths, methods, body, correlation/content
+  headers and runtime/OpenAPI acceptance are checked. No production requests execute.
+- Consumer evidence is REQUEST_ONLY: **19 new**, **30 total** of **144** observations. No affected
+  Professional/Public builder exists for these commands. UI event orchestration, auth, responses,
+  live privileged headers and global OLD/NEW parity are not inferred from these tests.
+- Existing breaking detection remains unchanged and reports **0**. Negative tests protect
+  requiredness, wire types, enum/bounds/pattern narrowing, aliases/removal and unknown fields;
+  existing header compatibility tests remain active. The approved baseline is not rewritten.
+
+Rebaseline: NORMALIZATION **117 -> 83**, strengthened unresolved **163 -> 129**, executed equivalent
+bindings **3 -> 37**. TRANSFORM **22**, REFINEMENT **19**, CROSS_FIELD_VALIDATION **3** and
+LEGACY_COMPATIBILITY **2** stay unchanged. Historical projections **142**, source-review points
+**373**, incomplete outputs **196**, complete outputs **49**, mounted/candidate/published
+**251/245/0** and global semantic parity **NOT_PROVEN** are unchanged.
+
+Verification, exact-SHA CI and residual acceptance gates are recorded in the
+[PRR-105 evidence document](../releases/2026-09-16-prr-105-api-v1-contract.md).
+Rollback is a scoped revert of T01 authorities and generated artifacts; runtime acceptance and
+legacy endpoints are preserved. Migration NONE. PRR-105 remains open; PRR-106 not started;
+Production/Markets/CASH OFF, F11 PAUSED. Stop after exact-SHA evidence and tracker projection.

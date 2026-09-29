@@ -209,8 +209,12 @@ test('input inventory retains all historic gaps, new semantic debt and freshness
   const document = buildInventory(); const inventory = buildInputInventory(document);
   assert.equal(inventory.summary.operations, 251);
   assert.equal(inventory.summary.unresolvedHistoricalProjections, 142);
-  assert.equal(inventory.summary.unresolvedInputSemantics, 163);
-  assert.equal(inventory.summary.acceptanceEquivalentBindings, 3);
+  assert.equal(inventory.summary.unresolvedInputSemantics, 129);
+  assert.equal(inventory.summary.acceptanceEquivalentBindings, 37);
+  assert.deepEqual(inventory.summary.unresolvedByPrimaryClass, {
+    STRUCTURAL_EQUIVALENT: 0, NORMALIZATION: 83, TRANSFORM: 22, REFINEMENT: 19,
+    CROSS_FIELD_VALIDATION: 3, RUNTIME_DERIVED: 0, LEGACY_COMPATIBILITY: 2,
+  });
   assert.equal(inventory.summary.runtimeRefinedDeclaredBindings, 3);
   assert.equal(Object.values(inventory.summary.unresolvedByPrimaryClass).reduce((a, b) => a + b), inventory.summary.unresolvedInputSemantics);
   assert.ok(inventory.operations.some((r) => r.additionalSurfaceGaps.some((g) => g.semanticClass === 'RUNTIME_DERIVED')));

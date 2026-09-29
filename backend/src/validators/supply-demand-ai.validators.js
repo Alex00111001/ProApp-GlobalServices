@@ -1,8 +1,9 @@
 const { z } = require('zod');
+const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
 
 const uuid = z.string().uuid(); const key = z.string().trim().toLowerCase().regex(/^[a-z0-9][a-z0-9._-]{1,63}$/);
 const page = z.coerce.number().int().min(1).default(1); const limit = z.coerce.number().int().min(1).max(100).default(50); const date = z.coerce.date();
-const reason = z.string().trim().min(8).max(500); const window = z.enum(['HOUR', 'DAY', 'SEVEN_DAYS', 'THIRTY_DAYS', 'CUSTOM']);
+const reason = trimmedString(8, 500); const window = z.enum(['HOUR', 'DAY', 'SEVEN_DAYS', 'THIRTY_DAYS', 'CUSTOM']);
 const pageQuery = z.object({ page, limit }).strict();
 const metricListQuery = pageQuery.extend({ kind: z.enum(['SUPPLY', 'DEMAND', 'BALANCE', 'GUARDRAIL']).optional() });
 const snapshotListQuery = pageQuery.extend({ marketId: uuid.optional(), divisionId: uuid.optional(), serviceId: uuid.optional(), status: z.enum(['COMPLETE', 'PARTIAL', 'STALE', 'INSUFFICIENT', 'FAILED']).optional(), from: date.optional(), to: date.optional() }).superRefine((value, context) => { if (value.from && value.to && (value.to <= value.from || value.to - value.from > 366 * 86400000)) context.addIssue({ code: 'custom', message: 'Date range must be positive and bounded to 366 days.' }); });
@@ -15,7 +16,7 @@ const reviewBody = z.object({ decision: z.enum(['APPROVED', 'REJECTED']), reason
 const activateBody = z.object({ reason }).strict();
 const readinessListQuery = pageQuery.extend({ marketId: uuid.optional(), status: z.enum(['DRAFT', 'ACTIVE', 'RETIRED']).optional(), outcome: z.enum(['NOT_READY', 'CONDITIONALLY_READY', 'READY']).optional() });
 const readinessEvaluateBody = z.object({ marketId: uuid, snapshotId: uuid.optional(), policyId: uuid.optional() }).strict();
-const expansionBody = z.object({ type: z.enum(['MARKET', 'GEOGRAPHY', 'SERVICE', 'COVERAGE_INCREASE', 'COVERAGE_REDUCTION']), marketId: uuid, divisionId: uuid.optional(), serviceId: uuid.optional(), hypothesis: z.string().trim().min(12).max(1000) }).strict();
+const expansionBody = z.object({ type: z.enum(['MARKET', 'GEOGRAPHY', 'SERVICE', 'COVERAGE_INCREASE', 'COVERAGE_REDUCTION']), marketId: uuid, divisionId: uuid.optional(), serviceId: uuid.optional(), hypothesis: trimmedString(12, 1000) }).strict();
 const expansionEvaluateBody = z.object({ readinessEvaluationId: uuid }).strict();
 const expansionReviewBody = z.object({ decision: z.enum(['APPROVED', 'REJECTED']), reason }).strict();
 const expansionListQuery = pageQuery.extend({ marketId: uuid.optional(), status: z.enum(['IDENTIFIED', 'UNDER_REVIEW', 'REVIEWED', 'REJECTED', 'ARCHIVED']).optional() });
@@ -32,3 +33,11 @@ const genericStatusQuery = pageQuery.extend({ status: z.string().trim().min(1).m
 const costsQuery = pageQuery.extend({ marketId: uuid.optional(), from: date.optional(), to: date.optional() }).superRefine((value, context) => { if (value.from && value.to && (value.to <= value.from || value.to - value.from > 366 * 86400000)) context.addIssue({ code: 'custom', message: 'Date range must be positive and bounded.' }); });
 
 module.exports = { activateBody, approvalBody, costsQuery, evaluationBody, executionBody, expansionBody, expansionEvaluateBody, expansionListQuery, expansionReviewBody, genericStatusQuery, limit, metricListQuery, modelPolicyBody, operationBody, page, providerBody, providerStatusBody, readinessEvaluateBody, readinessListQuery, readinessPolicyBody, reviewBody, snapshotBody, snapshotListQuery, uuid };
+
+// T01: reviewed wire acceptance for these mounted object validators only.
+declareTrimmedInput(reviewBody, 'trim.supply-demand-ai.validators.reviewBody');
+declareTrimmedInput(activateBody, 'trim.supply-demand-ai.validators.activateBody');
+declareTrimmedInput(approvalBody, 'trim.supply-demand-ai.validators.approvalBody');
+declareTrimmedInput(expansionReviewBody, 'trim.supply-demand-ai.validators.expansionReviewBody');
+declareTrimmedInput(providerStatusBody, 'trim.supply-demand-ai.validators.providerStatusBody');
+declareTrimmedInput(expansionBody, 'trim.supply-demand-ai.validators.expansionBody');

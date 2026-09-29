@@ -1,7 +1,8 @@
 const { z } = require('zod');
+const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
 
 const identifier = z.string().trim().toLowerCase().regex(/^[a-z0-9][a-z0-9._-]{1,79}$/);
-const reason = z.string().trim().min(10).max(2_000);
+const reason = trimmedString(10, 2_000);
 const market = z.string().trim().toUpperCase().regex(/^[A-Z]{2}$/);
 const dateTime = z.string().datetime({ offset: true });
 const money = z.coerce.number().finite().positive().max(1_000_000);
@@ -99,3 +100,8 @@ module.exports = {
   referralClaimSchema,
   revokeCodeSchema,
 };
+
+// T01: reviewed wire acceptance for these mounted object validators only.
+declareTrimmedInput(programStatusSchema, 'trim.referrals-automation.validators.programStatusSchema');
+declareTrimmedInput(automationStatusSchema, 'trim.referrals-automation.validators.automationStatusSchema');
+declareTrimmedInput(revokeCodeSchema, 'trim.referrals-automation.validators.revokeCodeSchema');

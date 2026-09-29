@@ -1,4 +1,5 @@
 const { z } = require('zod');
+const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
 
 const pagination = {
   page: z.coerce.number().int().min(1).default(1),
@@ -29,7 +30,7 @@ const integrationListQuerySchema = operationalListQuerySchema.extend({ status: z
 const alertListQuerySchema = operationalListQuerySchema.extend({ status: z.enum(['PENDING', 'PROCESSING', 'PROCESSED', 'FAILED', 'DEAD_LETTER']).optional() });
 const healthSnapshotQuerySchema = z.object({ ...pagination, service: optionalText(100) });
 const idSchema = z.string().uuid();
-const reasonSchema = z.string().trim().min(10).max(2_000);
+const reasonSchema = trimmedString(10, 2_000);
 const errorStatusSchema = z.object({
   status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),
   reason: reasonSchema,
@@ -38,7 +39,7 @@ const incidentStatusSchema = z.object({
   status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),
   reason: reasonSchema,
 });
-const incidentCommentSchema = z.object({ body: z.string().trim().min(1).max(5_000) });
+const incidentCommentSchema = z.object({ body: trimmedString(1, 5_000) });
 const supportCaseListQuerySchema = z.object({
   ...pagination,
   status: z.enum(['OPEN', 'TRIAGED', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED', 'CLOSED']).optional(),
@@ -59,7 +60,7 @@ const supportCaseStatusSchema = z.object({
   reason: reasonSchema,
 });
 const supportCaseAssignmentSchema = z.object({ assignedToId: z.string().uuid().nullable(), reason: reasonSchema });
-const supportCaseCommentSchema = z.object({ body: z.string().trim().min(1).max(5_000) });
+const supportCaseCommentSchema = z.object({ body: trimmedString(1, 5_000) });
 
 module.exports = {
   errorListQuerySchema,
@@ -79,3 +80,11 @@ module.exports = {
   supportCaseListQuerySchema,
   supportCaseStatusSchema,
 };
+
+// T01: reviewed wire acceptance for these mounted object validators only.
+declareTrimmedInput(errorStatusSchema, 'trim.admin-operations.validators.errorStatusSchema');
+declareTrimmedInput(incidentStatusSchema, 'trim.admin-operations.validators.incidentStatusSchema');
+declareTrimmedInput(incidentCommentSchema, 'trim.admin-operations.validators.incidentCommentSchema');
+declareTrimmedInput(supportCaseStatusSchema, 'trim.admin-operations.validators.supportCaseStatusSchema');
+declareTrimmedInput(supportCaseAssignmentSchema, 'trim.admin-operations.validators.supportCaseAssignmentSchema');
+declareTrimmedInput(supportCaseCommentSchema, 'trim.admin-operations.validators.supportCaseCommentSchema');

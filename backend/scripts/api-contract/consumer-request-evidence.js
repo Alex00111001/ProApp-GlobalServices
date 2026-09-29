@@ -24,7 +24,7 @@ function consumerMethod(entry, context = readSource(path.join(ROOT, entry.file))
 function requestEvidenceForCall(call, context) {
   const entry = REQUEST_EVIDENCE.find((item) => item.consumer === call.consumer && item.file === call.file && item.operation === call.operation
     && (() => { const { node } = consumerMethod(item, context); return call.line >= node.loc.start.line && call.line <= node.loc.end.line; })());
-  if (!entry) return null;
+  if (!entry) return require('./normalization-consumer-evidence').normalizationRequestEvidence(call, context);
   const { source } = consumerMethod(entry, context);
   return { status: 'EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY', method: entry.method,
     sourceDigest: createHash('sha256').update(source.replace(/\r\n/g, '\n')).digest('hex'),
