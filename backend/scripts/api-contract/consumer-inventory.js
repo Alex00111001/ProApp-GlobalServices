@@ -1,5 +1,6 @@
 const path = require('node:path');
 const { ROOT, METHODS, files, member, property, readSource, relative, walk } = require('./source-inventory');
+const { requestEvidenceForCall } = require('./consumer-request-evidence');
 
 const SURFACES = [
   { name: 'Customer mobile', root: 'mobile-client/src', prefix: '/api' },
@@ -44,12 +45,15 @@ function consumerInventory(routes) {
       const requestedPath = pathOf(node.arguments[0]);
       const fullPath = requestedPath?.startsWith('/') ? `${surface.prefix}${requestedPath}` : null;
       const matches = fullPath ? routes.filter((route) => shape(route.path) === shape(fullPath) && route.method === httpMethod) : [];
-      calls.push({ consumer: surface.name, file: relative(file), line: node.loc.start.line,
+      const call = { consumer: surface.name, file: relative(file), line: node.loc.start.line,
         method: httpMethod, path: fullPath, operation: matches.length === 1 ? `${matches[0].method} ${matches[0].path}` : null,
         status: !fullPath || httpMethod === 'UNRESOLVED' ? 'DYNAMIC_REVIEW_REQUIRED'
           : matches.length === 1 ? 'PATH_METHOD_MATCH' : 'NO_UNIQUE_OPERATION',
         requestResponseCompatibility: 'NOT_PROVEN_BY_PATH_MATCH',
-      });
+      };
+      const evidence = requestEvidenceForCall(call, context);
+      if (evidence) call.inputCompatibilityEvidence = evidence;
+      calls.push(call);
     });
   }
   return calls.sort((a, b) => a.file.localeCompare(b.file, 'en') || a.line - b.line);

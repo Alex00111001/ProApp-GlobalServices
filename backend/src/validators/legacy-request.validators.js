@@ -1,4 +1,5 @@
 const { z } = require('zod');
+const { declareInputContract, trimmedAsciiIdentifier } = require('../shared/http/input-contract');
 
 const uuid = z.string().uuid();
 const bookingStatuses = ['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW'];
@@ -31,11 +32,16 @@ const bookingRejectionBody = z.object({ reason: legacyReason }).strip().default(
 // normalization classification or close the global structural-equivalence gate.
 const bookingReasonWireSchema = z.object({ reason: z.string().nullable().optional() }).passthrough().default({});
 for (const schema of [bookingCancellationBody, bookingRejectionBody]) {
-  Object.defineProperty(schema, 'homeservicesWireContract', { value: Object.freeze({
+  declareInputContract(schema, {
     schema: bookingReasonWireSchema,
+    compatibilitySchema: bookingReasonWireSchema,
     classification: 'NORMALIZATION',
+    bodyRequired: false,
+    parityMode: 'ACCEPTANCE_EQUIVALENT',
+    evidenceId: 'booking.reason',
+    evidence: ['backend/test/input-authority.test.js', 'backend/test/booking-input-wire-contract.test.js'],
     semantics: ['Absent/null reason becomes null', 'String reason is trimmed and truncated to 500 characters', 'Unknown object fields are accepted and discarded'],
-  }) });
+  });
 }
 
 const notificationIdParams = z.object({ notificationId: uuid }).strict();
@@ -43,9 +49,18 @@ const notificationListQuery = pagination({ defaultLimit: 20, maxLimit: 50 }).ext
   unreadOnly: z.enum(['true', 'false']).optional(),
 }).strict();
 
-const paymentIntentId = z.string().trim().regex(/^pi_[A-Za-z0-9]+$/, 'Invalid payment intent identifier.').max(255);
+const paymentIntentPrefix = 'pi_';
+const paymentIntentMaximumLength = 255;
+const paymentIntentId = z.string().trim().regex(new RegExp(`^${paymentIntentPrefix}[A-Za-z0-9]+$`), 'Invalid payment intent identifier.').max(paymentIntentMaximumLength);
 const paymentIntentBody = z.object({ bookingId: uuid }).strict();
 const paymentConfirmationBody = z.object({ bookingId: uuid, paymentIntentId }).strict();
+declareInputContract(paymentConfirmationBody, {
+  schema: z.object({ bookingId: uuid, paymentIntentId: trimmedAsciiIdentifier({ prefix: paymentIntentPrefix, maximumLength: paymentIntentMaximumLength }) }).strict(),
+  classification: 'NORMALIZATION', classes: ['NORMALIZATION'],
+  projectionKind: 'ACCEPTED_WIRE', parityMode: 'ACCEPTANCE_EQUIVALENT',
+  evidenceId: 'payment.confirm', evidence: ['backend/test/input-authority.test.js'],
+  semantics: ['paymentIntentId is trimmed before provider-id pattern and maximum 255-character enforcement', 'Unknown fields are rejected; ownership/provider/payment/idempotency rules remain runtime-authoritative'],
+});
 const paymentHistoryQuery = pagination({ defaultLimit: 10, maxLimit: 50 });
 
 const favoriteProfessionalParams = z.object({ professionalId: uuid }).strict();

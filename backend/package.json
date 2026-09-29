@@ -16,6 +16,8 @@
     "test:integration": "node --test --test-concurrency=1 test/integration/*.test.js",
     "api:inventory:generate": "node scripts/api-contract/inventory-command.js --write",
     "api:inventory:check": "node scripts/api-contract/inventory-command.js --check",
+    "api:input:generate": "node scripts/api-contract/input-inventory.js --write",
+    "api:input:check": "node scripts/api-contract/input-inventory.js --check",
     "api:breaking:check": "node scripts/api-contract/breaking-command.js --check",
     "api:openapi:generate": "node scripts/api-contract/openapi-command.js --write",
     "api:openapi:check": "node scripts/api-contract/openapi-command.js --check && node scripts/api-contract/openapi-command.js --validate",

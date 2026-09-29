@@ -44,6 +44,13 @@ function breakingChanges(baseline, candidate) {
       const afterValue = field === 'middleware' ? requestMiddleware(after[field]) : after[field];
       if (stable(beforeValue) !== stable(afterValue)) changes.push(`${key}: ${field} contract changed`);
     }
+    if (before.inputContext) {
+      const oldHeaders = new Map((before.inputContext.clientHeaders || []).map((h) => [h.name, h]));
+      const newHeaders = new Map((after.inputContext?.clientHeaders || []).map((h) => [h.name, h]));
+      for (const [name, header] of newHeaders) if (header.required && !oldHeaders.get(name)?.required) changes.push(`${key}: header ${name} became required`);
+      for (const [name, header] of oldHeaders) schemaChanges(header.jsonSchema, newHeaders.get(name)?.jsonSchema, 'request', `${key}:header:${name}`, changes);
+      if (before.inputContext.bodyPolicy && before.inputContext.bodyPolicy !== after.inputContext?.bodyPolicy) changes.push(`${key}: request body handling changed`);
+    }
     const beforeStatuses = new Set(before.response.flatMap((response) => response.statuses));
     const afterStatuses = new Set(after.response.flatMap((response) => response.statuses));
     for (const code of beforeStatuses) if (!afterStatuses.has(code)) changes.push(`${key}: contractual status ${code} removed`);
@@ -53,6 +60,13 @@ function breakingChanges(baseline, candidate) {
       const previousSchema = baseline.schemas[`${before.handler.file}#${validation.schema}`];
       const nextSchema = candidate.schemas[`${after.handler.file}#${next.schema}`];
       schemaChanges(previousSchema?.jsonSchema, nextSchema?.jsonSchema, 'request', `${key}:${validation.input}`, changes);
+      if (previousSchema?.wireJsonSchema) schemaChanges(previousSchema.wireJsonSchema, nextSchema?.wireJsonSchema, 'request', `${key}:${validation.input}:wire`, changes);
+      if (previousSchema?.runtimeValidationDigest && previousSchema.runtimeValidationDigest !== nextSchema?.runtimeValidationDigest) {
+        changes.push(`${key}:${validation.input}: runtime validation semantics changed; compatibility review required`);
+      }
+      if (previousSchema?.runtimeSourceDigest && previousSchema.runtimeSourceDigest !== nextSchema?.runtimeSourceDigest) {
+        changes.push(`${key}:${validation.input}: runtime validator source changed; compatibility review required`);
+      }
     }
     for (const response of before.response) {
       for (const code of response.statuses) {

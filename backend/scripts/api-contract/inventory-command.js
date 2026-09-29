@@ -4,6 +4,10 @@ const { ROOT, inventory, sourceFingerprint } = require('./source-inventory');
 const { consumerInventory } = require('./consumer-inventory');
 const { schemaCatalog } = require('./schema-catalog');
 const { responseCatalog } = require('./response-catalog');
+const { buildInputInventory, checkInputInventory, OUTPUT: INPUT_OUTPUT } = require('./input-inventory');
+const { bookingInputContext } = require('../../src/contracts/booking.inputs');
+const { projectSchema } = require('./schema-catalog');
+const { verifyDeclaredAuthority } = require('./input-evidence');
 
 function buildInventory() {
   const routes = inventory();
@@ -11,8 +15,20 @@ function buildInventory() {
   for (const route of routes) route.responseAuthority = responseContracts[`${route.method} ${route.path}`] || null;
   const consumers = consumerInventory(routes);
   for (const route of routes) route.consumers = [...new Set(consumers.filter((call) => call.operation === `${route.method} ${route.path}`).map((call) => call.consumer))].sort();
-  return { formatVersion: 1, status: 'AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI',
+  for (const route of routes) route.inputContext = {
+    clientHeaders: route.path === '/api/bookings' && route.method === 'POST' ? [{
+      name: bookingInputContext.header.name, required: bookingInputContext.header.required,
+      jsonSchema: projectSchema(bookingInputContext.header.schema).jsonSchema,
+      runtimeExpression: bookingInputContext.header.runtimeExpression,
+      evidence: bookingInputContext.header.evidence,
+    }] : [],
+    ...(route.path.startsWith('/api/bookings') ? { serverDerived: bookingInputContext.derived,
+      bodyPolicy: bookingInputContext.ignoredBodies.some((suffix) => route.path.endsWith(`/${suffix}`)) ? 'IGNORED' : 'SEE_RUNTIME_VALIDATOR' } : {}),
+  };
+  const document = { formatVersion: 1, status: 'AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI',
     sourceFingerprint: sourceFingerprint(), routes, consumers, schemas: schemaCatalog(routes), responseContracts };
+  verifyDeclaredAuthority(document);
+  return document;
 }
 const serialize = (document) => `${JSON.stringify(document, null, 2)}\n`;
 function main(args = process.argv.slice(2)) {
@@ -22,6 +38,7 @@ function main(args = process.argv.slice(2)) {
   if (args[0] === '--write') {
     fs.mkdirSync(path.dirname(output), { recursive: true });
     fs.writeFileSync(output, serialize(document));
+    fs.writeFileSync(INPUT_OUTPUT, serialize(buildInputInventory(document)));
   } else if (args[0] === '--check') {
     if (!fs.existsSync(output) || fs.readFileSync(output, 'utf8').replace(/\r\n/g, '\n') !== serialize(document)) {
       throw new Error('Route inventory is stale. Regenerate and review the runtime and consumer differences.');
@@ -30,6 +47,7 @@ function main(args = process.argv.slice(2)) {
     if (unresolved.length) {
       throw new Error(`Consumer inventory contains ${unresolved.length} unresolved path/method call(s).`);
     }
+    checkInputInventory(document);
   }
   console.log(JSON.stringify({ routes: document.routes.length,
     classifications: Object.fromEntries(Object.entries(Object.groupBy(document.routes, (r) => r.classification)).map(([key, value]) => [key, value.length])),
@@ -41,7 +59,7 @@ function main(args = process.argv.slice(2)) {
     output: 'docs/api/route-inventory.v1.json', openApiPublication: 'BLOCKED_PENDING_COMPLETE_PARITY',
   }));
 }
+module.exports = { buildInventory, serialize, main };
 if (require.main === module) {
   try { main(); } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
-module.exports = { buildInventory, serialize, main };

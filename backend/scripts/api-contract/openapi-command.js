@@ -6,6 +6,8 @@ const { ROOT } = require('./source-inventory');
 const { buildInventory, serialize } = require('./inventory-command');
 const { safeErrorSchema } = require('../../src/contracts/error.responses');
 const { projectSchema } = require('./schema-catalog');
+const { bookingInputContext } = require('../../src/contracts/booking.inputs');
+const { unresolvedInput } = require('./input-evidence');
 
 const OUTPUT = path.join(ROOT, 'docs/api/openapi.v1.candidate.json');
 const supported = (route) => route.classification !== 'INTERNAL' && route.classification !== 'REMOVAL_CANDIDATE';
@@ -17,17 +19,21 @@ const cleanSchema = (schema) => {
 };
 const schemaFor = (document, route, validation) => {
   const entry = document.schemas[`${route.handler.file}#${validation.schema}`];
-  const schema = cleanSchema(entry?.jsonSchema);
+  const schema = cleanSchema(entry?.wireJsonSchema || entry?.jsonSchema);
   if (entry?.gaps?.length) schema['x-homeservices-runtime-semantics'] = entry.gaps;
   if (entry?.classification) schema['x-homeservices-input-classification'] = entry.classification;
   if (entry?.normalization) schema['x-homeservices-normalization'] = entry.normalization;
+  if (entry?.semanticClasses) schema['x-homeservices-semantic-classes'] = entry.semanticClasses;
+  if (entry?.projectionKind) schema['x-homeservices-projection-kind'] = entry.projectionKind;
+  if (entry?.evidence) schema['x-homeservices-evidence'] = entry.evidence;
+  if (entry?.unknownFieldPolicies) schema['x-homeservices-unknown-fields'] = entry.unknownFieldPolicies;
   schema['x-homeservices-zod-binding'] = `${route.handler.file}#${validation.schema}`;
   return schema;
 };
 const securityFor = (auth) => ({
   PUBLIC: [], CUSTOMER_BEARER: [{ bearerAuth: [] }], OPTIONAL_CUSTOMER_BEARER: [{}, { bearerAuth: [] }],
   ADMIN_BEARER: [{ adminBearerAuth: [] }], SIGNED_PROVIDER_PAYLOAD: [{ providerSignature: [] }],
-  ADMIN_REFRESH_COOKIE_CSRF: [{ adminRefreshCookie: [], adminCsrfHeader: [] }],
+  ADMIN_REFRESH_COOKIE_AND_CSRF: [{ adminRefreshCookie: [], adminCsrfHeader: [] }],
 }[auth] || []);
 const errorResponse = { description: 'Safe error envelope', content: { 'application/json': { schema: { $ref: '#/components/schemas/SafeError' } } } };
 const successSchema = (fields) => ({ type: 'object', properties: Object.fromEntries(fields.map((field) => [field, {}])), required: fields, additionalProperties: true,
@@ -60,7 +66,7 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
     operation: `${route.method} ${route.path}`,
     key: `${route.handler.file}#${validation.schema}`,
   })));
-  const unresolvedInputBindings = inputBindings.filter((binding) => inventoryDocument.schemas[binding.key]?.wireParity !== 'STRUCTURAL');
+  const unresolvedInputBindings = inputBindings.filter((binding) => unresolvedInput(inventoryDocument.schemas[binding.key]));
   for (const route of publishedRoutes) {
     const parameters = [];
     let requestBody;
@@ -87,6 +93,13 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
         const parameter = parameters.find((item) => item.in === 'path' && item.name === name);
         if (parameter) parameter.schema = schema;
       }
+    }
+    if (route.path === '/api/bookings' && route.method === 'POST') {
+      const header = bookingInputContext.header;
+      parameters.push({ name: header.name, in: 'header', required: header.required,
+        schema: cleanSchema(projectSchema(header.schema).jsonSchema),
+        'x-homeservices-input-classification': header.classification,
+        'x-homeservices-evidence': header.evidence });
     }
     const responses = {};
     for (const [status, response] of Object.entries(route.responseAuthority?.responses || {})) {
@@ -116,6 +129,14 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
       'x-homeservices-auth': route.auth, 'x-homeservices-middleware': route.middleware,
       'x-homeservices-consumers': route.consumers, 'x-homeservices-domain-authority': route.domainAuthority,
       'x-homeservices-rate-limit': route.rateLimit, 'x-homeservices-runtime-source': route.registration,
+      'x-homeservices-input-bindings': route.validation.map((v) => ({ input: v.input,
+        semanticClasses: inventoryDocument.schemas[`${route.handler.file}#${v.schema}`]?.semanticClasses || [],
+        unknownFieldPolicies: inventoryDocument.schemas[`${route.handler.file}#${v.schema}`]?.unknownFieldPolicies || [],
+        wireParity: inventoryDocument.schemas[`${route.handler.file}#${v.schema}`]?.wireParity || 'UNPROVEN' })),
+      ...(route.path.startsWith('/api/bookings') ? {
+        'x-homeservices-runtime-derived': bookingInputContext.derived,
+        ...(bookingInputContext.ignoredBodies.some((suffix) => route.path.endsWith(`/${suffix}`)) ? { 'x-homeservices-request-body': 'IGNORED_BY_RUNTIME_NOT_COMMAND_FIELDS' } : {}),
+      } : {}),
     };
   }
   return {
@@ -137,6 +158,9 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
       routeInputBindings: inputBindings.length,
       uniqueRouteInputSchemas: new Set(inputBindings.map((binding) => binding.key)).size,
       unresolvedRouteInputProjections: unresolvedInputBindings.length,
+      historicalStructuralOnlyUnresolved: inputBindings.filter((binding) => inventoryDocument.schemas[binding.key]?.wireParity !== 'STRUCTURAL').length,
+      executedAcceptanceEquivalentBindings: inputBindings.filter((binding) => inventoryDocument.schemas[binding.key]?.semanticEvidence?.inputSurfaceResolved).length,
+      structurallyRepresentedRuntimeRefinedBindings: inputBindings.filter((binding) => inventoryDocument.schemas[binding.key]?.semanticEvidence?.parityMode === 'STRUCTURAL_WITH_RUNTIME_REFINEMENT').length,
       unprovenCatalogSchemas: Object.values(inventoryDocument.schemas).filter((schema) => schema.wireParity !== 'STRUCTURAL').length,
       operationsWithoutCompleteResponseSchema: inventoryDocument.routes.filter(supported).filter((route) => !route.responseAuthority?.complete).length,
     },
