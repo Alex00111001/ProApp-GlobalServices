@@ -42,6 +42,7 @@ const { requestContext } = require('../../src/middleware/request-context');
 const { errorContract, publicErrorFromException } = require('../../src/shared/http/error-contract');
 const { responseContract } = require('../../src/shared/http/response-contract');
 const { applySuccessfulPayment } = require('../../src/modules/billing/payments/payment-capture.service');
+const { deleteFixtureOutbox } = require('./helpers/outbox-cleanup');
 
 const runId = `booking-transition-${randomUUID()}`;
 const fixtures = [];
@@ -168,7 +169,7 @@ const cleanFixture = async (fixture) => {
   const additionalIds = additionalBookings.map((booking) => booking.id);
   await prisma.bookingService.deleteMany({ where: { bookingId: { in: additionalIds } } });
   await prisma.notification.deleteMany({ where: { bookingId: { in: additionalIds } } });
-  await prisma.outboxEvent.deleteMany({ where: { aggregateId: { in: additionalIds } } });
+  await deleteFixtureOutbox(prisma, { aggregateId: { in: additionalIds } });
   await prisma.auditLog.deleteMany({ where: { resourceId: { in: additionalIds } } });
   await prisma.idempotencyRecord.deleteMany({ where: { scope: `booking:create:${fixture.clientUserId}` } });
   await prisma.booking.deleteMany({ where: { id: { in: additionalIds } } });
@@ -180,13 +181,13 @@ const cleanFixture = async (fixture) => {
     where: { deduplicationKey: `payment:cancelled-booking:${fixture.paymentId}` },
   });
   if (incident) {
-    await prisma.outboxEvent.deleteMany({ where: { aggregateId: incident.id } });
+    await deleteFixtureOutbox(prisma, { aggregateId: incident.id });
     await prisma.incidentEvent.deleteMany({ where: { incidentId: incident.id } });
     await prisma.incident.delete({ where: { id: incident.id } });
   }
 
   await prisma.refundDecision.deleteMany({ where: { refundId: { in: refundIds } } });
-  await prisma.outboxEvent.deleteMany({ where: { aggregateId: { in: [fixture.bookingId, ...(fixture.paymentId ? [fixture.paymentId] : []), ...payoutIds, ...refundIds] } } });
+  await deleteFixtureOutbox(prisma, { aggregateId: { in: [fixture.bookingId, ...(fixture.paymentId ? [fixture.paymentId] : []), ...payoutIds, ...refundIds] } });
   await prisma.auditLog.deleteMany({ where: { OR: [
     { actorId: { in: [fixture.clientUserId, fixture.professionalUserId] } },
     { resourceId: { in: [fixture.bookingId, ...(fixture.paymentId ? [fixture.paymentId] : []), ...payoutIds, ...refundIds] } },

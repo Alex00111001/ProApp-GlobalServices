@@ -64,7 +64,10 @@ const transactionDouble = ({ existing = null, conflict = null } = {}) => {
   return {
     calls,
     tx: {
-      $queryRaw: async () => { calls.locks += 1; return [{ locked: null }]; },
+      $queryRaw: async (query) => {
+        assert.ok(query.strings.join('?').includes(')::text AS "locked"'), 'advisory void result must be driver-deserializable');
+        calls.locks += 1; return [{ locked: '' }];
+      },
       idempotencyRecord: {
         findUnique: async () => existing,
         create: async () => { calls.idempotencyCreates += 1; },

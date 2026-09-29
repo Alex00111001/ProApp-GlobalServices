@@ -63,7 +63,7 @@ const schedulingWindow = ({ scheduledDate, bookingServices, servicesById, now = 
 };
 
 const acquireTransactionLock = (tx, lockKey) => tx.$queryRaw(Prisma.sql`
-  SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0)) AS "locked"
+  SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))::text AS "locked"
 `);
 
 const claimBookingCreation = async ({

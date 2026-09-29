@@ -27,6 +27,7 @@ const { PrismaPg } = require('@prisma/adapter-pg');
 const { applySuccessfulPayment } = require('../../src/modules/billing/payments/payment-capture.service');
 const { claimBookingTransition } = require('../../src/modules/bookings/booking-lifecycle.service');
 const { decimalToMinor } = require('../../src/modules/billing/pricing/pricing.service');
+const { deleteFixtureOutbox } = require('./helpers/outbox-cleanup');
 
 const createPrisma = () => new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL }),
@@ -169,7 +170,7 @@ const cleanup = async () => {
       where: { deduplicationKey: `payment:cancelled-booking:${fixture.paymentId}` }, select: { id: true },
     });
     if (incident) {
-      await prisma.outboxEvent.deleteMany({ where: { aggregateId: incident.id } });
+      await deleteFixtureOutbox(prisma, { aggregateId: incident.id });
       await prisma.incidentEvent.deleteMany({ where: { incidentId: incident.id } });
       await prisma.incident.delete({ where: { id: incident.id } });
     }
@@ -188,12 +189,12 @@ const cleanup = async () => {
     const refundIds = refunds.map((refund) => refund.id);
     if (refundIds.length) {
       await prisma.refundDecision.deleteMany({ where: { refundId: { in: refundIds } } });
-      await prisma.outboxEvent.deleteMany({ where: { aggregateId: { in: refundIds } } });
+      await deleteFixtureOutbox(prisma, { aggregateId: { in: refundIds } });
       await prisma.auditLog.deleteMany({ where: { resourceId: { in: refundIds } } });
       await prisma.refund.deleteMany({ where: { id: { in: refundIds } } });
     }
     await prisma.notification.deleteMany({ where: { bookingId: fixture.bookingId } });
-    await prisma.outboxEvent.deleteMany({ where: { aggregateId: { in: [fixture.paymentId, fixture.bookingId] } } });
+    await deleteFixtureOutbox(prisma, { aggregateId: { in: [fixture.paymentId, fixture.bookingId] } });
     await prisma.auditLog.deleteMany({ where: { resourceId: fixture.paymentId } });
     await prisma.payment.deleteMany({ where: { id: fixture.paymentId } });
     await prisma.booking.deleteMany({ where: { id: fixture.bookingId } });
