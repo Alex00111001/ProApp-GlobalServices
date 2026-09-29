@@ -115,10 +115,9 @@ const claimBookingCreation = async ({
       professionalId,
       status: { in: ACTIVE_SLOT_STATUSES },
       scheduledDate: { lt: end },
-      OR: [
-        { endDate: { gt: start } },
-        { endDate: null, scheduledDate: { gte: start } },
-      ],
+      // Reviewed scheduling migration backfills legacy rows and enforces a
+      // non-null endDate. Prisma's required DateTime filter rejects null.
+      endDate: { gt: start },
     },
     select: { id: true },
   });

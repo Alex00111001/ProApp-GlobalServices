@@ -73,7 +73,12 @@ const transactionDouble = ({ existing = null, conflict = null } = {}) => {
         create: async () => { calls.idempotencyCreates += 1; },
       },
       booking: {
-        findFirst: async () => { calls.conflictQueries += 1; return conflict; },
+        findFirst: async ({ where }) => {
+          assert.ok(where.endDate?.gt instanceof Date);
+          assert.ok(where.scheduledDate?.lt instanceof Date);
+          assert.equal(where.OR, undefined, 'required DateTime must not be queried with a legacy null branch');
+          calls.conflictQueries += 1; return conflict;
+        },
       },
     },
   };
