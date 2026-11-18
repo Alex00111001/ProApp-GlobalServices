@@ -312,3 +312,15 @@ publication, observability/documentation/rollback acceptance and final global ve
 OpenAPI remains **CANDIDATE_NOT_PUBLISHED**. PRR-105 closed: **NO**. PRR-106 started: **NO**.
 Production **OFF**; Markets **OFF**; CASH **RETIRED/OFF**; F11 **PAUSED**.
 Next: **STOP — await independent verification** after T01 exact-SHA CI and evidence projection.
+
+### T01 exact-SHA verification, 2026-11-18
+
+- Implementation SHA: `979d93bd3604d03b005ce6610ab5b034568997e2`.
+- Delivery ref: `ci/closure/prr105-t01-979d93bd`.
+- [Platform verification #98](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/44388933922):
+  **FAILURE**. Workspace verification, contract checks, PostgreSQL migrations and integration, and
+  secret scans passed. The backend dependency audit reported **1 critical, 6 high and 9 moderate**
+  advisories. The critical advisory is in `proxy-addr`. The failed audit stopped subsequent package
+  audits in the same step.
+- T01 remains open. Remediate affected dependencies in a separate reviewed change and verify the
+  resulting candidate SHA with the full workflow before requesting independent review.
