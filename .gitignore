@@ -81,3 +81,5 @@ __pycache__/
 !/.agents/skills/release/
 !/.agents/skills/repo-auditor/
 /skills-lock.json
+!/.agents/skills/systematic-engineering/
+!/.agents/skills/api-contract-engineering/

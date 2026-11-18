@@ -17,7 +17,9 @@ $required = @(
   'security',
   'legal-compliance',
   'release',
-  'repo-auditor'
+  'repo-auditor',
+  'systematic-engineering',
+  'api-contract-engineering'
 )
 
 $errors = [System.Collections.Generic.List[string]]::new()

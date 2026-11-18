@@ -30,6 +30,12 @@ The installed Claude Code 2.1.251 CLI advertises `fable`, `sonnet`, and `opus` a
 
 ## Task-specific selection layer
 
+Use Standard speed by default to conserve the plan allowance. Start with low
+reasoning for bounded mechanical work and medium for standard implementation
+or scoped review. Increase effort when the evidence or risk calls for it.
+Resolve the model from the current client picker or supported configuration
+before execution. For usage and rates, see [Codex pricing](https://learn.chatgpt.com/docs/pricing#token-rates).
+
 Before substantive work, split a delivery into independently verifiable sub-tasks and record a routing
 decision for each one. The objective is to use the least costly eligible model, not the least capable one.
 Unknown provider pricing must never be guessed; the tier map and observed verification effort are the
@@ -37,10 +43,10 @@ cost-control inputs.
 
 | Sub-task shape | Required model | Credit-efficient use |
 |---|---|---|
-| Read-only inventory, deterministic documentation, formatting, repetitive fixture or mechanical rename | Luna / `gpt-5.6-luna` | Use only after the contract and acceptance check are explicit. |
-| Isolated implementation, bounded validation, ordinary test or compatible API work with approved design | Terra / `gpt-5.6-terra` | Keep the scope to one bounded context and reuse the established tests/contracts. |
-| Security, payments, privacy, authorization, public compatibility, migration, production-readiness design or final review | Sol / `gpt-5.6-sol` | Use Sol for the design/final review; hand a fully specified, non-sensitive mechanical slice down only when its gate remains unchanged. |
-| A Sol review cannot resolve an exceptional cross-cutting ambiguity after its escalation criteria are met | Astra / `gpt-6-astra` | Exceptional escalation only; record why Sol was insufficient and what evidence is required. |
+| Read-only inventory, deterministic documentation, formatting, repetitive fixture or mechanical rename | Luna / `gpt-6-luna` | Use only after the contract and acceptance check are explicit. |
+| Isolated implementation, bounded validation, ordinary test or compatible API work with approved design | Terra / `gpt-6.1-terra` | Keep the scope to one bounded context and reuse the established tests/contracts. |
+| Security, payments, privacy, authorization, public compatibility, migration, production-readiness design or final review | Sol / `gpt-6.2-sol` | Use Sol for the design/final review; hand a fully specified, non-sensitive mechanical slice down only when its gate remains unchanged. |
+| A Sol review cannot resolve an exceptional cross-cutting ambiguity after its escalation criteria are met | Astra / `gpt-6.2-astra` | Exceptional escalation only; record why Sol was insufficient and what evidence is required. |
 
 For every meaningful sub-task, record:
 

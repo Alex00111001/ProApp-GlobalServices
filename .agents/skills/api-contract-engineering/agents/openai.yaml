@@ -1,0 +1,4 @@
+interface:
+  display_name: "API Contract Engineering"
+  short_description: "Trace runtime contracts through consumer evidence"
+  default_prompt: "Use $api-contract-engineering to analyze HomeServices runtime and OpenAPI parity."

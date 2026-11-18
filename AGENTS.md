@@ -89,3 +89,10 @@ Tests and evidence:
 Acceptance gate:
 Rollback / feature flag:
 ```
+
+## Engineering workflow routing
+
+For dependency planning, TDD, root-cause debugging and review use `systematic-engineering`.
+For runtime authority, OpenAPI projection and semantic consumer parity use `api-contract-engineering`.
+The permanent verification chain and tooling-only boundaries are in
+`docs/agent-governance/GOVERNANCE.md`; skills never replace PRR acceptance or authorize the next PRR.
