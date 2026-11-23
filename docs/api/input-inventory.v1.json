@@ -864,7 +864,7 @@
         {
           "surface": "QUERY",
           "expression": "req.query",
-          "validator": "z.object({\r\n    limit: limitSchema,\r\n    correlationId: z.string().trim().max(128).optional(),\r\n    resourceType: z.string().trim().max(100).optional(),\r\n  })",
+          "validator": "z.object({\n    limit: limitSchema,\n    correlationId: z.string().trim().max(128).optional(),\n    resourceType: z.string().trim().max(100).optional(),\n  })",
           "source": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 152
@@ -872,9 +872,9 @@
           "validatorSource": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 152,
-            "expression": "z.object({\r\n    limit: limitSchema,\r\n    correlationId: z.string().trim().max(128).optional(),\r\n    resourceType: z.string().trim().max(100).optional(),\r\n  })"
+            "expression": "z.object({\n    limit: limitSchema,\n    correlationId: z.string().trim().max(128).optional(),\n    resourceType: z.string().trim().max(100).optional(),\n  })"
           },
-          "key": "backend/src/routes/operations.routes.js#z.object({\r\n    limit: limitSchema,\r\n    correlationId: z.string().trim().max(128).optional(),\r\n    resourceType: z.string().trim().max(100).optional(),\r\n  })",
+          "key": "backend/src/routes/operations.routes.js#z.object({\n    limit: limitSchema,\n    correlationId: z.string().trim().max(128).optional(),\n    resourceType: z.string().trim().max(100).optional(),\n  })",
           "semanticClasses": [
             "NORMALIZATION"
           ],
@@ -962,7 +962,7 @@
         {
           "surface": "QUERY",
           "expression": "req.query",
-          "validator": "z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\r\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\r\n    service: z.string().trim().max(100).optional(),\r\n  })",
+          "validator": "z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\n    service: z.string().trim().max(100).optional(),\n  })",
           "source": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 40
@@ -970,9 +970,9 @@
           "validatorSource": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 40,
-            "expression": "z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\r\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\r\n    service: z.string().trim().max(100).optional(),\r\n  })"
+            "expression": "z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\n    service: z.string().trim().max(100).optional(),\n  })"
           },
-          "key": "backend/src/routes/operations.routes.js#z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\r\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\r\n    service: z.string().trim().max(100).optional(),\r\n  })",
+          "key": "backend/src/routes/operations.routes.js#z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\n    service: z.string().trim().max(100).optional(),\n  })",
           "semanticClasses": [
             "NORMALIZATION"
           ],
@@ -1158,7 +1158,7 @@
         {
           "surface": "BODY",
           "expression": "req.body",
-          "validator": "z.object({\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\r\n    reason: reasonSchema,\r\n  })",
+          "validator": "z.object({\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\n    reason: reasonSchema,\n  })",
           "source": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 80
@@ -1166,9 +1166,9 @@
           "validatorSource": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 80,
-            "expression": "z.object({\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\r\n    reason: reasonSchema,\r\n  })"
+            "expression": "z.object({\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\n    reason: reasonSchema,\n  })"
           },
-          "key": "backend/src/routes/operations.routes.js#z.object({\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\r\n    reason: reasonSchema,\r\n  })",
+          "key": "backend/src/routes/operations.routes.js#z.object({\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\n    reason: reasonSchema,\n  })",
           "semanticClasses": [
             "NORMALIZATION"
           ],
@@ -1488,7 +1488,7 @@
         {
           "surface": "QUERY",
           "expression": "req.query",
-          "validator": "z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\r\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\r\n  })",
+          "validator": "z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\n  })",
           "source": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 95
@@ -1496,9 +1496,9 @@
           "validatorSource": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 95,
-            "expression": "z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\r\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\r\n  })"
+            "expression": "z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\n  })"
           },
-          "key": "backend/src/routes/operations.routes.js#z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\r\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\r\n  })",
+          "key": "backend/src/routes/operations.routes.js#z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\n  })",
           "semanticClasses": [
             "NORMALIZATION"
           ],
@@ -1882,7 +1882,7 @@
         {
           "surface": "BODY",
           "expression": "req.body",
-          "validator": "z.object({\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\r\n    reason: reasonSchema,\r\n  })",
+          "validator": "z.object({\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\n    reason: reasonSchema,\n  })",
           "source": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 126
@@ -1890,9 +1890,9 @@
           "validatorSource": {
             "file": "backend/src/routes/operations.routes.js",
             "line": 126,
-            "expression": "z.object({\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\r\n    reason: reasonSchema,\r\n  })"
+            "expression": "z.object({\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\n    reason: reasonSchema,\n  })"
           },
-          "key": "backend/src/routes/operations.routes.js#z.object({\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\r\n    reason: reasonSchema,\r\n  })",
+          "key": "backend/src/routes/operations.routes.js#z.object({\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\n    reason: reasonSchema,\n  })",
           "semanticClasses": [
             "NORMALIZATION"
           ],

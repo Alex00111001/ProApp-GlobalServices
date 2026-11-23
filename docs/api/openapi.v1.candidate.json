@@ -1231,7 +1231,7 @@
                     "policy": "STRIP"
                   }
                 ],
-                "x-homeservices-zod-binding": "backend/src/routes/operations.routes.js#z.object({\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\r\n    reason: reasonSchema,\r\n  })"
+                "x-homeservices-zod-binding": "backend/src/routes/operations.routes.js#z.object({\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\n    reason: reasonSchema,\n  })"
               }
             }
           }
@@ -1918,7 +1918,7 @@
                     "policy": "STRIP"
                   }
                 ],
-                "x-homeservices-zod-binding": "backend/src/routes/operations.routes.js#z.object({\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\r\n    reason: reasonSchema,\r\n  })"
+                "x-homeservices-zod-binding": "backend/src/routes/operations.routes.js#z.object({\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\n    reason: reasonSchema,\n  })"
               }
             }
           }

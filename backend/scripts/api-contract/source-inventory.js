@@ -26,7 +26,7 @@ const files = (folder, extensions = /\.[jt]sx?$/) => fs.readdirSync(folder, { wi
     : extensions.test(entry.name) ? [path.join(folder, entry.name)] : []).sort();
 
 function readSource(file) {
-  const source = fs.readFileSync(file, 'utf8');
+  const source = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
   const ast = parser.parse(source, { sourceType: 'unambiguous', plugins: ['typescript', 'jsx'] });
   const imports = new Map();
   const definitions = new Map();

@@ -1,17 +1,29 @@
 process.env.NODE_ENV = 'test';
 process.env.DATABASE_URL ||= 'postgresql://user:password@localhost:5432/test';
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 const Ajv = require('ajv/dist/2020');
 const addFormats = require('ajv-formats');
 const { z } = require('zod');
-const { inventory, ROOT } = require('../scripts/api-contract/source-inventory');
+const { inventory, readSource, ROOT } = require('../scripts/api-contract/source-inventory');
 const { buildInventory, serialize } = require('../scripts/api-contract/inventory-command');
 const { projectSchema } = require('../scripts/api-contract/schema-catalog');
 const { consumerInventory } = require('../scripts/api-contract/consumer-inventory');
 const { breakingChanges, schemaChanges } = require('../scripts/api-contract/breaking-changes');
 const { buildOpenApi } = require('../scripts/api-contract/openapi-command');
+
+test('source snippets are identical for CRLF and LF checkouts', (t) => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'homeservices-api-source-'));
+  const file = path.join(temp, 'fixture.js');
+  t.after(() => { fs.unlinkSync(file); fs.rmdirSync(temp); });
+  const source = 'const schema = {\n  status: "OPEN",\n};\n';
+  fs.writeFileSync(file, source.replace(/\n/g, '\r\n'));
+  const context = readSource(file);
+  assert.equal(context.text(context.definitions.get('schema')), '{\n  status: "OPEN",\n}');
+});
 
 test('inventory is deterministic and classifies mounted internal, webhook, admin and mobile surfaces', () => {
   const first = buildInventory();

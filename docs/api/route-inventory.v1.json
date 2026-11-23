@@ -462,7 +462,7 @@
       "validation": [
         {
           "input": "req.query",
-          "schema": "z.object({\r\n    limit: limitSchema,\r\n    correlationId: z.string().trim().max(128).optional(),\r\n    resourceType: z.string().trim().max(100).optional(),\r\n  })",
+          "schema": "z.object({\n    limit: limitSchema,\n    correlationId: z.string().trim().max(128).optional(),\n    resourceType: z.string().trim().max(100).optional(),\n  })",
           "line": 152
         }
       ],
@@ -517,7 +517,7 @@
       "validation": [
         {
           "input": "req.query",
-          "schema": "z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\r\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\r\n    service: z.string().trim().max(100).optional(),\r\n  })",
+          "schema": "z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\n    service: z.string().trim().max(100).optional(),\n  })",
           "line": 40
         }
       ],
@@ -639,7 +639,7 @@
       "validation": [
         {
           "input": "req.body",
-          "schema": "z.object({\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\r\n    reason: reasonSchema,\r\n  })",
+          "schema": "z.object({\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\n    reason: reasonSchema,\n  })",
           "line": 80
         },
         {
@@ -798,7 +798,7 @@
       "validation": [
         {
           "input": "req.query",
-          "schema": "z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\r\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\r\n  })",
+          "schema": "z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\n  })",
           "line": 95
         }
       ],
@@ -979,7 +979,7 @@
       "validation": [
         {
           "input": "req.body",
-          "schema": "z.object({\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\r\n    reason: reasonSchema,\r\n  })",
+          "schema": "z.object({\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\n    reason: reasonSchema,\n  })",
           "line": 126
         },
         {
@@ -35783,7 +35783,7 @@
       "runtimeValidationDigest": "7bced324c7e065a199b13daad08d19ff4a0a1c89c3018f5d694a7ac563aa25ea",
       "runtimeSourceDigest": "0397c9573ab1b38dc695a5d7baddfb598218755b30d009e2070ea4c10dd72499"
     },
-    "backend/src/routes/operations.routes.js#z.object({\r\n    limit: limitSchema,\r\n    correlationId: z.string().trim().max(128).optional(),\r\n    resourceType: z.string().trim().max(100).optional(),\r\n  })": {
+    "backend/src/routes/operations.routes.js#z.object({\n    limit: limitSchema,\n    correlationId: z.string().trim().max(128).optional(),\n    resourceType: z.string().trim().max(100).optional(),\n  })": {
       "jsonSchema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
@@ -35824,7 +35824,7 @@
       "runtimeValidationDigest": "c9ec6ea7363262fddc825c769a2bcfdfcfc6fe6cb340941f3a6fc29255c957d7",
       "runtimeSourceDigest": "0a93a3262ce52c79d993ea11bd1c6a77fe387c8b8507934f52c0e06b272412b9"
     },
-    "backend/src/routes/operations.routes.js#z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\r\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\r\n    service: z.string().trim().max(100).optional(),\r\n  })": {
+    "backend/src/routes/operations.routes.js#z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),\n    severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),\n    service: z.string().trim().max(100).optional(),\n  })": {
       "jsonSchema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
@@ -35880,7 +35880,7 @@
       "runtimeValidationDigest": "609a5d68b10caaaff4955c4b98a349cf34aa11b0f656752125d2dc26e8afc1ae",
       "runtimeSourceDigest": "1cd614efe1e5019fff5157dbc28cfa4924cbd5dacbacb3fc73e2e9f51d6c339c"
     },
-    "backend/src/routes/operations.routes.js#z.object({\r\n    limit: limitSchema,\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\r\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\r\n  })": {
+    "backend/src/routes/operations.routes.js#z.object({\n    limit: limitSchema,\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),\n    severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),\n  })": {
       "jsonSchema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
@@ -35932,7 +35932,7 @@
       "runtimeValidationDigest": "fc1ad3cb05ef467a4485c930ff835e074d30baa07392981fed0c73d8d9eae7b0",
       "runtimeSourceDigest": "d0e73534f416d29c0392206bfe98d8de8dc600611c17ea84511d1eaeb49944bb"
     },
-    "backend/src/routes/operations.routes.js#z.object({\r\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\r\n    reason: reasonSchema,\r\n  })": {
+    "backend/src/routes/operations.routes.js#z.object({\n    status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),\n    reason: reasonSchema,\n  })": {
       "jsonSchema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
@@ -35975,7 +35975,7 @@
       "runtimeValidationDigest": "4e36681137e822458d6f1837e63ccf1d1d9ea1a1542df5ac8cd2c99aa827c2b8",
       "runtimeSourceDigest": "b4d4d057a39b536bc4469a4be1e3c8ce110dec237d5c758719e2c6736b725940"
     },
-    "backend/src/routes/operations.routes.js#z.object({\r\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\r\n    reason: reasonSchema,\r\n  })": {
+    "backend/src/routes/operations.routes.js#z.object({\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\n    reason: reasonSchema,\n  })": {
       "jsonSchema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
