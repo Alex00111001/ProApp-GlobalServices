@@ -15,6 +15,24 @@ const { publicContentResponses } = require('../src/contracts/public-content.resp
 const { paymentResponses } = require('../src/contracts/payment.responses');
 const { bookingResponses } = require('../src/contracts/booking.responses');
 const { operationsResponses } = require('../src/contracts/operations.responses');
+const { adminDirectoryResponses } = require('../src/contracts/admin-directory.responses');
+const { dashboardQuerySchema } = require('../src/validators/admin.validators');
+
+test('admin dashboard preserves UTC years extended by query offset normalization', () => {
+  const range = adminDirectoryResponses.dashboard.responses[200].schema.shape.range;
+  const request = dashboardQuerySchema.parse({
+    from: '0000-01-01T00:00:00+01:00',
+    to: '9999-12-31T23:59:59-01:00',
+  });
+  const response = {
+    ...request,
+    from: new Date(request.from).toISOString(),
+    to: new Date(request.to).toISOString(),
+  };
+  assert.equal(response.from, '-000001-12-31T23:00:00.000Z');
+  assert.equal(response.to, '+010000-01-01T00:59:59.000Z');
+  assert.deepEqual(range.parse(response), response);
+});
 
 test('operations list DTOs preserve null fields and dates while excluding internal fields', () => {
   const time = new Date('2026-09-21T08:00:00.000Z');
