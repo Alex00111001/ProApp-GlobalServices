@@ -41,6 +41,8 @@ const integrationListQuerySchema = operationalListQuerySchema.extend({ status: z
 const alertListQuerySchema = operationalListQuerySchema.extend({ status: z.enum(['PENDING', 'PROCESSING', 'PROCESSED', 'FAILED', 'DEAD_LETTER']).optional() });
 const healthSnapshotQuerySchema = z.object({ ...pagination, service: optionalText(100) });
 const idSchema = z.string().uuid();
+// The observability backfill assigned lowercase MD5 identifiers to existing groups.
+const errorGroupIdSchema = z.union([idSchema, z.string().regex(/^[0-9a-f]{32}$/u)]);
 const reasonSchema = trimmedString(10, 2_000);
 const errorStatusSchema = z.object({
   status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']),
@@ -98,6 +100,7 @@ const supportCaseCommentSchema = z.object({ body: trimmedString(1, 5_000) });
 
 module.exports = {
   errorListQuerySchema,
+  errorGroupIdSchema,
   errorStatusSchema,
   alertListQuerySchema,
   healthSnapshotQuerySchema,

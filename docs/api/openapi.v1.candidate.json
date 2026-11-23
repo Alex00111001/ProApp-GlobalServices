@@ -28485,14 +28485,22 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{32}$"
+                }
+              ],
               "x-homeservices-semantic-classes": [
                 "STRUCTURAL_EQUIVALENT"
               ],
               "x-homeservices-unknown-fields": [],
-              "x-homeservices-zod-binding": "backend/src/controllers/admin-operations.controller.js#idSchema"
+              "x-homeservices-zod-binding": "backend/src/controllers/admin-operations.controller.js#errorGroupIdSchema"
             }
           }
         ],
@@ -28826,14 +28834,22 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{32}$"
+                }
+              ],
               "x-homeservices-semantic-classes": [
                 "STRUCTURAL_EQUIVALENT"
               ],
               "x-homeservices-unknown-fields": [],
-              "x-homeservices-zod-binding": "backend/src/controllers/admin-operations.controller.js#idSchema"
+              "x-homeservices-zod-binding": "backend/src/controllers/admin-operations.controller.js#errorGroupIdSchema"
             }
           }
         ],
@@ -41933,7 +41949,7 @@
   "x-homeservices-completeness": {
     "unresolvedConsumerCalls": 0,
     "routeInputBindings": 247,
-    "uniqueRouteInputSchemas": 176,
+    "uniqueRouteInputSchemas": 177,
     "unresolvedRouteInputProjections": 128,
     "historicalStructuralOnlyUnresolved": 142,
     "executedAcceptanceEquivalentBindings": 38,

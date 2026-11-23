@@ -8,6 +8,7 @@ if (!process.env.DIRECT_URL) throw new Error('DIRECT_URL must point to the isola
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
+const { createHash } = require('node:crypto');
 const prisma = require('../../src/config/prisma');
 const app = require('../../src/app');
 const { hashPassword } = require('../../src/utils/password');
@@ -177,8 +178,10 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
 
     const operationsHeaders = { authorization: `Bearer ${session.accessToken}` };
     const fixtureTime = new Date('2026-09-21T08:00:00.000Z');
+    const fingerprint = `fixture-${runId}`;
     const group = await prisma.errorGroup.create({ data: {
-      fingerprint: `fixture-${runId}`, environment: 'test', service: runId,
+      id: createHash('md5').update(fingerprint).digest('hex'),
+      fingerprint, environment: 'test', service: runId,
       normalizedMessage: 'Synthetic operations fixture', lastSeenAt: fixtureTime,
     } });
     errorGroupId = group.id;
@@ -199,8 +202,35 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     const errorDetailResponse = await fetch(`${baseUrl}/operations/errors/${group.id}`, { headers: operationsHeaders });
     assert.equal(errorDetailResponse.status, 200);
     const { errorGroup } = await errorDetailResponse.json();
+    assert.equal(errorGroup.id, group.id);
     assert.equal(errorGroup.lastSeenAt, fixtureTime.toISOString());
     assert.deepEqual(errorGroup.incidents.map(({ id }) => id), [incidentIds[0]]);
+
+    const statusPath = `${baseUrl}/operations/errors/${group.id}/status`;
+    const statusBody = JSON.stringify({ status: 'ACKNOWLEDGED', reason: 'Acknowledge synthetic historical error group' });
+    const deniedStatus = await fetch(statusPath, {
+      method: 'PATCH', headers: { ...operationsHeaders, 'content-type': 'application/json' }, body: statusBody,
+    });
+    assert.equal(deniedStatus.status, 403);
+    assert.equal((await prisma.errorGroup.findUniqueOrThrow({ where: { id: group.id } })).status, 'OPEN');
+
+    const superRole = await prisma.role.findUniqueOrThrow({ where: { key: 'SUPER_ADMIN' } });
+    const operator = await createUser('HttpErrorOperator', superRole.id);
+    const operatorSession = await createAdminSession({
+      email: operator.email, password: 'integration-password', userAgent: 'integration-browser', ipAddress: '127.0.0.1',
+    }, prisma);
+    const acknowledged = await fetch(statusPath, {
+      method: 'PATCH',
+      headers: { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' },
+      body: statusBody,
+    });
+    assert.equal(acknowledged.status, 200);
+    const transitionResult = await acknowledged.json();
+    assert.equal(transitionResult.errorGroup.id, group.id);
+    assert.equal(transitionResult.errorGroup.status, 'ACKNOWLEDGED');
+    assert.equal(await prisma.auditLog.count({
+      where: { actorId: operator.id, resourceId: group.id, action: 'error.status_changed' },
+    }), 1);
 
     const incidentDetailResponse = await fetch(`${baseUrl}/operations/incidents/${incidentIds[0]}`, { headers: operationsHeaders });
     assert.equal(incidentDetailResponse.status, 200);

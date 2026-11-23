@@ -7,6 +7,13 @@ const requestMiddleware = (items = []) => items.filter((item) => !item.startsWit
 function schemaChanges(before, after, direction, location, changes) {
   if (stable(before) === stable(after)) return;
   if (!before || !after) { changes.push(`${location}: schema removed or added without compatibility proof`); return; }
+  const { $schema: beforeDialect, ...beforeKeywords } = before;
+  const { $schema: afterDialect, anyOf, ...afterKeywords } = after;
+  // A plain request union widens a standalone string grammar if it retains that exact branch.
+  if (direction === 'request' && beforeDialect === afterDialect && Array.isArray(anyOf)
+    && beforeKeywords.type === 'string' && Object.keys(beforeKeywords).every((key) => ['type', 'format', 'pattern'].includes(key))
+    && Object.keys(afterKeywords).length === 0
+    && anyOf.some((branch) => stable(branch) === stable(beforeKeywords))) return;
   const requiredBefore = new Set(before.required || []);
   const requiredAfter = new Set(after.required || []);
   for (const key of direction === 'request' ? requiredAfter : requiredBefore) {
