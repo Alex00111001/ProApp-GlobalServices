@@ -170,7 +170,7 @@ router.post('/role-change-requests/:id/reject', requirePermission(PERMISSIONS.RO
 router.get('/operations/overview', requirePermission(PERMISSIONS.OPERATIONS_READ), operationsController.overview);
 router.get('/operations/metrics', requirePermission(PERMISSIONS.OPERATIONS_READ), metricsHandler);
 router.get('/operations/health', requirePermission(PERMISSIONS.HEALTH_READ), operationsController.health);
-router.get('/operations/health/snapshots', requirePermission(PERMISSIONS.HEALTH_READ), operationsController.healthSnapshots);
+router.get('/operations/health/snapshots', requirePermission(PERMISSIONS.HEALTH_READ), responseContract(operationsResponses.healthSnapshots), operationsController.healthSnapshots);
 router.get('/operations/errors', requirePermission(PERMISSIONS.ERRORS_READ), responseContract(operationsResponses.errors), operationsController.errors);
 router.get('/operations/errors/:id', requirePermission(PERMISSIONS.ERRORS_READ), operationsController.error);
 router.patch('/operations/errors/:id/status', requirePermission(PERMISSIONS.ERRORS_MANAGE), operationsController.setErrorStatus);
@@ -178,8 +178,8 @@ router.get('/operations/incidents', requirePermission(PERMISSIONS.INCIDENTS_READ
 router.get('/operations/incidents/:id', requirePermission(PERMISSIONS.INCIDENTS_READ), operationsController.incident);
 router.patch('/operations/incidents/:id/status', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), operationsController.setIncidentStatus);
 router.post('/operations/incidents/:id/comments', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), operationsController.addIncidentComment);
-router.get('/operations/jobs', requirePermission(PERMISSIONS.JOBS_READ), operationsController.jobs);
-router.get('/operations/integrations', requirePermission(PERMISSIONS.INTEGRATIONS_READ), operationsController.integrations);
+router.get('/operations/jobs', requirePermission(PERMISSIONS.JOBS_READ), responseContract(operationsResponses.jobs), operationsController.jobs);
+router.get('/operations/integrations', requirePermission(PERMISSIONS.INTEGRATIONS_READ), responseContract(operationsResponses.integrations), operationsController.integrations);
 router.get('/operations/alerts', requirePermission(PERMISSIONS.ALERTS_READ), operationsController.alerts);
 router.get('/operations/financial-monitoring', requirePermission(PERMISSIONS.FINANCIAL_MONITORING_READ), operationsController.financialMonitoring);
 router.get('/operations/support/operators', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.supportOperators);
