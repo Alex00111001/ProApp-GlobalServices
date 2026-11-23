@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "0cce5f4f3d3f14ffbd468e6aaafc04afd45e1cb9aeb44e4be7d847acb37f9cc1",
+  "sourceFingerprint": "3fd5f9bde52bbe20efc1f4d886524a58d6a8323f85fdd36e7b772c0bb20a85c7",
   "routes": [
     {
       "method": "GET",
@@ -14158,7 +14158,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 158
+        "line": 161
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14210,7 +14210,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 157
+        "line": 160
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14260,7 +14260,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 155
+        "line": 158
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14312,7 +14312,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 156
+        "line": 159
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14373,7 +14373,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 148
+        "line": 151
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14432,7 +14432,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 147
+        "line": 150
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14491,7 +14491,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 152
+        "line": 155
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14548,7 +14548,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 149
+        "line": 152
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14600,7 +14600,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 150
+        "line": 153
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14652,7 +14652,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 153
+        "line": 156
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14711,7 +14711,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 154
+        "line": 157
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14768,7 +14768,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 151
+        "line": 154
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14827,7 +14827,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 143
+        "line": 146
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14879,7 +14879,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 144
+        "line": 147
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14933,7 +14933,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 146
+        "line": 149
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14992,7 +14992,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 145
+        "line": 148
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -15051,7 +15051,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 85
+        "line": 88
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15101,7 +15101,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 80
+        "line": 83
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15153,7 +15153,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 81
+        "line": 84
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15207,7 +15207,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 82
+        "line": 85
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15259,7 +15259,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 83
+        "line": 86
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15313,7 +15313,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 84
+        "line": 87
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15365,7 +15365,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 160
+        "line": 163
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -15418,7 +15418,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 31
+        "line": 34
       },
       "handler": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -15469,7 +15469,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 36
+        "line": 39
       },
       "handler": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -15517,7 +15517,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 35
+        "line": 38
       },
       "handler": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -15568,7 +15568,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 32
+        "line": 35
       },
       "handler": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -15613,7 +15613,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 37
+        "line": 40
       },
       "handler": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -15666,7 +15666,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 38
+        "line": 41
       },
       "handler": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -15721,7 +15721,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 102
+        "line": 105
       },
       "handler": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -15758,7 +15758,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 97
+        "line": 100
       },
       "handler": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -15814,7 +15814,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 98
+        "line": 101
       },
       "handler": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -15868,7 +15868,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 100
+        "line": 103
       },
       "handler": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -15922,7 +15922,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 99
+        "line": 102
       },
       "handler": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -15976,7 +15976,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 101
+        "line": 104
       },
       "handler": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -16013,7 +16013,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 55
+        "line": 58
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -16066,7 +16066,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 56
+        "line": 59
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -16112,7 +16112,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 119
+        "line": 122
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16164,7 +16164,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 120
+        "line": 123
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16218,7 +16218,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 121
+        "line": 124
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16277,7 +16277,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 125
+        "line": 128
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16336,7 +16336,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 124
+        "line": 127
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16395,7 +16395,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 123
+        "line": 126
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16454,7 +16454,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 122
+        "line": 125
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16508,7 +16508,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 40
+        "line": 43
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -16560,7 +16560,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 138
+        "line": 141
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -16612,7 +16612,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 139
+        "line": 142
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -16666,7 +16666,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 140
+        "line": 143
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -16723,7 +16723,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 141
+        "line": 144
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -16782,7 +16782,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 114
+        "line": 117
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16834,7 +16834,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 115
+        "line": 118
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16888,7 +16888,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 118
+        "line": 121
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -16945,7 +16945,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 117
+        "line": 120
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -17006,7 +17006,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 116
+        "line": 119
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -17065,7 +17065,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 108
+        "line": 111
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17115,7 +17115,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 106
+        "line": 109
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17167,7 +17167,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 107
+        "line": 110
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17208,7 +17208,8 @@
       "auth": "ADMIN_BEARER",
       "middleware": [
         "authenticateAdmin",
-        "requirePermission(PERMISSIONS.MARKETING_READ)"
+        "requirePermission(PERMISSIONS.MARKETING_READ)",
+        "responseContract(growthResponses.campaignList)"
       ],
       "rateLimit": {
         "global": {
@@ -17219,7 +17220,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 65
+        "line": 68
       },
       "handler": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -17245,7 +17246,183 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "adminGrowth.campaignList",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "key": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "DRAFT",
+                          "ACTIVE",
+                          "PAUSED",
+                          "ARCHIVED"
+                        ]
+                      },
+                      "medium": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "channel": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "countryCode": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "startsAt": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "endsAt": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "_count": {
+                        "type": "object",
+                        "properties": {
+                          "events": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "leads": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "conversions": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "events",
+                          "leads",
+                          "conversions"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "key",
+                      "name",
+                      "source",
+                      "status",
+                      "medium",
+                      "channel",
+                      "countryCode",
+                      "startsAt",
+                      "endsAt",
+                      "createdAt",
+                      "updatedAt",
+                      "_count"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "pagination": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    "totalItems": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "page",
+                    "limit",
+                    "totalItems",
+                    "totalPages"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "items",
+                "pagination"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Admin Web"
       ],
@@ -17271,7 +17448,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 66
+        "line": 69
       },
       "handler": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -17327,7 +17504,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 67
+        "line": 70
       },
       "handler": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -17388,7 +17565,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 68
+        "line": 71
       },
       "handler": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -17447,7 +17624,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 70
+        "line": 73
       },
       "handler": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -17499,7 +17676,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 64
+        "line": 67
       },
       "handler": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -17551,7 +17728,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 69
+        "line": 72
       },
       "handler": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -17603,7 +17780,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 63
+        "line": 66
       },
       "handler": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -17655,7 +17832,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 112
+        "line": 115
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17705,7 +17882,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 109
+        "line": 112
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17757,7 +17934,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 110
+        "line": 113
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17818,7 +17995,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 111
+        "line": 114
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17879,7 +18056,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 104
+        "line": 107
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17931,7 +18108,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 105
+        "line": 108
       },
       "handler": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -17990,7 +18167,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 180
+        "line": 183
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18031,7 +18208,8 @@
       "auth": "ADMIN_BEARER",
       "middleware": [
         "authenticateAdmin",
-        "requirePermission(PERMISSIONS.ERRORS_READ)"
+        "requirePermission(PERMISSIONS.ERRORS_READ)",
+        "responseContract(operationsResponses.errors)"
       ],
       "rateLimit": {
         "global": {
@@ -18042,7 +18220,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 171
+        "line": 174
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18068,7 +18246,184 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "adminOperations.errors",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "fingerprint": {
+                        "type": "string"
+                      },
+                      "errorCode": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "occurrenceCount": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "severity": {
+                        "type": "string",
+                        "enum": [
+                          "DEBUG",
+                          "INFO",
+                          "WARNING",
+                          "ERROR",
+                          "CRITICAL"
+                        ]
+                      },
+                      "environment": {
+                        "type": "string"
+                      },
+                      "service": {
+                        "type": "string"
+                      },
+                      "module": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "operation": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "normalizedMessage": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "OPEN",
+                          "ACKNOWLEDGED",
+                          "RESOLVED",
+                          "IGNORED"
+                        ]
+                      },
+                      "firstSeenAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "lastSeenAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "windowStartedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "windowOccurrenceCount": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "_count": {
+                        "type": "object",
+                        "properties": {
+                          "events": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "incidents": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "events",
+                          "incidents"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "fingerprint",
+                      "errorCode",
+                      "occurrenceCount",
+                      "severity",
+                      "environment",
+                      "service",
+                      "module",
+                      "operation",
+                      "normalizedMessage",
+                      "status",
+                      "firstSeenAt",
+                      "lastSeenAt",
+                      "windowStartedAt",
+                      "windowOccurrenceCount",
+                      "_count"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "pagination": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    "totalItems": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "page",
+                    "limit",
+                    "totalItems",
+                    "totalPages"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "items",
+                "pagination"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Admin Web"
       ],
@@ -18094,7 +18449,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 172
+        "line": 175
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18148,7 +18503,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 173
+        "line": 176
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18207,7 +18562,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 181
+        "line": 184
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18253,7 +18608,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 169
+        "line": 172
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18300,7 +18655,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 170
+        "line": 173
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18341,7 +18696,8 @@
       "auth": "ADMIN_BEARER",
       "middleware": [
         "authenticateAdmin",
-        "requirePermission(PERMISSIONS.INCIDENTS_READ)"
+        "requirePermission(PERMISSIONS.INCIDENTS_READ)",
+        "responseContract(operationsResponses.incidents)"
       ],
       "rateLimit": {
         "global": {
@@ -18352,7 +18708,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 174
+        "line": 177
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18378,7 +18734,225 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "adminOperations.incidents",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "OPEN",
+                          "INVESTIGATING",
+                          "IDENTIFIED",
+                          "MONITORING",
+                          "RESOLVED",
+                          "CLOSED"
+                        ]
+                      },
+                      "severity": {
+                        "type": "string",
+                        "enum": [
+                          "INFO",
+                          "LOW",
+                          "MEDIUM",
+                          "HIGH",
+                          "CRITICAL"
+                        ]
+                      },
+                      "service": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "detectedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "acknowledgedAt": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "resolvedAt": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "closedAt": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "errorGroup": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "fingerprint": {
+                                "type": "string"
+                              },
+                              "errorCode": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "occurrenceCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "fingerprint",
+                              "errorCode",
+                              "occurrenceCount"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "_count": {
+                        "type": "object",
+                        "properties": {
+                          "events": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "comments": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "events",
+                          "comments"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "description",
+                      "status",
+                      "severity",
+                      "service",
+                      "detectedAt",
+                      "acknowledgedAt",
+                      "resolvedAt",
+                      "closedAt",
+                      "updatedAt",
+                      "errorGroup",
+                      "_count"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "pagination": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    },
+                    "totalItems": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "page",
+                    "limit",
+                    "totalItems",
+                    "totalPages"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "items",
+                "pagination"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Admin Web"
       ],
@@ -18404,7 +18978,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 175
+        "line": 178
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18458,7 +19032,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 177
+        "line": 180
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18519,7 +19093,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 176
+        "line": 179
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18578,7 +19152,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 179
+        "line": 182
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18630,7 +19204,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 178
+        "line": 181
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18682,7 +19256,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 168
+        "line": 171
       },
       "handler": {
         "file": "backend/src/modules/observability/metrics.js",
@@ -18717,7 +19291,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 167
+        "line": 170
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18763,7 +19337,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 183
+        "line": 186
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18815,7 +19389,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 184
+        "line": 187
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18871,7 +19445,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 185
+        "line": 188
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18925,7 +19499,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 187
+        "line": 190
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -18984,7 +19558,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 188
+        "line": 191
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -19045,7 +19619,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 186
+        "line": 189
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -19104,7 +19678,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 182
+        "line": 185
       },
       "handler": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -19152,7 +19726,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 77
+        "line": 80
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -19204,7 +19778,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 72
+        "line": 75
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -19256,7 +19830,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 73
+        "line": 76
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -19310,7 +19884,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 74
+        "line": 77
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -19362,7 +19936,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 75
+        "line": 78
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -19416,7 +19990,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 76
+        "line": 79
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -19470,7 +20044,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 79
+        "line": 82
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -19522,7 +20096,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 78
+        "line": 81
       },
       "handler": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -19574,7 +20148,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 46
+        "line": 49
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -19627,7 +20201,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 47
+        "line": 50
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -19673,7 +20247,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 53
+        "line": 56
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -19727,7 +20301,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 136
+        "line": 139
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -19779,7 +20353,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 137
+        "line": 140
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -19831,7 +20405,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 132
+        "line": 135
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -19881,7 +20455,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 133
+        "line": 136
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -19935,7 +20509,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 135
+        "line": 138
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -19994,7 +20568,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 134
+        "line": 137
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20053,7 +20627,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 91
+        "line": 94
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20090,7 +20664,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 93
+        "line": 96
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20127,7 +20701,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 87
+        "line": 90
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20182,7 +20756,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 88
+        "line": 91
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20236,7 +20810,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 90
+        "line": 93
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20290,7 +20864,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 89
+        "line": 92
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20344,7 +20918,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 92
+        "line": 95
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20381,7 +20955,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 94
+        "line": 97
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20418,7 +20992,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 95
+        "line": 98
       },
       "handler": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -20470,7 +21044,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 162
+        "line": 165
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -20518,7 +21092,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 163
+        "line": 166
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -20572,7 +21146,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 164
+        "line": 167
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -20626,7 +21200,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 165
+        "line": 168
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -20680,7 +21254,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 161
+        "line": 164
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -20728,7 +21302,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 126
+        "line": 129
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -20780,7 +21354,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 127
+        "line": 130
       },
       "handler": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -20834,7 +21408,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 129
+        "line": 132
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20884,7 +21458,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 130
+        "line": 133
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20936,7 +21510,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 131
+        "line": 134
       },
       "handler": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20990,7 +21564,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 42
+        "line": 45
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -21042,7 +21616,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 43
+        "line": 46
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -21088,7 +21662,7 @@
       },
       "registration": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 44
+        "line": 47
       },
       "handler": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -53975,6 +54549,580 @@
               "pagination",
               "averageRating",
               "reviewCount"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/v1/admin/growth/campaigns": {
+      "operationId": "adminGrowth.campaignList",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "DRAFT",
+                        "ACTIVE",
+                        "PAUSED",
+                        "ARCHIVED"
+                      ]
+                    },
+                    "medium": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "channel": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "countryCode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "startsAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "endsAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "_count": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "leads": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "conversions": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "events",
+                        "leads",
+                        "conversions"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "key",
+                    "name",
+                    "source",
+                    "status",
+                    "medium",
+                    "channel",
+                    "countryCode",
+                    "startsAt",
+                    "endsAt",
+                    "createdAt",
+                    "updatedAt",
+                    "_count"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "totalItems": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "totalPages": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "page",
+                  "limit",
+                  "totalItems",
+                  "totalPages"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "items",
+              "pagination"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/v1/admin/operations/errors": {
+      "operationId": "adminOperations.errors",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "fingerprint": {
+                      "type": "string"
+                    },
+                    "errorCode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "occurrenceCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "severity": {
+                      "type": "string",
+                      "enum": [
+                        "DEBUG",
+                        "INFO",
+                        "WARNING",
+                        "ERROR",
+                        "CRITICAL"
+                      ]
+                    },
+                    "environment": {
+                      "type": "string"
+                    },
+                    "service": {
+                      "type": "string"
+                    },
+                    "module": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "operation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "normalizedMessage": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "OPEN",
+                        "ACKNOWLEDGED",
+                        "RESOLVED",
+                        "IGNORED"
+                      ]
+                    },
+                    "firstSeenAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "lastSeenAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "windowStartedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "windowOccurrenceCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "_count": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "incidents": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "events",
+                        "incidents"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "fingerprint",
+                    "errorCode",
+                    "occurrenceCount",
+                    "severity",
+                    "environment",
+                    "service",
+                    "module",
+                    "operation",
+                    "normalizedMessage",
+                    "status",
+                    "firstSeenAt",
+                    "lastSeenAt",
+                    "windowStartedAt",
+                    "windowOccurrenceCount",
+                    "_count"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "totalItems": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "totalPages": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "page",
+                  "limit",
+                  "totalItems",
+                  "totalPages"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "items",
+              "pagination"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/v1/admin/operations/incidents": {
+      "operationId": "adminOperations.incidents",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "OPEN",
+                        "INVESTIGATING",
+                        "IDENTIFIED",
+                        "MONITORING",
+                        "RESOLVED",
+                        "CLOSED"
+                      ]
+                    },
+                    "severity": {
+                      "type": "string",
+                      "enum": [
+                        "INFO",
+                        "LOW",
+                        "MEDIUM",
+                        "HIGH",
+                        "CRITICAL"
+                      ]
+                    },
+                    "service": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "detectedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "acknowledgedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "resolvedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "closedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "errorGroup": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "fingerprint": {
+                              "type": "string"
+                            },
+                            "errorCode": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "occurrenceCount": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "fingerprint",
+                            "errorCode",
+                            "occurrenceCount"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "_count": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "comments": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "events",
+                        "comments"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "description",
+                    "status",
+                    "severity",
+                    "service",
+                    "detectedAt",
+                    "acknowledgedAt",
+                    "resolvedAt",
+                    "closedAt",
+                    "updatedAt",
+                    "errorGroup",
+                    "_count"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "page": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "totalItems": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "totalPages": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "page",
+                  "limit",
+                  "totalItems",
+                  "totalPages"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "items",
+              "pagination"
             ],
             "additionalProperties": false
           },

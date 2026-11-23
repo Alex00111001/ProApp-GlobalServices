@@ -94,6 +94,20 @@ test('Supabase test proves growth idempotency, privacy, RBAC and audited lifecyc
     assert.equal(activeResponse.status, 200);
     assert.equal((await activeResponse.json()).campaign.status, 'ACTIVE');
 
+    const matchedResponse = await fetch(`${baseUrl}/campaigns?search=${encodeURIComponent(runId.replaceAll('.', '-'))}`, { headers: marketingHeaders });
+    assert.equal(matchedResponse.status, 200);
+    const matched = await matchedResponse.json();
+    assert.equal(matched.items.length, 1);
+    assert.equal(matched.items[0].id, campaignId);
+    assert.equal(matched.items[0].status, 'ACTIVE');
+    assert.equal(new Date(matched.items[0].createdAt).toISOString(), matched.items[0].createdAt);
+    assert.deepEqual(matched.items[0]._count, { events: 0, leads: 0, conversions: 0 });
+    assert.deepEqual(matched.pagination, { page: 1, limit: 25, totalItems: 1, totalPages: 1 });
+
+    const emptyResponse = await fetch(`${baseUrl}/campaigns?page=2&search=${encodeURIComponent(runId.replaceAll('.', '-'))}`, { headers: marketingHeaders });
+    assert.equal(emptyResponse.status, 200);
+    assert.deepEqual(await emptyResponse.json(), { items: [], pagination: { page: 2, limit: 25, totalItems: 1, totalPages: 1 } });
+
     // Exercise the mounted parser and serialized pagination through the real admin session.
     for (const [query, page, limit] of [
       ['', 1, 25],
