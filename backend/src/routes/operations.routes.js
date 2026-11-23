@@ -104,6 +104,7 @@ router.get('/incidents', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async 
     },
     take: query.limit,
     orderBy: { detectedAt: 'desc' },
+    omit: { deduplicationKey: true },
     include: { errorGroup: true, _count: { select: { events: true, comments: true } } },
   });
   res.json({ incidents });
@@ -112,6 +113,7 @@ router.get('/incidents', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async 
 router.get('/incidents/:id', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async (req, res) => {
   const incident = await prisma.incident.findUnique({
     where: { id: idSchema.parse(req.params.id) },
+    omit: { deduplicationKey: true },
     include: {
       errorGroup: true,
       events: { take: 200, orderBy: { createdAt: 'desc' } },
@@ -134,7 +136,8 @@ router.patch('/incidents/:id/status', requirePermission(PERMISSIONS.INCIDENTS_MA
     reason: input.reason,
     context: req.context,
   });
-  res.json(result);
+  const { deduplicationKey, ...incident } = result.incident;
+  res.json({ ...result, incident });
 });
 
 router.post('/incidents/:id/comments', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async (req, res) => {
