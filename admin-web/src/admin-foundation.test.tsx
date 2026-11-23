@@ -13,6 +13,7 @@ import { SupplyDemandAIPage } from './pages/SupplyDemandAIPage'
 import { navigation } from './navigation'
 import { aiExecutionListSchema, aiOperationListSchema, contentEntryListSchema, experimentListSchema, expansionListSchema, readinessEvaluationListSchema, seoRedirectListSchema, supplyDemandSnapshotListSchema } from './lib/contracts'
 import { api } from './lib/api'
+import { integrationsSchema } from './lib/contracts'
 import { session } from './state/session'
 
 const sessionPayload = {
@@ -167,6 +168,19 @@ describe('optional list search', () => {
 })
 
 describe('F5 operations control', () => {
+  it('accepts integration rows with the server receipt timestamp', () => {
+    const time = '2026-09-21T08:00:00.000Z'
+    const item = {
+      id: 'integration-1', provider: 'test', eventType: 'test.event', status: 'RECEIVED',
+      attempts: 0, receivedAt: time, updatedAt: time, correlationId: null,
+      processingStartedAt: null, processedAt: null, hasError: false,
+    }
+    const list = integrationsSchema.parse({
+      items: [item], pagination: { page: 1, limit: 25, totalItems: 1, totalPages: 1 },
+    })
+    expect(list.items).toEqual([item])
+  })
+
   it('renders only operational modules granted by the backend permission set', async () => {
     const operationsSession = { ...sessionPayload, permissions: ['operations.read', 'errors.read', 'health.read'] }
     const overview = {

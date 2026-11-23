@@ -94,10 +94,10 @@ export const incidentDetailSchema = z.object({ incident: z.object({
 
 export const healthSchema = z.object({ status: z.string(), checkedAt: z.string(), service: z.string(), dependencies: z.record(z.string(), healthDependencySchema) })
 export const healthSnapshotsSchema = z.object({ items: z.array(z.object({ id: z.string(), service: z.string(), status: z.string(), latencyMs: z.number().nullable(), message: z.string().nullable(), checkedAt: z.string() })), pagination: paginationSchema })
-const operationalItemBase = { id: z.string(), status: z.string(), attempts: z.number(), createdAt: z.string(), hasError: z.boolean() }
-export const jobsSchema = z.object({ items: z.array(z.object({ ...operationalItemBase, aggregateType: z.string(), eventType: z.string(), availableAt: z.string(), lockedAt: z.string().nullable(), processedAt: z.string().nullable() })), pagination: paginationSchema })
+const operationalItemBase = { id: z.string(), status: z.string(), attempts: z.number(), hasError: z.boolean() }
+export const jobsSchema = z.object({ items: z.array(z.object({ ...operationalItemBase, createdAt: z.string(), aggregateType: z.string(), eventType: z.string(), availableAt: z.string(), lockedAt: z.string().nullable(), processedAt: z.string().nullable() })), pagination: paginationSchema })
 export const integrationsSchema = z.object({ items: z.array(z.object({ ...operationalItemBase, provider: z.string(), eventType: z.string(), correlationId: z.string().nullable(), receivedAt: z.string(), processingStartedAt: z.string().nullable(), processedAt: z.string().nullable(), updatedAt: z.string() })), pagination: paginationSchema })
-export const alertsSchema = z.object({ items: z.array(z.object({ ...operationalItemBase, aggregateId: z.string(), eventType: z.string(), route: z.string().nullable(), severity: z.string().nullable(), availableAt: z.string(), processedAt: z.string().nullable() })), pagination: paginationSchema })
+export const alertsSchema = z.object({ items: z.array(z.object({ ...operationalItemBase, createdAt: z.string(), aggregateId: z.string(), eventType: z.string(), route: z.string().nullable(), severity: z.string().nullable(), availableAt: z.string(), processedAt: z.string().nullable() })), pagination: paginationSchema })
 const financialGroupSchema = z.object({ status: z.string(), currency: z.string(), count: z.number(), amount: z.string() })
 export const financialMonitoringSchema = z.object({
   generatedAt: z.string(), readOnly: z.literal(true), refunds: z.array(financialGroupSchema), payouts: z.array(financialGroupSchema),

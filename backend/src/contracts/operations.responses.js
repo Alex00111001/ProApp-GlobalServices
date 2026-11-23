@@ -39,6 +39,28 @@ const incident = outputObject({
   errorGroup: outputObject(errorGroupSummary).nullable(),
   _count: outputObject({ events: count, comments: count }),
 });
+const snapshot = outputObject({
+  id: z.string(), service: z.string(),
+  status: z.enum(['HEALTHY', 'DEGRADED', 'OUTAGE', 'UNKNOWN']),
+  latencyMs: z.number().int().nullable(), message: z.string().nullable(), checkedAt: dateTime,
+});
+const processingFields = {
+  id: z.string(), eventType: z.string(), attempts: count,
+  processedAt: dateTime.nullable(), hasError: z.boolean(),
+};
+const job = outputObject({
+  ...processingFields,
+  aggregateType: z.string(),
+  status: z.enum(['PENDING', 'PROCESSING', 'PROCESSED', 'FAILED', 'DEAD_LETTER']),
+  availableAt: dateTime, lockedAt: dateTime.nullable(), createdAt: dateTime,
+});
+const integration = outputObject({
+  ...processingFields,
+  provider: z.string(),
+  status: z.enum(['RECEIVED', 'PROCESSING', 'PROCESSED', 'FAILED', 'DEAD_LETTER']),
+  correlationId: z.string().nullable(), receivedAt: dateTime,
+  processingStartedAt: dateTime.nullable(), updatedAt: dateTime,
+});
 
 const operationsResponses = Object.freeze({
   errors: defineResponseContract({
@@ -52,6 +74,18 @@ const operationsResponses = Object.freeze({
     path: '/api/v1/admin/operations/incidents',
     operationId: 'adminOperations.incidents',
     responses: { 200: serialized(adminListResponse(incident)) },
+  }),
+  healthSnapshots: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/operations/health/snapshots', operationId: 'adminOperations.healthSnapshots',
+    responses: { 200: serialized(adminListResponse(snapshot)) },
+  }),
+  jobs: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/operations/jobs', operationId: 'adminOperations.jobs',
+    responses: { 200: serialized(adminListResponse(job)) },
+  }),
+  integrations: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/operations/integrations', operationId: 'adminOperations.integrations',
+    responses: { 200: serialized(adminListResponse(integration)) },
   }),
 });
 
