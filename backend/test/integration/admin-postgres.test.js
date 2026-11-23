@@ -282,17 +282,23 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.equal(await prisma.outboxEvent.count({
       where: { aggregateType: 'SupportCase', aggregateId: supportCaseId },
     }), 2);
-    for (const duplicate of [false, true]) {
+    for (const [assignedToId, duplicate] of [[support.id, false], [support.id, true], [null, false], [null, true]]) {
       const assignment = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}/assignment`, {
         method: 'PATCH',
         headers: { ...operationsHeaders, 'content-type': 'application/json' },
-        body: JSON.stringify({ assignedToId: support.id, reason: 'Assign case to the synthetic test operator' }),
+        body: JSON.stringify({ assignedToId, reason: 'Update assignment for the synthetic support case' }),
       });
       assert.equal(assignment.status, 200);
       assert.deepEqual(await assignment.json(), {
-        supportCase: { id: supportCaseId, assignedToId: support.id, status: 'TRIAGED' }, duplicate,
+        supportCase: { id: supportCaseId, assignedToId, status: 'TRIAGED' }, duplicate,
       });
     }
+    assert.equal(await prisma.supportCaseEvent.count({
+      where: { caseId: supportCaseId, eventType: { in: ['ASSIGNED', 'UNASSIGNED'] } },
+    }), 2);
+    assert.equal(await prisma.outboxEvent.count({
+      where: { aggregateType: 'SupportCase', aggregateId: supportCaseId, eventType: 'support.case.assignment_changed' },
+    }), 2);
     const addedComment = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}/comments`, {
       method: 'POST',
       headers: { ...operationsHeaders, 'content-type': 'application/json' },
