@@ -228,6 +228,22 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.equal(supportListBody.items[0].id, supportCaseId);
     assert.equal(supportListBody.items[0].assignedTo, null);
     assert.equal(supportListBody.pagination.totalItems, 1);
+    assert.equal(supportListBody.pagination.page, 1);
+    assert.equal(supportListBody.pagination.limit, 25);
+
+    const filteredSupportList = await fetch(
+      `${baseUrl}/operations/support/cases?search=%20${createdCase.caseKey}%20&status=OPEN&priority=HIGH&page=01&limit=2e1`,
+      { headers: operationsHeaders },
+    );
+    assert.equal(filteredSupportList.status, 200);
+    const filteredSupportBody = await filteredSupportList.json();
+    assert.deepEqual(filteredSupportBody.items.map(({ id }) => id), [supportCaseId]);
+    assert.equal(filteredSupportBody.pagination.limit, 20);
+
+    for (const query of ['search=', 'search=a&search=b', 'status=open', 'priority=high', 'assignedToId=invalid', 'page=1&page=2', 'limit=101']) {
+      const invalidSupportList = await fetch(`${baseUrl}/operations/support/cases?${query}`, { headers: operationsHeaders });
+      assert.equal(invalidSupportList.status, 400, query);
+    }
 
     const supportDetail = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}`, { headers: operationsHeaders });
     assert.equal(supportDetail.status, 200);

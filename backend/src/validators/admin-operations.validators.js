@@ -51,12 +51,18 @@ const incidentStatusSchema = z.object({
   reason: reasonSchema,
 });
 const incidentCommentSchema = z.object({ body: trimmedString(1, 5_000) });
-const supportCaseListQuerySchema = z.object({
+const supportCaseListQuerySchema = annotateInputSemantics(z.object({
   ...pagination,
   status: z.enum(['OPEN', 'TRIAGED', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED', 'CLOSED']).optional(),
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
   assignedToId: z.string().uuid().optional(),
   search: optionalText(128),
+}), {
+  ...paginationEvidence,
+  semantics: [...paginationEvidence.semantics,
+    'Search is trimmed before enforcing its bounds. Omitted filters stay absent.',
+    'Status and priority use exact enum values. An assignee filter requires a UUID.',
+  ],
 });
 const supportPriority = z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']);
 const supportCaseCreateSchema = z.object({

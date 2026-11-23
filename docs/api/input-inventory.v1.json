@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "205d34604227c25455d3e71f6287d95f573a6027a46d12cefc9e7fb136e26fd1",
+  "sourceFingerprint": "9b41c770309fa1153ad2c3c53b11e0c2f71a004d9380191df6d9750bc57d22c0",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -26195,6 +26195,16 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+              "Bracketed keys such as limit[] are stripped as unknown keys.",
+              "Search is trimmed before enforcing its bounds. Omitted filters stay absent.",
+              "Status and priority use exact enum values. An assignee filter requires a UUID."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -26202,7 +26212,7 @@
               }
             ],
             "runtimeValidationDigest": "58f663a936891263a898cb1bb6e174ea53e20a0f923df448e6564658602dee4c",
-            "runtimeSourceDigest": "8adf440704698155eacccf750dab3e678b60172acfeb0986e8c52bbb6c2408c5"
+            "runtimeSourceDigest": "7f138015f3b5682dba053792797e5629d737963f7a82aa7c6b1c3562bf3adfec"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -26262,7 +26272,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseCreateSchema",
-            "line": 62
+            "line": 68
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseCreateSchema",
           "semanticClasses": [
@@ -26629,7 +26639,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseAssignmentSchema",
-            "line": 90
+            "line": 96
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseAssignmentSchema",
           "semanticClasses": [
@@ -26909,7 +26919,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseCommentSchema",
-            "line": 91
+            "line": 97
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseCommentSchema",
           "semanticClasses": [
@@ -27163,7 +27173,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseStatusSchema",
-            "line": 86
+            "line": 92
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseStatusSchema",
           "semanticClasses": [

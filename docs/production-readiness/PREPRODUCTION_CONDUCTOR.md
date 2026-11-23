@@ -59,6 +59,16 @@ vacía en campañas y el desempate entre páginas de incidentes. La integración
 El candidato conserva 129 entradas y 193 respuestas incompletas, además de las pruebas
 pendientes de paridad global de consumidores.
 
+**Soporte administrativo.** Los PR [#45](https://github.com/Alex00111001/ProApp-GlobalServices/pull/45)
+y [#46](https://github.com/Alex00111001/ProApp-GlobalServices/pull/46) incorporaron las respuestas
+de lectura y la entrada de creación de casos. La verificación de los SHA integrados
+[`4e60f7f6`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45240416202) y
+[`244ba6df`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45241313859)
+pasó. El inventario conserva 128 entradas semánticas pendientes y 184 respuestas incompletas.
+Las entradas de cambio de estado, asignación y comentario ya tienen evidencia de equivalencia
+de validador. El siguiente vacío de entrada de soporte es la consulta de la lista de casos,
+que combina paginación, filtros opcionales y búsqueda. OpenAPI sigue como candidato.
+
 ## Camino crítico
 
 El orden siguiente refleja dependencias de aceptación. El camino de calendario se actualiza
