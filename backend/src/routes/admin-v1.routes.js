@@ -15,6 +15,7 @@ const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
 const { metricsHandler } = require('../modules/observability/metrics');
 const { responseContract } = require('../shared/http/response-contract');
+const { adminDirectoryResponses } = require('../contracts/admin-directory.responses');
 const { growthResponses } = require('../contracts/growth.responses');
 const { operationsResponses } = require('../contracts/operations.responses');
 const { supportResponses } = require('../contracts/support.responses');
@@ -43,11 +44,11 @@ router.post('/auth/sessions/:id/revoke', requirePermission(PERMISSIONS.SESSIONS_
 
 router.get('/dashboard', requirePermission(PERMISSIONS.DASHBOARD_READ), controller.dashboard);
 
-router.get('/users', requirePermission(PERMISSIONS.USERS_READ), controller.users);
+router.get('/users', requirePermission(PERMISSIONS.USERS_READ), responseContract(adminDirectoryResponses.users), controller.users);
 router.get('/users/:id', requirePermission(PERMISSIONS.USERS_PII_READ), controller.user);
 router.patch('/users/:id/status', requirePermission(PERMISSIONS.USERS_MANAGE), controller.setUserStatus);
 
-router.get('/professionals', requirePermission(PERMISSIONS.PROFESSIONALS_READ), controller.professionals);
+router.get('/professionals', requirePermission(PERMISSIONS.PROFESSIONALS_READ), responseContract(adminDirectoryResponses.professionals), controller.professionals);
 router.get(
   '/professionals/:id',
   requirePermission(PERMISSIONS.PROFESSIONALS_READ),
@@ -56,7 +57,7 @@ router.get(
 );
 router.patch('/professionals/:id/status', requirePermission(PERMISSIONS.PROFESSIONALS_MANAGE), controller.setProfessionalStatus);
 
-router.get('/bookings', requirePermission(PERMISSIONS.BOOKINGS_READ), controller.bookings);
+router.get('/bookings', requirePermission(PERMISSIONS.BOOKINGS_READ), responseContract(adminDirectoryResponses.bookings), controller.bookings);
 router.get(
   '/bookings/:id',
   requirePermission(PERMISSIONS.BOOKINGS_READ),

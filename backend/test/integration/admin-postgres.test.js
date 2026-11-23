@@ -142,11 +142,25 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.equal(deniedBody.code, 'INSUFFICIENT_PERMISSION');
     assert.equal(deniedBody.correlationId, `${runId}-http-denied`);
 
-    const allowed = await fetch(`${baseUrl}/users?page=1&limit=5`, {
+    const allowed = await fetch(`${baseUrl}/users?page=1&limit=5&search=${encodeURIComponent(support.email)}`, {
       headers: { authorization: `Bearer ${session.accessToken}`, 'x-correlation-id': `${runId}-http-users` },
     });
     assert.equal(allowed.status, 200);
-    assert.equal(Array.isArray((await allowed.json()).items), true);
+    const { items: users } = await allowed.json();
+    const supportUser = users.find(({ id }) => id === support.id);
+    assert.ok(supportUser);
+    assert.equal(typeof supportUser.emailMasked, 'string');
+    assert.equal(Object.hasOwn(supportUser, 'email'), false);
+    assert.equal(Object.hasOwn(supportUser, 'phone'), false);
+    for (const endpoint of ['professionals', 'bookings']) {
+      const emptyList = await fetch(`${baseUrl}/${endpoint}?search=${encodeURIComponent(runId)}`, {
+        headers: { authorization: `Bearer ${session.accessToken}` },
+      });
+      assert.equal(emptyList.status, 200);
+      assert.deepEqual(await emptyList.json(), {
+        items: [], pagination: { page: 1, limit: 25, totalItems: 0, totalPages: 1 },
+      });
+    }
 
     const operations = await fetch(`${baseUrl}/operations/overview`, {
       headers: { authorization: `Bearer ${session.accessToken}`, 'x-correlation-id': `${runId}-http-operations` },
