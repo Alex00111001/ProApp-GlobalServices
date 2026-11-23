@@ -324,3 +324,42 @@ Next: **STOP — await independent verification** after T01 exact-SHA CI and evi
   audits in the same step.
 - T01 remains open. Remediate affected dependencies in a separate reviewed change and verify the
   resulting candidate SHA with the full workflow before requesting independent review.
+
+### T01 dependency remediation and verification, 2026-11-23
+
+- Scope is PRR-1 / PRR-105.T01, dependency remediation across all six npm scopes, HIGH risk.
+  Implementation used GPT-6.1 Terra with STANDARD routing. The independent compatibility review
+  used DEEP routing. The review identified an Expo SDK alignment issue in the first candidate,
+  which was resolved before the second review.
+- Dependency remediation commit `124ba651ee5eaf2003ca900748f8dcb9ed9a46ec` passed PostgreSQL
+  and secret scanning in [Platform verification #99](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45147361100).
+  The build job failed the inventory freshness check because the Zod upgrade rewrote its default
+  email pattern. The follow-up pins the existing email grammar in the customer and admin
+  validators, regenerates the runtime-derived inventories, and preserves the approved baseline
+  and OpenAPI candidate bytes. The new regression reproduced the pattern mismatch before the
+  fix and passed after it. Both mobile lockfiles resolve Expo 57.0.20 and pass the installed
+  SDK's bundled native-module compatibility comparison.
+- Delivery candidate `886f321ae1192cefd6132932713e19bbd6968248` on
+  `ci/closure/prr105-t01-dependency-remediation-886f321a` passed all three jobs in
+  [Platform verification #100](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45148055600).
+  This run exercised all workspace checks and contract gates, the six npm audits, isolated
+  PostgreSQL migration replay, RBAC synchronization, integration/concurrency and financial
+  idempotency acceptance, and the full-history and tracked-tree secret scans.
+- Local `npm run verify` passed with Backend 445/445, Admin 15/15 and build, Public Web 4/4
+  and build, Customer 5/5 and typecheck, and Professional typecheck. The inventory freshness,
+  breaking (zero findings), and OpenAPI freshness/validation commands passed. All six local
+  `npm audit --audit-level=high` checks passed with zero high or critical findings. Moderate
+  findings remain in Backend (6), Customer (3) and Professional (3).
+- Independent DEEP rereview of the delivery candidate reported no code blockers. It ran
+  31/31 input-authority tests, verified the existing and explicit email patterns were identical,
+  and checked both mobile lockfiles against their exact Expo release manifests with zero native
+  module mismatches. The Expo CLI offline compatibility checks passed. These checks cover package
+  alignment; native device E2E was outside this remediation.
+- Migration and flag changes are absent. If a regression requires reverting these commits,
+  keep the dependency security gate in force and verify a corrected replacement on its own SHA.
+- The technical remediations and exact-SHA CI are verified. Formal delivery acceptance still
+  requires a merged PR or approved delivery commit under the
+  [PRR acceptance criteria, section 4](../production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md).
+  The documentary SHA has its own Platform verification before any tracker projection. PRR-105
+  still has 129 unresolved input bindings and 196 incomplete outputs, and its OpenAPI status is
+  `CANDIDATE_NOT_PUBLISHED`. Stop at this tranche pending delivery acceptance.
