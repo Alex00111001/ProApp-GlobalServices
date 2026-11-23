@@ -145,6 +145,27 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.equal(typeof operationsBody.errors, 'object');
     assert.equal(operationsBody.financialAttention.latestReconciliation === null || typeof operationsBody.financialAttention.latestReconciliation.id === 'string', true);
 
+    for (const path of ['/operations/errors', '/operations/incidents']) {
+      const headers = { authorization: `Bearer ${session.accessToken}` };
+      for (const [query, page, limit] of [
+        ['', 1, 25],
+        ['page=02&limit=2e1', 2, 20],
+        ['limit%5B%5D=2', 1, 25],
+      ]) {
+        const response = await fetch(`${baseUrl}${path}?${query}`, { headers });
+        assert.equal(response.status, 200, `${path}?${query}`);
+        const body = await response.json();
+        assert.ok(Array.isArray(body.items));
+        assert.equal(body.pagination.page, page);
+        assert.equal(body.pagination.limit, limit);
+      }
+      for (const query of ['limit=', 'limit=25&limit=25', 'limit=101', 'search=']) {
+        const response = await fetch(`${baseUrl}${path}?${query}`, { headers });
+        assert.equal(response.status, 400, `${path}?${query}`);
+        assert.equal((await response.json()).code, 'VALIDATION_ERROR');
+      }
+    }
+
     const deniedJobs = await fetch(`${baseUrl}/operations/jobs?page=1&limit=5`, {
       headers: { authorization: `Bearer ${session.accessToken}`, 'x-correlation-id': `${runId}-http-jobs-denied` },
     });
