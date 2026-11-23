@@ -14,6 +14,7 @@ const countsBy = (groups, key) => Object.fromEntries(groups.map((group) => [grou
 const decimal = (value) => value?.toFixed?.(2) || '0.00';
 const alertEventTypes = ['incident.alert_requested', 'incident.reopened'];
 const alertSeverities = new Set(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
+const configuredAlertRoutes = new Set([env.observabilityAlertRouteHigh, env.observabilityAlertRouteCritical]);
 
 const getOperationsOverview = async (client = prisma) => {
   const [
@@ -209,7 +210,7 @@ const listAlertDeliveries = async ({ page, limit, status }, client = prisma) => 
     items: rows.map(({ payload, lastError, ...item }) => ({
       ...item,
       route: typeof payload?.route === 'string' && /^[A-Za-z0-9._:-]{1,80}$/.test(payload.route)
-        && redactText(payload.route) === payload.route ? payload.route : null,
+        && (configuredAlertRoutes.has(payload.route) || redactText(payload.route) === payload.route) ? payload.route : null,
       severity: alertSeverities.has(payload?.severity) ? payload.severity : null,
       hasError: Boolean(lastError),
     })),

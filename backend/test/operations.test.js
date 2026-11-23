@@ -1,4 +1,5 @@
 process.env.NODE_ENV = 'test';
+process.env.OBSERVABILITY_ALERT_ROUTE_HIGH = 'operations-escalation-emea';
 process.env.DATABASE_URL ||= 'postgresql://user:password@localhost:5432/test';
 
 const assert = require('node:assert/strict');
@@ -70,6 +71,8 @@ test('alert list keeps safe historical routing data and omits malformed metadata
     null, ['route'], { route: { internal: 'synthetic-private-value' }, severity: true },
     { route: '', severity: '' }, { route: 'https://example.invalid/webhook', severity: 'unexpected free text' },
     { route: 'operations-on-call', severity: 'HIGH' },
+    { route: 'operations-escalation-emea', severity: 'HIGH' },
+    { route: 'synthetic-unconfigured-long-label', severity: 'HIGH' },
   ];
   const response = await listAlertDeliveries({ page: 1, limit: 25 }, {
     outboxEvent: {
@@ -81,6 +84,7 @@ test('alert list keeps safe historical routing data and omits malformed metadata
   const output = schema.parse(serialize(response));
   assert.deepEqual(output.items.map(({ route, severity }) => [route, severity]), [
     [null, null], [null, null], [null, null], [null, null], [null, null], ['operations-on-call', 'HIGH'],
+    ['operations-escalation-emea', 'HIGH'], [null, 'HIGH'],
   ]);
   assert.equal(JSON.stringify(output).includes('synthetic-private-value'), false);
 });
