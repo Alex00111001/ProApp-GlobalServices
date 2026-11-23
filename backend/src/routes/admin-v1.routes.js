@@ -182,7 +182,7 @@ router.post('/operations/incidents/:id/comments', requirePermission(PERMISSIONS.
 router.get('/operations/jobs', requirePermission(PERMISSIONS.JOBS_READ), responseContract(operationsResponses.jobs), operationsController.jobs);
 router.get('/operations/integrations', requirePermission(PERMISSIONS.INTEGRATIONS_READ), responseContract(operationsResponses.integrations), operationsController.integrations);
 router.get('/operations/alerts', requirePermission(PERMISSIONS.ALERTS_READ), responseContract(operationsResponses.alerts), operationsController.alerts);
-router.get('/operations/financial-monitoring', requirePermission(PERMISSIONS.FINANCIAL_MONITORING_READ), operationsController.financialMonitoring);
+router.get('/operations/financial-monitoring', requirePermission(PERMISSIONS.FINANCIAL_MONITORING_READ), responseContract(operationsResponses.financialMonitoring), operationsController.financialMonitoring);
 router.get('/operations/support/operators', requirePermission(PERMISSIONS.SUPPORT_MANAGE), responseContract(supportResponses.operators), operationsController.supportOperators);
 router.get('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_READ), responseContract(supportResponses.cases), operationsController.supportCases);
 router.post('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_MANAGE), responseContract(supportResponses.create), operationsController.createSupportCase);

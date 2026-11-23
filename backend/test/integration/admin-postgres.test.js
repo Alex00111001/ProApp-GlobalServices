@@ -247,6 +247,21 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
 
     const incidentPath = `${baseUrl}/operations/incidents/${incidentIds[0]}`;
     const operatorHeaders = { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' };
+    const financialPath = `${baseUrl}/operations/financial-monitoring`;
+    const deniedFinancial = await fetch(financialPath, { headers: operationsHeaders });
+    assert.equal(deniedFinancial.status, 403);
+    const financialResponse = await fetch(financialPath, { headers: operatorHeaders });
+    assert.equal(financialResponse.status, 200);
+    const financial = await financialResponse.json();
+    assert.equal(financial.readOnly, true);
+    assert.ok(Array.isArray(financial.reconciliationRuns));
+    for (const rows of [financial.refunds, financial.payouts, financial.disputes]) {
+      assert.ok(Array.isArray(rows));
+      for (const row of rows) assert.equal(typeof row.amount, 'string');
+    }
+    assert.equal(await prisma.auditLog.count({
+      where: { actorId: operator.id, action: 'ADMIN_FINANCIAL_MONITORING_READ', outcome: 'SUCCESS' },
+    }), 1);
     let transitionedIncident;
     for (const duplicate of [false, true]) {
       const response = await fetch(`${incidentPath}/status`, {

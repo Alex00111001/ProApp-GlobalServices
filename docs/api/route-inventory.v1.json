@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "2df73330f431e8102b4e77dd79b70eb95be2096999ab83494b53cbe460b99dbd",
+  "sourceFingerprint": "d9f2621badde2f0349f380d9680c40e0bd35f6fc575ba15e160abce4633de2fa",
   "routes": [
     {
       "method": "GET",
@@ -19444,7 +19444,8 @@
       "auth": "ADMIN_BEARER",
       "middleware": [
         "authenticateAdmin",
-        "requirePermission(PERMISSIONS.FINANCIAL_MONITORING_READ)"
+        "requirePermission(PERMISSIONS.FINANCIAL_MONITORING_READ)",
+        "responseContract(operationsResponses.financialMonitoring)"
       ],
       "rateLimit": {
         "global": {
@@ -19475,7 +19476,192 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "adminOperations.financialMonitoring",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "generatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                },
+                "readOnly": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "refunds": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string"
+                      },
+                      "currency": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "amount": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "currency",
+                      "count",
+                      "amount"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "payouts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string"
+                      },
+                      "currency": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "amount": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "currency",
+                      "count",
+                      "amount"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "disputes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string"
+                      },
+                      "currency": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "amount": {
+                        "type": "string"
+                      },
+                      "recoveredAmount": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "currency",
+                      "count",
+                      "amount",
+                      "recoveredAmount"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "reconciliationRuns": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "scope": {
+                        "type": "string"
+                      },
+                      "startedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      "completedAt": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "matchedCount": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "mismatchCount": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "errorCount": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "status",
+                      "scope",
+                      "startedAt",
+                      "completedAt",
+                      "matchedCount",
+                      "mismatchCount",
+                      "errorCount"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "generatedAt",
+                "readOnly",
+                "refunds",
+                "payouts",
+                "disputes",
+                "reconciliationRuns"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Admin Web"
       ],
@@ -59165,6 +59351,192 @@
             "required": [
               "errorGroup",
               "duplicate"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
+    "GET /api/v1/admin/operations/financial-monitoring": {
+      "operationId": "adminOperations.financialMonitoring",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "generatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              "readOnly": {
+                "type": "boolean",
+                "const": true
+              },
+              "refunds": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "amount": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "currency",
+                    "count",
+                    "amount"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "payouts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "amount": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "currency",
+                    "count",
+                    "amount"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "disputes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "amount": {
+                      "type": "string"
+                    },
+                    "recoveredAmount": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "currency",
+                    "count",
+                    "amount",
+                    "recoveredAmount"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "reconciliationRuns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "startedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "completedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "matchedCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "mismatchCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "errorCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "scope",
+                    "startedAt",
+                    "completedAt",
+                    "matchedCount",
+                    "mismatchCount",
+                    "errorCount"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "generatedAt",
+              "readOnly",
+              "refunds",
+              "payouts",
+              "disputes",
+              "reconciliationRuns"
             ],
             "additionalProperties": false
           },
