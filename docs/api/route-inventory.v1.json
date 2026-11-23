@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "d623762b48df718c642eef4664800ebf4292cb241b0a19119ce0186dd1f04d45",
+  "sourceFingerprint": "83d31e89f3559a3438497f8aa90a97e2f06ad37aff7e20e4f5216cade2a3c409",
   "routes": [
     {
       "method": "GET",
@@ -24964,7 +24964,7 @@
         }
       ],
       "runtimeValidationDigest": "9366ffd6b153f92f2e59f85048c4c167df388e4fd3928da605bd6e8d2c572db0",
-      "runtimeSourceDigest": "41514a5b890133b05e096f8028b3c27f70a7f3645cfcb90e57c7511b47697d06"
+      "runtimeSourceDigest": "4735a3c1d354d802b6f6d5d07a36388c57488e34dd379cc789c4defee191a51c"
     },
     "backend/src/controllers/admin-auth.controller.js#revokeSessionSchema": {
       "jsonSchema": {
@@ -32503,8 +32503,8 @@
           "password"
         ]
       },
-      "runtimeValidationDigest": "33f7b2b4f761266494b9d62b9f64fbe4c5aeb6c2263f3105fea08ed292da81e7",
-      "runtimeSourceDigest": "2179387f53513c8746a3c739b0e6adab8010523f7532d881babae6508db01dfb",
+      "runtimeValidationDigest": "69a9be826f039a91e4d96a35402b945e634bc94b04497c4ab9eac9934d861a20",
+      "runtimeSourceDigest": "b6c0c5d1ae3902e3c72e2525bf6b42eda2a8e5bba33b7bbcd4c78c5fe0e6abc4",
       "semanticEvidence": {
         "status": "PASS",
         "parityMode": "STRUCTURAL_WITH_RUNTIME_REFINEMENT",
@@ -32584,7 +32584,7 @@
         "additionalProperties": false
       },
       "runtimeValidationDigest": "21ea1073e3b5a32c48304a8f93117bc8d336effaa5bff417d954febe6dc54de2",
-      "runtimeSourceDigest": "4807924ea0b41112633d129286aae0990f3aeb0e79dc0ff96580b612c69cb7e2",
+      "runtimeSourceDigest": "295da3a3b42cbb33513c80f5c417b552bb60b122ef8f4ea4abf76122a617371c",
       "semanticEvidence": {
         "status": "PASS",
         "parityMode": "STRUCTURAL_WITH_RUNTIME_REFINEMENT",
@@ -33018,8 +33018,8 @@
           }
         ]
       },
-      "runtimeValidationDigest": "cecd44ce704b98fb43a1dbd5a16bc96150250abc40a7f6ffee16748c588355ce",
-      "runtimeSourceDigest": "41ce0b52997a9b8e2ed52fb30a17006e8555a32712ffb39b372680eb3d5f26f2"
+      "runtimeValidationDigest": "9ca56b0b57c31b4202b256a88d0b6659a4e49e66345fd211a9ccbe48896d36c3",
+      "runtimeSourceDigest": "7498f19f1f49d402b11c4f4a319eba4f3002790ced8bddb0346329cc50236d0f"
     },
     "backend/src/controllers/auth.controller.js#updateProfileSchema": {
       "jsonSchema": {
@@ -38152,7 +38152,7 @@
           "password"
         ]
       },
-      "runtimeValidationDigest": "33f7b2b4f761266494b9d62b9f64fbe4c5aeb6c2263f3105fea08ed292da81e7"
+      "runtimeValidationDigest": "69a9be826f039a91e4d96a35402b945e634bc94b04497c4ab9eac9934d861a20"
     },
     "backend/src/validators/auth.validators.js#passwordRecoveryRequestSchema": {
       "jsonSchema": {
@@ -38705,7 +38705,7 @@
           }
         ]
       },
-      "runtimeValidationDigest": "cecd44ce704b98fb43a1dbd5a16bc96150250abc40a7f6ffee16748c588355ce"
+      "runtimeValidationDigest": "9ca56b0b57c31b4202b256a88d0b6659a4e49e66345fd211a9ccbe48896d36c3"
     },
     "backend/src/validators/auth.validators.js#reviewSchema": {
       "jsonSchema": {

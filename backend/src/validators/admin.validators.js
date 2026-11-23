@@ -1,5 +1,6 @@
 const { z } = require('zod');
 const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
+const { authEmailPattern } = require('./auth-email-pattern');
 
 const optionalQueryString = (max) => z.preprocess(
   (value) => value === '' || value === undefined ? undefined : value,
@@ -67,7 +68,7 @@ const professionalStatusSchema = z.object({
 }).strict();
 
 const adminLoginSchema = z.object({
-  email: z.email().max(254).transform((value) => value.toLowerCase()),
+  email: z.email({ pattern: authEmailPattern }).max(254).transform((value) => value.toLowerCase()),
   password: z.string().min(8).max(200),
 }).strict();
 

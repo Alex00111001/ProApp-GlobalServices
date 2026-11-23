@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "d623762b48df718c642eef4664800ebf4292cb241b0a19119ce0186dd1f04d45",
+  "sourceFingerprint": "83d31e89f3559a3438497f8aa90a97e2f06ad37aff7e20e4f5216cade2a3c409",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -3596,7 +3596,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "changePasswordSchema",
-            "line": 75
+            "line": 76
           },
           "key": "backend/src/controllers/auth.controller.js#changePasswordSchema",
           "semanticClasses": [
@@ -3728,7 +3728,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "accountActionConfirmSchema",
-            "line": 104
+            "line": 105
           },
           "key": "backend/src/controllers/auth.controller.js#accountActionConfirmSchema",
           "semanticClasses": [
@@ -3950,7 +3950,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "loginSchema",
-            "line": 57
+            "line": 58
           },
           "key": "backend/src/controllers/auth.controller.js#loginSchema",
           "semanticClasses": [
@@ -4027,8 +4027,8 @@
                 "password"
               ]
             },
-            "runtimeValidationDigest": "33f7b2b4f761266494b9d62b9f64fbe4c5aeb6c2263f3105fea08ed292da81e7",
-            "runtimeSourceDigest": "2179387f53513c8746a3c739b0e6adab8010523f7532d881babae6508db01dfb",
+            "runtimeValidationDigest": "69a9be826f039a91e4d96a35402b945e634bc94b04497c4ab9eac9934d861a20",
+            "runtimeSourceDigest": "b6c0c5d1ae3902e3c72e2525bf6b42eda2a8e5bba33b7bbcd4c78c5fe0e6abc4",
             "semanticEvidence": {
               "status": "PASS",
               "parityMode": "STRUCTURAL_WITH_RUNTIME_REFINEMENT",
@@ -4168,7 +4168,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "passwordResetSchema",
-            "line": 100
+            "line": 101
           },
           "key": "backend/src/controllers/auth.controller.js#passwordResetSchema",
           "semanticClasses": [
@@ -4263,7 +4263,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "passwordRecoveryRequestSchema",
-            "line": 84
+            "line": 85
           },
           "key": "backend/src/controllers/auth.controller.js#passwordRecoveryRequestSchema",
           "semanticClasses": [
@@ -4342,7 +4342,7 @@
               "additionalProperties": false
             },
             "runtimeValidationDigest": "21ea1073e3b5a32c48304a8f93117bc8d336effaa5bff417d954febe6dc54de2",
-            "runtimeSourceDigest": "4807924ea0b41112633d129286aae0990f3aeb0e79dc0ff96580b612c69cb7e2",
+            "runtimeSourceDigest": "295da3a3b42cbb33513c80f5c417b552bb60b122ef8f4ea4abf76122a617371c",
             "semanticEvidence": {
               "status": "PASS",
               "parityMode": "STRUCTURAL_WITH_RUNTIME_REFINEMENT",
@@ -4532,7 +4532,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "updateProfileSchema",
-            "line": 63
+            "line": 64
           },
           "key": "backend/src/controllers/auth.controller.js#updateProfileSchema",
           "semanticClasses": [
@@ -4701,7 +4701,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "refreshSessionSchema",
-            "line": 80
+            "line": 81
           },
           "key": "backend/src/controllers/auth.controller.js#refreshSessionSchema",
           "semanticClasses": [
@@ -4830,7 +4830,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "registerSchema",
-            "line": 18
+            "line": 19
           },
           "key": "backend/src/controllers/auth.controller.js#registerSchema",
           "semanticClasses": [
@@ -5195,8 +5195,8 @@
                 }
               ]
             },
-            "runtimeValidationDigest": "cecd44ce704b98fb43a1dbd5a16bc96150250abc40a7f6ffee16748c588355ce",
-            "runtimeSourceDigest": "41ce0b52997a9b8e2ed52fb30a17006e8555a32712ffb39b372680eb3d5f26f2"
+            "runtimeValidationDigest": "9ca56b0b57c31b4202b256a88d0b6659a4e49e66345fd211a9ccbe48896d36c3",
+            "runtimeSourceDigest": "7498f19f1f49d402b11c4f4a319eba4f3002790ced8bddb0346329cc50236d0f"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -5526,7 +5526,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "createBookingSchema",
-            "line": 129
+            "line": 130
           },
           "key": "backend/src/controllers/booking.controller.js#createBookingSchema",
           "semanticClasses": [
@@ -11127,7 +11127,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "professionalProfileSchema",
-            "line": 118
+            "line": 119
           },
           "key": "backend/src/controllers/professional.controller.js#professionalProfileSchema.strict()",
           "semanticClasses": [
@@ -11300,7 +11300,7 @@
           "validatorSource": {
             "file": "backend/src/validators/auth.validators.js",
             "name": "reviewSchema",
-            "line": 169
+            "line": 170
           },
           "key": "backend/src/controllers/review.controller.js#reviewSchema.strict()",
           "semanticClasses": [
@@ -16318,7 +16318,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "auditListQuerySchema",
-            "line": 51
+            "line": 52
           },
           "key": "backend/src/controllers/admin-v1.controller.js#auditListQuerySchema",
           "semanticClasses": [
@@ -16458,7 +16458,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "adminLoginSchema",
-            "line": 69
+            "line": 70
           },
           "key": "backend/src/controllers/admin-auth.controller.js#adminLoginSchema",
           "semanticClasses": [
@@ -16507,7 +16507,7 @@
               }
             ],
             "runtimeValidationDigest": "9366ffd6b153f92f2e59f85048c4c167df388e4fd3928da605bd6e8d2c572db0",
-            "runtimeSourceDigest": "41514a5b890133b05e096f8028b3c27f70a7f3645cfcb90e57c7511b47697d06"
+            "runtimeSourceDigest": "4735a3c1d354d802b6f6d5d07a36388c57488e34dd379cc789c4defee191a51c"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -17036,7 +17036,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "revokeSessionSchema",
-            "line": 74
+            "line": 75
           },
           "key": "backend/src/controllers/admin-auth.controller.js#revokeSessionSchema",
           "semanticClasses": [
@@ -18258,7 +18258,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "bookingListQuerySchema",
-            "line": 45
+            "line": 46
           },
           "key": "backend/src/controllers/admin-v1.controller.js#bookingListQuerySchema",
           "semanticClasses": [
@@ -19757,7 +19757,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "dashboardQuerySchema",
-            "line": 20
+            "line": 21
           },
           "key": "backend/src/controllers/admin-v1.controller.js#dashboardQuerySchema",
           "semanticClasses": [
@@ -28683,7 +28683,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "professionalListQuerySchema",
-            "line": 41
+            "line": 42
           },
           "key": "backend/src/controllers/admin-v1.controller.js#professionalListQuerySchema",
           "semanticClasses": [
@@ -28877,7 +28877,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "professionalStatusSchema",
-            "line": 64
+            "line": 65
           },
           "key": "backend/src/controllers/admin-v1.controller.js#professionalStatusSchema",
           "semanticClasses": [
@@ -31418,7 +31418,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleChangeSchema",
-            "line": 75
+            "line": 76
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleChangeSchema",
           "semanticClasses": [
@@ -31553,7 +31553,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleDecisionSchema",
-            "line": 82
+            "line": 83
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleDecisionSchema",
           "semanticClasses": [
@@ -31734,7 +31734,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleDecisionSchema",
-            "line": 82
+            "line": 83
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleDecisionSchema",
           "semanticClasses": [
@@ -32530,7 +32530,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "userListQuerySchema",
-            "line": 36
+            "line": 37
           },
           "key": "backend/src/controllers/admin-v1.controller.js#userListQuerySchema",
           "semanticClasses": [
@@ -32728,7 +32728,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "userStatusSchema",
-            "line": 59
+            "line": 60
           },
           "key": "backend/src/controllers/admin-v1.controller.js#userStatusSchema",
           "semanticClasses": [
