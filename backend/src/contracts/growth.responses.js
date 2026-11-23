@@ -1,6 +1,6 @@
 const { z } = require('zod');
 const { defineResponseContract, outputObject, serialized } = require('../shared/http/response-contract');
-const { dateTime } = require('./shared.responses');
+const { adminListResponse, dateTime } = require('./shared.responses');
 
 const count = z.number().int().nonnegative();
 const campaign = outputObject({
@@ -24,15 +24,7 @@ const campaignListResponse = defineResponseContract({
   path: '/api/v1/admin/growth/campaigns',
   operationId: 'adminGrowth.campaignList',
   responses: {
-    200: serialized(outputObject({
-      items: z.array(campaign),
-      pagination: outputObject({
-        page: z.number().int().min(1),
-        limit: z.number().int().min(1).max(100),
-        totalItems: count,
-        totalPages: z.number().int().min(1),
-      }),
-    })),
+    200: serialized(adminListResponse(campaign)),
   },
 });
 

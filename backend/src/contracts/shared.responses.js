@@ -14,5 +14,14 @@ const customerSession = outputObject({
 const pagination = outputObject({
   page: z.number().int().min(1), limit: z.number().int().min(1), total: z.number().int().nonnegative(), pages: z.number().int().nonnegative(),
 });
+const adminListResponse = (item) => outputObject({
+  items: z.array(item),
+  pagination: outputObject({
+    page: z.number().int().min(1),
+    limit: z.number().int().min(1).max(100),
+    totalItems: z.number().int().nonnegative(),
+    totalPages: z.number().int().min(1),
+  }),
+});
 
-module.exports = { customerSession, dateTime, messageResponse, pagination };
+module.exports = { adminListResponse, customerSession, dateTime, messageResponse, pagination };

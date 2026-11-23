@@ -16,6 +16,7 @@ const { PERMISSIONS } = require('../modules/identity/permission-catalog');
 const { metricsHandler } = require('../modules/observability/metrics');
 const { responseContract } = require('../shared/http/response-contract');
 const { growthResponses } = require('../contracts/growth.responses');
+const { operationsResponses } = require('../contracts/operations.responses');
 
 const router = express.Router();
 const authLimiter = rateLimit({
@@ -170,10 +171,10 @@ router.get('/operations/overview', requirePermission(PERMISSIONS.OPERATIONS_READ
 router.get('/operations/metrics', requirePermission(PERMISSIONS.OPERATIONS_READ), metricsHandler);
 router.get('/operations/health', requirePermission(PERMISSIONS.HEALTH_READ), operationsController.health);
 router.get('/operations/health/snapshots', requirePermission(PERMISSIONS.HEALTH_READ), operationsController.healthSnapshots);
-router.get('/operations/errors', requirePermission(PERMISSIONS.ERRORS_READ), operationsController.errors);
+router.get('/operations/errors', requirePermission(PERMISSIONS.ERRORS_READ), responseContract(operationsResponses.errors), operationsController.errors);
 router.get('/operations/errors/:id', requirePermission(PERMISSIONS.ERRORS_READ), operationsController.error);
 router.patch('/operations/errors/:id/status', requirePermission(PERMISSIONS.ERRORS_MANAGE), operationsController.setErrorStatus);
-router.get('/operations/incidents', requirePermission(PERMISSIONS.INCIDENTS_READ), operationsController.incidents);
+router.get('/operations/incidents', requirePermission(PERMISSIONS.INCIDENTS_READ), responseContract(operationsResponses.incidents), operationsController.incidents);
 router.get('/operations/incidents/:id', requirePermission(PERMISSIONS.INCIDENTS_READ), operationsController.incident);
 router.patch('/operations/incidents/:id/status', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), operationsController.setIncidentStatus);
 router.post('/operations/incidents/:id/comments', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), operationsController.addIncidentComment);
