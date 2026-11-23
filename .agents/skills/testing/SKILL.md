@@ -30,3 +30,10 @@ Use lockfile installs and an isolated test database. Identify `DATABASE_URL` bef
 When a test fails, distinguish implementation defect, stale test, environment issue, and architectural conflict. Do not weaken assertions merely to pass. Report exact commands, scope, pass/fail/skip counts, prerequisites, and unverified areas.
 
 For country/market work, cover every affected market, disabled/unknown markets, stale policy versions, cross-country hierarchy forgery, identity masking/checksums, address/service-area independence, and preservation of existing markets.
+
+## Governed TDD and contract evidence
+
+Use `systematic-engineering` for red/green root-cause work and `api-contract-engineering` for
+runtime/input/output/consumer parity. Preserve all assertions and required gates. A test plan
+identifies behavior, harness, expected failure, dependencies and evidence; it is not an executed
+result. Tooling-only smoke tests never authorize API implementation or PRR status changes.

@@ -1,4 +1,5 @@
 const { z } = require('zod');
+const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
 
 const uuid = z.string().uuid();
 const key = z.string().trim().toLowerCase().regex(/^[a-z0-9][a-z0-9._-]{1,63}$/);
@@ -6,7 +7,7 @@ const marketCode = z.string().trim().toUpperCase().regex(/^[A-Z][A-Z0-9_-]{1,15}
 const locale = z.string().trim().regex(/^[a-z]{2}(?:-[A-Z]{2})?$/).max(35);
 const page = z.coerce.number().int().min(1).default(1);
 const limit = z.coerce.number().int().min(1).max(100).default(50);
-const boundedReason = z.string().trim().min(8).max(500);
+const boundedReason = trimmedString(8, 500);
 const date = z.coerce.date();
 
 const experimentCreateBody = z.object({ key, name: z.string().trim().min(2).max(120), description: z.string().trim().max(1000).optional(), marketCode, layerKey: key, surface: key, featureFlagKey: key, trafficAllocationBps: z.number().int().min(0).max(10_000).default(0) }).strict();
@@ -34,3 +35,8 @@ const publicContentParams = z.object({ marketCode, locale, type: z.enum(contentT
 const sitemapParams = z.object({ marketCode, locale }).strict();
 
 module.exports = { assignmentBody, contentEntryBody, contentListQuery, contentVersionBody, experimentCreateBody, experimentListQuery, experimentStatusBody, experimentVersionBody, exposureBody, limit, page, publicContentParams, publishBody, redirectBody, redirectListQuery, redirectQuery, resultsBody, retireBody, reviewBody, sitemapParams, uuid };
+
+// T01: reviewed wire acceptance for these mounted object validators only.
+declareTrimmedInput(reviewBody, 'trim.experiments-content-seo.validators.reviewBody');
+declareTrimmedInput(retireBody, 'trim.experiments-content-seo.validators.retireBody');
+declareTrimmedInput(experimentStatusBody, 'trim.experiments-content-seo.validators.experimentStatusBody');

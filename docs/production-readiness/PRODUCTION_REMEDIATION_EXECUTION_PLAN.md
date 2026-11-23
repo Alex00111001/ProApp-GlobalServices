@@ -167,7 +167,7 @@ debe dividirse antes de entrar en `EN CURSO`.
 | PRR-103 | Reparar filtración de errores 5xx | PRR-001 | respuestas estables sin detalles internos |
 | PRR-104 | Validar/capar paginación, filtros, UUID y cuerpos legacy | PRR-001 | tests malformed/abuse verdes |
 | PRR-105 | Publicar OpenAPI/contrato v1 compatible | PRR-103/104 | diff y consumer tests verdes |
-| PRR-106 | Cubrir HTTP payment/booking/auth/upload/notification/admin | PRR-102/105 | umbrales críticos acordados |
+| PRR-106 | Cubrir HTTP payment/booking/auth/upload/notification/admin | PRR-101/105 | umbrales críticos acordados y compatibilidad de CASH retirado |
 
 PRR-103 está implementado en la rama de control de producción. La autoridad pública única es
 `backend/src/shared/http/error-contract.js`, el boundary terminal es
@@ -233,7 +233,7 @@ migración, cambio de estado financiero, activación de Market, proveedor ni pro
 
 | ID | Entregable | Depende de | Gate |
 |---|---|---|---|
-| PRR-501 | PaymentProvider port y Stripe adapter contractual | PRR-102 | sandbox + fake contractual equivalentes |
+| PRR-501 | PaymentProvider port y Stripe adapter contractual | PRR-101 | sandbox + fake contractual equivalentes, con CASH retirado |
 | PRR-502 | Triggers append-only Ledger/Audit | revisión DB/Finance | UPDATE/DELETE indebidos rechazados |
 | PRR-503 | Reconciliación cash/card/refund/payout/dispute | PRR-501/502 | balances e idempotencia 100% |
 | PRR-504 | E2E financiero sandbox y replay de webhooks | PRR-503 | duplicados/concurrencia/timeout probados |

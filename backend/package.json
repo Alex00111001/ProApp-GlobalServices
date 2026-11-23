@@ -49,7 +49,10 @@
   },
   "overrides": {
     "deepmerge-ts": "8.0.2",
-    "mysql2": "3.24.2"
+    "mysql2": "3.24.2",
+    "@prisma/config": {
+      "effect": "3.22.1"
+    }
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.1",

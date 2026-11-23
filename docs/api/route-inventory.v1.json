@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "a1a8c33c761fce4503b9dad2d223a5cc114e49709e923e863fb6e035d2269a20",
+  "sourceFingerprint": "83d31e89f3559a3438497f8aa90a97e2f06ad37aff7e20e4f5216cade2a3c409",
   "routes": [
     {
       "method": "GET",
@@ -23340,7 +23340,13 @@
       "path": "/api/v1/admin/experiments/{parameter}/status",
       "operation": "PATCH /api/v1/admin/experiments/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "608fa616d2cf75a29155d4f729c6c478ab3544cb7055c07d6aed1ae7b073a138",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23480,7 +23486,13 @@
       "path": "/api/v1/admin/markets/{parameter}/status",
       "operation": "PATCH /api/v1/admin/markets/{marketCode}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "6bfc4a3b553e7c0be2cd4065bd31cef04ab7c8a287e3242cfaf1f243683b1b4d",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23490,7 +23502,13 @@
       "path": "/api/v1/admin/identity/policies/{parameter}/review",
       "operation": "POST /api/v1/admin/identity/policies/{id}/review",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "7558cd030a7745c4b84a2e25954247d470be8965577e57b154cfda1a4cc6eca4",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23500,7 +23518,13 @@
       "path": "/api/v1/admin/identity/policies/{parameter}/status",
       "operation": "PATCH /api/v1/admin/identity/policies/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "806bee35a4cab8d81083347bf3b8f48ad58a8a4f4dc872d90c5539f13f991a47",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23540,7 +23564,13 @@
       "path": "/api/v1/admin/operations/errors/{parameter}/status",
       "operation": "PATCH /api/v1/admin/operations/errors/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "4b281cf50ffc135bf5b54214fe0bf56b59df3d17ae2796d047b1680bb12d5183",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23570,7 +23600,13 @@
       "path": "/api/v1/admin/operations/incidents/{parameter}/status",
       "operation": "PATCH /api/v1/admin/operations/incidents/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "564c29afaca034e8d89de28a4e0e9f39997927b80e87a73455668143339a846b",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23580,7 +23616,13 @@
       "path": "/api/v1/admin/operations/incidents/{parameter}/comments",
       "operation": "POST /api/v1/admin/operations/incidents/{id}/comments",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "dbd579b70c8294d845ffc8a1b3265ab3e0bf79df38539befc2ce6e9ffcd971ae",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23670,7 +23712,13 @@
       "path": "/api/v1/admin/privacy/policies/{parameter}/review",
       "operation": "POST /api/v1/admin/privacy/policies/{id}/review",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "49df1809229f2bb1288bb12f77105d012ea1b2dc61c4b910058c36749b26e043",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23680,7 +23728,13 @@
       "path": "/api/v1/admin/privacy/policies/{parameter}/status",
       "operation": "PATCH /api/v1/admin/privacy/policies/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "c65511beada50ac281e70c3def259a7298d2556c74270e893d8f6a29f3190c7c",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23740,7 +23794,13 @@
       "path": "/api/v1/admin/attribution/models/{parameter}/status",
       "operation": "PATCH /api/v1/admin/attribution/models/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "b9b9d27a20b607840931b3681f1c3dd9725e53ad94cf5c88844e89a05f9b0947",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23770,7 +23830,13 @@
       "path": "/api/v1/admin/professionals/{parameter}/status",
       "operation": "PATCH /api/v1/admin/professionals/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "a08193b23dc2b32a1d0efc2a976f30742ef29583e5e3876276eb74f3ac323682",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23910,7 +23976,13 @@
       "path": "/api/v1/admin/role-change-requests/{parameter}/approve",
       "operation": "POST /api/v1/admin/role-change-requests/{id}/approve",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "c886c4a296edeedee463de9bfc8cb5c4a2680bef5ee80ffcb2905b520e80b250",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -23920,7 +23992,13 @@
       "path": "/api/v1/admin/role-change-requests/{parameter}/reject",
       "operation": "POST /api/v1/admin/role-change-requests/{id}/reject",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "4c7c26815f0f9f12d330269d16c9f64bdb935eb444a271686882352c36371dd6",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -24000,7 +24078,13 @@
       "path": "/api/v1/admin/ai/executions/{parameter}/approvals",
       "operation": "POST /api/v1/admin/ai/executions/{id}/approvals",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "977a4ab178e8749d91565d8e1613a2125a8d8966d695cb79e0165e8d54b57ef3",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -24050,7 +24134,13 @@
       "path": "/api/v1/admin/operations/support/cases/{parameter}/status",
       "operation": "PATCH /api/v1/admin/operations/support/cases/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "533f9946c4b9e2ec522fb7a25c1e702883f83945ba99e749580aaf99fce47a1d",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -24060,7 +24150,13 @@
       "path": "/api/v1/admin/operations/support/cases/{parameter}/assignment",
       "operation": "PATCH /api/v1/admin/operations/support/cases/{id}/assignment",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "7ac1e9c84e8d36e13cb7fc7c7d12aeb3f19f0533b2b61676473405bccc0c3050",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -24070,7 +24166,13 @@
       "path": "/api/v1/admin/operations/support/cases/{parameter}/comments",
       "operation": "POST /api/v1/admin/operations/support/cases/{id}/comments",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "8950ec63681d1013dd0a0011c14d2518e9f9ba0735a4583640312bead6965ca1",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -24090,7 +24192,13 @@
       "path": "/api/v1/admin/users/{parameter}/status",
       "operation": "PATCH /api/v1/admin/users/{id}/status",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "d015bb7a8c2af7ff50838728ad718c4daf01a26fb85d42239b23f077fc3ff04f",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Admin Web",
@@ -24267,7 +24375,13 @@
       "path": "/api/v1/referrals/codes/{parameter}/revoke",
       "operation": "POST /api/v1/referrals/codes/{id}/revoke",
       "status": "PATH_METHOD_MATCH",
-      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+      "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+      "inputCompatibilityEvidence": {
+        "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+        "sourceDigest": "7a1253caf2c7a221dc77b26d84b78a9fd26ef039495c576d4972d1446f5ea232",
+        "scope": "REQUEST_ONLY",
+        "evidence": "backend/test/normalization-consumer.test.js"
+      }
     },
     {
       "consumer": "Customer mobile",
@@ -24850,7 +24964,7 @@
         }
       ],
       "runtimeValidationDigest": "9366ffd6b153f92f2e59f85048c4c167df388e4fd3928da605bd6e8d2c572db0",
-      "runtimeSourceDigest": "41514a5b890133b05e096f8028b3c27f70a7f3645cfcb90e57c7511b47697d06"
+      "runtimeSourceDigest": "4735a3c1d354d802b6f6d5d07a36388c57488e34dd379cc789c4defee191a51c"
     },
     "backend/src/controllers/admin-auth.controller.js#revokeSessionSchema": {
       "jsonSchema": {
@@ -24868,9 +24982,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -24883,8 +24997,44 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin.validators.revokeSessionSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "aaf0b8280e9d2f3335fffa64fd9ec0ea66de6568a2c5cefb6aabcd367e30f534",
-      "runtimeSourceDigest": "5c5508153cd0b7c851b29ae638e79336e52d943423d7b7da6c49f119a13669fd"
+      "runtimeSourceDigest": "7b56ed4bb2cdd9b825ab3ef0b64d0eac218e2fe9091fa6a029f2bf8822adb3c3",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 57,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "10aef967c118341dc58048ddfcc9be7d5f87476d6f3d0460716c4971e8006630",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-automation.controller.js#adminListSchema": {
       "jsonSchema": {
@@ -25083,7 +25233,7 @@
         }
       ],
       "runtimeValidationDigest": "d04c143a8281f714522c22f939af6cf942ddd917b3239abc91591518b1763322",
-      "runtimeSourceDigest": "97fa147deee0fcff32a36eb21a2d37b67e14c9d45e0e7eed36f54f3564cc1963"
+      "runtimeSourceDigest": "5f7e4dad628e126bb0614d2ad816bea5eaf2c7712ecf70b79d86a0d1e0e47f1f"
     },
     "backend/src/controllers/admin-automation.controller.js#automationNewVersionSchema": {
       "jsonSchema": {
@@ -25202,7 +25352,7 @@
         }
       ],
       "runtimeValidationDigest": "4b7e66bfc56da9aad449489b030ca3d557ce0098586725e2dba289ed98119d86",
-      "runtimeSourceDigest": "60bf1b7e22e7204be6e04596c7eef3fffa535e2456ab5b41c93e5eb77e392922"
+      "runtimeSourceDigest": "a19695402ff36edfd49c7ffcefa55921a2b51d7c978418e014c03dc22a664c41"
     },
     "backend/src/controllers/admin-automation.controller.js#automationStatusSchema": {
       "jsonSchema": {
@@ -25240,9 +25390,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -25255,8 +25405,64 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.referrals-automation.validators.automationStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "PAUSED",
+              "ARCHIVED"
+            ]
+          },
+          "versionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "expectedRowVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "expectedRowVersion",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "c6e36a79306276cf4457e433ccf3f324c990101158373fa514c3cd9093ff0ffb",
-      "runtimeSourceDigest": "f61eeaa42b5567ca0a314cb7bbab6ca985f14c0e92d6b2b8e7ebdf5154aeb3d0"
+      "runtimeSourceDigest": "a3db9cab909053afcb863fc406aa1143a14166568c6c3a899327dac461b9a05e",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 61,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "17151886528ec286383d9579b75f42dfbdb74c3580eb74ba2a25607e03891acb",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f10.controller.js#v.activateBody": {
       "jsonSchema": {
@@ -25274,9 +25480,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -25289,8 +25495,44 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.activateBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "8b3215497cb1fc9ad531aed02e4512a2231fcf1005ca6cf2bee1cb7ab9121e23",
-      "runtimeSourceDigest": "470d8bad7ffc590ecd21adabac14a7b68059169543960d8bfbeaa9ae2b304c5b"
+      "runtimeSourceDigest": "d66c9b4118cc1cca03b714185d7f843853fa62d07e5ed5e403a35eed0184bf29",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 57,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "03d0f865b2b302842407c216fa9f04729eb4d0eaecdb60fc8142ce1c0aa8f994",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f10.controller.js#v.approvalBody": {
       "jsonSchema": {
@@ -25321,9 +25563,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -25336,8 +25578,57 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.approvalBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "artifactDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "artifactDigest",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "6d00cb29bdeb31e29466d9f8ccce73b19e04231e90fc34635de3a809a47f50dd",
-      "runtimeSourceDigest": "aeafdb1a4fbb07d29d598d8af91dcc0f417df93cf50e4b8be26c633fc33096e0"
+      "runtimeSourceDigest": "a7c266c4712d1ac97f3ea02f0570aff6878a94b6736b16cb09fee79219c1720c",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 61,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "e0cad213a0aba62e652e97761e63bebcbaf09cb1560d66dcb3a367d11751c7c6",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f10.controller.js#v.costsQuery": {
       "jsonSchema": null,
@@ -25586,9 +25877,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -25601,8 +25892,71 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "hypothesis: ECMAScript trim, then 12..1000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.expansionBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MARKET",
+              "GEOGRAPHY",
+              "SERVICE",
+              "COVERAGE_INCREASE",
+              "COVERAGE_REDUCTION"
+            ]
+          },
+          "marketId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "divisionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "serviceId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "hypothesis": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{10,998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "type",
+          "marketId",
+          "hypothesis"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "c96a9f1aabfe8131adb9d6d41a9956f390755a2afa062da3b8db0c38958fac01",
-      "runtimeSourceDigest": "a5197d720f0fb431c6bcc3411b3d5ea1a7e6977673fe97a2bed765470bc50381"
+      "runtimeSourceDigest": "7fa3b99d641a6540be75ade43252fa680f2bd8f35b72ba38d7b17ead33db8c8f",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 61,
+        "refinementWitnesses": 0,
+        "normalizationResults": 23,
+        "caseDigest": "1f7d7f1024e9d87a0ec716e4f6abfae3bccffab64b88d18c18442d03231cd2b1",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f10.controller.js#v.expansionEvaluateBody": {
       "jsonSchema": {
@@ -25713,9 +26067,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -25728,8 +26082,52 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.expansionReviewBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "ba4f57b1f93037aa2e117813f676ce90113b3d50622bb01161ac2b96bf4f0ee5",
-      "runtimeSourceDigest": "c81c0353cd863942a426ce1ec9ad0c1bcb1278ab0bc3d9f8f6f48370e0816d49"
+      "runtimeSourceDigest": "1c82c744f07ac2dfa9ab90b65785ba99758dcdc970cce83e0d65af7e7efb0124",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "826c8ee25608f952f25b1674ff5ee8030b7acbce9abb36633e80de455fd7c2ec",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f10.controller.js#v.genericStatusQuery": {
       "jsonSchema": {
@@ -26288,9 +26686,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -26303,8 +26701,54 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.providerStatusBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DISABLED",
+              "DEGRADED",
+              "SUSPENDED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "d4e3b4d7e1450fcc89e7c6ba25ae464864e3d38db6e987809039d076c61b4b58",
-      "runtimeSourceDigest": "89f6ed3c1a246cd4756be6333dac06e960343e1652b346e32aeadfcf292063c9"
+      "runtimeSourceDigest": "e56aad2b2cd2372552a5cb4fa18243058dfd7f2656942ec41433424466031467",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "5153d2a783b3a326364a0a091ea9ba538ddc647bd86f6f909320c01f00bc9c8e",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f10.controller.js#v.readinessEvaluateBody": {
       "jsonSchema": {
@@ -26594,9 +27038,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -26609,8 +27053,52 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.reviewBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "ba4f57b1f93037aa2e117813f676ce90113b3d50622bb01161ac2b96bf4f0ee5",
-      "runtimeSourceDigest": "0bfae5a2b9ebecd1859195d4b40aaf3b9ee58e2ba8684bf095674458a2b7f55b"
+      "runtimeSourceDigest": "38829f8bd6465e384e5f4ed794bd4791f800cd7fb313cee78c3141b3ae94215c",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "826c8ee25608f952f25b1674ff5ee8030b7acbce9abb36633e80de455fd7c2ec",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f10.controller.js#v.snapshotBody": {
       "jsonSchema": null,
@@ -27061,9 +27549,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -27076,8 +27564,56 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.experiments-content-seo.validators.experimentStatusBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "READY",
+              "RUNNING",
+              "PAUSED",
+              "COMPLETED",
+              "ARCHIVED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "24e084c631a334e31c89ffa9645eee0541073c95420e3c03dccd135ee06c7077",
-      "runtimeSourceDigest": "035db4e7dc078a20d09600a334e769f78754c7ccee28a791a4d8bb581182c0e9"
+      "runtimeSourceDigest": "f4f1471e59ee7074e7c2b13ad05c6927b4b50844ecfb2ba6505cf5394f5ac688",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "39bbde49cd528cbfff3497dd495c332cb4d5b898fcf6ae21bf885f0f2260b170",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f9.controller.js#v.experimentVersionBody": {
       "jsonSchema": null,
@@ -27180,7 +27716,7 @@
         }
       ],
       "runtimeValidationDigest": "0a8d1d39155feea6e1485604d8002348bfef16dcf1d1afa7a4fb84c9462d18be",
-      "runtimeSourceDigest": "002e66f20078c778012296001b31d630a16f95f6f864a2797665ac9677b9833b"
+      "runtimeSourceDigest": "dd60b37f6fd9b034ca254ce99c939780e8e1581956e960479621986a6652d85d"
     },
     "backend/src/controllers/admin-f9.controller.js#v.redirectListQuery": {
       "jsonSchema": {
@@ -27268,9 +27804,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -27283,8 +27819,44 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.experiments-content-seo.validators.retireBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "8b3215497cb1fc9ad531aed02e4512a2231fcf1005ca6cf2bee1cb7ab9121e23",
-      "runtimeSourceDigest": "3b39617c43e243862d5a9a521f0f71a3b889a21aef9280e6a2e88f78d6b967b1"
+      "runtimeSourceDigest": "8a85616b08fedd76b086ba5f4ee01c811a581d297d14a125e6b60a448f85deb1",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 57,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "03d0f865b2b302842407c216fa9f04729eb4d0eaecdb60fc8142ce1c0aa8f994",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f9.controller.js#v.reviewBody": {
       "jsonSchema": {
@@ -27310,9 +27882,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -27325,8 +27897,52 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.experiments-content-seo.validators.reviewBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "ba4f57b1f93037aa2e117813f676ce90113b3d50622bb01161ac2b96bf4f0ee5",
-      "runtimeSourceDigest": "ab5ae232d1ff1887a4ae17e842fc60c71facb415df1915ef8e9bc1047005bc4d"
+      "runtimeSourceDigest": "5c12614526d652e50f223dd571963066c5899cbdff52058340607536da0dcd1a",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "826c8ee25608f952f25b1674ff5ee8030b7acbce9abb36633e80de455fd7c2ec",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-f9.controller.js#v.uuid": {
       "jsonSchema": {
@@ -28284,9 +28900,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -28299,8 +28915,58 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reviewReference: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change",
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.markets.validators.identityPolicyReviewBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reviewReference": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "reviewReference",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "4de1ed252448f4a4efd4c42accee707008c1d762e7df8f586a33765a187c0ec6",
-      "runtimeSourceDigest": "2b11ea52bd3a8fa8853aa398f450b7517f801afc20f2b6d9096dd50446b82fd5"
+      "runtimeSourceDigest": "98f2df04673904dd1b10c36bcbb8b8be0a6edead1d338c71230c7ff1f804c3ac",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 99,
+        "refinementWitnesses": 0,
+        "normalizationResults": 49,
+        "caseDigest": "b4054df9da0b893c8d6bf4dbdb0435cfcc6904c7912fce668c15f727e912cfd8",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-markets.controller.js#identityPolicyStatusBody": {
       "jsonSchema": {
@@ -28326,9 +28992,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -28341,8 +29007,52 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.markets.validators.identityPolicyStatusBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "RETIRED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "398a9ee81606decbebb1f8a0498d951da3f4270bc29cc8fc0dfe981191a79a63",
-      "runtimeSourceDigest": "31d493e1e9e59a76ee429ca58b9406acd6c53a5a4fbc38ecac8937224052ad9a"
+      "runtimeSourceDigest": "2163503ac6d4a344350f02dee2f360042f8821e915af7724893da6fc81361c76",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "0d8cddb8246ccb83cee7a2ab0606a8640ef7d28dfc91b702e6b146c6f4f839d9",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-markets.controller.js#marketCode": {
       "jsonSchema": {
@@ -28390,9 +29100,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -28405,8 +29115,55 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.markets.validators.marketStatusBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "DISABLED",
+              "READY",
+              "ACTIVE",
+              "SUSPENDED",
+              "RETIRED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "7d3035771341e06180991582c582417dd7c00744b41ec671d6b288ab5edff855",
-      "runtimeSourceDigest": "9a6813fd31c9ec22bdce913924739e0841019042178a292df0fe942718397b10"
+      "runtimeSourceDigest": "89650028e2b7992fcb8d57a8fb19095aefb14d4135332fa82549cbe93ffef141",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "5153d2a783b3a326364a0a091ea9ba538ddc647bd86f6f909320c01f00bc9c8e",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-markets.controller.js#uuid": {
       "jsonSchema": {
@@ -28573,9 +29330,9 @@
           "reason"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -28588,8 +29345,53 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.errorStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "ACKNOWLEDGED",
+              "RESOLVED",
+              "IGNORED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ]
+      },
       "runtimeValidationDigest": "1cb13c5ff90a57f5f3d63c4050fcbfc8b5be0cbf9ff46595120f7af5e04a1b49",
-      "runtimeSourceDigest": "8171f9d69a1598aad183c82435e8c6a18ec3946cec69d1e4e2156e3bf28427a3"
+      "runtimeSourceDigest": "89797ff711a12f22be977452419334d93eab1c9fbd0593e531e38495d1a2c952",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 35,
+        "caseDigest": "3c7b9c9290aabbd1b839a89e2c9fbbcd1c9ad11259f3f99b11d11cf22ba539db",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-operations.controller.js#healthSnapshotQuerySchema": {
       "jsonSchema": {
@@ -28668,9 +29470,9 @@
           "body"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -28683,8 +29485,43 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "body: ECMAScript trim, then 1..5000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.incidentCommentSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S|\\S[\\s\\S]{0,4998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
       "runtimeValidationDigest": "4722d9d4cc58fa7c57d867f878eac3c4d4f5fbec02c5590e5c44f3f1ef85fdc0",
-      "runtimeSourceDigest": "16a6d30611d658a19f0db339877a4cfbc10c456f77721ed6d61ffc9860f3aa9e"
+      "runtimeSourceDigest": "62646b99406831da657e884642149b1071214a5942fe34b784d6cc03bd2d2edc",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 55,
+        "refinementWitnesses": 0,
+        "normalizationResults": 35,
+        "caseDigest": "82e9e93281c8cc4e123d26378261207358b4f495a3fc1aafcdccd98e86212e4d",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-operations.controller.js#incidentListQuerySchema": {
       "jsonSchema": {
@@ -28783,9 +29620,9 @@
           "reason"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -28798,8 +29635,55 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.incidentStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "INVESTIGATING",
+              "IDENTIFIED",
+              "MONITORING",
+              "RESOLVED",
+              "CLOSED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ]
+      },
       "runtimeValidationDigest": "13575b38400d4a5c34d844dbca1a7128cd65e700e274f560acb6f39135954db5",
-      "runtimeSourceDigest": "b5cd889b40d0b4da9031c960cb24e53dc3a618b54f34641f889e5c78b645c42e"
+      "runtimeSourceDigest": "ad01b1771f0e59769f0df308c8e90bd5cf000429e8a1bbd024fcb56b167e29dc",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 35,
+        "caseDigest": "3332c229ab2e9daf43c5d76d5be92249fce97e7354bc9519b1cb03adea0f3bae",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-operations.controller.js#integrationListQuerySchema": {
       "jsonSchema": {
@@ -28937,9 +29821,9 @@
           "reason"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -28952,8 +29836,56 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.supportCaseAssignmentSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "assignedToId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "assignedToId",
+          "reason"
+        ]
+      },
       "runtimeValidationDigest": "840714400f57eb6793d7fd90dbaf1ed09ddb94b7d232de9121aa7064da076fa5",
-      "runtimeSourceDigest": "727ced46f0f580effd29f18ce614c1b7f18d40486c2f20a5e8bccc83806618cc"
+      "runtimeSourceDigest": "d4397f36a372ef43e88c10daec930b0be688122e1f13acfa1c93b86ce5907fb5",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 35,
+        "caseDigest": "d2352d6021c30d19ee2242d45f88c6f4980d959c8bbadfbed2c40da1883348ea",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-operations.controller.js#supportCaseCommentSchema": {
       "jsonSchema": {
@@ -28970,9 +29902,9 @@
           "body"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -28985,8 +29917,43 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "body: ECMAScript trim, then 1..5000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.supportCaseCommentSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S|\\S[\\s\\S]{0,4998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
       "runtimeValidationDigest": "4722d9d4cc58fa7c57d867f878eac3c4d4f5fbec02c5590e5c44f3f1ef85fdc0",
-      "runtimeSourceDigest": "98a23eb6ef564c6c27293c3b1f9479ffaf952e4f0741324a5c1cac70446d9f30"
+      "runtimeSourceDigest": "9620a2a7cfc584a39b57e0b7b1b58ace6f98af9053785c097bcd82ee1d35d041",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 55,
+        "refinementWitnesses": 0,
+        "normalizationResults": 35,
+        "caseDigest": "f22f10c21f05f8efd7ccea4df8372e5afa35b82474361bb38416adbda6511ce6",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-operations.controller.js#supportCaseCreateSchema": {
       "jsonSchema": {
@@ -29155,9 +30122,9 @@
           "reason"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -29170,8 +30137,55 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.supportCaseStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "TRIAGED",
+              "IN_PROGRESS",
+              "WAITING_CUSTOMER",
+              "RESOLVED",
+              "CLOSED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ]
+      },
       "runtimeValidationDigest": "1c7e45b096414d97adcb75faf13f2ab637547844f4a0915136f0c42f963ebd41",
-      "runtimeSourceDigest": "0da172779738f934f151956f5ed65bc4bab1b956bebb761cda16245e6e25fac1"
+      "runtimeSourceDigest": "98c738c68ac411b4a9c4bc60c96883da60eb39b3e90e1f23366a00a5ea40b095",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 35,
+        "caseDigest": "b7526753c4c9e2cc552245dbc2945994bb637b5ef113f56766aa9a0989386f72",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-payout.controller.js#idSchema": {
       "jsonSchema": {
@@ -29384,7 +30398,7 @@
         }
       ],
       "runtimeValidationDigest": "ac7a7ddaba2bf92735fdf15c0c4d3a7c6a6e5b9e20ecc9d184df1ef6786ebea2",
-      "runtimeSourceDigest": "1e234b03860e949cc2c336e0a355deb14802f56c361a6fb0f69905c6d1e7a8df"
+      "runtimeSourceDigest": "70d4940df9782055a8438ca09813d97e57f1815db5f46c27abd473957a9d509b"
     },
     "backend/src/controllers/admin-privacy.controller.js#modelStatusSchema": {
       "jsonSchema": {
@@ -29415,9 +30429,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -29430,8 +30444,57 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.privacy.validators.modelStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "RETIRED"
+            ]
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "0cfebb4c2dec12199c356980304066accc2963d903f2c0219f7e76ded649cd92",
-      "runtimeSourceDigest": "809efa10aab082b658e92c36d455b4a4022627cddd7c8784ec6854dc9e9c9cec"
+      "runtimeSourceDigest": "0fd1dc0eacaa71e44e2de3fe0bc3e3b2952455439c657b39787f5171077dfef2",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "d9e12ff3b6a343c88b7cd4e4b415d8776617e7711aabd4f1d814bc1efa8f78c3",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-privacy.controller.js#modelUpdateSchema": {
       "jsonSchema": {
@@ -29490,7 +30553,7 @@
         }
       ],
       "runtimeValidationDigest": "68e731ee48d129e55af0d84540f57d95c62d9089f0ad70b46eb4d08a658fd425",
-      "runtimeSourceDigest": "e5bdac2e922310cb2b6418318f8505334794914b31e274cb2097c5629c37a8ee"
+      "runtimeSourceDigest": "d762d45c9b3c912c116b3bf38d7285de7025db2c2c14f3ff61ffe19045d3035d"
     },
     "backend/src/controllers/admin-privacy.controller.js#policyCreateSchema": {
       "jsonSchema": {
@@ -29596,7 +30659,7 @@
         }
       ],
       "runtimeValidationDigest": "aad751962b50957281ff4929e266d128c39ea4640fb125722f04786e268f2959",
-      "runtimeSourceDigest": "30359993690c7155f7f8f47c6dfb3c6c62fc446db9cc1eb1e90ae428cd480b3f"
+      "runtimeSourceDigest": "70685855ed815c63782d1fa23b6aa15c16e64fc78dd1cf117e578d2c58d47145"
     },
     "backend/src/controllers/admin-privacy.controller.js#policyReviewSchema": {
       "jsonSchema": {
@@ -29628,9 +30691,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -29643,8 +30706,58 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reviewReference: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change",
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.privacy.validators.policyReviewSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reviewStatus": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reviewReference": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reviewStatus",
+          "reviewReference",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "edd2b2527054b46b9ca1993a322c99057f5d81c09b8cadc16875bb6ff7fd1ee0",
-      "runtimeSourceDigest": "d2123570ed69ea44adf5598ca20e9bfcc3162f7ceefeebbbf53808a2bdf5dea8"
+      "runtimeSourceDigest": "f59230499aa55843a18af6dfc58b1f863e8b97c74c08d6cdbb3d4d4f7f98d36a",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 99,
+        "refinementWitnesses": 0,
+        "normalizationResults": 49,
+        "caseDigest": "5edcdcf56acb23ae41d565acb472b1b833922516412f6acbd41e7b95eb1cb82d",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-privacy.controller.js#policyStatusSchema": {
       "jsonSchema": {
@@ -29675,9 +30788,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -29690,8 +30803,57 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.privacy.validators.policyStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "RETIRED"
+            ]
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "0cfebb4c2dec12199c356980304066accc2963d903f2c0219f7e76ded649cd92",
-      "runtimeSourceDigest": "26b719ce1651f159da541e1fb689d7c272ecae91251ad854d438d4af93b57391"
+      "runtimeSourceDigest": "5d6b6c689f7dfdc0f776bd2a56abdaf2031657e6c4241e873846d0487713d666",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "d9e12ff3b6a343c88b7cd4e4b415d8776617e7711aabd4f1d814bc1efa8f78c3",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-privacy.controller.js#policyUpdateSchema": {
       "jsonSchema": {
@@ -29762,7 +30924,7 @@
         }
       ],
       "runtimeValidationDigest": "01d655aa8f409327e5b338bf2249b2a19393736b7e3beab96b3502e42dfc5fb4",
-      "runtimeSourceDigest": "a6b2cd55e131ffd54b6797cb8568ec24417d65a90b5eb6872e21f6f76822fa84"
+      "runtimeSourceDigest": "1771385f0dd83fc7b75ec4e55b6e26f167f61d7ebc96e55e15d1344f86e5f8d2"
     },
     "backend/src/controllers/admin-privacy.controller.js#reasonSchema": {
       "jsonSchema": {
@@ -30028,7 +31190,7 @@
         }
       ],
       "runtimeValidationDigest": "05cc21715c57b0af8656a9a642e14fdf5d6173f7b433d15b0919b27ae78de91f",
-      "runtimeSourceDigest": "9f537cc304b46c3585ea13a1d80c0dc22affe116585edfc0cae76a63c2a0ed65"
+      "runtimeSourceDigest": "a46adffdf28b8d8161a3d7576e342d122997c2e7634085f8ab34f3e16c02a2c4"
     },
     "backend/src/controllers/admin-referrals.controller.js#programNewVersionSchema": {
       "jsonSchema": {
@@ -30170,7 +31332,7 @@
         }
       ],
       "runtimeValidationDigest": "208e9227de696e495d6c2b57aa90ba29cc4e6e363513d56f31bfca1038b489ad",
-      "runtimeSourceDigest": "ec8e57072a196be4e58a8af7e4b47b27b29a6b7968f8b59fe18a8121e97e40af"
+      "runtimeSourceDigest": "8b8e3d1994edbc2083f23a80dd4eb6f6636ed06551a33e5c5f2c9f9c3ee51745"
     },
     "backend/src/controllers/admin-referrals.controller.js#programStatusSchema": {
       "jsonSchema": {
@@ -30215,9 +31377,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -30230,8 +31392,71 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.referrals-automation.validators.programStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "ACTIVE",
+              "PAUSED",
+              "COMPLETED",
+              "ARCHIVED"
+            ]
+          },
+          "expectedRowVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "expectedRowVersion",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "0ec828aa503bd47aa4ecd1a4456ca1fecb7ee4cf408bcf3de5bda692e8703ea8",
-      "runtimeSourceDigest": "a1407330f2d142d7f9f5fbdb23dc8574d4c113d91f95a812cba0dd031298424c"
+      "runtimeSourceDigest": "52fb59d270a00047caf6f17c5b13aa85673ef3a7c2f293e304df4689505233b0",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 61,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "17151886528ec286383d9579b75f42dfbdb74c3580eb74ba2a25607e03891acb",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-referrals.controller.js#rewardStatusSchema": {
       "jsonSchema": {
@@ -30650,9 +31875,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -30665,8 +31890,55 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin.validators.professionalStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED",
+              "SUSPENDED",
+              "ACTIVE",
+              "INACTIVE"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "740a7cceab52430dc6ec89e60ef4e331fe7597b958deb27f9ccf6569bd64308a",
-      "runtimeSourceDigest": "a213ec75abffd2c2ff022b8255ba595b53d6af91e5a791487418b1ec5cee4de0"
+      "runtimeSourceDigest": "b03de3040b95b92331872d06d10b5a576ded516976e0cbb714772276543b2457",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "88cd55eb5b263329d2894746dc3383d743e815906c2c0d362f777baff70c8763",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-v1.controller.js#roleChangeSchema": {
       "jsonSchema": {
@@ -30745,9 +32017,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -30760,8 +32032,44 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin.validators.roleDecisionSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "aaf0b8280e9d2f3335fffa64fd9ec0ea66de6568a2c5cefb6aabcd367e30f534",
-      "runtimeSourceDigest": "b028336fccd4de5771bb26309ab5238c8187ff696ee1917768677140828d2fd3"
+      "runtimeSourceDigest": "bd6df015b8a0a769edb0eca08fdcdff2e841b1fa36b457b1f80f7ead12289da2",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 57,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "10aef967c118341dc58048ddfcc9be7d5f87476d6f3d0460716c4971e8006630",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-v1.controller.js#userListQuerySchema": {
       "jsonSchema": {
@@ -30844,9 +32152,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -30859,8 +32167,48 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin.validators.userStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "isActive",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "e2179f21566c0181cf5cdd60be7d589d01d9f6da2fe05f8c1a43ab4191ca2d1f",
-      "runtimeSourceDigest": "6a9c92b8b8ea22a12b81948d260f1205f65be2097061124b99e549b25881b333"
+      "runtimeSourceDigest": "983faf9e7ec60d2ec4ea14d4b86b7855fbc48284ca613bfecf4a42c5648e6f72",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 59,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "ba4f7d4dcf4fb38a30b4151d69c88a23cd8b1299155e16f5a04a8d5f6da936fa",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin.controller.js#auditLogQuery": {
       "jsonSchema": {
@@ -31155,8 +32503,8 @@
           "password"
         ]
       },
-      "runtimeValidationDigest": "33f7b2b4f761266494b9d62b9f64fbe4c5aeb6c2263f3105fea08ed292da81e7",
-      "runtimeSourceDigest": "2179387f53513c8746a3c739b0e6adab8010523f7532d881babae6508db01dfb",
+      "runtimeValidationDigest": "69a9be826f039a91e4d96a35402b945e634bc94b04497c4ab9eac9934d861a20",
+      "runtimeSourceDigest": "b6c0c5d1ae3902e3c72e2525bf6b42eda2a8e5bba33b7bbcd4c78c5fe0e6abc4",
       "semanticEvidence": {
         "status": "PASS",
         "parityMode": "STRUCTURAL_WITH_RUNTIME_REFINEMENT",
@@ -31236,7 +32584,7 @@
         "additionalProperties": false
       },
       "runtimeValidationDigest": "21ea1073e3b5a32c48304a8f93117bc8d336effaa5bff417d954febe6dc54de2",
-      "runtimeSourceDigest": "4807924ea0b41112633d129286aae0990f3aeb0e79dc0ff96580b612c69cb7e2",
+      "runtimeSourceDigest": "295da3a3b42cbb33513c80f5c417b552bb60b122ef8f4ea4abf76122a617371c",
       "semanticEvidence": {
         "status": "PASS",
         "parityMode": "STRUCTURAL_WITH_RUNTIME_REFINEMENT",
@@ -31670,8 +33018,8 @@
           }
         ]
       },
-      "runtimeValidationDigest": "cecd44ce704b98fb43a1dbd5a16bc96150250abc40a7f6ffee16748c588355ce",
-      "runtimeSourceDigest": "41ce0b52997a9b8e2ed52fb30a17006e8555a32712ffb39b372680eb3d5f26f2"
+      "runtimeValidationDigest": "9ca56b0b57c31b4202b256a88d0b6659a4e49e66345fd211a9ccbe48896d36c3",
+      "runtimeSourceDigest": "7498f19f1f49d402b11c4f4a319eba4f3002790ced8bddb0346329cc50236d0f"
     },
     "backend/src/controllers/auth.controller.js#updateProfileSchema": {
       "jsonSchema": {
@@ -33335,9 +34683,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -33350,8 +34698,44 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "proof: ECMAScript trim, then 40..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.privacy.validators.reconciliationSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "proof": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{38,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "proof"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "433956ab6c1cd1c8d8b373357f9769dc251ed9b7ec70bca19581f740e74b9431",
-      "runtimeSourceDigest": "f7c196058b295f434b3f1640bf50ce20fd313478ad2d483c2716663eed99539f"
+      "runtimeSourceDigest": "332624ea081e8889b672a497c79d7b12bce287fe7f4f65a8a3536e4dc4f6fcc1",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 57,
+        "refinementWitnesses": 0,
+        "normalizationResults": 20,
+        "caseDigest": "89f491da5bcddc07479f9116bb24c24e73ab1a1ad28acbba59bd54893dec7c31",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/privacy.controller.js#touchpointSchema": {
       "jsonSchema": {
@@ -33944,9 +35328,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -33959,8 +35343,44 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.referrals-automation.validators.revokeCodeSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "79f02ad5899e19cfa413ae6260f835b8029c980911fe9cef6ddd0d3e591fcc1f",
-      "runtimeSourceDigest": "426845a7557e860284e4d1cd79b25d62db223845fb6cdbbff392d58a74ed05d8"
+      "runtimeSourceDigest": "a5508af0205dcbc07c53459b18d84a38ba38c6aa726bf9099909673e093b7056",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 57,
+        "refinementWitnesses": 0,
+        "normalizationResults": 25,
+        "caseDigest": "9872035c9693c670b799fa473901a9f1967e8f943ecbd9cdd50eb4b79d876b56",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/review.controller.js#pageQuerySchema": {
       "jsonSchema": {
@@ -34784,9 +36204,9 @@
           "reason"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -34799,6 +36219,41 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.errorStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "ACKNOWLEDGED",
+              "RESOLVED",
+              "IGNORED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ]
+      },
       "runtimeValidationDigest": "1cb13c5ff90a57f5f3d63c4050fcbfc8b5be0cbf9ff46595120f7af5e04a1b49"
     },
     "backend/src/validators/admin-operations.validators.js#healthSnapshotQuerySchema": {
@@ -34876,9 +36331,9 @@
           "body"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -34891,6 +36346,31 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "body: ECMAScript trim, then 1..5000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.incidentCommentSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S|\\S[\\s\\S]{0,4998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
       "runtimeValidationDigest": "4722d9d4cc58fa7c57d867f878eac3c4d4f5fbec02c5590e5c44f3f1ef85fdc0"
     },
     "backend/src/validators/admin-operations.validators.js#incidentListQuerySchema": {
@@ -34989,9 +36469,9 @@
           "reason"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -35004,6 +36484,43 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.incidentStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "INVESTIGATING",
+              "IDENTIFIED",
+              "MONITORING",
+              "RESOLVED",
+              "CLOSED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ]
+      },
       "runtimeValidationDigest": "13575b38400d4a5c34d844dbca1a7128cd65e700e274f560acb6f39135954db5"
     },
     "backend/src/validators/admin-operations.validators.js#integrationListQuerySchema": {
@@ -35183,9 +36700,9 @@
           "reason"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -35198,6 +36715,44 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.supportCaseAssignmentSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "assignedToId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "assignedToId",
+          "reason"
+        ]
+      },
       "runtimeValidationDigest": "840714400f57eb6793d7fd90dbaf1ed09ddb94b7d232de9121aa7064da076fa5"
     },
     "backend/src/validators/admin-operations.validators.js#supportCaseCommentSchema": {
@@ -35215,9 +36770,9 @@
           "body"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -35230,6 +36785,31 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "body: ECMAScript trim, then 1..5000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.supportCaseCommentSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S|\\S[\\s\\S]{0,4998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "body"
+        ]
+      },
       "runtimeValidationDigest": "4722d9d4cc58fa7c57d867f878eac3c4d4f5fbec02c5590e5c44f3f1ef85fdc0"
     },
     "backend/src/validators/admin-operations.validators.js#supportCaseCreateSchema": {
@@ -35397,9 +36977,9 @@
           "reason"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -35412,6 +36992,43 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin-operations.validators.supportCaseStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "TRIAGED",
+              "IN_PROGRESS",
+              "WAITING_CUSTOMER",
+              "RESOLVED",
+              "CLOSED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ]
+      },
       "runtimeValidationDigest": "1c7e45b096414d97adcb75faf13f2ab637547844f4a0915136f0c42f963ebd41"
     },
     "backend/src/validators/admin.validators.js#adminLoginSchema": {
@@ -35766,9 +37383,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -35781,6 +37398,43 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin.validators.professionalStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED",
+              "SUSPENDED",
+              "ACTIVE",
+              "INACTIVE"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "740a7cceab52430dc6ec89e60ef4e331fe7597b958deb27f9ccf6569bd64308a"
     },
     "backend/src/validators/admin.validators.js#revokeSessionSchema": {
@@ -35799,9 +37453,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -35814,6 +37468,32 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin.validators.revokeSessionSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "aaf0b8280e9d2f3335fffa64fd9ec0ea66de6568a2c5cefb6aabcd367e30f534"
     },
     "backend/src/validators/admin.validators.js#roleChangeSchema": {
@@ -35892,9 +37572,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -35907,6 +37587,32 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin.validators.roleDecisionSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "aaf0b8280e9d2f3335fffa64fd9ec0ea66de6568a2c5cefb6aabcd367e30f534"
     },
     "backend/src/validators/admin.validators.js#userListQuerySchema": {
@@ -35989,9 +37695,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -36004,6 +37710,36 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.admin.validators.userStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "isActive",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "e2179f21566c0181cf5cdd60be7d589d01d9f6da2fe05f8c1a43ab4191ca2d1f"
     },
     "backend/src/validators/auth.validators.js#accountActionConfirmSchema": {
@@ -36416,7 +38152,7 @@
           "password"
         ]
       },
-      "runtimeValidationDigest": "33f7b2b4f761266494b9d62b9f64fbe4c5aeb6c2263f3105fea08ed292da81e7"
+      "runtimeValidationDigest": "69a9be826f039a91e4d96a35402b945e634bc94b04497c4ab9eac9934d861a20"
     },
     "backend/src/validators/auth.validators.js#passwordRecoveryRequestSchema": {
       "jsonSchema": {
@@ -36969,7 +38705,7 @@
           }
         ]
       },
-      "runtimeValidationDigest": "cecd44ce704b98fb43a1dbd5a16bc96150250abc40a7f6ffee16748c588355ce"
+      "runtimeValidationDigest": "9ca56b0b57c31b4202b256a88d0b6659a4e49e66345fd211a9ccbe48896d36c3"
     },
     "backend/src/validators/auth.validators.js#reviewSchema": {
       "jsonSchema": {
@@ -37487,9 +39223,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -37502,6 +39238,44 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.experiments-content-seo.validators.experimentStatusBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "READY",
+              "RUNNING",
+              "PAUSED",
+              "COMPLETED",
+              "ARCHIVED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "24e084c631a334e31c89ffa9645eee0541073c95420e3c03dccd135ee06c7077"
     },
     "backend/src/validators/experiments-content-seo.validators.js#experimentVersionBody": {
@@ -37870,9 +39644,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -37885,6 +39659,32 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.experiments-content-seo.validators.retireBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "8b3215497cb1fc9ad531aed02e4512a2231fcf1005ca6cf2bee1cb7ab9121e23"
     },
     "backend/src/validators/experiments-content-seo.validators.js#reviewBody": {
@@ -37911,9 +39711,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -37926,6 +39726,40 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.experiments-content-seo.validators.reviewBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "ba4f57b1f93037aa2e117813f676ce90113b3d50622bb01161ac2b96bf4f0ee5"
     },
     "backend/src/validators/experiments-content-seo.validators.js#sitemapParams": {
@@ -39942,9 +41776,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -39957,6 +41791,46 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reviewReference: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change",
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.markets.validators.identityPolicyReviewBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reviewReference": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "reviewReference",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "4de1ed252448f4a4efd4c42accee707008c1d762e7df8f586a33765a187c0ec6"
     },
     "backend/src/validators/markets.validators.js#identityPolicyStatusBody": {
@@ -39983,9 +41857,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -39998,6 +41872,40 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.markets.validators.identityPolicyStatusBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "RETIRED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "398a9ee81606decbebb1f8a0498d951da3f4270bc29cc8fc0dfe981191a79a63"
     },
     "backend/src/validators/markets.validators.js#marketCode": {
@@ -40045,9 +41953,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -40060,6 +41968,43 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.markets.validators.marketStatusBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "DISABLED",
+              "READY",
+              "ACTIVE",
+              "SUSPENDED",
+              "RETIRED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "7d3035771341e06180991582c582417dd7c00744b41ec671d6b288ab5edff855"
     },
     "backend/src/validators/markets.validators.js#registrationSchemaQuery": {
@@ -40505,9 +42450,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -40520,6 +42465,45 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.privacy.validators.modelStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "RETIRED"
+            ]
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "0cfebb4c2dec12199c356980304066accc2963d903f2c0219f7e76ded649cd92"
     },
     "backend/src/validators/privacy.validators.js#modelUpdateSchema": {
@@ -40759,9 +42743,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -40774,6 +42758,46 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reviewReference: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change",
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.privacy.validators.policyReviewSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reviewStatus": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reviewReference": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reviewStatus",
+          "reviewReference",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "edd2b2527054b46b9ca1993a322c99057f5d81c09b8cadc16875bb6ff7fd1ee0"
     },
     "backend/src/validators/privacy.validators.js#policyStatusSchema": {
@@ -40805,9 +42829,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -40820,6 +42844,45 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.privacy.validators.policyStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "RETIRED"
+            ]
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "0cfebb4c2dec12199c356980304066accc2963d903f2c0219f7e76ded649cd92"
     },
     "backend/src/validators/privacy.validators.js#policyUpdateSchema": {
@@ -40908,9 +42971,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -40923,6 +42986,32 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "proof: ECMAScript trim, then 40..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.privacy.validators.reconciliationSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "proof": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{38,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "proof"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "433956ab6c1cd1c8d8b373357f9769dc251ed9b7ec70bca19581f740e74b9431"
     },
     "backend/src/validators/privacy.validators.js#touchpointSchema": {
@@ -41446,9 +43535,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -41461,6 +43550,52 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.referrals-automation.validators.automationStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "PAUSED",
+              "ARCHIVED"
+            ]
+          },
+          "versionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "expectedRowVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "expectedRowVersion",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "c6e36a79306276cf4457e433ccf3f324c990101158373fa514c3cd9093ff0ffb"
     },
     "backend/src/validators/referrals-automation.validators.js#codeCreateSchema": {
@@ -41857,9 +43992,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -41872,6 +44007,59 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.referrals-automation.validators.programStatusSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "ACTIVE",
+              "PAUSED",
+              "COMPLETED",
+              "ARCHIVED"
+            ]
+          },
+          "expectedRowVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "expectedRowVersion",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "0ec828aa503bd47aa4ecd1a4456ca1fecb7ee4cf408bcf3de5bda692e8703ea8"
     },
     "backend/src/validators/referrals-automation.validators.js#referralClaimSchema": {
@@ -41928,9 +44116,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -41943,6 +44131,32 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 10..2000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.referrals-automation.validators.revokeCodeSchema",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,1998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "79f02ad5899e19cfa413ae6260f835b8029c980911fe9cef6ddd0d3e591fcc1f"
     },
     "backend/src/validators/supply-demand-ai.validators.js#activateBody": {
@@ -41961,9 +44175,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -41976,6 +44190,32 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.activateBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "8b3215497cb1fc9ad531aed02e4512a2231fcf1005ca6cf2bee1cb7ab9121e23"
     },
     "backend/src/validators/supply-demand-ai.validators.js#approvalBody": {
@@ -42007,9 +44247,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -42022,6 +44262,45 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.approvalBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "artifactDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "artifactDigest",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "6d00cb29bdeb31e29466d9f8ccce73b19e04231e90fc34635de3a809a47f50dd"
     },
     "backend/src/validators/supply-demand-ai.validators.js#costsQuery": {
@@ -42268,9 +44547,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -42283,6 +44562,59 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "hypothesis: ECMAScript trim, then 12..1000 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.expansionBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MARKET",
+              "GEOGRAPHY",
+              "SERVICE",
+              "COVERAGE_INCREASE",
+              "COVERAGE_REDUCTION"
+            ]
+          },
+          "marketId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "divisionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "serviceId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "hypothesis": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{10,998}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "type",
+          "marketId",
+          "hypothesis"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "c96a9f1aabfe8131adb9d6d41a9956f390755a2afa062da3b8db0c38958fac01"
     },
     "backend/src/validators/supply-demand-ai.validators.js#expansionEvaluateBody": {
@@ -42392,9 +44724,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -42407,6 +44739,40 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.expansionReviewBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "ba4f57b1f93037aa2e117813f676ce90113b3d50622bb01161ac2b96bf4f0ee5"
     },
     "backend/src/validators/supply-demand-ai.validators.js#genericStatusQuery": {
@@ -42951,9 +45317,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -42966,6 +45332,42 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.providerStatusBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DISABLED",
+              "DEGRADED",
+              "SUSPENDED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "d4e3b4d7e1450fcc89e7c6ba25ae464864e3d38db6e987809039d076c61b4b58"
     },
     "backend/src/validators/supply-demand-ai.validators.js#readinessEvaluateBody": {
@@ -43210,9 +45612,9 @@
         ],
         "additionalProperties": false
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -43225,6 +45627,40 @@
           "policy": "REJECT"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "reason: ECMAScript trim, then 8..500 Unicode code points; no case/coercion/truncation change"
+      ],
+      "evidence": [
+        "backend/test/shared-normalization.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "trim.supply-demand-ai.validators.reviewBody",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{6,498}\\S)\\s*$"
+          }
+        },
+        "required": [
+          "decision",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "runtimeValidationDigest": "ba4f57b1f93037aa2e117813f676ce90113b3d50622bb01161ac2b96bf4f0ee5"
     },
     "backend/src/validators/supply-demand-ai.validators.js#snapshotBody": {

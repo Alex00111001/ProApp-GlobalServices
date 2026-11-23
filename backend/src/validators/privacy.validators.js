@@ -1,11 +1,12 @@
 const { z } = require('zod');
+const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
 
 const idempotencyKey = z.string().trim().min(16).max(128).regex(/^[A-Za-z0-9._:-]+$/);
 const countryCode = z.string().trim().length(2).transform((value) => value.toUpperCase());
 const locale = z.string().trim().regex(/^[a-z]{2}(?:-[A-Z]{2})?$/);
 const identifier = z.string().trim().min(1).max(80).regex(/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/);
 const source = z.string().trim().min(2).max(64).regex(/^[A-Z0-9_:-]+$/);
-const reason = z.string().trim().min(10).max(2_000);
+const reason = trimmedString(10, 2_000);
 const page = z.coerce.number().int().min(1).default(1);
 const limit = z.coerce.number().int().min(1).max(100).default(25);
 
@@ -16,7 +17,7 @@ const policyQuerySchema = z.object({
 }).strict();
 
 const identityProofSchema = z.object({ anonymousId: z.string().trim().min(16).max(128).regex(/^[A-Za-z0-9._:-]+$/) }).strict();
-const reconciliationSchema = z.object({ proof: z.string().trim().min(40).max(2_000) }).strict();
+const reconciliationSchema = z.object({ proof: trimmedString(40, 2_000) }).strict();
 
 const consentDecisionSchema = z.object({
   idempotencyKey,
@@ -83,7 +84,7 @@ const policyUpdateSchema = z.object({
 
 const policyReviewSchema = z.object({
   reviewStatus: z.enum(['APPROVED', 'REJECTED']),
-  reviewReference: z.string().trim().min(8).max(500),
+  reviewReference: trimmedString(8, 500),
   reason,
 }).strict();
 
@@ -136,3 +137,9 @@ module.exports = {
   touchpointSchema,
   withdrawalSchema,
 };
+
+// T01: reviewed wire acceptance for these mounted object validators only.
+declareTrimmedInput(reconciliationSchema, 'trim.privacy.validators.reconciliationSchema');
+declareTrimmedInput(policyReviewSchema, 'trim.privacy.validators.policyReviewSchema');
+declareTrimmedInput(policyStatusSchema, 'trim.privacy.validators.policyStatusSchema');
+declareTrimmedInput(modelStatusSchema, 'trim.privacy.validators.modelStatusSchema');

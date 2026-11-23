@@ -38,3 +38,14 @@ Separate:
 - Recommended sequence and acceptance criteria
 
 Do not mark a capability complete from generated code alone. Run checks only when safe and identify every unverified claim.
+
+## Dependency and ownership mapping
+
+Use local `git ls-files` and `rg` first; do not upload a code bundle to a mapping service.
+Map actual package manifests and imports alongside `docs/DEPENDENCY_GRAPH.md` and target bounded
+contexts. For each domain trace routes -> handlers -> service/policy -> persistence/provider,
+then validators/serializers -> API projections -> consumer call sites -> tests -> CI job.
+Record owner, direction, evidence path and unresolved/dynamic edge. Distinguish an observed import
+graph from approved domain boundaries. Candidate dead/legacy code requires import, mount, dynamic
+loading, job, consumer and compatibility checks; lack of text matches is not removal authority.
+Report drift and gaps in the existing task/PRR evidence, not a new architecture source of truth.

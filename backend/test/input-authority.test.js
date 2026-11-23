@@ -5,6 +5,7 @@ const { projectSchema } = require('../scripts/api-contract/schema-catalog');
 const { verifyRequestCases, verifyOpenApiBinding, verifyHeaderBinding } = require('../scripts/api-contract/request-parity');
 const { declareInputContract } = require('../src/shared/http/input-contract');
 const { createBookingSchema, loginSchema, passwordRecoveryRequestSchema, registerSchema } = require('../src/validators/auth.validators');
+const { adminLoginSchema } = require('../src/validators/admin.validators');
 const { bookingCancellationBody, bookingRejectionBody, paymentConfirmationBody, bookingIdParams, bookingListQuery } = require('../src/validators/legacy-request.validators');
 const { bookingInputContext } = require('../src/contracts/booking.inputs');
 const { buildInventory } = require('../scripts/api-contract/inventory-command');
@@ -29,6 +30,21 @@ for (const [name, schema, cases] of [
   ['identity recovery', passwordRecoveryRequestSchema, emailCases(true)], ['payment confirm', paymentConfirmationBody, paymentCases],
 ]) test(`${name}: executed wire acceptance, normalization/transformation and refinement evidence`, () => {
   assert.equal(verifyRequestCases({ schema, cases }).status, 'PASS');
+});
+
+test('identity entry points preserve the approved email pattern and normalization', () => {
+  const baseline = require('../../docs/api/route-inventory.baseline.v1.json');
+  const pattern = baseline.schemas['backend/src/controllers/auth.controller.js#loginSchema'].jsonSchema.properties.email.pattern;
+  const validEmail = "First'+Last.Label@Example.INVALID";
+  for (const { shape: { email } } of [registerSchema, loginSchema, passwordRecoveryRequestSchema, adminLoginSchema]) {
+    assert.equal(z.toJSONSchema(email, { io: 'input' }).pattern, pattern);
+    assert.equal(email.parse(validEmail), validEmail.toLowerCase());
+    for (const input of ['.first@example.invalid', 'first..last@example.invalid', "first'@example.invalid"]) {
+      assert.equal(email.safeParse(input).success, false);
+    }
+  }
+  assert.equal(loginSchema.shape.email.parse(` ${validEmail} `), validEmail.toLowerCase());
+  assert.equal(adminLoginSchema.shape.email.safeParse(` ${validEmail} `).success, false);
 });
 
 test('Booking header is projected from the actual runtime parser and keeps trim/boundary semantics', () => {
@@ -209,8 +225,12 @@ test('input inventory retains all historic gaps, new semantic debt and freshness
   const document = buildInventory(); const inventory = buildInputInventory(document);
   assert.equal(inventory.summary.operations, 251);
   assert.equal(inventory.summary.unresolvedHistoricalProjections, 142);
-  assert.equal(inventory.summary.unresolvedInputSemantics, 163);
-  assert.equal(inventory.summary.acceptanceEquivalentBindings, 3);
+  assert.equal(inventory.summary.unresolvedInputSemantics, 129);
+  assert.equal(inventory.summary.acceptanceEquivalentBindings, 37);
+  assert.deepEqual(inventory.summary.unresolvedByPrimaryClass, {
+    STRUCTURAL_EQUIVALENT: 0, NORMALIZATION: 83, TRANSFORM: 22, REFINEMENT: 19,
+    CROSS_FIELD_VALIDATION: 3, RUNTIME_DERIVED: 0, LEGACY_COMPATIBILITY: 2,
+  });
   assert.equal(inventory.summary.runtimeRefinedDeclaredBindings, 3);
   assert.equal(Object.values(inventory.summary.unresolvedByPrimaryClass).reduce((a, b) => a + b), inventory.summary.unresolvedInputSemantics);
   assert.ok(inventory.operations.some((r) => r.additionalSurfaceGaps.some((g) => g.semanticClass === 'RUNTIME_DERIVED')));

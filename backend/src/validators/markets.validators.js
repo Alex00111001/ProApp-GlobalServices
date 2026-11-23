@@ -1,4 +1,5 @@
 const { z } = require('zod');
+const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
 
 const marketCode = z.string().trim().toUpperCase().regex(/^[A-Z][A-Z0-9_-]{1,15}$/);
 const uuid = z.string().uuid();
@@ -48,7 +49,7 @@ const serviceAreaBody = z.object({
 
 const marketStatusBody = z.object({
   status: z.enum(['DISABLED', 'READY', 'ACTIVE', 'SUSPENDED', 'RETIRED']),
-  reason: z.string().trim().min(8).max(500),
+  reason: trimmedString(8, 500),
 }).strict();
 
 const adminListQuery = z.object({ page, limit, status: z.enum(['DRAFT', 'DISABLED', 'READY', 'ACTIVE', 'SUSPENDED', 'RETIRED']).optional() }).strict();
@@ -69,12 +70,12 @@ const identityPolicyListQuery = z.object({
 }).strict();
 const identityPolicyReviewBody = z.object({
   decision: z.enum(['APPROVED', 'REJECTED']),
-  reviewReference: z.string().trim().min(8).max(500),
-  reason: z.string().trim().min(8).max(500),
+  reviewReference: trimmedString(8, 500),
+  reason: trimmedString(8, 500),
 }).strict();
 const identityPolicyStatusBody = z.object({
   status: z.enum(['ACTIVE', 'RETIRED']),
-  reason: z.string().trim().min(8).max(500),
+  reason: trimmedString(8, 500),
 }).strict();
 const adminIdentityDocumentQuery = z.object({ userId: uuid, page, limit }).strict();
 
@@ -124,3 +125,8 @@ module.exports = {
   serviceAreaBody,
   uuid,
 };
+
+// T01: reviewed wire acceptance for these mounted object validators only.
+declareTrimmedInput(marketStatusBody, 'trim.markets.validators.marketStatusBody');
+declareTrimmedInput(identityPolicyReviewBody, 'trim.markets.validators.identityPolicyReviewBody');
+declareTrimmedInput(identityPolicyStatusBody, 'trim.markets.validators.identityPolicyStatusBody');

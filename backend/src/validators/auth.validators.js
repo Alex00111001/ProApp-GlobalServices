@@ -3,6 +3,7 @@ const { annotateInputSemantics, declareInputContract } = require('../shared/http
 const { normalizeBookingPayload } = require('../shared/http/compatibility');
 const { LEGAL_DOCUMENT_VERSION } = require('../config/business');
 const { enforceFieldRules } = require('../shared/http/field-rules');
+const { authEmailPattern } = require('./auth-email-pattern');
 const registrationFieldRules = Object.freeze([
   Object.freeze({ kind: 'REQUIRED_WHEN_TRUE', flag: 'marketingConsent', fields: Object.freeze(['marketingPolicyId', 'marketingPolicyVersion']),
     issuePath: 'marketingPolicyId', message: 'An effective marketing policy id and version are required.' }),
@@ -16,7 +17,7 @@ const safeText = (min, max) => annotateInputSemantics(z.string().transform(clean
 
 // Schema para registro de usuario
 const registerSchema = z.object({
-  email: z.string().trim().toLowerCase().email('Invalid email format'),
+  email: z.string().trim().toLowerCase().email({ pattern: authEmailPattern, error: 'Invalid email format' }),
   phone: z.string().trim().regex(/^\+[1-9]\d{7,14}$/, 'Phone must use international format'),
   password: z.string().min(12, 'Password must be at least 12 characters').max(200),
   firstName: safeText(2, 80),
@@ -55,7 +56,7 @@ annotateInputSemantics(registerSchema, {
   semantics: ['Marketing consent requires policy id/version together', 'Supplying either policy id or version requires the other'],
 });
 const loginSchema = z.object({
-  email: z.string().trim().toLowerCase().email('Invalid email format'),
+  email: z.string().trim().toLowerCase().email({ pattern: authEmailPattern, error: 'Invalid email format' }),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -82,7 +83,7 @@ const refreshSessionSchema = z.object({
 }).strict();
 
 const passwordRecoveryRequestSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email: z.string().trim().toLowerCase().email({ pattern: authEmailPattern }),
   locale: z.string().trim().regex(/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/).max(35).optional(),
 }).strict();
 const emailWire = z.string();

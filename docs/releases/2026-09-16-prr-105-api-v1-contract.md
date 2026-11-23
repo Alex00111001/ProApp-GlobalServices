@@ -251,3 +251,115 @@ Eleven actual Customer/Professional request-building methods execute unchanged a
 Residual PRR-105 gates: **163 strengthened unresolved input bindings**, 373 overlapping source-review points, **196 incomplete outputs**, complete request/response/error/validation/pagination/auth and OLD/NEW semantic parity, final approved v1 publication, full documentation/observability/rollback acceptance and final global exact-SHA verification. OpenAPI remains **CANDIDATE_NOT_PUBLISHED**. Tranche CI does not close global PRR-105.
 
 PRR-105 closed: **NO**. PRR-106 started: **NO**. Production: **OFF**. Markets: **OFF**. CASH: **RETIRED/OFF**. F11: **PAUSED**. Next: **STOP — await independent verification**. No next tranche is started.
+
+## PRR-105.T01 — Shared Input Normalization Authority, 2026-09-29
+
+- Base SHA: `5c534b36988e8c426efb860fda3e215a571a876d`; [Platform verification #97](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/36567291474) **SUCCESS**, exact SHA verified before implementation.
+- Scope: HIGH / DEEP, operator-selected runner; shared input authority, executable wire acceptance, consumer request evidence and documentation. MVP **DISCARDED**; target **COMPLETE + STABLE + PUBLISHABLE + PRODUCTION-READY**. No task beyond T01 is started.
+- Architecture and ranked dependency selection: [Input contract authority](../api/INPUT_CONTRACT_AUTHORITY.md#prr-105t01-shared-bounded-trim-authority-2026-09-29). Baseline [normalization inventory](../api/normalization-inventory.t01.json) contains all **117** bindings and **71** exact field-semantic clusters, including method/path/domain/surface/field/validator/operation/wire/canonical/consumer/risk/primitive data. Cluster sets overlap; they are not additive closure counts.
+- One shared bounded-trim primitive, six existing bound variants, seven validator modules, **29** explicit object authorities and **34** mounted bindings. Runtime remains the previous `string -> trim -> min/max` validator, with identical values/issues and no added coercion/case folding/truncation. Pure structural siblings are retained; unrelated defaults/coercions/refinements are refused by the composition helper.
+- Accepted wire, rather than normalized internal length, drives generated OpenAPI. Padded maximum text now has executable wire/runtime equivalence evidence. All closed bindings retain **NORMALIZATION**. The six operations with unknown-field STRIP accept then discard extras; 28 strict commands reject them. Domain/auth/identity-proof validity remains separate.
+
+### T01 actual rebaseline
+
+| Counter | Before | After |
+| --- | ---: | ---: |
+| Mounted / candidate / published | 251 / 245 / 0 | 251 / 245 / 0 |
+| NORMALIZATION unresolved | 117 | 83 |
+| NORMALIZATION closed in T01 | 0 | 34 |
+| Total strengthened unresolved input bindings | 163 | 129 |
+| TRANSFORM remaining | 22 | 22 |
+| REFINEMENT remaining | 19 | 19 |
+| CROSS_FIELD_VALIDATION remaining | 3 | 3 |
+| LEGACY_COMPATIBILITY remaining | 2 | 2 |
+| Historical structural-only unresolved projections | 142 | 142 |
+| Executed acceptance-equivalent declared bindings | 3 | 37 |
+| Runtime-refined declarations still open | 3 | 3 |
+| Incomplete / complete outputs | 196 / 49 | 196 / 49 |
+| Consumer observations | 144 | 144 |
+| Request-semantic observations with executed cases | 11 | 30 |
+| Breaking mismatches | 0 | 0 |
+
+Source reads **677**, additional overlapping source-review points **373** and semantic-review
+bindings **166** remain unchanged. Closed means equivalent acceptance for the represented
+validator structural surface, not global domain/response/auth proof.
+
+### T01 tests and security
+
+- TDD: the padded maximum case failed before shared wire authority with `OpenAPI narrowed accepted wire values`, then passed after the implementation. `shared-normalization.test.js` runs **34** tests: 29 authorities, prior-parser value/issue equivalence, seeded Unicode/boundary cases, unsupported-composition rejection, every mounted binding and breaking negative controls.
+- Fixed fixtures and table/property cases cover canonical values, min/max +/-1, whitespace variants, astral/combining/zero-width characters, empty/null/absence, invalid types and canonical output. Mass assignment, identity/role/market/header/prototype-shaped fields, case confusion, numeric/boolean coercion and empty bypass attempts preserve rejection/stripping and existing case semantics. No privileged runtime header or endpoint activation is executed.
+- Actual consumers: **18 Admin + 1 Customer**, **19 new REQUEST_ONLY observations**. Seventeen builders exercise four input variants; two Admin builders synthesize reasons and execute both status branches with exact emitted-text assertions. Real request expressions and Admin serialization run unchanged with isolated transport/UI/session inputs. All **20 consumer tests PASS**. Professional/Public have no affected builder for these operations. Response/auth/global OLD/NEW parity remains **NOT_PROVEN**.
+- Local `npm run verify`: **PASS**; Backend **444/444**, zero skips; Admin **15/15 + build**, Public Web **4/4 + build**, Customer **5/5 + typecheck**, Professional **typecheck**. The existing inventory test now asserts the actual 129/37 counts and every residual class; no test or acceptance gate was removed. The later consumer assertion strengthening also passed its **20/20** focused rerun.
+- Prisma format/validate/generate **PASS**; schema diff empty; migration **NONE**. Database and financial evidence for T01 must come from the isolated exact-SHA PostgreSQL CI; previous tranche results are not substituted.
+- Local six-scope dependency audits: **0 HIGH/CRITICAL**. Backend multer GHSA-3pph-fpjx-jg34 and Admin undici GHSA-3wwx-pv8p-q78v remain **moderate**, one per affected scope; not zero total vulnerabilities. No dependencies or lockfiles changed.
+- Inventory freshness, OpenAPI 3.1 validation and breaking checks **PASS**, breaking **0**. Generate -> check -> regenerate preserves all three generated artifact SHA-256 hashes. No generated-schema edit, baseline rewrite, compatibility exception, CI or security-gate modification.
+- Tracked-tree/full-history secrets, fixture guard, artifact hygiene, database and final exact-SHA results are recorded below after the actual runs. They are not inferred from historical CI.
+
+### T01 delivery and remaining acceptance
+
+Implementation and documentary SHA/CI evidence will be bound here after execution. The immutable
+commit containing the final version of this section is its evidence SHA, resolvable with
+`git log -1 --format=%H -- docs/releases/2026-09-16-prr-105-api-v1-contract.md`; it cannot embed its
+own Git hash. Its own Platform verification must succeed before Notion projection.
+
+Unrelated pre-existing governance/skill edits are preserved outside T01 commits. Rollback is a
+scoped revert preserving existing runtime validation and legacy endpoints. GitHub remains technical
+authority; Notion is projected only after final exact-SHA SUCCESS, retaining **EN CURSO** and **15%**.
+
+Residual global gates: **129** unresolved semantic inputs, **196** incomplete outputs, full
+consumer request/response/error/validation/pagination/auth and OLD/NEW parity, approved v1
+publication, observability/documentation/rollback acceptance and final global verification.
+OpenAPI remains **CANDIDATE_NOT_PUBLISHED**. PRR-105 closed: **NO**. PRR-106 started: **NO**.
+Production **OFF**; Markets **OFF**; CASH **RETIRED/OFF**; F11 **PAUSED**.
+Next: **STOP — await independent verification** after T01 exact-SHA CI and evidence projection.
+
+### T01 exact-SHA verification, 2026-11-18
+
+- Implementation SHA: `979d93bd3604d03b005ce6610ab5b034568997e2`.
+- Delivery ref: `ci/closure/prr105-t01-979d93bd`.
+- [Platform verification #98](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/44388933922):
+  **FAILURE**. Workspace verification, contract checks, PostgreSQL migrations and integration, and
+  secret scans passed. The backend dependency audit reported **1 critical, 6 high and 9 moderate**
+  advisories. The critical advisory is in `proxy-addr`. The failed audit stopped subsequent package
+  audits in the same step.
+- T01 remains open. Remediate affected dependencies in a separate reviewed change and verify the
+  resulting candidate SHA with the full workflow before requesting independent review.
+
+### T01 dependency remediation and verification, 2026-11-23
+
+- Scope is PRR-1 / PRR-105.T01, dependency remediation across all six npm scopes, HIGH risk.
+  Implementation used GPT-6.1 Terra with STANDARD routing. The independent compatibility review
+  used DEEP routing. The review identified an Expo SDK alignment issue in the first candidate,
+  which was resolved before the second review.
+- Dependency remediation commit `124ba651ee5eaf2003ca900748f8dcb9ed9a46ec` passed PostgreSQL
+  and secret scanning in [Platform verification #99](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45147361100).
+  The build job failed the inventory freshness check because the Zod upgrade rewrote its default
+  email pattern. The follow-up pins the existing email grammar in the customer and admin
+  validators, regenerates the runtime-derived inventories, and preserves the approved baseline
+  and OpenAPI candidate bytes. The new regression reproduced the pattern mismatch before the
+  fix and passed after it. Both mobile lockfiles resolve Expo 57.0.20 and pass the installed
+  SDK's bundled native-module compatibility comparison.
+- Delivery candidate `886f321ae1192cefd6132932713e19bbd6968248` on
+  `ci/closure/prr105-t01-dependency-remediation-886f321a` passed all three jobs in
+  [Platform verification #100](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45148055600).
+  This run exercised all workspace checks and contract gates, the six npm audits, isolated
+  PostgreSQL migration replay, RBAC synchronization, integration/concurrency and financial
+  idempotency acceptance, and the full-history and tracked-tree secret scans.
+- Local `npm run verify` passed with Backend 445/445, Admin 15/15 and build, Public Web 4/4
+  and build, Customer 5/5 and typecheck, and Professional typecheck. The inventory freshness,
+  breaking (zero findings), and OpenAPI freshness/validation commands passed. All six local
+  `npm audit --audit-level=high` checks passed with zero high or critical findings. Moderate
+  findings remain in Backend (6), Customer (3) and Professional (3).
+- Independent DEEP rereview of the delivery candidate reported no code blockers. It ran
+  31/31 input-authority tests, verified the existing and explicit email patterns were identical,
+  and checked both mobile lockfiles against their exact Expo release manifests with zero native
+  module mismatches. The Expo CLI offline compatibility checks passed. These checks cover package
+  alignment; native device E2E was outside this remediation.
+- Migration and flag changes are absent. If a regression requires reverting these commits,
+  keep the dependency security gate in force and verify a corrected replacement on its own SHA.
+- The technical remediations and exact-SHA CI are verified. Formal delivery acceptance still
+  requires a merged PR or approved delivery commit under the
+  [PRR acceptance criteria, section 4](../production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md).
+  The documentary SHA has its own Platform verification before any tracker projection. PRR-105
+  still has 129 unresolved input bindings and 196 incomplete outputs, and its OpenAPI status is
+  `CANDIDATE_NOT_PUBLISHED`. Stop at this tranche pending delivery acceptance.

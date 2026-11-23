@@ -1,4 +1,6 @@
 const { z } = require('zod');
+const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
+const { authEmailPattern } = require('./auth-email-pattern');
 
 const optionalQueryString = (max) => z.preprocess(
   (value) => value === '' || value === undefined ? undefined : value,
@@ -57,20 +59,20 @@ const auditListQuerySchema = paginationSchema.extend({
 
 const userStatusSchema = z.object({
   isActive: z.boolean(),
-  reason: z.string().trim().min(10).max(500),
+  reason: trimmedString(10, 500),
 }).strict();
 
 const professionalStatusSchema = z.object({
   status: z.enum(['APPROVED', 'REJECTED', 'SUSPENDED', 'ACTIVE', 'INACTIVE']),
-  reason: z.string().trim().min(10).max(500),
+  reason: trimmedString(10, 500),
 }).strict();
 
 const adminLoginSchema = z.object({
-  email: z.email().max(254).transform((value) => value.toLowerCase()),
+  email: z.email({ pattern: authEmailPattern }).max(254).transform((value) => value.toLowerCase()),
   password: z.string().min(8).max(200),
 }).strict();
 
-const revokeSessionSchema = z.object({ reason: z.string().trim().min(10).max(500) }).strict();
+const revokeSessionSchema = z.object({ reason: trimmedString(10, 500) }).strict();
 const roleChangeSchema = z.object({
   targetUserId: z.uuid(),
   roleId: z.uuid(),
@@ -78,7 +80,7 @@ const roleChangeSchema = z.object({
   reason: z.string().trim().min(10).max(500),
   idempotencyKey: z.string().trim().min(12).max(120).regex(/^[A-Za-z0-9._:-]+$/),
 }).strict();
-const roleDecisionSchema = z.object({ reason: z.string().trim().min(10).max(500) }).strict();
+const roleDecisionSchema = z.object({ reason: trimmedString(10, 500) }).strict();
 
 module.exports = {
   adminLoginSchema,
@@ -94,3 +96,9 @@ module.exports = {
   userListQuerySchema,
   userStatusSchema,
 };
+
+// T01: reviewed wire acceptance for these mounted object validators only.
+declareTrimmedInput(userStatusSchema, 'trim.admin.validators.userStatusSchema');
+declareTrimmedInput(professionalStatusSchema, 'trim.admin.validators.professionalStatusSchema');
+declareTrimmedInput(revokeSessionSchema, 'trim.admin.validators.revokeSessionSchema');
+declareTrimmedInput(roleDecisionSchema, 'trim.admin.validators.roleDecisionSchema');

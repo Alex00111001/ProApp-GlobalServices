@@ -109,10 +109,10 @@ actual execution model in the evidence record:
 
 | Required tier | Default concrete model | Use only when |
 |---|---|---|
-| Luna | `gpt-5.6-luna` | the work is deterministic, low-risk and cheaply verified. |
-| Terra | `gpt-5.6-terra` | a bounded implementation has an approved contract and no DEEP trigger. |
-| Sol | `gpt-5.6-sol` | the task affects security, money, privacy, authorization, public compatibility, migrations or production readiness. |
-| Exceptional escalation | `gpt-6-astra` | a Sol review cannot safely resolve an evidenced cross-cutting ambiguity. |
+| Luna | `gpt-6-luna` | the work is deterministic, low-risk and cheaply verified. |
+| Terra | `gpt-6.1-terra` | a bounded implementation has an approved contract and no DEEP trigger. |
+| Sol | `gpt-6.2-sol` | the task affects security, money, privacy, authorization, public compatibility, migrations or production readiness. |
+| Exceptional escalation | `gpt-6.2-astra` | a Sol review cannot safely resolve an evidenced cross-cutting ambiguity. |
 
 The goal is not to choose the highest model by default. Choose the lowest model that meets the mandatory
 risk tier, then escalate immediately when the rules below apply. Provider pricing can change; do not invent

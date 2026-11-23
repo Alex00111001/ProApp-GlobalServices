@@ -78,3 +78,27 @@ Legal policy text and country interpretations require qualified review. Agents m
 ## Maintenance
 
 Review this governance, the model map, skill descriptions, external register, and adapters whenever architecture changes, a model/provider is replaced, a skill dependency is upgraded, or a post-incident review identifies an instruction failure.
+
+## Governed engineering skill constraints
+
+MVP = DISCARDED. Target = COMPLETE + STABLE + PUBLISHABLE + PRODUCTION-READY.
+All first-party and approved external skills follow the existing acceptance definition above.
+Notion holds the Production Readiness Backlog; GitHub holds technical source/evidence; Codex is
+an implementation agent; CI executes verification; PRR governs acceptance. Do not create another
+backlog, redefine HECHO, decide human gates or advance automatically into the next PRR.
+
+Verification-before-completion is permanent:
+
+implementation -> local verification -> tests -> contract gates -> security gates -> CI
+-> exact-SHA evidence -> acceptance gate.
+
+Report the scope and result of each executed check and explicitly identify missing evidence.
+Do not claim fixed, done, complete or production ready from intent, generated code, a partial
+suite or a different-SHA CI run. Do not skip required tests, weaken assertions, remove tests
+for green results, ignore CI or alter acceptance gates. For tooling-only work use relevant
+format/discovery/scope verification; it does not satisfy product acceptance gates.
+
+Skills never authorize Production, Markets, CASH or F11 runtime activation. Load
+`systematic-engineering` for dependency planning/root-cause/TDD procedure and
+`api-contract-engineering` for runtime-authoritative contract analysis. Read-only preparation
+of PRR-105 is not permission to implement it or start PRR-106.

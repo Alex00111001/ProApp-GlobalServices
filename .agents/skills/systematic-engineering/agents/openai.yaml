@@ -1,0 +1,4 @@
+interface:
+  display_name: "Systematic Engineering"
+  short_description: "Plan, debug and verify governed engineering"
+  default_prompt: "Use $systematic-engineering to plan or investigate this authorized HomeServices task."
