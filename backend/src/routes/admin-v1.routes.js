@@ -174,11 +174,11 @@ router.get('/operations/health', requirePermission(PERMISSIONS.HEALTH_READ), ope
 router.get('/operations/health/snapshots', requirePermission(PERMISSIONS.HEALTH_READ), responseContract(operationsResponses.healthSnapshots), operationsController.healthSnapshots);
 router.get('/operations/errors', requirePermission(PERMISSIONS.ERRORS_READ), responseContract(operationsResponses.errors), operationsController.errors);
 router.get('/operations/errors/:id', requirePermission(PERMISSIONS.ERRORS_READ), responseContract(operationsResponses.errorDetail), operationsController.error);
-router.patch('/operations/errors/:id/status', requirePermission(PERMISSIONS.ERRORS_MANAGE), operationsController.setErrorStatus);
+router.patch('/operations/errors/:id/status', requirePermission(PERMISSIONS.ERRORS_MANAGE), responseContract(operationsResponses.errorStatus), operationsController.setErrorStatus);
 router.get('/operations/incidents', requirePermission(PERMISSIONS.INCIDENTS_READ), responseContract(operationsResponses.incidents), operationsController.incidents);
 router.get('/operations/incidents/:id', requirePermission(PERMISSIONS.INCIDENTS_READ), responseContract(operationsResponses.incidentDetail), operationsController.incident);
-router.patch('/operations/incidents/:id/status', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), operationsController.setIncidentStatus);
-router.post('/operations/incidents/:id/comments', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), operationsController.addIncidentComment);
+router.patch('/operations/incidents/:id/status', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), responseContract(operationsResponses.incidentStatus), operationsController.setIncidentStatus);
+router.post('/operations/incidents/:id/comments', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), responseContract(operationsResponses.incidentComment), operationsController.addIncidentComment);
 router.get('/operations/jobs', requirePermission(PERMISSIONS.JOBS_READ), responseContract(operationsResponses.jobs), operationsController.jobs);
 router.get('/operations/integrations', requirePermission(PERMISSIONS.INTEGRATIONS_READ), responseContract(operationsResponses.integrations), operationsController.integrations);
 router.get('/operations/alerts', requirePermission(PERMISSIONS.ALERTS_READ), responseContract(operationsResponses.alerts), operationsController.alerts);

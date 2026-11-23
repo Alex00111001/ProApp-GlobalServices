@@ -35,7 +35,12 @@ test.before(async () => {
 });
 
 test.after(async () => {
-  if (incidentIds.length) await prisma.incident.deleteMany({ where: { id: { in: incidentIds } } });
+  if (incidentIds.length) {
+    const incidentEvents = { aggregateType: 'Incident', aggregateId: { in: incidentIds } };
+    await prisma.automationEventDelivery.deleteMany({ where: { sourceEvent: incidentEvents } });
+    await prisma.outboxEvent.deleteMany({ where: incidentEvents });
+    await prisma.incident.deleteMany({ where: { id: { in: incidentIds } } });
+  }
   if (errorGroupId) await prisma.errorGroup.deleteMany({ where: { id: errorGroupId } });
   if (changeId) await prisma.adminRoleChangeRequest.deleteMany({ where: { id: changeId } });
   if (supportCaseId) {
@@ -237,6 +242,33 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     const { incident: incidentDetail } = await incidentDetailResponse.json();
     assert.equal(incidentDetail.errorGroup.id, group.id);
     assert.equal(incidentDetail.comments[0].author, null);
+
+    const incidentPath = `${baseUrl}/operations/incidents/${incidentIds[0]}`;
+    const operatorHeaders = { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' };
+    let transitionedIncident;
+    for (const duplicate of [false, true]) {
+      const response = await fetch(`${incidentPath}/status`, {
+        method: 'PATCH', headers: operatorHeaders,
+        body: JSON.stringify({ status: 'INVESTIGATING', reason: 'Investigate the synthetic incident' }),
+      });
+      assert.equal(response.status, 200);
+      const result = await response.json();
+      assert.equal(result.duplicate, duplicate);
+      assert.equal(result.incident.status, 'INVESTIGATING');
+      assert.equal(result.incident.errorGroupId, group.id);
+      assert.equal(result.incident.assigneeId, null);
+      assert.equal(new Date(result.incident.acknowledgedAt).toISOString(), result.incident.acknowledgedAt);
+      if (duplicate) assert.deepEqual(result.incident, transitionedIncident);
+      transitionedIncident = result.incident;
+    }
+    const noteResponse = await fetch(`${incidentPath}/comments`, {
+      method: 'POST', headers: operatorHeaders, body: JSON.stringify({ body: ' Synthetic operations note ' }),
+    });
+    assert.equal(noteResponse.status, 201);
+    const { comment: incidentNote } = await noteResponse.json();
+    assert.equal(incidentNote.incidentId, incidentIds[0]);
+    assert.equal(incidentNote.authorId, operator.id);
+    assert.equal(incidentNote.body, 'Synthetic operations note');
 
     const orderedIds = [...incidentIds].sort().reverse();
     for (const [index, id] of orderedIds.entries()) {

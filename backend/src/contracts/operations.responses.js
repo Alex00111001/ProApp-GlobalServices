@@ -104,6 +104,15 @@ const incidentDetail = incident.omit({ _count: true }).extend({
     author: outputObject({ id: z.string(), firstName: z.string(), lastName: z.string() }).nullable(),
   })),
 });
+const errorGroupRecord = errorGroup.omit({ _count: true });
+const incidentRecord = incident.omit({ _count: true, errorGroup: true }).extend({
+  errorGroupId: z.string().nullable(), deduplicationKey: z.string().nullable(),
+  assigneeId: z.string().nullable(), createdAt: dateTime,
+});
+const incidentCommentRecord = outputObject({
+  id: z.string(), incidentId: z.string(), authorId: z.string(), body: z.string(),
+  createdAt: dateTime, updatedAt: dateTime,
+});
 const processingFields = {
   id: z.string(), eventType: z.string(), attempts: count,
   processedAt: dateTime.nullable(), hasError: z.boolean(),
@@ -141,6 +150,18 @@ const operationsResponses = Object.freeze({
   incidentDetail: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/operations/incidents/{id}', operationId: 'adminOperations.incidentDetail',
     responses: { 200: serialized(outputObject({ incident: incidentDetail })) },
+  }),
+  errorStatus: defineResponseContract({
+    method: 'PATCH', path: '/api/v1/admin/operations/errors/{id}/status', operationId: 'adminOperations.errorStatus',
+    responses: { 200: serialized(outputObject({ errorGroup: errorGroupRecord, duplicate: z.boolean() })) },
+  }),
+  incidentStatus: defineResponseContract({
+    method: 'PATCH', path: '/api/v1/admin/operations/incidents/{id}/status', operationId: 'adminOperations.incidentStatus',
+    responses: { 200: serialized(outputObject({ incident: incidentRecord, duplicate: z.boolean() })) },
+  }),
+  incidentComment: defineResponseContract({
+    method: 'POST', path: '/api/v1/admin/operations/incidents/{id}/comments', operationId: 'adminOperations.incidentComment',
+    responses: { 201: serialized(outputObject({ comment: incidentCommentRecord })) },
   }),
   errors: defineResponseContract({
     method: 'GET',
