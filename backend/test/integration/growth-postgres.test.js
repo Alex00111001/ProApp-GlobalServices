@@ -94,6 +94,29 @@ test('Supabase test proves growth idempotency, privacy, RBAC and audited lifecyc
     assert.equal(activeResponse.status, 200);
     assert.equal((await activeResponse.json()).campaign.status, 'ACTIVE');
 
+    // Exercise the mounted parser and serialized pagination through the real admin session.
+    for (const [query, page, limit] of [
+      ['', 1, 25],
+      ['page=02&limit=2.0', 2, 2],
+      ['limit=2e1', 1, 20],
+      ['limit=0x10', 1, 16],
+      ['limit=%2025%20', 1, 25],
+      ['limit=100', 1, 100],
+      ['limit%5B%5D=2', 1, 25],
+    ]) {
+      const response = await fetch(`${baseUrl}/campaigns?${query}`, { headers: marketingHeaders });
+      assert.equal(response.status, 200, query);
+      const { items, pagination } = await response.json();
+      assert.ok(Array.isArray(items), query);
+      assert.equal(pagination.page, page, query);
+      assert.equal(pagination.limit, limit, query);
+    }
+    for (const query of ['page=', 'page=0', 'limit=', 'limit=1.5', 'limit=101', 'limit=25&limit=25', 'search=']) {
+      const response = await fetch(`${baseUrl}/campaigns?${query}`, { headers: marketingHeaders });
+      assert.equal(response.status, 400, query);
+      assert.equal((await response.json()).code, 'VALIDATION_ERROR', query);
+    }
+
     const clientEventId = `${runId}:signup-completed`;
     const first = await trackEvent({
       eventId: clientEventId,
