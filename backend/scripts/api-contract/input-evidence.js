@@ -6,9 +6,23 @@ const { reasonCases, bookingCases, emailCases, paymentCases } = require('../../t
 
 // Executable test inputs, not OpenAPI examples or evidence assertions supplied by a client.
 const { normalizationCases } = require('../../test/helpers/normalization-cases');
+const supportCase = { subject: 'New request', description: 'A synthetic support request', category: 'OTHER' };
 const CASES = Object.freeze({
   'booking.reason': reasonCases, 'booking.create': bookingCases,
   'identity.login': emailCases(false), 'identity.recovery': emailCases(true), 'payment.confirm': paymentCases,
+  'support.case-create': [
+    { name: 'default priority', value: supportCase, accepted: true, expected: { ...supportCase, priority: 'MEDIUM' } },
+    { name: 'trimmed maximum and ignored extra', value: {
+      ...supportCase, subject: `  ${'x'.repeat(200)} `, description: `  ${'y'.repeat(10_000)} `,
+      priority: 'HIGH', ignored: true,
+    }, accepted: true, expected: { ...supportCase, subject: 'x'.repeat(200), description: 'y'.repeat(10_000), priority: 'HIGH' } },
+    { name: 'minimum Unicode text', value: { ...supportCase, subject: ' 🙂🙂🙂🙂🙂 ', description: ' 0123456789 ' },
+      accepted: true, expected: { ...supportCase, subject: '🙂🙂🙂🙂🙂', description: '0123456789', priority: 'MEDIUM' } },
+    ...[
+      { subject: ' abcd ' }, { subject: 'x'.repeat(201) }, { description: ' 123456789 ' },
+      { description: 'x'.repeat(10_001) }, { priority: null }, { priority: 'high' }, { category: 'INVALID' },
+    ].map((override, index) => ({ name: `invalid support input ${index + 1}`, value: { ...supportCase, ...override }, accepted: false })),
+  ],
 });
 function verifyDeclaredAuthority(document) {
   const verified = new Map();

@@ -1,6 +1,6 @@
 const { z } = require('zod');
 const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
-const { annotateInputSemantics } = require('../shared/http/input-contract');
+const { annotateInputSemantics, declareInputContract } = require('../shared/http/input-contract');
 
 const pagination = {
   page: z.coerce.number().int().min(1).default(1),
@@ -58,13 +58,30 @@ const supportCaseListQuerySchema = z.object({
   assignedToId: z.string().uuid().optional(),
   search: optionalText(128),
 });
+const supportPriority = z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']);
 const supportCaseCreateSchema = z.object({
-  subject: z.string().trim().min(5).max(200),
-  description: z.string().trim().min(10).max(10_000),
+  subject: trimmedString(5, 200),
+  description: trimmedString(10, 10_000),
   category: z.enum(['ACCOUNT', 'BOOKING', 'PAYMENT', 'PROFESSIONAL', 'SAFETY', 'OTHER']),
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).default('MEDIUM'),
+  priority: supportPriority.default('MEDIUM'),
   requesterUserId: z.string().uuid().optional(),
   bookingId: z.string().uuid().optional(),
+});
+declareInputContract(supportCaseCreateSchema, {
+  schema: supportCaseCreateSchema.extend({
+    subject: supportCaseCreateSchema.shape.subject.homeservicesNormalization.wire,
+    description: supportCaseCreateSchema.shape.description.homeservicesNormalization.wire,
+    priority: supportPriority.optional(),
+  }).passthrough(),
+  classification: 'NORMALIZATION',
+  parityMode: 'ACCEPTANCE_EQUIVALENT',
+  evidenceId: 'support.case-create',
+  evidence: ['backend/test/input-authority.test.js'],
+  semantics: [
+    'Subject and description are trimmed before checking their Unicode length.',
+    'Omitted priority defaults to MEDIUM. Explicit priority must match the supported enum.',
+    'Unknown keys are accepted by the wire and stripped by the runtime object.',
+  ],
 });
 const supportCaseStatusSchema = z.object({
   status: z.enum(['OPEN', 'TRIAGED', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED', 'CLOSED']),
