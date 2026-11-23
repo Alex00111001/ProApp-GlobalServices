@@ -40,6 +40,15 @@ const caseDetail = outputObject({
     })),
   }),
 });
+const { assignedTo, ...caseRecordFields } = caseFields;
+const caseRecord = outputObject({
+  ...caseRecordFields, description: z.string(), assignedToId: z.string().nullable(), createdById: z.string(),
+  resolvedAt: dateTime.nullable(), closedAt: dateTime.nullable(),
+});
+const assignmentRecord = outputObject({ id: z.string(), assignedToId: z.string().nullable(), status });
+const commentRecord = outputObject({
+  id: z.string(), caseId: z.string(), authorId: z.string(), body: z.string(), createdAt: dateTime, updatedAt: dateTime,
+});
 
 const supportResponses = Object.freeze({
   operators: defineResponseContract({
@@ -53,6 +62,22 @@ const supportResponses = Object.freeze({
   detail: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/operations/support/cases/{id}', operationId: 'adminSupport.caseDetail',
     responses: { 200: serialized(caseDetail) },
+  }),
+  create: defineResponseContract({
+    method: 'POST', path: '/api/v1/admin/operations/support/cases', operationId: 'adminSupport.createCase',
+    responses: { 201: serialized(outputObject({ supportCase: caseRecord })) },
+  }),
+  status: defineResponseContract({
+    method: 'PATCH', path: '/api/v1/admin/operations/support/cases/{id}/status', operationId: 'adminSupport.setStatus',
+    responses: { 200: serialized(outputObject({ supportCase: caseRecord, duplicate: z.boolean() })) },
+  }),
+  assignment: defineResponseContract({
+    method: 'PATCH', path: '/api/v1/admin/operations/support/cases/{id}/assignment', operationId: 'adminSupport.assignCase',
+    responses: { 200: outputObject({ supportCase: assignmentRecord, duplicate: z.boolean() }) },
+  }),
+  comment: defineResponseContract({
+    method: 'POST', path: '/api/v1/admin/operations/support/cases/{id}/comments', operationId: 'adminSupport.addComment',
+    responses: { 201: serialized(outputObject({ comment: commentRecord })) },
   }),
 });
 

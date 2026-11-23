@@ -30778,25 +30778,142 @@
         },
         "responses": {
           "201": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "supportCase"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "supportCase": {}
+                    "supportCase": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "caseKey": {
+                          "type": "string"
+                        },
+                        "subject": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                          "enum": [
+                            "ACCOUNT",
+                            "BOOKING",
+                            "PAYMENT",
+                            "PROFESSIONAL",
+                            "SAFETY",
+                            "OTHER"
+                          ]
+                        },
+                        "priority": {
+                          "type": "string",
+                          "enum": [
+                            "LOW",
+                            "MEDIUM",
+                            "HIGH",
+                            "URGENT"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "OPEN",
+                            "TRIAGED",
+                            "IN_PROGRESS",
+                            "WAITING_CUSTOMER",
+                            "RESOLVED",
+                            "CLOSED"
+                          ]
+                        },
+                        "requesterUserId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "bookingId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "assignedToId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdById": {
+                          "type": "string"
+                        },
+                        "resolvedAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "closedAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "caseKey",
+                        "subject",
+                        "category",
+                        "priority",
+                        "status",
+                        "requesterUserId",
+                        "bookingId",
+                        "createdAt",
+                        "updatedAt",
+                        "description",
+                        "assignedToId",
+                        "createdById",
+                        "resolvedAt",
+                        "closedAt"
+                      ],
+                      "additionalProperties": false
+                    }
                   },
                   "required": [
                     "supportCase"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -30812,7 +30929,8 @@
         "x-homeservices-auth": "ADMIN_BEARER",
         "x-homeservices-middleware": [
           "authenticateAdmin",
-          "requirePermission(PERMISSIONS.SUPPORT_MANAGE)"
+          "requirePermission(PERMISSIONS.SUPPORT_MANAGE)",
+          "responseContract(supportResponses.create)"
         ],
         "x-homeservices-consumers": [
           "Admin Web"
@@ -31364,19 +31482,56 @@
         },
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "properties": {
+                    "supportCase": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "assignedToId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "OPEN",
+                            "TRIAGED",
+                            "IN_PROGRESS",
+                            "WAITING_CUSTOMER",
+                            "RESOLVED",
+                            "CLOSED"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "assignedToId",
+                        "status"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "duplicate": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "supportCase",
+                    "duplicate"
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -31392,7 +31547,8 @@
         "x-homeservices-auth": "ADMIN_BEARER",
         "x-homeservices-middleware": [
           "authenticateAdmin",
-          "requirePermission(PERMISSIONS.SUPPORT_MANAGE)"
+          "requirePermission(PERMISSIONS.SUPPORT_MANAGE)",
+          "responseContract(supportResponses.assignment)"
         ],
         "x-homeservices-consumers": [
           "Admin Web"
@@ -31505,25 +31661,57 @@
         },
         "responses": {
           "201": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [
-              "comment"
-            ],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "comment": {}
+                    "comment": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "caseId": {
+                          "type": "string"
+                        },
+                        "authorId": {
+                          "type": "string"
+                        },
+                        "body": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "caseId",
+                        "authorId",
+                        "body",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
                   },
                   "required": [
                     "comment"
                   ],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -31539,7 +31727,8 @@
         "x-homeservices-auth": "ADMIN_BEARER",
         "x-homeservices-middleware": [
           "authenticateAdmin",
-          "requirePermission(PERMISSIONS.SUPPORT_MANAGE)"
+          "requirePermission(PERMISSIONS.SUPPORT_MANAGE)",
+          "responseContract(supportResponses.comment)"
         ],
         "x-homeservices-consumers": [
           "Admin Web"
@@ -31664,19 +31853,146 @@
         },
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "properties": {
+                    "supportCase": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "caseKey": {
+                          "type": "string"
+                        },
+                        "subject": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                          "enum": [
+                            "ACCOUNT",
+                            "BOOKING",
+                            "PAYMENT",
+                            "PROFESSIONAL",
+                            "SAFETY",
+                            "OTHER"
+                          ]
+                        },
+                        "priority": {
+                          "type": "string",
+                          "enum": [
+                            "LOW",
+                            "MEDIUM",
+                            "HIGH",
+                            "URGENT"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "OPEN",
+                            "TRIAGED",
+                            "IN_PROGRESS",
+                            "WAITING_CUSTOMER",
+                            "RESOLVED",
+                            "CLOSED"
+                          ]
+                        },
+                        "requesterUserId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "bookingId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "assignedToId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdById": {
+                          "type": "string"
+                        },
+                        "resolvedAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "closedAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "caseKey",
+                        "subject",
+                        "category",
+                        "priority",
+                        "status",
+                        "requesterUserId",
+                        "bookingId",
+                        "createdAt",
+                        "updatedAt",
+                        "description",
+                        "assignedToId",
+                        "createdById",
+                        "resolvedAt",
+                        "closedAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "duplicate": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "supportCase",
+                    "duplicate"
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -31692,7 +32008,8 @@
         "x-homeservices-auth": "ADMIN_BEARER",
         "x-homeservices-middleware": [
           "authenticateAdmin",
-          "requirePermission(PERMISSIONS.SUPPORT_MANAGE)"
+          "requirePermission(PERMISSIONS.SUPPORT_MANAGE)",
+          "responseContract(supportResponses.status)"
         ],
         "x-homeservices-consumers": [
           "Admin Web"
@@ -40736,6 +41053,6 @@
     "executedAcceptanceEquivalentBindings": 38,
     "structurallyRepresentedRuntimeRefinedBindings": 3,
     "unprovenCatalogSchemas": 242,
-    "operationsWithoutCompleteResponseSchema": 184
+    "operationsWithoutCompleteResponseSchema": 180
   }
 }
