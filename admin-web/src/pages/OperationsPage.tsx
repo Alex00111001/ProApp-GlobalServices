@@ -37,7 +37,8 @@ function OverviewPanel() {
 function ErrorExplorer() {
   const [page, setPage] = useState(1); const [input, setInput] = useState(''); const [search, setSearch] = useState(''); const [selected, setSelected] = useState<string | null>(null); const [nextStatus, setNextStatus] = useState(''); const [reason, setReason] = useState('')
   const { can } = useSession(); const queryClient = useQueryClient()
-  const query = useQuery({ queryKey: ['operations-errors', page, search], queryFn: () => api(`/v1/admin/operations/errors?page=${page}&limit=25&search=${encodeURIComponent(search)}`, { schema: errorGroupListSchema }) })
+  const params = new URLSearchParams({ page: String(page), limit: '25', ...(search ? { search } : {}) })
+  const query = useQuery({ queryKey: ['operations-errors', page, search], queryFn: () => api(`/v1/admin/operations/errors?${params}`, { schema: errorGroupListSchema }) })
   const detail = useQuery({ queryKey: ['operations-error', selected], enabled: Boolean(selected), queryFn: () => api(`/v1/admin/operations/errors/${selected}`, { schema: errorGroupDetailSchema }) })
   const mutation = useMutation({ mutationFn: () => api(`/v1/admin/operations/errors/${selected}/status`, { method: 'PATCH', body: JSON.stringify({ status: nextStatus, reason }) }), onSuccess: async () => { setReason(''); await Promise.all([queryClient.invalidateQueries({ queryKey: ['operations-errors'] }), queryClient.invalidateQueries({ queryKey: ['operations-error', selected] })]) } })
   const group = detail.data?.errorGroup
@@ -50,7 +51,8 @@ function ErrorExplorer() {
 function IncidentCenter() {
   const [page, setPage] = useState(1); const [input, setInput] = useState(''); const [search, setSearch] = useState(''); const [selected, setSelected] = useState<string | null>(null); const [nextStatus, setNextStatus] = useState(''); const [reason, setReason] = useState(''); const [comment, setComment] = useState('')
   const { can } = useSession(); const queryClient = useQueryClient()
-  const query = useQuery({ queryKey: ['operations-incidents', page, search], queryFn: () => api(`/v1/admin/operations/incidents?page=${page}&limit=25&search=${encodeURIComponent(search)}`, { schema: incidentListSchema }) })
+  const params = new URLSearchParams({ page: String(page), limit: '25', ...(search ? { search } : {}) })
+  const query = useQuery({ queryKey: ['operations-incidents', page, search], queryFn: () => api(`/v1/admin/operations/incidents?${params}`, { schema: incidentListSchema }) })
   const detail = useQuery({ queryKey: ['operations-incident', selected], enabled: Boolean(selected), queryFn: () => api(`/v1/admin/operations/incidents/${selected}`, { schema: incidentDetailSchema }) })
   const refresh = () => Promise.all([queryClient.invalidateQueries({ queryKey: ['operations-incidents'] }), queryClient.invalidateQueries({ queryKey: ['operations-incident', selected] })])
   const transition = useMutation({ mutationFn: () => api(`/v1/admin/operations/incidents/${selected}/status`, { method: 'PATCH', body: JSON.stringify({ status: nextStatus, reason }) }), onSuccess: async () => { setReason(''); await refresh() } })
