@@ -222,6 +222,27 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     supportCaseId = createdCase.id;
     assert.match(createdCase.caseKey, /^SUP-[A-F0-9]{8}$/);
 
+    const supportList = await fetch(`${baseUrl}/operations/support/cases?search=${createdCase.caseKey}`, { headers: operationsHeaders });
+    assert.equal(supportList.status, 200);
+    const supportListBody = await supportList.json();
+    assert.equal(supportListBody.items[0].id, supportCaseId);
+    assert.equal(supportListBody.items[0].assignedTo, null);
+    assert.equal(supportListBody.pagination.totalItems, 1);
+
+    const supportDetail = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}`, { headers: operationsHeaders });
+    assert.equal(supportDetail.status, 200);
+    const detail = (await supportDetail.json()).supportCase;
+    assert.equal(detail.createdBy.id, support.id);
+    assert.equal(detail.events[0].toStatus, 'OPEN');
+    assert.equal(detail.resolvedAt, null);
+    assert.equal(Object.hasOwn(detail.events[0], 'metadata'), false);
+
+    const supportOperators = await fetch(`${baseUrl}/operations/support/operators`, { headers: operationsHeaders });
+    assert.equal(supportOperators.status, 200);
+    assert.deepEqual((await supportOperators.json()).operators.find(({ id }) => id === support.id), {
+      id: support.id, firstName: support.firstName, lastName: support.lastName,
+    });
+
     const triaged = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}/status`, {
       method: 'PATCH',
       headers: { authorization: `Bearer ${session.accessToken}`, 'content-type': 'application/json', 'x-correlation-id': `${runId}-support-triage` },

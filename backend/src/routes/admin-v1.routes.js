@@ -17,6 +17,7 @@ const { metricsHandler } = require('../modules/observability/metrics');
 const { responseContract } = require('../shared/http/response-contract');
 const { growthResponses } = require('../contracts/growth.responses');
 const { operationsResponses } = require('../contracts/operations.responses');
+const { supportResponses } = require('../contracts/support.responses');
 
 const router = express.Router();
 const authLimiter = rateLimit({
@@ -182,10 +183,10 @@ router.get('/operations/jobs', requirePermission(PERMISSIONS.JOBS_READ), respons
 router.get('/operations/integrations', requirePermission(PERMISSIONS.INTEGRATIONS_READ), responseContract(operationsResponses.integrations), operationsController.integrations);
 router.get('/operations/alerts', requirePermission(PERMISSIONS.ALERTS_READ), responseContract(operationsResponses.alerts), operationsController.alerts);
 router.get('/operations/financial-monitoring', requirePermission(PERMISSIONS.FINANCIAL_MONITORING_READ), operationsController.financialMonitoring);
-router.get('/operations/support/operators', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.supportOperators);
-router.get('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_READ), operationsController.supportCases);
+router.get('/operations/support/operators', requirePermission(PERMISSIONS.SUPPORT_MANAGE), responseContract(supportResponses.operators), operationsController.supportOperators);
+router.get('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_READ), responseContract(supportResponses.cases), operationsController.supportCases);
 router.post('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.createSupportCase);
-router.get('/operations/support/cases/:id', requirePermission(PERMISSIONS.SUPPORT_READ), operationsController.supportCase);
+router.get('/operations/support/cases/:id', requirePermission(PERMISSIONS.SUPPORT_READ), responseContract(supportResponses.detail), operationsController.supportCase);
 router.patch('/operations/support/cases/:id/status', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.setSupportCaseStatus);
 router.patch('/operations/support/cases/:id/assignment', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.assignSupportCase);
 router.post('/operations/support/cases/:id/comments', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.addSupportComment);
