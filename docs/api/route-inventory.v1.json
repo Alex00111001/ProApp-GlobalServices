@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "d9f2621badde2f0349f380d9680c40e0bd35f6fc575ba15e160abce4633de2fa",
+  "sourceFingerprint": "ed8cdb7ff4c58285ba91f045dbc690b446182b78fd7d16b114c1efa1345418e8",
   "routes": [
     {
       "method": "GET",
@@ -19676,7 +19676,8 @@
       "auth": "ADMIN_BEARER",
       "middleware": [
         "authenticateAdmin",
-        "requirePermission(PERMISSIONS.HEALTH_READ)"
+        "requirePermission(PERMISSIONS.HEALTH_READ)",
+        "responseContract(operationsResponses.health)"
       ],
       "rateLimit": {
         "global": {
@@ -19708,7 +19709,115 @@
       ],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "adminOperations.health",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "object",
+              "properties": {
+                "checkedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                },
+                "service": {
+                  "type": "string"
+                },
+                "dependencies": {
+                  "type": "object",
+                  "properties": {
+                    "database": {
+                      "type": "object",
+                      "properties": {
+                        "service": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "HEALTHY",
+                            "DEGRADED",
+                            "OUTAGE"
+                          ]
+                        },
+                        "latencyMs": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "service",
+                        "status",
+                        "latencyMs"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "outbox": {
+                      "type": "object",
+                      "properties": {
+                        "service": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "HEALTHY",
+                            "DEGRADED",
+                            "OUTAGE"
+                          ]
+                        },
+                        "latencyMs": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "service",
+                        "status",
+                        "latencyMs"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "database",
+                    "outbox"
+                  ],
+                  "additionalProperties": false
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "HEALTHY",
+                    "DEGRADED"
+                  ]
+                }
+              },
+              "required": [
+                "checkedAt",
+                "service",
+                "dependencies",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": []
+          }
+        }
+      },
       "consumers": [
         "Admin Web"
       ],
@@ -21302,14 +21411,6 @@
                 "health": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "HEALTHY",
-                        "DEGRADED",
-                        "OUTAGE"
-                      ]
-                    },
                     "checkedAt": {
                       "type": "string",
                       "format": "date-time",
@@ -21387,13 +21488,21 @@
                         "outbox"
                       ],
                       "additionalProperties": false
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "HEALTHY",
+                        "DEGRADED",
+                        "OUTAGE"
+                      ]
                     }
                   },
                   "required": [
-                    "status",
                     "checkedAt",
                     "service",
-                    "dependencies"
+                    "dependencies",
+                    "status"
                   ],
                   "additionalProperties": false
                 },
@@ -59545,6 +59654,115 @@
         }
       }
     },
+    "GET /api/v1/admin/operations/health": {
+      "operationId": "adminOperations.health",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "checkedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              "service": {
+                "type": "string"
+              },
+              "dependencies": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": "object",
+                    "properties": {
+                      "service": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "HEALTHY",
+                          "DEGRADED",
+                          "OUTAGE"
+                        ]
+                      },
+                      "latencyMs": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "service",
+                      "status",
+                      "latencyMs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "outbox": {
+                    "type": "object",
+                    "properties": {
+                      "service": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "HEALTHY",
+                          "DEGRADED",
+                          "OUTAGE"
+                        ]
+                      },
+                      "latencyMs": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "service",
+                      "status",
+                      "latencyMs"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "database",
+                  "outbox"
+                ],
+                "additionalProperties": false
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "HEALTHY",
+                  "DEGRADED"
+                ]
+              }
+            },
+            "required": [
+              "checkedAt",
+              "service",
+              "dependencies",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": []
+        }
+      }
+    },
     "GET /api/v1/admin/operations/health/snapshots": {
       "operationId": "adminOperations.healthSnapshots",
       "complete": true,
@@ -60675,14 +60893,6 @@
               "health": {
                 "type": "object",
                 "properties": {
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "HEALTHY",
-                      "DEGRADED",
-                      "OUTAGE"
-                    ]
-                  },
                   "checkedAt": {
                     "type": "string",
                     "format": "date-time",
@@ -60760,13 +60970,21 @@
                       "outbox"
                     ],
                     "additionalProperties": false
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "HEALTHY",
+                      "DEGRADED",
+                      "OUTAGE"
+                    ]
                   }
                 },
                 "required": [
-                  "status",
                   "checkedAt",
                   "service",
-                  "dependencies"
+                  "dependencies",
+                  "status"
                 ],
                 "additionalProperties": false
               },

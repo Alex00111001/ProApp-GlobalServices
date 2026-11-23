@@ -159,6 +159,13 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.equal(operationsBody.automation.manualReplayEnabled, false);
     assert.equal(typeof operationsBody.aiOperations.executions, 'object');
     assert.equal(operationsBody.aiOperations.autonomousSensitiveActions, false);
+    const currentHealthResponse = await fetch(`${baseUrl}/operations/health`, {
+      headers: { authorization: `Bearer ${session.accessToken}` },
+    });
+    assert.equal(currentHealthResponse.status, 200);
+    const currentHealth = await currentHealthResponse.json();
+    assert.ok(['HEALTHY', 'DEGRADED'].includes(currentHealth.status));
+    assert.deepEqual(Object.keys(currentHealth.dependencies).sort(), ['database', 'outbox']);
     assert.equal(operationsBody.financialAttention.latestReconciliation === null || typeof operationsBody.financialAttention.latestReconciliation.id === 'string', true);
 
     for (const path of ['/operations/errors', '/operations/incidents']) {
