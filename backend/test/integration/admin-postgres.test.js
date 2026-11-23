@@ -300,7 +300,17 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.ok(legacyIncidents.every((item) => !Object.hasOwn(item, 'deduplicationKey')));
     const legacyDetail = await fetch(`${legacyPath}/${incidentIds[0]}`, { headers: legacyHeaders });
     assert.equal(legacyDetail.status, 200);
-    assert.equal(Object.hasOwn((await legacyDetail.json()).incident, 'deduplicationKey'), false);
+    const { incident: legacyIncident } = await legacyDetail.json();
+    assert.equal(Object.hasOwn(legacyIncident, 'deduplicationKey'), false);
+    assert.ok(legacyIncident.events.some(({ eventType }) => eventType === 'STATUS_CHANGED'));
+    assert.ok(legacyIncident.events.every((event) => !Object.hasOwn(event, 'metadata')));
+    const legacyError = await fetch(`${baseUrl.replace('/api/v1/admin', '/api/admin')}/operations/errors/${group.id}`, {
+      headers: legacyHeaders,
+    });
+    assert.equal(legacyError.status, 200);
+    const { errorGroup: legacyErrorGroup } = await legacyError.json();
+    assert.deepEqual(legacyErrorGroup.incidents.map(({ id }) => id), [incidentIds[0]]);
+    assert.equal(Object.hasOwn(legacyErrorGroup.incidents[0], 'deduplicationKey'), false);
     const legacyDuplicate = await fetch(`${legacyPath}/${incidentIds[0]}/status`, {
       method: 'PATCH', headers: legacyHeaders,
       body: JSON.stringify({ status: 'INVESTIGATING', reason: 'Repeat synthetic incident transition' }),
