@@ -17,6 +17,7 @@ test('pagination evidence is projected without changing canonical parameters or 
     '/api/v1/admin/growth/campaigns': 'growth-postgres',
     '/api/v1/admin/operations/errors': 'admin-postgres',
     '/api/v1/admin/operations/incidents': 'admin-postgres',
+    '/api/v1/admin/operations/support/cases': 'admin-postgres',
   };
   for (const [path, fixture] of Object.entries(paths)) {
     const operation = api.paths[path].get;

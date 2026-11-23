@@ -30672,6 +30672,16 @@
                 "policy": "STRIP"
               }
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+              "Bracketed keys such as limit[] are stripped as unknown keys.",
+              "Search is trimmed before enforcing its bounds. Omitted filters stay absent.",
+              "Status and priority use exact enum values. An assignee filter requires a UUID."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
+            ],
             "wireParity": "UNPROVEN"
           }
         ]
