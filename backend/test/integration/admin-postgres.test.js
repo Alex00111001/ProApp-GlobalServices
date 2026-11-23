@@ -11,6 +11,7 @@ const http = require('node:http');
 const { createHash } = require('node:crypto');
 const prisma = require('../../src/config/prisma');
 const app = require('../../src/app');
+const { generateToken } = require('../../src/middleware/auth');
 const { hashPassword } = require('../../src/utils/password');
 const { bootstrapRbac } = require('../../src/modules/identity/bootstrap-rbac');
 const { authenticateAdminToken, createAdminSession, refreshAdminSession } = require('../../src/modules/identity/admin-session.service');
@@ -35,7 +36,12 @@ test.before(async () => {
 });
 
 test.after(async () => {
-  if (incidentIds.length) await prisma.incident.deleteMany({ where: { id: { in: incidentIds } } });
+  if (incidentIds.length) {
+    const incidentEvents = { aggregateType: 'Incident', aggregateId: { in: incidentIds } };
+    await prisma.automationEventDelivery.deleteMany({ where: { sourceEvent: incidentEvents } });
+    await prisma.outboxEvent.deleteMany({ where: incidentEvents });
+    await prisma.incident.deleteMany({ where: { id: { in: incidentIds } } });
+  }
   if (errorGroupId) await prisma.errorGroup.deleteMany({ where: { id: errorGroupId } });
   if (changeId) await prisma.adminRoleChangeRequest.deleteMany({ where: { id: changeId } });
   if (supportCaseId) {
@@ -188,6 +194,7 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     for (const errorGroupId of [group.id, null]) {
       const incident = await prisma.incident.create({ data: {
         title: 'Synthetic incident fixture', service: runId, detectedAt: fixtureTime, errorGroupId,
+        deduplicationKey: errorGroupId ? `private-recovery-fixture:${runId}` : null,
       } });
       incidentIds.push(incident.id);
     }
@@ -237,6 +244,67 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     const { incident: incidentDetail } = await incidentDetailResponse.json();
     assert.equal(incidentDetail.errorGroup.id, group.id);
     assert.equal(incidentDetail.comments[0].author, null);
+
+    const incidentPath = `${baseUrl}/operations/incidents/${incidentIds[0]}`;
+    const operatorHeaders = { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' };
+    let transitionedIncident;
+    for (const duplicate of [false, true]) {
+      const response = await fetch(`${incidentPath}/status`, {
+        method: 'PATCH', headers: operatorHeaders,
+        body: JSON.stringify({ status: 'INVESTIGATING', reason: 'Investigate the synthetic incident' }),
+      });
+      assert.equal(response.status, 200);
+      const result = await response.json();
+      assert.equal(result.duplicate, duplicate);
+      assert.equal(result.incident.status, 'INVESTIGATING');
+      assert.equal(result.incident.errorGroupId, group.id);
+      assert.equal(result.incident.assigneeId, null);
+      assert.equal(Object.hasOwn(result.incident, 'deduplicationKey'), false);
+      assert.equal(new Date(result.incident.acknowledgedAt).toISOString(), result.incident.acknowledgedAt);
+      if (duplicate) assert.deepEqual(result.incident, transitionedIncident);
+      transitionedIncident = result.incident;
+    }
+    const noteResponse = await fetch(`${incidentPath}/comments`, {
+      method: 'POST', headers: operatorHeaders, body: JSON.stringify({ body: ' Synthetic operations note ' }),
+    });
+    assert.equal(noteResponse.status, 201);
+    const { comment: incidentNote } = await noteResponse.json();
+    assert.equal(incidentNote.incidentId, incidentIds[0]);
+    assert.equal(incidentNote.authorId, operator.id);
+    assert.equal(incidentNote.body, 'Synthetic operations note');
+
+    const legacyPath = `${baseUrl.replace('/api/v1/admin', '/api/admin')}/operations/incidents`;
+    const legacyHeaders = {
+      authorization: `Bearer ${generateToken({ userId: operator.id, role: operator.role })}`,
+      'content-type': 'application/json',
+    };
+    const legacyList = await fetch(legacyPath, { headers: legacyHeaders });
+    assert.equal(legacyList.status, 200);
+    const { incidents: legacyIncidents } = await legacyList.json();
+    assert.ok(legacyIncidents.some(({ id }) => id === incidentIds[0]));
+    assert.ok(legacyIncidents.every((item) => !Object.hasOwn(item, 'deduplicationKey')));
+    const legacyDetail = await fetch(`${legacyPath}/${incidentIds[0]}`, { headers: legacyHeaders });
+    assert.equal(legacyDetail.status, 200);
+    const { incident: legacyIncident } = await legacyDetail.json();
+    assert.equal(Object.hasOwn(legacyIncident, 'deduplicationKey'), false);
+    assert.ok(legacyIncident.events.some(({ eventType }) => eventType === 'STATUS_CHANGED'));
+    assert.ok(legacyIncident.events.every((event) => !Object.hasOwn(event, 'metadata')));
+    const legacyError = await fetch(`${baseUrl.replace('/api/v1/admin', '/api/admin')}/operations/errors/${group.id}`, {
+      headers: legacyHeaders,
+    });
+    assert.equal(legacyError.status, 200);
+    const { errorGroup: legacyErrorGroup } = await legacyError.json();
+    assert.deepEqual(legacyErrorGroup.incidents.map(({ id }) => id), [incidentIds[0]]);
+    assert.equal(Object.hasOwn(legacyErrorGroup.incidents[0], 'deduplicationKey'), false);
+    const legacyDuplicate = await fetch(`${legacyPath}/${incidentIds[0]}/status`, {
+      method: 'PATCH', headers: legacyHeaders,
+      body: JSON.stringify({ status: 'INVESTIGATING', reason: 'Repeat synthetic incident transition' }),
+    });
+    assert.equal(legacyDuplicate.status, 200);
+    assert.deepEqual(await legacyDuplicate.json(), { incident: transitionedIncident, duplicate: true });
+    assert.equal((await prisma.incident.findUniqueOrThrow({
+      where: { id: incidentIds[0] }, select: { deduplicationKey: true },
+    })).deduplicationKey, `private-recovery-fixture:${runId}`);
 
     const orderedIds = [...incidentIds].sort().reverse();
     for (const [index, id] of orderedIds.entries()) {

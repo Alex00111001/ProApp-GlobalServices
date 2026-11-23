@@ -69,7 +69,7 @@ router.get('/errors/:id', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async
           requestId: true, correlationId: true, traceId: true, appVersion: true,
         },
       },
-      incidents: { take: 20, orderBy: { detectedAt: 'desc' } },
+      incidents: { take: 20, orderBy: { detectedAt: 'desc' }, omit: { deduplicationKey: true } },
     },
   });
   if (!errorGroup) return res.status(404).json({ error: 'Error group not found', code: 'ERROR_GROUP_NOT_FOUND' });
@@ -104,6 +104,7 @@ router.get('/incidents', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async 
     },
     take: query.limit,
     orderBy: { detectedAt: 'desc' },
+    omit: { deduplicationKey: true },
     include: { errorGroup: true, _count: { select: { events: true, comments: true } } },
   });
   res.json({ incidents });
@@ -112,9 +113,10 @@ router.get('/incidents', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async 
 router.get('/incidents/:id', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async (req, res) => {
   const incident = await prisma.incident.findUnique({
     where: { id: idSchema.parse(req.params.id) },
+    omit: { deduplicationKey: true },
     include: {
       errorGroup: true,
-      events: { take: 200, orderBy: { createdAt: 'desc' } },
+      events: { take: 200, orderBy: { createdAt: 'desc' }, omit: { metadata: true } },
       comments: { take: 200, orderBy: { createdAt: 'desc' }, select: { id: true, authorId: true, body: true, createdAt: true, updatedAt: true } },
     },
   });
@@ -134,7 +136,8 @@ router.patch('/incidents/:id/status', requirePermission(PERMISSIONS.INCIDENTS_MA
     reason: input.reason,
     context: req.context,
   });
-  res.json(result);
+  const { deduplicationKey, ...incident } = result.incident;
+  res.json({ ...result, incident });
 });
 
 router.post('/incidents/:id/comments', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), async (req, res) => {
