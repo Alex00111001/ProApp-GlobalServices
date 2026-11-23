@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "83d31e89f3559a3438497f8aa90a97e2f06ad37aff7e20e4f5216cade2a3c409",
+  "sourceFingerprint": "3fd5f9bde52bbe20efc1f4d886524a58d6a8323f85fdd36e7b772c0bb20a85c7",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -5004,6 +5004,13 @@
             ],
             "semanticReviewRequired": true,
             "semanticFacts": [],
+            "observedSemantics": [
+              "Marketing consent requires policy id/version together",
+              "Supplying either policy id or version requires the other"
+            ],
+            "observedEvidence": [
+              "backend/test/input-authority.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -8662,7 +8669,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "eventSchema",
-            "line": 13
+            "line": 14
           },
           "key": "backend/src/routes/event.routes.js#eventSchema",
           "semanticClasses": [
@@ -12216,7 +12223,7 @@
       "path": "/api/v1/admin/ai/costs",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 158
+        "line": 161
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -12309,7 +12316,7 @@
       "path": "/api/v1/admin/ai/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 157
+        "line": 160
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -12411,7 +12418,7 @@
       "path": "/api/v1/admin/ai/executions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 155
+        "line": 158
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -12529,7 +12536,7 @@
       "path": "/api/v1/admin/ai/executions/{id}/approvals",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 156
+        "line": 159
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -12793,7 +12800,7 @@
       "path": "/api/v1/admin/ai/model-policies/{id}/activate",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 148
+        "line": 151
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13014,7 +13021,7 @@
       "path": "/api/v1/admin/ai/model-policies/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 147
+        "line": 150
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13251,7 +13258,7 @@
       "path": "/api/v1/admin/ai/operation-versions/{id}/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 152
+        "line": 155
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13500,7 +13507,7 @@
       "path": "/api/v1/admin/ai/operations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 149
+        "line": 152
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13613,7 +13620,7 @@
       "path": "/api/v1/admin/ai/operations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 150
+        "line": 153
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13849,7 +13856,7 @@
       "path": "/api/v1/admin/ai/operations/{id}/activate",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 153
+        "line": 156
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14070,7 +14077,7 @@
       "path": "/api/v1/admin/ai/operations/{id}/executions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 154
+        "line": 157
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14266,7 +14273,7 @@
       "path": "/api/v1/admin/ai/prompts/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 151
+        "line": 154
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14503,7 +14510,7 @@
       "path": "/api/v1/admin/ai/providers",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 143
+        "line": 146
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14616,7 +14623,7 @@
       "path": "/api/v1/admin/ai/providers",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 144
+        "line": 147
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14821,7 +14828,7 @@
       "path": "/api/v1/admin/ai/providers/{id}/model-policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 146
+        "line": 149
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -15110,7 +15117,7 @@
       "path": "/api/v1/admin/ai/providers/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 145
+        "line": 148
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -15351,7 +15358,7 @@
       "path": "/api/v1/admin/attribution/conversions/{id}/calculate",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 85
+        "line": 88
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15497,7 +15504,7 @@
       "path": "/api/v1/admin/attribution/models",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 80
+        "line": 83
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15637,7 +15644,7 @@
       "path": "/api/v1/admin/attribution/models",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 81
+        "line": 84
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15779,7 +15786,7 @@
       "path": "/api/v1/admin/attribution/models/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 82
+        "line": 85
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15933,7 +15940,7 @@
       "path": "/api/v1/admin/attribution/models/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 83
+        "line": 86
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -16140,7 +16147,7 @@
       "path": "/api/v1/admin/attribution/results",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 84
+        "line": 87
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -16280,7 +16287,7 @@
       "path": "/api/v1/admin/audit",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 160
+        "line": 163
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -16420,7 +16427,7 @@
       "path": "/api/v1/admin/auth/login",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 31
+        "line": 34
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -16566,7 +16573,7 @@
       "path": "/api/v1/admin/auth/logout",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 36
+        "line": 39
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -16675,7 +16682,7 @@
       "path": "/api/v1/admin/auth/me",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 35
+        "line": 38
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -16791,7 +16798,7 @@
       "path": "/api/v1/admin/auth/refresh",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 32
+        "line": 35
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -16900,7 +16907,7 @@
       "path": "/api/v1/admin/auth/sessions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 37
+        "line": 40
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -17009,7 +17016,7 @@
       "path": "/api/v1/admin/auth/sessions/{id}/revoke",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 38
+        "line": 41
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -17245,7 +17252,7 @@
       "path": "/api/v1/admin/automation/dead-letter",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 102
+        "line": 105
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -17280,7 +17287,7 @@
       "path": "/api/v1/admin/automation/definitions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 97
+        "line": 100
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -17413,7 +17420,7 @@
       "path": "/api/v1/admin/automation/definitions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 98
+        "line": 101
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -17660,7 +17667,7 @@
       "path": "/api/v1/admin/automation/definitions/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 100
+        "line": 103
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -17918,7 +17925,7 @@
       "path": "/api/v1/admin/automation/definitions/{id}/versions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 99
+        "line": 102
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -18185,7 +18192,7 @@
       "path": "/api/v1/admin/automation/executions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 101
+        "line": 104
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -18220,7 +18227,7 @@
       "path": "/api/v1/admin/bookings",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 55
+        "line": 58
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -18356,7 +18363,7 @@
       "path": "/api/v1/admin/bookings/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 56
+        "line": 59
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -18418,7 +18425,7 @@
       "path": "/api/v1/admin/content",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 119
+        "line": 122
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -18552,7 +18559,7 @@
       "path": "/api/v1/admin/content",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 120
+        "line": 123
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -18697,7 +18704,7 @@
       "path": "/api/v1/admin/content/{id}/versions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 121
+        "line": 124
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -18963,7 +18970,7 @@
       "path": "/api/v1/admin/content/publications/{id}/retire",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 125
+        "line": 128
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -19184,7 +19191,7 @@
       "path": "/api/v1/admin/content/versions/{id}/publish",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 124
+        "line": 127
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -19362,7 +19369,7 @@
       "path": "/api/v1/admin/content/versions/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 123
+        "line": 126
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -19599,7 +19606,7 @@
       "path": "/api/v1/admin/content/versions/{id}/submit",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 122
+        "line": 125
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -19719,7 +19726,7 @@
       "path": "/api/v1/admin/dashboard",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 40
+        "line": 43
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -19837,7 +19844,7 @@
       "path": "/api/v1/admin/expansion",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 138
+        "line": 141
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -19958,7 +19965,7 @@
       "path": "/api/v1/admin/expansion",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 139
+        "line": 142
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20176,7 +20183,7 @@
       "path": "/api/v1/admin/expansion/{id}/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 140
+        "line": 143
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20322,7 +20329,7 @@
       "path": "/api/v1/admin/expansion/evaluations/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 141
+        "line": 144
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20559,7 +20566,7 @@
       "path": "/api/v1/admin/experiments",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 114
+        "line": 117
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -20681,7 +20688,7 @@
       "path": "/api/v1/admin/experiments",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 115
+        "line": 118
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -20844,7 +20851,7 @@
       "path": "/api/v1/admin/experiments/{id}/results",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 118
+        "line": 121
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -20985,7 +20992,7 @@
       "path": "/api/v1/admin/experiments/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 117
+        "line": 120
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -21247,7 +21254,7 @@
       "path": "/api/v1/admin/experiments/{id}/versions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 116
+        "line": 119
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -21424,7 +21431,7 @@
       "path": "/api/v1/admin/geography/divisions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 108
+        "line": 111
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -21545,7 +21552,7 @@
       "path": "/api/v1/admin/geography/imports",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 106
+        "line": 109
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -21651,7 +21658,7 @@
       "path": "/api/v1/admin/geography/imports",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 107
+        "line": 110
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -21739,7 +21746,7 @@
       "path": "/api/v1/admin/growth/campaigns",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 65
+        "line": 68
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -21777,7 +21784,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "campaignListQuerySchema",
-            "line": 84
+            "line": 85
           },
           "key": "backend/src/controllers/admin-growth.controller.js#campaignListQuerySchema",
           "semanticClasses": [
@@ -21839,6 +21846,14 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before Zod number coercion. Numeric strings such as 2.0, 2e1 and 0x10 are accepted.",
+              "Bracketed keys such as limit[] are stripped as unknown keys."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/growth-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -21846,7 +21861,7 @@
               }
             ],
             "runtimeValidationDigest": "cbc529eb724979dbd156504e2089a8694321dc11ba29fcd9e17a0eb532bcea57",
-            "runtimeSourceDigest": "cc9857d4ae61683bd97f90d0e2d09ee679cee4011280993b600b58a9ade5e257"
+            "runtimeSourceDigest": "8c67335b7f2d58553755c386fd56946c7509f4e9f4d86baaff0544489ba05c4f"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -21868,7 +21883,7 @@
       "path": "/api/v1/admin/growth/campaigns",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 66
+        "line": 69
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -21906,7 +21921,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "campaignCreateSchema",
-            "line": 56
+            "line": 57
           },
           "key": "backend/src/controllers/admin-growth.controller.js#campaignCreateSchema",
           "semanticClasses": [
@@ -22072,7 +22087,7 @@
       "path": "/api/v1/admin/growth/campaigns/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 67
+        "line": 70
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22110,7 +22125,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "campaignUpdateSchema",
-            "line": 68
+            "line": 69
           },
           "key": "backend/src/controllers/admin-growth.controller.js#campaignUpdateSchema",
           "semanticClasses": [
@@ -22243,7 +22258,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-growth.controller.js#idSchema",
           "semanticClasses": [
@@ -22362,7 +22377,7 @@
       "path": "/api/v1/admin/growth/campaigns/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 68
+        "line": 71
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22400,7 +22415,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "campaignStatusSchema",
-            "line": 79
+            "line": 80
           },
           "key": "backend/src/controllers/admin-growth.controller.js#campaignStatusSchema",
           "semanticClasses": [
@@ -22467,7 +22482,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-growth.controller.js#idSchema",
           "semanticClasses": [
@@ -22586,7 +22601,7 @@
       "path": "/api/v1/admin/growth/conversions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 70
+        "line": 73
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22624,7 +22639,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "conversionListQuerySchema",
-            "line": 96
+            "line": 105
           },
           "key": "backend/src/controllers/admin-growth.controller.js#conversionListQuerySchema",
           "semanticClasses": [
@@ -22716,7 +22731,7 @@
       "path": "/api/v1/admin/growth/funnel",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 64
+        "line": 67
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22754,7 +22769,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "rangeQuerySchema",
-            "line": 48
+            "line": 49
           },
           "key": "backend/src/controllers/admin-growth.controller.js#rangeQuerySchema",
           "semanticClasses": [
@@ -22838,7 +22853,7 @@
       "path": "/api/v1/admin/growth/leads",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 69
+        "line": 72
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22876,7 +22891,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "leadListQuerySchema",
-            "line": 90
+            "line": 99
           },
           "key": "backend/src/controllers/admin-growth.controller.js#leadListQuerySchema",
           "semanticClasses": [
@@ -22967,7 +22982,7 @@
       "path": "/api/v1/admin/growth/overview",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 63
+        "line": 66
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -23005,7 +23020,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "rangeQuerySchema",
-            "line": 48
+            "line": 49
           },
           "key": "backend/src/controllers/admin-growth.controller.js#rangeQuerySchema",
           "semanticClasses": [
@@ -23089,7 +23104,7 @@
       "path": "/api/v1/admin/identity/documents",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 112
+        "line": 115
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23192,7 +23207,7 @@
       "path": "/api/v1/admin/identity/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 109
+        "line": 112
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23320,7 +23335,7 @@
       "path": "/api/v1/admin/identity/policies/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 110
+        "line": 113
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23586,7 +23601,7 @@
       "path": "/api/v1/admin/identity/policies/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 111
+        "line": 114
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23840,7 +23855,7 @@
       "path": "/api/v1/admin/markets",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 104
+        "line": 107
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23957,7 +23972,7 @@
       "path": "/api/v1/admin/markets/{marketCode}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 105
+        "line": 108
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -24181,7 +24196,7 @@
       "path": "/api/v1/admin/operations/alerts",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 180
+        "line": 183
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24219,7 +24234,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "alertListQuerySchema",
-            "line": 30
+            "line": 41
           },
           "key": "backend/src/controllers/admin-operations.controller.js#alertListQuerySchema",
           "semanticClasses": [
@@ -24303,7 +24318,7 @@
       "path": "/api/v1/admin/operations/errors",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 171
+        "line": 174
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24341,7 +24356,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "errorListQuerySchema",
-            "line": 10
+            "line": 21
           },
           "key": "backend/src/controllers/admin-operations.controller.js#errorListQuerySchema",
           "semanticClasses": [
@@ -24410,6 +24425,14 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+              "Bracketed keys such as limit[] are stripped as unknown keys."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -24417,7 +24440,7 @@
               }
             ],
             "runtimeValidationDigest": "a7fc6c31fb993cbb5703606a068451eb31a0cdb9f7b1c184457e947621086cb4",
-            "runtimeSourceDigest": "0362fcafc21ed59e6cfb1df20628d48d83d4c2de84ee07e8d5731978662e9733"
+            "runtimeSourceDigest": "e27f45b5f01aa6348b86bbc2cba7d8d6463de8d99e7a6c4ec2ed77eec7e970f1"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -24439,7 +24462,7 @@
       "path": "/api/v1/admin/operations/errors/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 172
+        "line": 175
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24477,7 +24500,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -24533,7 +24556,7 @@
       "path": "/api/v1/admin/operations/errors/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 173
+        "line": 176
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24577,7 +24600,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "errorStatusSchema",
-            "line": 34
+            "line": 45
           },
           "key": "backend/src/controllers/admin-operations.controller.js#errorStatusSchema",
           "semanticClasses": [
@@ -24688,7 +24711,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -24807,7 +24830,7 @@
       "path": "/api/v1/admin/operations/financial-monitoring",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 181
+        "line": 184
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24842,7 +24865,7 @@
       "path": "/api/v1/admin/operations/health",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 169
+        "line": 172
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24877,7 +24900,7 @@
       "path": "/api/v1/admin/operations/health/snapshots",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 170
+        "line": 173
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24915,7 +24938,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "healthSnapshotQuerySchema",
-            "line": 31
+            "line": 42
           },
           "key": "backend/src/controllers/admin-operations.controller.js#healthSnapshotQuerySchema",
           "semanticClasses": [
@@ -24989,7 +25012,7 @@
       "path": "/api/v1/admin/operations/incidents",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 174
+        "line": 177
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25027,7 +25050,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "incidentListQuerySchema",
-            "line": 17
+            "line": 28
           },
           "key": "backend/src/controllers/admin-operations.controller.js#incidentListQuerySchema",
           "semanticClasses": [
@@ -25098,6 +25121,14 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+              "Bracketed keys such as limit[] are stripped as unknown keys."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -25105,7 +25136,7 @@
               }
             ],
             "runtimeValidationDigest": "2054dba63d7d2cdb2d137e2a7efe9b9e045602a484e78f94f6f4a89c8b9071b7",
-            "runtimeSourceDigest": "6969df3ce94051bd158a341d22f32af9dab81a77b03deeb1ff951c58ece0a34e"
+            "runtimeSourceDigest": "83df555de53f0d3f83502bfc9834cd7feb4c7f158dc4c5c3820b4122836092c0"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -25127,7 +25158,7 @@
       "path": "/api/v1/admin/operations/incidents/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 175
+        "line": 178
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25165,7 +25196,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -25221,7 +25252,7 @@
       "path": "/api/v1/admin/operations/incidents/{id}/comments",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 177
+        "line": 180
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25265,7 +25296,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "incidentCommentSchema",
-            "line": 42
+            "line": 53
           },
           "key": "backend/src/controllers/admin-operations.controller.js#incidentCommentSchema",
           "semanticClasses": [
@@ -25356,7 +25387,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -25475,7 +25506,7 @@
       "path": "/api/v1/admin/operations/incidents/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 176
+        "line": 179
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25519,7 +25550,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "incidentStatusSchema",
-            "line": 38
+            "line": 49
           },
           "key": "backend/src/controllers/admin-operations.controller.js#incidentStatusSchema",
           "semanticClasses": [
@@ -25634,7 +25665,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -25753,7 +25784,7 @@
       "path": "/api/v1/admin/operations/integrations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 179
+        "line": 182
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25791,7 +25822,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "integrationListQuerySchema",
-            "line": 29
+            "line": 40
           },
           "key": "backend/src/controllers/admin-operations.controller.js#integrationListQuerySchema",
           "semanticClasses": [
@@ -25875,7 +25906,7 @@
       "path": "/api/v1/admin/operations/jobs",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 178
+        "line": 181
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25913,7 +25944,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "jobListQuerySchema",
-            "line": 28
+            "line": 39
           },
           "key": "backend/src/controllers/admin-operations.controller.js#jobListQuerySchema",
           "semanticClasses": [
@@ -25997,7 +26028,7 @@
       "path": "/api/v1/admin/operations/metrics",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 168
+        "line": 171
       },
       "controller": {
         "file": "backend/src/modules/observability/metrics.js",
@@ -26021,7 +26052,7 @@
       "path": "/api/v1/admin/operations/overview",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 167
+        "line": 170
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26056,7 +26087,7 @@
       "path": "/api/v1/admin/operations/support/cases",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 183
+        "line": 186
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26094,7 +26125,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseListQuerySchema",
-            "line": 43
+            "line": 54
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseListQuerySchema",
           "semanticClasses": [
@@ -26193,7 +26224,7 @@
       "path": "/api/v1/admin/operations/support/cases",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 184
+        "line": 187
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26231,7 +26262,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseCreateSchema",
-            "line": 50
+            "line": 61
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseCreateSchema",
           "semanticClasses": [
@@ -26387,7 +26418,7 @@
       "path": "/api/v1/admin/operations/support/cases/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 185
+        "line": 188
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26425,7 +26456,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -26481,7 +26512,7 @@
       "path": "/api/v1/admin/operations/support/cases/{id}/assignment",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 187
+        "line": 190
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26525,7 +26556,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseAssignmentSchema",
-            "line": 62
+            "line": 73
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseAssignmentSchema",
           "semanticClasses": [
@@ -26642,7 +26673,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -26761,7 +26792,7 @@
       "path": "/api/v1/admin/operations/support/cases/{id}/comments",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 188
+        "line": 191
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26805,7 +26836,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseCommentSchema",
-            "line": 63
+            "line": 74
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseCommentSchema",
           "semanticClasses": [
@@ -26896,7 +26927,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -27015,7 +27046,7 @@
       "path": "/api/v1/admin/operations/support/cases/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 186
+        "line": 189
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -27059,7 +27090,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseStatusSchema",
-            "line": 58
+            "line": 69
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseStatusSchema",
           "semanticClasses": [
@@ -27174,7 +27205,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -27293,7 +27324,7 @@
       "path": "/api/v1/admin/operations/support/operators",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 182
+        "line": 185
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -27328,7 +27359,7 @@
       "path": "/api/v1/admin/privacy/consents",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 77
+        "line": 80
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -27468,7 +27499,7 @@
       "path": "/api/v1/admin/privacy/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 72
+        "line": 75
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -27608,7 +27639,7 @@
       "path": "/api/v1/admin/privacy/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 73
+        "line": 76
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -27783,7 +27814,7 @@
       "path": "/api/v1/admin/privacy/policies/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 74
+        "line": 77
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -27949,7 +27980,7 @@
       "path": "/api/v1/admin/privacy/policies/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 75
+        "line": 78
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -28158,7 +28189,7 @@
       "path": "/api/v1/admin/privacy/policies/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 76
+        "line": 79
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -28365,7 +28396,7 @@
       "path": "/api/v1/admin/privacy/touchpoints",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 79
+        "line": 82
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -28505,7 +28536,7 @@
       "path": "/api/v1/admin/privacy/withdrawals",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 78
+        "line": 81
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -28645,7 +28676,7 @@
       "path": "/api/v1/admin/professionals",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 46
+        "line": 49
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -28771,7 +28802,7 @@
       "path": "/api/v1/admin/professionals/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 47
+        "line": 50
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -28833,7 +28864,7 @@
       "path": "/api/v1/admin/professionals/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 53
+        "line": 56
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -29036,7 +29067,7 @@
       "path": "/api/v1/admin/readiness/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 136
+        "line": 139
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29155,7 +29186,7 @@
       "path": "/api/v1/admin/readiness/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 137
+        "line": 140
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29254,7 +29285,7 @@
       "path": "/api/v1/admin/readiness/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 132
+        "line": 135
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29362,7 +29393,7 @@
       "path": "/api/v1/admin/readiness/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 133
+        "line": 136
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29576,7 +29607,7 @@
       "path": "/api/v1/admin/readiness/policies/{id}/activate",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 135
+        "line": 138
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29797,7 +29828,7 @@
       "path": "/api/v1/admin/readiness/policies/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 134
+        "line": 137
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -30034,7 +30065,7 @@
       "path": "/api/v1/admin/referrals/codes",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 91
+        "line": 94
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30069,7 +30100,7 @@
       "path": "/api/v1/admin/referrals/conversions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 93
+        "line": 96
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30104,7 +30135,7 @@
       "path": "/api/v1/admin/referrals/programs",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 87
+        "line": 90
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30237,7 +30268,7 @@
       "path": "/api/v1/admin/referrals/programs",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 88
+        "line": 91
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30519,7 +30550,7 @@
       "path": "/api/v1/admin/referrals/programs/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 90
+        "line": 93
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30791,7 +30822,7 @@
       "path": "/api/v1/admin/referrals/programs/{id}/versions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 89
+        "line": 92
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -31083,7 +31114,7 @@
       "path": "/api/v1/admin/referrals/referrals",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 92
+        "line": 95
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -31118,7 +31149,7 @@
       "path": "/api/v1/admin/referrals/rewards",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 94
+        "line": 97
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -31153,7 +31184,7 @@
       "path": "/api/v1/admin/referrals/rewards/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 95
+        "line": 98
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -31345,7 +31376,7 @@
       "path": "/api/v1/admin/role-change-requests",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 162
+        "line": 165
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31380,7 +31411,7 @@
       "path": "/api/v1/admin/role-change-requests",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 163
+        "line": 166
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31509,7 +31540,7 @@
       "path": "/api/v1/admin/role-change-requests/{id}/approve",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 164
+        "line": 167
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31690,7 +31721,7 @@
       "path": "/api/v1/admin/role-change-requests/{id}/reject",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 165
+        "line": 168
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31871,7 +31902,7 @@
       "path": "/api/v1/admin/roles",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 161
+        "line": 164
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31906,7 +31937,7 @@
       "path": "/api/v1/admin/seo/redirects",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 126
+        "line": 129
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -32019,7 +32050,7 @@
       "path": "/api/v1/admin/seo/redirects",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 127
+        "line": 130
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -32166,7 +32197,7 @@
       "path": "/api/v1/admin/supply-demand/metrics",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 129
+        "line": 132
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -32270,7 +32301,7 @@
       "path": "/api/v1/admin/supply-demand/snapshots",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 130
+        "line": 133
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -32363,7 +32394,7 @@
       "path": "/api/v1/admin/supply-demand/snapshots",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 131
+        "line": 134
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -32482,7 +32513,7 @@
       "path": "/api/v1/admin/users",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 42
+        "line": 45
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -32622,7 +32653,7 @@
       "path": "/api/v1/admin/users/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 43
+        "line": 46
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -32684,7 +32715,7 @@
       "path": "/api/v1/admin/users/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 44
+        "line": 47
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",

@@ -129,10 +129,19 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
       'x-homeservices-auth': route.auth, 'x-homeservices-middleware': route.middleware,
       'x-homeservices-consumers': route.consumers, 'x-homeservices-domain-authority': route.domainAuthority,
       'x-homeservices-rate-limit': route.rateLimit, 'x-homeservices-runtime-source': route.registration,
-      'x-homeservices-input-bindings': route.validation.map((v) => ({ input: v.input,
-        semanticClasses: inventoryDocument.schemas[`${route.handler.file}#${v.schema}`]?.semanticClasses || [],
-        unknownFieldPolicies: inventoryDocument.schemas[`${route.handler.file}#${v.schema}`]?.unknownFieldPolicies || [],
-        wireParity: inventoryDocument.schemas[`${route.handler.file}#${v.schema}`]?.wireParity || 'UNPROVEN' })),
+      'x-homeservices-input-bindings': route.validation.map(({ input, schema }) => {
+        const binding = inventoryDocument.schemas[`${route.handler.file}#${schema}`];
+        return {
+          input,
+          semanticClasses: binding?.semanticClasses || [],
+          unknownFieldPolicies: binding?.unknownFieldPolicies || [],
+          ...(input.includes('req.query') && binding?.observedEvidence ? {
+            observedSemantics: binding.observedSemantics,
+            observedEvidence: binding.observedEvidence,
+          } : {}),
+          wireParity: binding?.wireParity || 'UNPROVEN',
+        };
+      }),
       ...(route.path.startsWith('/api/bookings') ? {
         'x-homeservices-runtime-derived': bookingInputContext.derived,
         ...(bookingInputContext.ignoredBodies.some((suffix) => route.path.endsWith(`/${suffix}`)) ? { 'x-homeservices-request-body': 'IGNORED_BY_RUNTIME_NOT_COMMAND_FIELDS' } : {}),

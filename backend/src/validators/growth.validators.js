@@ -1,4 +1,5 @@
 const { z } = require('zod');
+const { annotateInputSemantics } = require('../shared/http/input-contract');
 
 const eventId = z.string().trim().min(16).max(128).regex(/^[A-Za-z0-9._:-]+$/);
 const sourceId = z.string().min(1).max(128);
@@ -81,11 +82,19 @@ const campaignStatusSchema = z.object({
   reason,
 }).strict();
 
-const campaignListQuerySchema = z.object({
+const campaignListQuerySchema = annotateInputSemantics(z.object({
   ...pagination,
   status: z.enum(['DRAFT', 'ACTIVE', 'PAUSED', 'ARCHIVED']).optional(),
   search: optionalText(128),
   countryCode: countryCode.optional(),
+}), {
+  classes: ['NORMALIZATION'],
+  evidence: ['backend/test/integration/growth-postgres.test.js'],
+  semantics: [
+    'Omitted page and limit default to 1 and 25. Empty or repeated values fail.',
+    'Express decodes query values before Zod number coercion. Numeric strings such as 2.0, 2e1 and 0x10 are accepted.',
+    'Bracketed keys such as limit[] are stripped as unknown keys.',
+  ],
 });
 const leadListQuerySchema = z.object({
   ...pagination,

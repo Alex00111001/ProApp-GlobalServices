@@ -14,6 +14,35 @@ const { experimentSchemas } = require('../src/contracts/experiment.responses');
 const { publicContentResponses } = require('../src/contracts/public-content.responses');
 const { paymentResponses } = require('../src/contracts/payment.responses');
 const { bookingResponses } = require('../src/contracts/booking.responses');
+const { operationsResponses } = require('../src/contracts/operations.responses');
+
+test('operations list DTOs preserve null fields and dates while excluding internal fields', () => {
+  const time = new Date('2026-09-21T08:00:00.000Z');
+  const pagination = { page: 1, limit: 25, totalItems: 1, totalPages: 1 };
+  const group = {
+    id: 'group-1', fingerprint: 'fingerprint', errorCode: null, occurrenceCount: 3,
+    severity: 'ERROR', environment: 'test', service: 'core', module: null, operation: null,
+    normalizedMessage: 'Safe message', status: 'OPEN', firstSeenAt: time, lastSeenAt: time,
+    windowStartedAt: time, windowOccurrenceCount: 3, _count: { events: 3, incidents: 0 },
+  };
+  const incident = {
+    id: 'incident-1', title: 'Synthetic incident', description: null, status: 'OPEN',
+    severity: 'MEDIUM', service: null, detectedAt: time, acknowledgedAt: null,
+    resolvedAt: null, closedAt: null, updatedAt: time, errorGroup: null,
+    _count: { events: 1, comments: 0 },
+  };
+  for (const [contract, item] of [
+    [operationsResponses.errors, group],
+    [operationsResponses.incidents, incident],
+    [operationsResponses.incidents, {
+      ...incident, errorGroup: { id: group.id, fingerprint: group.fingerprint, errorCode: null, occurrenceCount: 3 },
+    }],
+  ]) {
+    const { schema, serialize } = contract.responses[200];
+    const input = { items: [{ ...item, privateContext: 'synthetic-internal-field' }], pagination };
+    assert.deepEqual(schema.parse(serialize(input)), JSON.parse(JSON.stringify({ items: [item], pagination })));
+  }
+});
 
 const request = async (handler) => {
   const app = express();
