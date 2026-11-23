@@ -206,8 +206,8 @@ const listAlertDeliveries = async ({ page, limit, status }, client = prisma) => 
   return {
     items: rows.map(({ payload, lastError, ...item }) => ({
       ...item,
-      route: typeof payload === 'object' && payload ? payload.route || null : null,
-      severity: typeof payload === 'object' && payload ? payload.severity || null : null,
+      route: typeof payload?.route === 'string' ? payload.route || null : null,
+      severity: typeof payload?.severity === 'string' ? payload.severity || null : null,
       hasError: Boolean(lastError),
     })),
     pagination: pageResult(page, limit, totalItems),

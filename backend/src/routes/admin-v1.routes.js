@@ -180,7 +180,7 @@ router.patch('/operations/incidents/:id/status', requirePermission(PERMISSIONS.I
 router.post('/operations/incidents/:id/comments', requirePermission(PERMISSIONS.INCIDENTS_MANAGE), operationsController.addIncidentComment);
 router.get('/operations/jobs', requirePermission(PERMISSIONS.JOBS_READ), responseContract(operationsResponses.jobs), operationsController.jobs);
 router.get('/operations/integrations', requirePermission(PERMISSIONS.INTEGRATIONS_READ), responseContract(operationsResponses.integrations), operationsController.integrations);
-router.get('/operations/alerts', requirePermission(PERMISSIONS.ALERTS_READ), operationsController.alerts);
+router.get('/operations/alerts', requirePermission(PERMISSIONS.ALERTS_READ), responseContract(operationsResponses.alerts), operationsController.alerts);
 router.get('/operations/financial-monitoring', requirePermission(PERMISSIONS.FINANCIAL_MONITORING_READ), operationsController.financialMonitoring);
 router.get('/operations/support/operators', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.supportOperators);
 router.get('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_READ), operationsController.supportCases);
