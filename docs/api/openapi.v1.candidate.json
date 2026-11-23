@@ -30697,13 +30697,11 @@
                 "properties": {
                   "subject": {
                     "type": "string",
-                    "minLength": 5,
-                    "maxLength": 200
+                    "pattern": "^\\s*(?:\\S[\\s\\S]{3,198}\\S)\\s*$"
                   },
                   "description": {
                     "type": "string",
-                    "minLength": 10,
-                    "maxLength": 10000
+                    "pattern": "^\\s*(?:\\S[\\s\\S]{8,9998}\\S)\\s*$"
                   },
                   "category": {
                     "type": "string",
@@ -30717,7 +30715,6 @@
                     ]
                   },
                   "priority": {
-                    "default": "MEDIUM",
                     "type": "string",
                     "enum": [
                       "LOW",
@@ -30743,10 +30740,20 @@
                   "category"
                 ],
                 "x-homeservices-runtime-semantics": [
-                  "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+                  "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
+                ],
+                "x-homeservices-input-classification": "NORMALIZATION",
+                "x-homeservices-normalization": [
+                  "Subject and description are trimmed before checking their Unicode length.",
+                  "Omitted priority defaults to MEDIUM. Explicit priority must match the supported enum.",
+                  "Unknown keys are accepted by the wire and stripped by the runtime object."
                 ],
                 "x-homeservices-semantic-classes": [
                   "NORMALIZATION"
+                ],
+                "x-homeservices-projection-kind": "ACCEPTED_WIRE",
+                "x-homeservices-evidence": [
+                  "backend/test/input-authority.test.js"
                 ],
                 "x-homeservices-unknown-fields": [
                   {
@@ -30824,7 +30831,7 @@
                 "policy": "STRIP"
               }
             ],
-            "wireParity": "UNPROVEN"
+            "wireParity": "NORMALIZATION"
           }
         ]
       }
@@ -40714,9 +40721,9 @@
     "unresolvedConsumerCalls": 0,
     "routeInputBindings": 247,
     "uniqueRouteInputSchemas": 176,
-    "unresolvedRouteInputProjections": 129,
+    "unresolvedRouteInputProjections": 128,
     "historicalStructuralOnlyUnresolved": 142,
-    "executedAcceptanceEquivalentBindings": 37,
+    "executedAcceptanceEquivalentBindings": 38,
     "structurallyRepresentedRuntimeRefinedBindings": 3,
     "unprovenCatalogSchemas": 242,
     "operationsWithoutCompleteResponseSchema": 184

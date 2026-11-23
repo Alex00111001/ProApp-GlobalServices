@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "b6890eea63f8108de284b5ceb0f1c5c6816362f24871885bee43b0969ff78edd",
+  "sourceFingerprint": "205d34604227c25455d3e71f6287d95f573a6027a46d12cefc9e7fb136e26fd1",
   "routes": [
     {
       "method": "GET",
@@ -32083,9 +32083,9 @@
           "category"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -32098,8 +32098,81 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "Subject and description are trimmed before checking their Unicode length.",
+        "Omitted priority defaults to MEDIUM. Explicit priority must match the supported enum.",
+        "Unknown keys are accepted by the wire and stripped by the runtime object."
+      ],
+      "evidence": [
+        "backend/test/input-authority.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "support.case-create",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{3,198}\\S)\\s*$"
+          },
+          "description": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,9998}\\S)\\s*$"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ACCOUNT",
+              "BOOKING",
+              "PAYMENT",
+              "PROFESSIONAL",
+              "SAFETY",
+              "OTHER"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "URGENT"
+            ]
+          },
+          "requesterUserId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "bookingId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "subject",
+          "description",
+          "category"
+        ]
+      },
       "runtimeValidationDigest": "fe86c69cf348cf39652b2b65a02b4056383ebd3b894c99870200bf2cdd45b913",
-      "runtimeSourceDigest": "24b59d71446b6ee599e1b27031b49e097b88c74381d7e3ed147d30efac796d4b"
+      "runtimeSourceDigest": "f806db42363620f6e4d95fdde9bf77390b0160c1303b484d9f9761f51afa508a",
+      "semanticEvidence": {
+        "status": "PASS",
+        "parityMode": "ACCEPTANCE_EQUIVALENT",
+        "cases": 10,
+        "refinementWitnesses": 0,
+        "normalizationResults": 3,
+        "caseDigest": "2b03c98934f00ed33a23edb31c68413303c80f7997ec7c568f884da78d560265",
+        "inputSurfaceResolved": true,
+        "scope": "VALIDATOR_INPUT_ONLY_NOT_AUTH_OR_DOMAIN_PROOF"
+      }
     },
     "backend/src/controllers/admin-operations.controller.js#supportCaseListQuerySchema": {
       "jsonSchema": {
@@ -38963,9 +39036,9 @@
           "category"
         ]
       },
-      "wireParity": "UNPROVEN",
+      "wireParity": "NORMALIZATION",
       "gaps": [
-        "NORMALIZATION_REQUIRES_WIRE_CONTRACT"
+        "NORMALIZATION_REQUIRES_SEMANTIC_EVIDENCE"
       ],
       "semanticClasses": [
         "NORMALIZATION"
@@ -38978,6 +39051,69 @@
           "policy": "STRIP"
         }
       ],
+      "bodyRequired": true,
+      "classification": "NORMALIZATION",
+      "normalization": [
+        "Subject and description are trimmed before checking their Unicode length.",
+        "Omitted priority defaults to MEDIUM. Explicit priority must match the supported enum.",
+        "Unknown keys are accepted by the wire and stripped by the runtime object."
+      ],
+      "evidence": [
+        "backend/test/input-authority.test.js"
+      ],
+      "projectionKind": "ACCEPTED_WIRE",
+      "parityMode": "ACCEPTANCE_EQUIVALENT",
+      "evidenceId": "support.case-create",
+      "runtimeExpression": null,
+      "wireJsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{3,198}\\S)\\s*$"
+          },
+          "description": {
+            "type": "string",
+            "pattern": "^\\s*(?:\\S[\\s\\S]{8,9998}\\S)\\s*$"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ACCOUNT",
+              "BOOKING",
+              "PAYMENT",
+              "PROFESSIONAL",
+              "SAFETY",
+              "OTHER"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "URGENT"
+            ]
+          },
+          "requesterUserId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "bookingId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "subject",
+          "description",
+          "category"
+        ]
+      },
       "runtimeValidationDigest": "fe86c69cf348cf39652b2b65a02b4056383ebd3b894c99870200bf2cdd45b913"
     },
     "backend/src/validators/admin-operations.validators.js#supportCaseListQuerySchema": {

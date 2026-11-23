@@ -28,7 +28,23 @@ test('pagination evidence is projected without changing canonical parameters or 
     assert.equal(limit.required, false);
     assert.deepEqual(limit.schema, { default: 25, type: 'integer', minimum: 1, maximum: 100 });
   }
-  assert.equal(api['x-homeservices-completeness'].unresolvedRouteInputProjections, 129);
+  assert.equal(api['x-homeservices-completeness'].unresolvedRouteInputProjections, 128);
+});
+
+test('support case creation projects an optional priority and verifies the runtime default', () => {
+  const document = buildInventory();
+  const operation = document.routes.find((route) => route.method === 'POST' && route.path === '/api/v1/admin/operations/support/cases');
+  const binding = document.schemas[`${operation.handler.file}#supportCaseCreateSchema`];
+  assert.equal(binding.evidenceId, 'support.case-create');
+  assert.equal(binding.semanticEvidence.inputSurfaceResolved, true);
+  assert.equal(binding.wireJsonSchema.required.includes('priority'), false);
+  const { supportCaseCreateSchema } = require('../src/validators/admin-operations.validators');
+  const parsed = supportCaseCreateSchema.parse({
+    subject: '  New request ', description: ' A synthetic support request ', category: 'OTHER', ignored: true,
+  });
+  assert.deepEqual(parsed, {
+    subject: 'New request', description: 'A synthetic support request', category: 'OTHER', priority: 'MEDIUM',
+  });
 });
 const { schemaChanges, breakingChanges } = require('../scripts/api-contract/breaking-changes');
 const { catalogProjection } = require('../scripts/api-contract/schema-catalog');
@@ -245,10 +261,10 @@ test('input inventory retains all historic gaps, new semantic debt and freshness
   const document = buildInventory(); const inventory = buildInputInventory(document);
   assert.equal(inventory.summary.operations, 251);
   assert.equal(inventory.summary.unresolvedHistoricalProjections, 142);
-  assert.equal(inventory.summary.unresolvedInputSemantics, 129);
-  assert.equal(inventory.summary.acceptanceEquivalentBindings, 37);
+  assert.equal(inventory.summary.unresolvedInputSemantics, 128);
+  assert.equal(inventory.summary.acceptanceEquivalentBindings, 38);
   assert.deepEqual(inventory.summary.unresolvedByPrimaryClass, {
-    STRUCTURAL_EQUIVALENT: 0, NORMALIZATION: 83, TRANSFORM: 22, REFINEMENT: 19,
+    STRUCTURAL_EQUIVALENT: 0, NORMALIZATION: 82, TRANSFORM: 22, REFINEMENT: 19,
     CROSS_FIELD_VALIDATION: 3, RUNTIME_DERIVED: 0, LEGACY_COMPATIBILITY: 2,
   });
   assert.equal(inventory.summary.runtimeRefinedDeclaredBindings, 3);
