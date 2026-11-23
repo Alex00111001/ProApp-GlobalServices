@@ -278,13 +278,22 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
 
     const incidentPath = `${baseUrl}/operations/incidents/${incidentIds[0]}`;
     const operatorHeaders = { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' };
-    const rolesResponse = await fetch(`${baseUrl}/roles`, { headers: operatorHeaders });
+    const complianceRole = await prisma.role.findUniqueOrThrow({ where: { key: 'COMPLIANCE_ADMIN' } });
+    const catalogReader = await createUser('HttpCatalogReader', complianceRole.id);
+    const catalogReaderSession = await createAdminSession({
+      email: catalogReader.email, password: 'integration-password', userAgent: 'integration-browser', ipAddress: '127.0.0.1',
+    }, prisma);
+    const catalogHeaders = { authorization: `Bearer ${catalogReaderSession.accessToken}` };
+    const rolesResponse = await fetch(`${baseUrl}/roles`, { headers: catalogHeaders });
     assert.equal(rolesResponse.status, 200);
     const { roles } = await rolesResponse.json();
     const supportCatalogRole = roles.find(({ id }) => id === supportRole.id);
     assert.equal(supportCatalogRole.key, 'SUPPORT_ADMIN');
     assert.ok(supportCatalogRole.permissions.some(({ permission }) => permission.key === 'support.read'));
     assert.ok(supportCatalogRole._count.assignments >= 1);
+    const restrictedRoleChanges = await fetch(`${baseUrl}/role-change-requests`, { headers: catalogHeaders });
+    assert.equal(restrictedRoleChanges.status, 403);
+    assert.equal((await restrictedRoleChanges.json()).code, 'INSUFFICIENT_PERMISSION');
     const financialPath = `${baseUrl}/operations/financial-monitoring`;
     const deniedFinancial = await fetch(financialPath, { headers: operationsHeaders });
     assert.equal(deniedFinancial.status, 403);
