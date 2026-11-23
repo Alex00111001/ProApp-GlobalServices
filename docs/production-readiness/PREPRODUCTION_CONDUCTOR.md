@@ -1,0 +1,141 @@
+# HomeServices — Conductor de preproducción
+
+**Objetivo.** Obtener un candidato desplegado y ensayado en staging aislado, con evidencia
+reproducible para su SHA y digest exactos. Usar datos sintéticos y proveedores sandbox.
+El GO de producción se decide por separado según PRR-805 y PRR-806.
+
+**Autoridad.** Usar los IDs, dependencias y criterios de cierre del
+[plan PRR](PRODUCTION_REMEDIATION_EXECUTION_PLAN.md). Este conductor ordena el trabajo
+y conserva la definición de HECHO de la [gobernanza](../agent-governance/GOVERNANCE.md).
+
+## Punto de partida al 23 de noviembre de 2026
+
+La rama de trabajo local está en `207632bb`. La [CI #98](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/44388933922)
+verificó T01 en `979d93bd`. Pasaron los checks del workspace y de contratos, PostgreSQL y
+Secret Scan. La auditoría del backend detectó un aviso crítico y seis altos. El paso se
+interrumpió antes de auditar los paquetes siguientes. T01 sigue abierto. PRR-105 registra
+129 entradas pendientes de equivalencia semántica y 196 respuestas incompletas.
+[Registro de entrega](../releases/2026-09-16-prr-105-api-v1-contract.md).
+
+**Avance verificado.** La remediación `886f321a` obtuvo CI completa
+en [#100](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45148055600),
+y el registro de evidencia `255d0bb9` pasó
+[#101](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45148655558).
+La revisión técnica independiente se completó. El [PR #37](https://github.com/Alex00111001/ProApp-GlobalServices/pull/37)
+integró T01 en la rama de entrega como `17afcf21`, con
+[CI completa verde del SHA integrado](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45152661024).
+El siguiente tramo de PRR-105 es un piloto de parámetros enteros de consulta con valor predeterminado.
+
+**Preparación del piloto.** Una comprobación de solo lectura con el parser simple de
+Express y los validadores actuales de errores operativos y campañas confirmó 19 casos
+iguales en ambos. La ausencia de parámetros produce página 1 y límite 25. Un valor vacío,
+duplicado, fraccionario o un límite por encima de 100 falla. Las formas `01`, `2.0`,
+`2e1` y `0x10` se aceptan y se convierten a enteros. Con `limit[]=2`, el parser entrega
+una clave distinta de `limit` y se aplica el valor predeterminado. Estas observaciones
+preparan los casos de regresión. El piloto debe comprobar también el comportamiento
+HTTP montado y el contrato de los consumidores antes de declarar equivalencia.
+
+Admin Web envía `search=` en la consulta inicial de Growth y Operations porque ambas
+pantallas inicializan la búsqueda con una cadena vacía. Los dos validadores rechazan
+esa consulta en `search` (`too_small`), y aceptan tanto omitir la clave como enviar
+texto no vacío. El piloto debe cubrir el caso real del consumidor. Una corrección
+compatible sería omitir la clave vacía al construir la consulta de Admin Web, con una
+prueba de la carga inicial y de la búsqueda. Mantener el criterio del servidor para
+quienes envían explícitamente `search=`.
+
+**Corrección verificada.** El [PR #38](https://github.com/Alex00111001/ProApp-GlobalServices/pull/38)
+aplica la corrección también a la lista de incidentes. La
+[CI del SHA `63a48e11`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45151371597)
+pasó los tres trabajos. Admin Web verificó lint, build y 18 pruebas locales, incluidas las
+tres listas. Se puede revertir el commit sin migración.
+
+**Ensayo de integración.** [La CI del candidato combinado `a4c1845f`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45155747284)
+confirmó los tres trabajos para los cambios de los PR #38 y #40. Ambos se integraron y
+el SHA `66906204` pasó [CI de entrega](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45235484640).
+El [PR #41](https://github.com/Alex00111001/ProApp-GlobalServices/pull/41) añadió los esquemas
+de respuesta 200 de campañas, errores e incidentes. PostgreSQL cubrió una página posterior
+vacía en campañas y el desempate entre páginas de incidentes. La integración quedó en
+`e751a69a`. Consultar la [CI del SHA de entrega](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45236031789).
+El candidato conserva 129 entradas y 193 respuestas incompletas, además de las pruebas
+pendientes de paridad global de consumidores.
+
+## Camino crítico
+
+El orden siguiente refleja dependencias de aceptación. El camino de calendario se actualiza
+cuando los responsables confirman duración, capacidad y fechas de decisiones externas.
+
+| Orden | Bloque del plan | Evidencia para pasar al siguiente bloque |
+| --- | --- | --- |
+| 1 | Remediar dependencias y verificar PRR-105.T01 | Auditar todos los lockfiles, revisar actualizaciones y regresiones de backend, ejecutar Platform verification sobre el candidato exacto y completar la revisión independiente prevista. |
+| 2 | Cerrar PRR-105 y PRR-106 | Contratos por dominio con autoridad de runtime, paridad en los cuatro consumidores, OpenAPI v1 aprobado y publicado y cobertura HTTP crítica verde. Mantener compatibilidad con la retirada de efectivo aprobada en PRR-101. |
+| 3 | Completar PRR-2 a PRR-5 y habilitar PRR-701/702 cuando los contratos estén estables | Provisionar staging aislado antes de los ensayos de ingreso real de F8.6. Completar verificación de sesiones y privacidad, incorporación profesional y documentos privados, ledger y reconciliación financiera en sandbox. Registrar revisiones y aprobaciones aplicables. |
+| 4 | Integrar PRR-6 sobre el entorno verificado | Artefactos reproducibles y recorridos E2E de cliente, profesional, Admin y Web contra el candidato integrado. Guardar los resultados. |
+| 5 | Ensayar PRR-703 a PRR-706 y preparar PRR-801/802 | Restauración real con RTO/RPO medidos, carga y alertas verificadas, F11 con aprobación aplicable, simulacros de canary, rollback y parada de emergencia, builds internos y runbooks operativos. |
+
+### Trabajo paralelo que reduce esperas
+
+- Solicitar decisiones de edge y confianza territorial (PRR-201), privacidad/legal (PRR-302/305)
+  y almacenamiento privado (PRR-403). Confirmar responsables y fechas de revisión.
+- Preparar criterios E2E, datos sintéticos y selección de plataforma de pruebas. Maestro para móvil
+  y Playwright para web son candidatos. Incorporarlos cuando el bloque y sus dependencias estén autorizados.
+- Preparar topología, inventario de secretos, estrategia de artefactos y procedimiento de restauración.
+  Con contratos estables, PRR-701/702 puede avanzar junto a los recorridos. Sus resultados habilitan
+  las pruebas que requieren staging real, incluidas las de PRR-207.
+- Preparar las decisiones de F11 con Platform, Security, Legal y Release. La implementación PRR-705
+  espera el cierre de PRR-1 a PRR-6 y la aprobación aplicable del [ADR 0007](../adr/0007-production-control-plane.md).
+
+## Cómo dirigir la ejecución
+
+En modo autónomo, el conductor toma la siguiente tarea habilitada dentro del alcance
+autorizado, aplica o delega el cambio, ejecuta las pruebas, sigue la CI y recupera fallos
+reversibles sin pedir confirmaciones rutinarias. Si un bloque exige una aprobación humana
+o evidencia externa, registra la condición de desbloqueo y avanza cualquier tarea
+independiente autorizada. La autonomía se aplica durante la ejecución activa de Codex.
+La autorización del operador incluye integrar PR de la rama de entrega cuando el SHA
+esperado tiene CI verde, se cumplen las revisiones exigidas y GitHub admite la
+integración mediante sus protecciones ordinarias. Verificar después el SHA integrado.
+
+1. Al iniciar cada bloque, comprobar rama, SHA, CI y evidencia previa. Elegir el primer trabajo
+   autorizado cuyas dependencias estén satisfechas. Registrar responsable, revisor, entorno,
+   alcance, pruebas, rollback y decisión pendiente en el ítem PRR correspondiente.
+2. Dividir el bloque por dominio o contrato, con una prueba observable por entrega. Ejecutar primero
+   checks focalizados. Cerrar con CI completa para el SHA exacto, enlace al PR o referencia de entrega
+   y registro de release. Si hay evidencia ausente, caducada o fallida, mantener abierto el ítem.
+3. Registrar cada bloqueo con evidencia, responsable y condición de desbloqueo. Mientras se resuelve,
+   avanzar trabajo independiente autorizado. Tomar Git y CI como autoridad para reflejar el estado en Notion.
+4. Aplicar el [routing](../agent-governance/MODEL_ROUTING.md) en velocidad Standard. Luna para inventario
+   y evidencia mecánica, **GPT-6.1 Terra** para implementación acotada y verificación, Sol para diseño
+   y revisión DEEP, Astra para escalación excepcional. Registrar el modelo realmente utilizado.
+
+### Subagentes
+
+Las definiciones del proyecto viven en [`.codex/agents`](../../.codex/agents).
+En una sesión de Codex que cargue los agentes del proyecto, pide al agente principal que use
+`preproduction_orchestrator` para coordinar el bloque autorizado. Ejemplo:
+
+> Usa preproduction_orchestrator para dirigir el bloque autorizado de PRR-105. Delega el
+> inventario de CI a prr_evidence y devuelve el SHA verificado y los bloqueos.
+
+| Agente | Modelo | Esfuerzo inicial | Responsabilidad |
+| --- | --- | --- | --- |
+| `preproduction_orchestrator` | GPT-6.2 Sol | Medio | Priorizar, asignar alcance y consolidar evidencia |
+| `prr_evidence` | GPT-6 Luna | Bajo | Inventario, CI y registros verificables en solo lectura |
+| `prr_implementer` | GPT-6.1 Terra | Medio | Implementación acotada y pruebas focalizadas |
+| `prr_reviewer` | GPT-6.2 Sol | Medio | Revisión técnica DEEP y hallazgos en solo lectura |
+
+El [límite del proyecto](../../.codex/config.toml) admite hasta tres subagentes abiertos
+por sesión, incluido el orquestador si se invoca como subagente. El orquestador empieza
+con un trabajador y usa un segundo sólo para trabajo independiente. Usa velocidad
+Standard cuando esté disponible y comunica cualquier sustitución por un modelo más caro
+antes de ejecutarla. Astra requiere una escalación justificada y aprobación del operador.
+
+Delegar sólo cuando esté autorizado y aporte valor. El coordinador conserva la decisión de
+entrega y solicita la aprobación humana cuando corresponda.
+
+## Condición de salida
+
+El responsable de release debe poder identificar el SHA, el digest y el entorno del candidato,
+ver CI y auditorías completas, reproducir las comprobaciones de migración y E2E, y consultar los
+resultados de restauración, observabilidad y rollback. Registrar qué ensayos se hicieron, con qué
+flags y quién aceptó la evidencia. PRR-803/804 utilizan ese expediente para la auditoría final y
+el manifiesto de release. PRR-805 registra la decisión humana sobre el lanzamiento.
