@@ -8,6 +8,10 @@ const healthStatus = z.enum(['HEALTHY', 'DEGRADED', 'OUTAGE']);
 const dependencyHealth = outputObject({
   service: z.string(), status: healthStatus, latencyMs: z.number().int(), message: z.string().optional(),
 });
+const healthReportFields = {
+  checkedAt: dateTime, service: z.string(),
+  dependencies: outputObject({ database: dependencyHealth, outbox: dependencyHealth }),
+};
 const reconciliationSummary = outputObject({
   id: z.string(), status: z.string(), scope: z.string(),
   startedAt: dateTime, completedAt: dateTime.nullable(),
@@ -19,8 +23,7 @@ const financialGroup = outputObject({
 const overview = outputObject({
   generatedAt: dateTime,
   health: outputObject({
-    status: healthStatus, checkedAt: dateTime, service: z.string(),
-    dependencies: outputObject({ database: dependencyHealth, outbox: dependencyHealth }),
+    ...healthReportFields, status: healthStatus,
   }),
   errors: countsByStatus,
   incidents: countsByStatus,
@@ -143,6 +146,10 @@ const alert = outputObject({
 });
 
 const operationsResponses = Object.freeze({
+  health: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/operations/health', operationId: 'adminOperations.health',
+    responses: { 200: outputObject({ ...healthReportFields, status: z.enum(['HEALTHY', 'DEGRADED']) }) },
+  }),
   financialMonitoring: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/operations/financial-monitoring', operationId: 'adminOperations.financialMonitoring',
     responses: { 200: serialized(outputObject({
