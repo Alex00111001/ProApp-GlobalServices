@@ -60,7 +60,7 @@ test('job, integration and alert views expose failure state without raw provider
   assert.equal(Object.hasOwn(alerts.items[0], 'payload'), false);
 });
 
-test('alert list keeps text from historical payloads and omits non-text metadata', async () => {
+test('alert list keeps safe historical routing data and omits malformed metadata', async () => {
   const time = new Date('2026-09-21T08:00:00.000Z');
   const row = {
     aggregateId: 'incident-1', eventType: 'incident.reopened', status: 'PENDING',
@@ -68,7 +68,8 @@ test('alert list keeps text from historical payloads and omits non-text metadata
   };
   const payloads = [
     null, ['route'], { route: { internal: 'synthetic-private-value' }, severity: true },
-    { route: '', severity: '' }, { route: 'operations-on-call', severity: 'HIGH' },
+    { route: '', severity: '' }, { route: 'https://example.invalid/webhook', severity: 'unexpected free text' },
+    { route: 'operations-on-call', severity: 'HIGH' },
   ];
   const response = await listAlertDeliveries({ page: 1, limit: 25 }, {
     outboxEvent: {
@@ -79,7 +80,7 @@ test('alert list keeps text from historical payloads and omits non-text metadata
   const { schema, serialize } = operationsResponses.alerts.responses[200];
   const output = schema.parse(serialize(response));
   assert.deepEqual(output.items.map(({ route, severity }) => [route, severity]), [
-    [null, null], [null, null], [null, null], [null, null], ['operations-on-call', 'HIGH'],
+    [null, null], [null, null], [null, null], [null, null], [null, null], ['operations-on-call', 'HIGH'],
   ]);
   assert.equal(JSON.stringify(output).includes('synthetic-private-value'), false);
 });

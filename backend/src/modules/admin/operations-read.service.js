@@ -1,6 +1,7 @@
 const prisma = require('../../config/prisma');
 const env = require('../../config/env');
 const { getReadiness } = require('../observability/health.service');
+const { redactText } = require('../observability/redaction');
 
 const pageResult = (page, limit, totalItems) => ({
   page,
@@ -12,6 +13,7 @@ const skipFor = (page, limit) => (page - 1) * limit;
 const countsBy = (groups, key) => Object.fromEntries(groups.map((group) => [group[key], group._count._all]));
 const decimal = (value) => value?.toFixed?.(2) || '0.00';
 const alertEventTypes = ['incident.alert_requested', 'incident.reopened'];
+const alertSeverities = new Set(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
 
 const getOperationsOverview = async (client = prisma) => {
   const [
@@ -206,8 +208,9 @@ const listAlertDeliveries = async ({ page, limit, status }, client = prisma) => 
   return {
     items: rows.map(({ payload, lastError, ...item }) => ({
       ...item,
-      route: typeof payload?.route === 'string' ? payload.route || null : null,
-      severity: typeof payload?.severity === 'string' ? payload.severity || null : null,
+      route: typeof payload?.route === 'string' && /^[A-Za-z0-9._:-]{1,80}$/.test(payload.route)
+        && redactText(payload.route) === payload.route ? payload.route : null,
+      severity: alertSeverities.has(payload?.severity) ? payload.severity : null,
       hasError: Boolean(lastError),
     })),
     pagination: pageResult(page, limit, totalItems),
