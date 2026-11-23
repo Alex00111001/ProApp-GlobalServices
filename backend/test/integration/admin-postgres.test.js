@@ -265,7 +265,16 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
       body: JSON.stringify({ status: 'TRIAGED', reason: 'Validated and accepted by integration support' }),
     });
     assert.equal(triaged.status, 200);
-    assert.equal((await triaged.json()).supportCase.status, 'TRIAGED');
+    const transition = await triaged.json();
+    assert.equal(transition.supportCase.status, 'TRIAGED');
+    assert.equal(transition.duplicate, false);
+    const duplicateTransition = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}/status`, {
+      method: 'PATCH',
+      headers: { ...operationsHeaders, 'content-type': 'application/json' },
+      body: JSON.stringify({ status: 'TRIAGED', reason: 'Repeated support transition for verification' }),
+    });
+    assert.equal(duplicateTransition.status, 200);
+    assert.deepEqual(await duplicateTransition.json(), { supportCase: transition.supportCase, duplicate: true });
     assert.equal(await prisma.auditLog.count({
       where: { actorId: support.id, action: 'AUTHORIZATION_DENIED', resourceId: 'roles.read', outcome: 'DENIED' },
     }), 1);
@@ -273,6 +282,28 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.equal(await prisma.outboxEvent.count({
       where: { aggregateType: 'SupportCase', aggregateId: supportCaseId },
     }), 2);
+    for (const duplicate of [false, true]) {
+      const assignment = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}/assignment`, {
+        method: 'PATCH',
+        headers: { ...operationsHeaders, 'content-type': 'application/json' },
+        body: JSON.stringify({ assignedToId: support.id, reason: 'Assign case to the synthetic test operator' }),
+      });
+      assert.equal(assignment.status, 200);
+      assert.deepEqual(await assignment.json(), {
+        supportCase: { id: supportCaseId, assignedToId: support.id, status: 'TRIAGED' }, duplicate,
+      });
+    }
+    const addedComment = await fetch(`${baseUrl}/operations/support/cases/${supportCaseId}/comments`, {
+      method: 'POST',
+      headers: { ...operationsHeaders, 'content-type': 'application/json' },
+      body: JSON.stringify({ body: ' Synthetic support comment ' }),
+    });
+    assert.equal(addedComment.status, 201);
+    const { comment } = await addedComment.json();
+    assert.equal(comment.caseId, supportCaseId);
+    assert.equal(comment.authorId, support.id);
+    assert.equal(comment.body, 'Synthetic support comment');
+    assert.equal(new Date(comment.createdAt).toISOString(), comment.createdAt);
     assert.equal(await prisma.auditLog.count({
       where: { actorId: support.id, action: 'AUTHORIZATION_DENIED', resourceId: 'jobs.read', outcome: 'DENIED' },
     }), 1);

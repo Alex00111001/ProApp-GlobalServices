@@ -185,10 +185,10 @@ router.get('/operations/alerts', requirePermission(PERMISSIONS.ALERTS_READ), res
 router.get('/operations/financial-monitoring', requirePermission(PERMISSIONS.FINANCIAL_MONITORING_READ), operationsController.financialMonitoring);
 router.get('/operations/support/operators', requirePermission(PERMISSIONS.SUPPORT_MANAGE), responseContract(supportResponses.operators), operationsController.supportOperators);
 router.get('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_READ), responseContract(supportResponses.cases), operationsController.supportCases);
-router.post('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.createSupportCase);
+router.post('/operations/support/cases', requirePermission(PERMISSIONS.SUPPORT_MANAGE), responseContract(supportResponses.create), operationsController.createSupportCase);
 router.get('/operations/support/cases/:id', requirePermission(PERMISSIONS.SUPPORT_READ), responseContract(supportResponses.detail), operationsController.supportCase);
-router.patch('/operations/support/cases/:id/status', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.setSupportCaseStatus);
-router.patch('/operations/support/cases/:id/assignment', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.assignSupportCase);
-router.post('/operations/support/cases/:id/comments', requirePermission(PERMISSIONS.SUPPORT_MANAGE), operationsController.addSupportComment);
+router.patch('/operations/support/cases/:id/status', requirePermission(PERMISSIONS.SUPPORT_MANAGE), responseContract(supportResponses.status), operationsController.setSupportCaseStatus);
+router.patch('/operations/support/cases/:id/assignment', requirePermission(PERMISSIONS.SUPPORT_MANAGE), responseContract(supportResponses.assignment), operationsController.assignSupportCase);
+router.post('/operations/support/cases/:id/comments', requirePermission(PERMISSIONS.SUPPORT_MANAGE), responseContract(supportResponses.comment), operationsController.addSupportComment);
 
 module.exports = router;
