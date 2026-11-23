@@ -168,7 +168,7 @@ router.post('/role-change-requests', requirePermission(PERMISSIONS.ROLES_MANAGE)
 router.post('/role-change-requests/:id/approve', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.approveRoleChange);
 router.post('/role-change-requests/:id/reject', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.rejectRoleChange);
 
-router.get('/operations/overview', requirePermission(PERMISSIONS.OPERATIONS_READ), operationsController.overview);
+router.get('/operations/overview', requirePermission(PERMISSIONS.OPERATIONS_READ), responseContract(operationsResponses.overview), operationsController.overview);
 router.get('/operations/metrics', requirePermission(PERMISSIONS.OPERATIONS_READ), metricsHandler);
 router.get('/operations/health', requirePermission(PERMISSIONS.HEALTH_READ), operationsController.health);
 router.get('/operations/health/snapshots', requirePermission(PERMISSIONS.HEALTH_READ), responseContract(operationsResponses.healthSnapshots), operationsController.healthSnapshots);
