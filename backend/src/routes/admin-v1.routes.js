@@ -164,10 +164,10 @@ router.get('/ai/costs', requirePermission(PERMISSIONS.AI_COSTS_READ), f10Control
 
 router.get('/audit', requirePermission(PERMISSIONS.AUDIT_READ), controller.auditLogs);
 router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), responseContract(adminDirectoryResponses.roles), controller.roles);
-router.get('/role-change-requests', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.roleChangeRequests);
-router.post('/role-change-requests', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.requestRoleChange);
-router.post('/role-change-requests/:id/approve', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.approveRoleChange);
-router.post('/role-change-requests/:id/reject', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.rejectRoleChange);
+router.get('/role-change-requests', requirePermission(PERMISSIONS.ROLES_MANAGE), responseContract(adminDirectoryResponses.roleChangeRequests), controller.roleChangeRequests);
+router.post('/role-change-requests', requirePermission(PERMISSIONS.ROLES_MANAGE), responseContract(adminDirectoryResponses.requestRoleChange), controller.requestRoleChange);
+router.post('/role-change-requests/:id/approve', requirePermission(PERMISSIONS.ROLES_MANAGE), responseContract(adminDirectoryResponses.approveRoleChange), controller.approveRoleChange);
+router.post('/role-change-requests/:id/reject', requirePermission(PERMISSIONS.ROLES_MANAGE), responseContract(adminDirectoryResponses.rejectRoleChange), controller.rejectRoleChange);
 
 router.get('/operations/overview', requirePermission(PERMISSIONS.OPERATIONS_READ), responseContract(operationsResponses.overview), operationsController.overview);
 router.get('/operations/metrics', requirePermission(PERMISSIONS.OPERATIONS_READ), metricsHandler);
