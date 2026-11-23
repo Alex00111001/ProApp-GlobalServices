@@ -11,6 +11,18 @@ const { bookingInputContext } = require('../src/contracts/booking.inputs');
 const { buildInventory } = require('../scripts/api-contract/inventory-command');
 const { buildOpenApi } = require('../scripts/api-contract/openapi-command');
 
+test('error group paths retain UUIDs and accept historical backfill IDs', () => {
+  const { errorGroupIdSchema, idSchema } = require('../src/validators/admin-operations.validators');
+  const uuid = '123e4567-e89b-42d3-a456-426614174000';
+  const historicalId = '0123456789abcdef0123456789abcdef';
+  assert.equal(errorGroupIdSchema.parse(uuid), uuid);
+  assert.equal(errorGroupIdSchema.parse(historicalId), historicalId);
+  assert.equal(idSchema.safeParse(historicalId).success, false);
+  for (const invalidId of [historicalId.toUpperCase(), historicalId.slice(1), `${historicalId}\n`, 'other']) {
+    assert.equal(errorGroupIdSchema.safeParse(invalidId).success, false);
+  }
+});
+
 test('pagination evidence is projected without changing canonical parameters or claiming wire parity', () => {
   const api = buildOpenApi(buildInventory());
   const paths = {
@@ -48,6 +60,22 @@ test('support case creation projects an optional priority and verifies the runti
   });
 });
 const { schemaChanges, breakingChanges } = require('../scripts/api-contract/breaking-changes');
+
+test('request unions only prove widening when an unchanged prior branch is retained without sibling constraints', () => {
+  const uuid = { type: 'string', format: 'uuid' };
+  const historical = { type: 'string', pattern: '^[0-9a-f]{32}$' };
+  const wider = { anyOf: [uuid, historical] };
+  const changes = [];
+  schemaChanges(uuid, wider, 'request', 'id', changes);
+  assert.deepEqual(changes, []);
+  for (const candidate of [{ ...wider, maxLength: 32 }, { anyOf: [historical] }, { oneOf: wider.anyOf }]) {
+    const rejected = [];
+    schemaChanges(uuid, candidate, 'request', 'id', rejected);
+    assert.ok(rejected.length);
+  }
+  schemaChanges(uuid, wider, 'response', 'id', changes);
+  assert.ok(changes.length);
+});
 const { catalogProjection } = require('../scripts/api-contract/schema-catalog');
 const { reasonCases, bookingCases, emailCases, paymentCases, sample, uuid } = require('./helpers/input-contract-cases');
 

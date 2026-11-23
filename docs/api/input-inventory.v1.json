@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "bb69349a7d039ffe6beaa92df5a0994c96f2af967d2120324d684c5c14394ef7",
+  "sourceFingerprint": "413058a9ba7431c5e8b4c8176b37d38a71c237d31a2caef81c560648553172f6",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -24229,7 +24229,7 @@
           "validator": "alertListQuerySchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 121
+            "line": 122
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -24307,7 +24307,7 @@
           "expression": "req.query",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 121
+            "line": 122
           }
         }
       ],
@@ -24351,7 +24351,7 @@
           "validator": "errorListQuerySchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 71
+            "line": 72
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -24451,7 +24451,7 @@
           "expression": "req.query",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 71
+            "line": 72
           }
         }
       ],
@@ -24492,17 +24492,17 @@
         {
           "surface": "PARAMS",
           "expression": "req.params.id",
-          "validator": "idSchema",
+          "validator": "errorGroupIdSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 73
+            "line": 74
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
-            "name": "idSchema",
-            "line": 43
+            "name": "errorGroupIdSchema",
+            "line": 45
           },
-          "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
+          "key": "backend/src/controllers/admin-operations.controller.js#errorGroupIdSchema",
           "semanticClasses": [
             "STRUCTURAL_EQUIVALENT"
           ],
@@ -24513,9 +24513,17 @@
           "currentProjection": {
             "jsonSchema": {
               "$schema": "https://json-schema.org/draft/2020-12/schema",
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{32}$"
+                }
+              ]
             },
             "wireParity": "STRUCTURAL",
             "gaps": [],
@@ -24525,8 +24533,8 @@
             "semanticReviewRequired": false,
             "semanticFacts": [],
             "unknownFieldPolicies": [],
-            "runtimeValidationDigest": "7c815b3a35194737d12859e87ed6abca0b6430ebab1b65183723714dc72161ad",
-            "runtimeSourceDigest": "ee37ada867d99cafb276e74b402720865c287111926d1ceb7ac3eee368db3d27"
+            "runtimeValidationDigest": "74f854b75c5f9a0e3ae4416053acf5e0242fb8d091282cefd0f720cb221438b7",
+            "runtimeSourceDigest": "e31e4821a03369a2de14d6efd8af4468cc2a76fffe28557e9a262936178594a6"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -24537,7 +24545,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 73
+            "line": 74
           }
         },
         {
@@ -24545,7 +24553,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 73
+            "line": 74
           }
         }
       ],
@@ -24595,12 +24603,12 @@
           "validator": "errorStatusSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 80
+            "line": 81
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "errorStatusSchema",
-            "line": 45
+            "line": 47
           },
           "key": "backend/src/controllers/admin-operations.controller.js#errorStatusSchema",
           "semanticClasses": [
@@ -24703,17 +24711,17 @@
         {
           "surface": "PARAMS",
           "expression": "req.params.id",
-          "validator": "idSchema",
+          "validator": "errorGroupIdSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 82
+            "line": 83
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
-            "name": "idSchema",
-            "line": 43
+            "name": "errorGroupIdSchema",
+            "line": 45
           },
-          "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
+          "key": "backend/src/controllers/admin-operations.controller.js#errorGroupIdSchema",
           "semanticClasses": [
             "STRUCTURAL_EQUIVALENT"
           ],
@@ -24724,9 +24732,17 @@
           "currentProjection": {
             "jsonSchema": {
               "$schema": "https://json-schema.org/draft/2020-12/schema",
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{32}$"
+                }
+              ]
             },
             "wireParity": "STRUCTURAL",
             "gaps": [],
@@ -24736,8 +24752,8 @@
             "semanticReviewRequired": false,
             "semanticFacts": [],
             "unknownFieldPolicies": [],
-            "runtimeValidationDigest": "7c815b3a35194737d12859e87ed6abca0b6430ebab1b65183723714dc72161ad",
-            "runtimeSourceDigest": "ee37ada867d99cafb276e74b402720865c287111926d1ceb7ac3eee368db3d27"
+            "runtimeValidationDigest": "74f854b75c5f9a0e3ae4416053acf5e0242fb8d091282cefd0f720cb221438b7",
+            "runtimeSourceDigest": "e31e4821a03369a2de14d6efd8af4468cc2a76fffe28557e9a262936178594a6"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -24748,7 +24764,7 @@
           "expression": "req.body",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 80
+            "line": 81
           }
         },
         {
@@ -24756,7 +24772,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 82
+            "line": 83
           }
         },
         {
@@ -24764,7 +24780,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 82
+            "line": 83
           }
         },
         {
@@ -24772,7 +24788,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 86
+            "line": 87
           }
         },
         {
@@ -24780,7 +24796,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 84
+            "line": 85
           }
         },
         {
@@ -24788,7 +24804,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 84
+            "line": 85
           }
         }
       ],
@@ -24798,7 +24814,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 86
+            "line": 87
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -24808,7 +24824,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 84
+            "line": 85
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -24818,7 +24834,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 84
+            "line": 85
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -24933,7 +24949,7 @@
           "validator": "healthSnapshotQuerySchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 69
+            "line": 70
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -25001,7 +25017,7 @@
           "expression": "req.query",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 69
+            "line": 70
           }
         }
       ],
@@ -25045,7 +25061,7 @@
           "validator": "incidentListQuerySchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 90
+            "line": 91
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -25147,7 +25163,7 @@
           "expression": "req.query",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 90
+            "line": 91
           }
         }
       ],
@@ -25191,7 +25207,7 @@
           "validator": "idSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 92
+            "line": 93
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -25233,7 +25249,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 92
+            "line": 93
           }
         },
         {
@@ -25241,7 +25257,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 92
+            "line": 93
           }
         }
       ],
@@ -25291,12 +25307,12 @@
           "validator": "incidentCommentSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 109
+            "line": 110
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "incidentCommentSchema",
-            "line": 53
+            "line": 55
           },
           "key": "backend/src/controllers/admin-operations.controller.js#incidentCommentSchema",
           "semanticClasses": [
@@ -25382,7 +25398,7 @@
           "validator": "idSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 111
+            "line": 112
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -25424,7 +25440,7 @@
           "expression": "req.body",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 109
+            "line": 110
           }
         },
         {
@@ -25432,7 +25448,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 111
+            "line": 112
           }
         },
         {
@@ -25440,7 +25456,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 111
+            "line": 112
           }
         },
         {
@@ -25448,7 +25464,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 114
+            "line": 115
           }
         },
         {
@@ -25456,7 +25472,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 112
+            "line": 113
           }
         },
         {
@@ -25464,7 +25480,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 112
+            "line": 113
           }
         }
       ],
@@ -25474,7 +25490,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 114
+            "line": 115
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -25484,7 +25500,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 112
+            "line": 113
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -25494,7 +25510,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 112
+            "line": 113
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -25545,12 +25561,12 @@
           "validator": "incidentStatusSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 99
+            "line": 100
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "incidentStatusSchema",
-            "line": 49
+            "line": 51
           },
           "key": "backend/src/controllers/admin-operations.controller.js#incidentStatusSchema",
           "semanticClasses": [
@@ -25660,7 +25676,7 @@
           "validator": "idSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 101
+            "line": 102
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -25702,7 +25718,7 @@
           "expression": "req.body",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 99
+            "line": 100
           }
         },
         {
@@ -25710,7 +25726,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 101
+            "line": 102
           }
         },
         {
@@ -25718,7 +25734,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 101
+            "line": 102
           }
         },
         {
@@ -25726,7 +25742,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 105
+            "line": 106
           }
         },
         {
@@ -25734,7 +25750,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 103
+            "line": 104
           }
         },
         {
@@ -25742,7 +25758,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 103
+            "line": 104
           }
         }
       ],
@@ -25752,7 +25768,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 105
+            "line": 106
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -25762,7 +25778,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 103
+            "line": 104
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -25772,7 +25788,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 103
+            "line": 104
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -25817,7 +25833,7 @@
           "validator": "integrationListQuerySchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 120
+            "line": 121
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -25895,7 +25911,7 @@
           "expression": "req.query",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 120
+            "line": 121
           }
         }
       ],
@@ -25939,7 +25955,7 @@
           "validator": "jobListQuerySchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 119
+            "line": 120
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -26017,7 +26033,7 @@
           "expression": "req.query",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 119
+            "line": 120
           }
         }
       ],
@@ -26120,12 +26136,12 @@
           "validator": "supportCaseListQuerySchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 128
+            "line": 129
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseListQuerySchema",
-            "line": 54
+            "line": 56
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseListQuerySchema",
           "semanticClasses": [
@@ -26223,7 +26239,7 @@
           "expression": "req.query",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 128
+            "line": 129
           }
         }
       ],
@@ -26267,12 +26283,12 @@
           "validator": "supportCaseCreateSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 136
+            "line": 137
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseCreateSchema",
-            "line": 68
+            "line": 70
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseCreateSchema",
           "semanticClasses": [
@@ -26435,7 +26451,7 @@
           "expression": "req.body",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 136
+            "line": 137
           }
         },
         {
@@ -26443,7 +26459,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 136
+            "line": 137
           }
         },
         {
@@ -26451,7 +26467,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 136
+            "line": 137
           }
         },
         {
@@ -26459,7 +26475,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 136
+            "line": 137
           }
         }
       ],
@@ -26469,7 +26485,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 136
+            "line": 137
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -26479,7 +26495,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 136
+            "line": 137
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -26489,7 +26505,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 136
+            "line": 137
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -26534,7 +26550,7 @@
           "validator": "idSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 130
+            "line": 131
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -26576,7 +26592,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 130
+            "line": 131
           }
         },
         {
@@ -26584,7 +26600,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 130
+            "line": 131
           }
         }
       ],
@@ -26634,12 +26650,12 @@
           "validator": "supportCaseAssignmentSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 142
+            "line": 143
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseAssignmentSchema",
-            "line": 96
+            "line": 98
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseAssignmentSchema",
           "semanticClasses": [
@@ -26751,7 +26767,7 @@
           "validator": "idSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -26793,7 +26809,7 @@
           "expression": "req.body",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 142
+            "line": 143
           }
         },
         {
@@ -26801,7 +26817,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           }
         },
         {
@@ -26809,7 +26825,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           }
         },
         {
@@ -26817,7 +26833,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           }
         },
         {
@@ -26825,7 +26841,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           }
         },
         {
@@ -26833,7 +26849,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           }
         }
       ],
@@ -26843,7 +26859,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -26853,7 +26869,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -26863,7 +26879,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 143
+            "line": 144
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -26914,12 +26930,12 @@
           "validator": "supportCaseCommentSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 146
+            "line": 147
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseCommentSchema",
-            "line": 97
+            "line": 99
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseCommentSchema",
           "semanticClasses": [
@@ -27005,7 +27021,7 @@
           "validator": "idSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -27047,7 +27063,7 @@
           "expression": "req.body",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 146
+            "line": 147
           }
         },
         {
@@ -27055,7 +27071,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           }
         },
         {
@@ -27063,7 +27079,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           }
         },
         {
@@ -27071,7 +27087,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           }
         },
         {
@@ -27079,7 +27095,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           }
         },
         {
@@ -27087,7 +27103,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           }
         }
       ],
@@ -27097,7 +27113,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -27107,7 +27123,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -27117,7 +27133,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 147
+            "line": 148
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -27168,12 +27184,12 @@
           "validator": "supportCaseStatusSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 138
+            "line": 139
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseStatusSchema",
-            "line": 92
+            "line": 94
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseStatusSchema",
           "semanticClasses": [
@@ -27283,7 +27299,7 @@
           "validator": "idSchema",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           },
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
@@ -27325,7 +27341,7 @@
           "expression": "req.body",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 138
+            "line": 139
           }
         },
         {
@@ -27333,7 +27349,7 @@
           "expression": "req.params",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           }
         },
         {
@@ -27341,7 +27357,7 @@
           "expression": "req.params.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           }
         },
         {
@@ -27349,7 +27365,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           }
         },
         {
@@ -27357,7 +27373,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           }
         },
         {
@@ -27365,7 +27381,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           }
         }
       ],
@@ -27375,7 +27391,7 @@
           "expression": "req.context",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -27385,7 +27401,7 @@
           "expression": "req.user",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"
@@ -27395,7 +27411,7 @@
           "expression": "req.user.id",
           "source": {
             "file": "backend/src/controllers/admin-operations.controller.js",
-            "line": 139
+            "line": 140
           },
           "semanticClass": "RUNTIME_DERIVED",
           "status": "RUNTIME_SOURCE_REVIEW_REQUIRED"

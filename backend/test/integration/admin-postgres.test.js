@@ -8,6 +8,7 @@ if (!process.env.DIRECT_URL) throw new Error('DIRECT_URL must point to the isola
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
+const { createHash } = require('node:crypto');
 const prisma = require('../../src/config/prisma');
 const app = require('../../src/app');
 const { hashPassword } = require('../../src/utils/password');
@@ -177,8 +178,10 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
 
     const operationsHeaders = { authorization: `Bearer ${session.accessToken}` };
     const fixtureTime = new Date('2026-09-21T08:00:00.000Z');
+    const fingerprint = `fixture-${runId}`;
     const group = await prisma.errorGroup.create({ data: {
-      fingerprint: `fixture-${runId}`, environment: 'test', service: runId,
+      id: createHash('md5').update(fingerprint).digest('hex'),
+      fingerprint, environment: 'test', service: runId,
       normalizedMessage: 'Synthetic operations fixture', lastSeenAt: fixtureTime,
     } });
     errorGroupId = group.id;
@@ -199,6 +202,7 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     const errorDetailResponse = await fetch(`${baseUrl}/operations/errors/${group.id}`, { headers: operationsHeaders });
     assert.equal(errorDetailResponse.status, 200);
     const { errorGroup } = await errorDetailResponse.json();
+    assert.equal(errorGroup.id, group.id);
     assert.equal(errorGroup.lastSeenAt, fixtureTime.toISOString());
     assert.deepEqual(errorGroup.incidents.map(({ id }) => id), [incidentIds[0]]);
 

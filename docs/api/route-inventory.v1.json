@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "bb69349a7d039ffe6beaa92df5a0994c96f2af967d2120324d684c5c14394ef7",
+  "sourceFingerprint": "413058a9ba7431c5e8b4c8176b37d38a71c237d31a2caef81c560648553172f6",
   "routes": [
     {
       "method": "GET",
@@ -18537,7 +18537,7 @@
         {
           "input": "req.query",
           "schema": "alertListQuerySchema",
-          "line": 121
+          "line": 122
         }
       ],
       "response": [
@@ -18547,7 +18547,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 121
+          "line": 122
         }
       ],
       "ownershipEvidence": [],
@@ -18726,7 +18726,7 @@
         {
           "input": "req.query",
           "schema": "errorListQuerySchema",
-          "line": 71
+          "line": 72
         }
       ],
       "response": [
@@ -18736,7 +18736,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 71
+          "line": 72
         }
       ],
       "ownershipEvidence": [],
@@ -18955,8 +18955,8 @@
       "validation": [
         {
           "input": "req.params.id",
-          "schema": "idSchema",
-          "line": 73
+          "schema": "errorGroupIdSchema",
+          "line": 74
         }
       ],
       "response": [
@@ -18968,7 +18968,7 @@
             "errorGroup"
           ],
           "completeSchema": false,
-          "line": 77
+          "line": 78
         }
       ],
       "ownershipEvidence": [],
@@ -19280,12 +19280,12 @@
         {
           "input": "req.body",
           "schema": "errorStatusSchema",
-          "line": 80
+          "line": 81
         },
         {
           "input": "req.params.id",
-          "schema": "idSchema",
-          "line": 82
+          "schema": "errorGroupIdSchema",
+          "line": 83
         }
       ],
       "response": [
@@ -19295,7 +19295,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 81
+          "line": 82
         }
       ],
       "ownershipEvidence": [
@@ -19343,7 +19343,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 125
+          "line": 126
         }
       ],
       "ownershipEvidence": [],
@@ -19390,7 +19390,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 67
+          "line": 68
         }
       ],
       "ownershipEvidence": [],
@@ -19433,7 +19433,7 @@
         {
           "input": "req.query",
           "schema": "healthSnapshotQuerySchema",
-          "line": 69
+          "line": 70
         }
       ],
       "response": [
@@ -19443,7 +19443,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 69
+          "line": 70
         }
       ],
       "ownershipEvidence": [],
@@ -19594,7 +19594,7 @@
         {
           "input": "req.query",
           "schema": "incidentListQuerySchema",
-          "line": 90
+          "line": 91
         }
       ],
       "response": [
@@ -19604,7 +19604,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 90
+          "line": 91
         }
       ],
       "ownershipEvidence": [],
@@ -19865,7 +19865,7 @@
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 92
+          "line": 93
         }
       ],
       "response": [
@@ -19877,7 +19877,7 @@
             "incident"
           ],
           "completeSchema": false,
-          "line": 96
+          "line": 97
         }
       ],
       "ownershipEvidence": [],
@@ -20217,12 +20217,12 @@
         {
           "input": "req.body",
           "schema": "incidentCommentSchema",
-          "line": 109
+          "line": 110
         },
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 111
+          "line": 112
         }
       ],
       "response": [
@@ -20234,7 +20234,7 @@
             "comment"
           ],
           "completeSchema": false,
-          "line": 116
+          "line": 117
         }
       ],
       "ownershipEvidence": [
@@ -20278,12 +20278,12 @@
         {
           "input": "req.body",
           "schema": "incidentStatusSchema",
-          "line": 99
+          "line": 100
         },
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 101
+          "line": 102
         }
       ],
       "response": [
@@ -20293,7 +20293,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 100
+          "line": 101
         }
       ],
       "ownershipEvidence": [
@@ -20338,7 +20338,7 @@
         {
           "input": "req.query",
           "schema": "integrationListQuerySchema",
-          "line": 120
+          "line": 121
         }
       ],
       "response": [
@@ -20348,7 +20348,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 120
+          "line": 121
         }
       ],
       "ownershipEvidence": [],
@@ -20533,7 +20533,7 @@
         {
           "input": "req.query",
           "schema": "jobListQuerySchema",
-          "line": 119
+          "line": 120
         }
       ],
       "response": [
@@ -20543,7 +20543,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 119
+          "line": 120
         }
       ],
       "ownershipEvidence": [],
@@ -20760,7 +20760,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 64
+          "line": 65
         }
       ],
       "ownershipEvidence": [],
@@ -21184,7 +21184,7 @@
         {
           "input": "req.query",
           "schema": "supportCaseListQuerySchema",
-          "line": 128
+          "line": 129
         }
       ],
       "response": [
@@ -21194,7 +21194,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 128
+          "line": 129
         }
       ],
       "ownershipEvidence": [],
@@ -21422,7 +21422,7 @@
         {
           "input": "req.body",
           "schema": "supportCaseCreateSchema",
-          "line": 136
+          "line": 137
         }
       ],
       "response": [
@@ -21434,7 +21434,7 @@
             "supportCase"
           ],
           "completeSchema": false,
-          "line": 136
+          "line": 137
         }
       ],
       "ownershipEvidence": [
@@ -21620,7 +21620,7 @@
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 130
+          "line": 131
         }
       ],
       "response": [
@@ -21632,7 +21632,7 @@
             "supportCase"
           ],
           "completeSchema": false,
-          "line": 134
+          "line": 135
         }
       ],
       "ownershipEvidence": [],
@@ -22038,12 +22038,12 @@
         {
           "input": "req.body",
           "schema": "supportCaseAssignmentSchema",
-          "line": 142
+          "line": 143
         },
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 143
+          "line": 144
         }
       ],
       "response": [
@@ -22053,7 +22053,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 143
+          "line": 144
         }
       ],
       "ownershipEvidence": [
@@ -22153,12 +22153,12 @@
         {
           "input": "req.body",
           "schema": "supportCaseCommentSchema",
-          "line": 146
+          "line": 147
         },
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 147
+          "line": 148
         }
       ],
       "response": [
@@ -22170,7 +22170,7 @@
             "comment"
           ],
           "completeSchema": false,
-          "line": 147
+          "line": 148
         }
       ],
       "ownershipEvidence": [
@@ -22271,12 +22271,12 @@
         {
           "input": "req.body",
           "schema": "supportCaseStatusSchema",
-          "line": 138
+          "line": 139
         },
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 139
+          "line": 140
         }
       ],
       "response": [
@@ -22286,7 +22286,7 @@
           ],
           "fields": [],
           "completeSchema": false,
-          "line": 139
+          "line": 140
         }
       ],
       "ownershipEvidence": [
@@ -22482,7 +22482,7 @@
             "operators"
           ],
           "completeSchema": false,
-          "line": 149
+          "line": 150
         }
       ],
       "ownershipEvidence": [],
@@ -32649,6 +32649,32 @@
       "runtimeValidationDigest": "291f6a71869f0739e592b0b106b8dc02adb82535911547014b79287ade6431a7",
       "runtimeSourceDigest": "d50a20de74a4ddb5b42c3cb94e276dcfcc2f406770534dbe2d75a63ca2914777"
     },
+    "backend/src/controllers/admin-operations.controller.js#errorGroupIdSchema": {
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          }
+        ]
+      },
+      "wireParity": "STRUCTURAL",
+      "gaps": [],
+      "semanticClasses": [
+        "STRUCTURAL_EQUIVALENT"
+      ],
+      "semanticReviewRequired": false,
+      "semanticFacts": [],
+      "unknownFieldPolicies": [],
+      "runtimeValidationDigest": "74f854b75c5f9a0e3ae4416053acf5e0242fb8d091282cefd0f720cb221438b7",
+      "runtimeSourceDigest": "e31e4821a03369a2de14d6efd8af4468cc2a76fffe28557e9a262936178594a6"
+    },
     "backend/src/controllers/admin-operations.controller.js#errorListQuerySchema": {
       "jsonSchema": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -39629,6 +39655,31 @@
         }
       ],
       "runtimeValidationDigest": "291f6a71869f0739e592b0b106b8dc02adb82535911547014b79287ade6431a7"
+    },
+    "backend/src/validators/admin-operations.validators.js#errorGroupIdSchema": {
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          }
+        ]
+      },
+      "wireParity": "STRUCTURAL",
+      "gaps": [],
+      "semanticClasses": [
+        "STRUCTURAL_EQUIVALENT"
+      ],
+      "semanticReviewRequired": false,
+      "semanticFacts": [],
+      "unknownFieldPolicies": [],
+      "runtimeValidationDigest": "74f854b75c5f9a0e3ae4416053acf5e0242fb8d091282cefd0f720cb221438b7"
     },
     "backend/src/validators/admin-operations.validators.js#errorListQuerySchema": {
       "jsonSchema": {

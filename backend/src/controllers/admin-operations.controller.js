@@ -1,4 +1,5 @@
 const {
+  errorGroupIdSchema,
   errorListQuerySchema,
   alertListQuerySchema,
   errorStatusSchema,
@@ -70,7 +71,7 @@ exports.healthSnapshots = handler(async (req, res) => res.json(await listHealthS
 
 exports.errors = handler(async (req, res) => res.json(await listErrorGroups(errorListQuerySchema.parse(req.query))));
 exports.error = handler(async (req, res) => {
-  const id = idSchema.parse(req.params.id);
+  const id = errorGroupIdSchema.parse(req.params.id);
   const errorGroup = await getErrorGroup(id);
   if (!errorGroup) throw notFound('ERROR_GROUP_NOT_FOUND', 'Error group was not found.');
   await auditRead(req, 'ADMIN_ERROR_GROUP_READ', 'ERROR_GROUP', id, { occurrencesReturned: errorGroup.events.length });
@@ -79,7 +80,7 @@ exports.error = handler(async (req, res) => {
 exports.setErrorStatus = handler(async (req, res) => {
   const input = errorStatusSchema.parse(req.body);
   return res.json(await transitionErrorGroup({
-    errorGroupId: idSchema.parse(req.params.id),
+    errorGroupId: errorGroupIdSchema.parse(req.params.id),
     toStatus: input.status,
     actorId: req.user.id,
     reason: input.reason,
