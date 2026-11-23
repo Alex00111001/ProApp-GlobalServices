@@ -21,9 +21,10 @@ interrumpió antes de auditar los paquetes siguientes. T01 sigue abierto. PRR-10
 en [#100](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45148055600),
 y el registro de evidencia `255d0bb9` pasó
 [#101](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45148655558).
-La revisión técnica independiente se completó. Antes del siguiente tramo, comprobar
-la aceptación formal de entrega exigida por el plan PRR. El candidato para ese tramo
-es un piloto de parámetros enteros de consulta con valor predeterminado.
+La revisión técnica independiente se completó. El [PR #37](https://github.com/Alex00111001/ProApp-GlobalServices/pull/37)
+integró T01 en la rama de entrega como `17afcf21`, con
+[CI completa verde del SHA integrado](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45152661024).
+El siguiente tramo de PRR-105 es un piloto de parámetros enteros de consulta con valor predeterminado.
 
 **Preparación del piloto.** Una comprobación de solo lectura con el parser simple de
 Express y los validadores actuales de errores operativos y campañas confirmó 19 casos
@@ -46,9 +47,17 @@ quienes envían explícitamente `search=`.
 aplica la corrección también a la lista de incidentes. La
 [CI del SHA `63a48e11`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45151371597)
 pasó los tres trabajos. Admin Web verificó lint, build y 18 pruebas locales, incluidas las
-tres listas. Se puede revertir el commit sin migración. El PR está apilado sobre
-[#37](https://github.com/Alex00111001/ProApp-GlobalServices/pull/37). Tras integrar T01,
-retargetear el PR a la rama de entrega y verificar el nuevo candidato de integración.
+tres listas. Se puede revertir el commit sin migración.
+
+**Ensayo de integración.** [La CI del candidato combinado `a4c1845f`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45155747284)
+confirmó los tres trabajos para los cambios de los PR #38 y #40. Ambos se integraron y
+el SHA `66906204` pasó [CI de entrega](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45235484640).
+El [PR #41](https://github.com/Alex00111001/ProApp-GlobalServices/pull/41) añadió los esquemas
+de respuesta 200 de campañas, errores e incidentes. PostgreSQL cubrió una página posterior
+vacía en campañas y el desempate entre páginas de incidentes. La integración quedó en
+`e751a69a`. Consultar la [CI del SHA de entrega](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45236031789).
+El candidato conserva 129 entradas y 193 respuestas incompletas, además de las pruebas
+pendientes de paridad global de consumidores.
 
 ## Camino crítico
 
@@ -82,6 +91,9 @@ autorizado, aplica o delega el cambio, ejecuta las pruebas, sigue la CI y recupe
 reversibles sin pedir confirmaciones rutinarias. Si un bloque exige una aprobación humana
 o evidencia externa, registra la condición de desbloqueo y avanza cualquier tarea
 independiente autorizada. La autonomía se aplica durante la ejecución activa de Codex.
+La autorización del operador incluye integrar PR de la rama de entrega cuando el SHA
+esperado tiene CI verde, se cumplen las revisiones exigidas y GitHub admite la
+integración mediante sus protecciones ordinarias. Verificar después el SHA integrado.
 
 1. Al iniciar cada bloque, comprobar rama, SHA, CI y evidencia previa. Elegir el primer trabajo
    autorizado cuyas dependencias estén satisfechas. Registrar responsable, revisor, entorno,
