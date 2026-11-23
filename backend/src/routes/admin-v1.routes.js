@@ -42,7 +42,7 @@ router.post('/auth/logout', authController.logout);
 router.get('/auth/sessions', authController.listSessions);
 router.post('/auth/sessions/:id/revoke', requirePermission(PERMISSIONS.SESSIONS_MANAGE), authController.revokeSession);
 
-router.get('/dashboard', requirePermission(PERMISSIONS.DASHBOARD_READ), controller.dashboard);
+router.get('/dashboard', requirePermission(PERMISSIONS.DASHBOARD_READ), responseContract(adminDirectoryResponses.dashboard), controller.dashboard);
 
 router.get('/users', requirePermission(PERMISSIONS.USERS_READ), responseContract(adminDirectoryResponses.users), controller.users);
 router.get('/users/:id', requirePermission(PERMISSIONS.USERS_PII_READ), controller.user);

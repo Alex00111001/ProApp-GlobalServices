@@ -134,6 +134,16 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.match(login.headers.get('set-cookie'), /SameSite=Strict/i);
     const session = await login.json();
 
+    const dashboardResponse = await fetch(`${baseUrl}/dashboard?currency=EUR`, {
+      headers: { authorization: `Bearer ${session.accessToken}` },
+    });
+    assert.equal(dashboardResponse.status, 200);
+    const dashboard = await dashboardResponse.json();
+    assert.equal(dashboard.range.currency, 'EUR');
+    assert.equal(typeof dashboard.metrics.activeUsers, 'number');
+    assert.match(dashboard.metrics.netPlatformRevenue, /^-?\d+\.\d{2}$/);
+    assert.equal(dashboard.definitions.netPlatformRevenue.unit, 'money');
+
     const denied = await fetch(`${baseUrl}/roles`, {
       headers: { authorization: `Bearer ${session.accessToken}`, 'x-correlation-id': `${runId}-http-denied` },
     });
