@@ -1,5 +1,6 @@
 const { z } = require('zod');
 const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
+const { annotateInputSemantics } = require('../shared/http/input-contract');
 
 const pagination = {
   page: z.coerce.number().int().min(1).default(1),
@@ -7,20 +8,30 @@ const pagination = {
 };
 const optionalText = (max = 128) => z.string().trim().min(1).max(max).optional();
 
-const errorListQuerySchema = z.object({
+const paginationEvidence = {
+  classes: ['NORMALIZATION'],
+  evidence: ['backend/test/integration/admin-postgres.test.js'],
+  semantics: [
+    'Omitted page and limit default to 1 and 25. Empty or repeated values fail.',
+    'Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.',
+    'Bracketed keys such as limit[] are stripped as unknown keys.',
+  ],
+};
+
+const errorListQuerySchema = annotateInputSemantics(z.object({
   ...pagination,
   status: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'IGNORED']).optional(),
   severity: z.enum(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']).optional(),
   service: optionalText(100),
   search: optionalText(128),
-});
-const incidentListQuerySchema = z.object({
+}), paginationEvidence);
+const incidentListQuerySchema = annotateInputSemantics(z.object({
   ...pagination,
   status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']).optional(),
   severity: z.enum(['INFO', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),
   service: optionalText(100),
   search: optionalText(128),
-});
+}), paginationEvidence);
 const operationalListQuerySchema = z.object({
   ...pagination,
   search: optionalText(128),

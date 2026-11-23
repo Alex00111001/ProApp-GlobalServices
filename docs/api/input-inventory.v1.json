@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "83d31e89f3559a3438497f8aa90a97e2f06ad37aff7e20e4f5216cade2a3c409",
+  "sourceFingerprint": "0cce5f4f3d3f14ffbd468e6aaafc04afd45e1cb9aeb44e4be7d847acb37f9cc1",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -5004,6 +5004,13 @@
             ],
             "semanticReviewRequired": true,
             "semanticFacts": [],
+            "observedSemantics": [
+              "Marketing consent requires policy id/version together",
+              "Supplying either policy id or version requires the other"
+            ],
+            "observedEvidence": [
+              "backend/test/input-authority.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -8662,7 +8669,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "eventSchema",
-            "line": 13
+            "line": 14
           },
           "key": "backend/src/routes/event.routes.js#eventSchema",
           "semanticClasses": [
@@ -21777,7 +21784,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "campaignListQuerySchema",
-            "line": 84
+            "line": 85
           },
           "key": "backend/src/controllers/admin-growth.controller.js#campaignListQuerySchema",
           "semanticClasses": [
@@ -21839,6 +21846,14 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before Zod number coercion. Numeric strings such as 2.0, 2e1 and 0x10 are accepted.",
+              "Bracketed keys such as limit[] are stripped as unknown keys."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/growth-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -21846,7 +21861,7 @@
               }
             ],
             "runtimeValidationDigest": "cbc529eb724979dbd156504e2089a8694321dc11ba29fcd9e17a0eb532bcea57",
-            "runtimeSourceDigest": "cc9857d4ae61683bd97f90d0e2d09ee679cee4011280993b600b58a9ade5e257"
+            "runtimeSourceDigest": "8c67335b7f2d58553755c386fd56946c7509f4e9f4d86baaff0544489ba05c4f"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -21906,7 +21921,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "campaignCreateSchema",
-            "line": 56
+            "line": 57
           },
           "key": "backend/src/controllers/admin-growth.controller.js#campaignCreateSchema",
           "semanticClasses": [
@@ -22110,7 +22125,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "campaignUpdateSchema",
-            "line": 68
+            "line": 69
           },
           "key": "backend/src/controllers/admin-growth.controller.js#campaignUpdateSchema",
           "semanticClasses": [
@@ -22243,7 +22258,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-growth.controller.js#idSchema",
           "semanticClasses": [
@@ -22400,7 +22415,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "campaignStatusSchema",
-            "line": 79
+            "line": 80
           },
           "key": "backend/src/controllers/admin-growth.controller.js#campaignStatusSchema",
           "semanticClasses": [
@@ -22467,7 +22482,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-growth.controller.js#idSchema",
           "semanticClasses": [
@@ -22624,7 +22639,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "conversionListQuerySchema",
-            "line": 96
+            "line": 105
           },
           "key": "backend/src/controllers/admin-growth.controller.js#conversionListQuerySchema",
           "semanticClasses": [
@@ -22754,7 +22769,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "rangeQuerySchema",
-            "line": 48
+            "line": 49
           },
           "key": "backend/src/controllers/admin-growth.controller.js#rangeQuerySchema",
           "semanticClasses": [
@@ -22876,7 +22891,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "leadListQuerySchema",
-            "line": 90
+            "line": 99
           },
           "key": "backend/src/controllers/admin-growth.controller.js#leadListQuerySchema",
           "semanticClasses": [
@@ -23005,7 +23020,7 @@
           "validatorSource": {
             "file": "backend/src/validators/growth.validators.js",
             "name": "rangeQuerySchema",
-            "line": 48
+            "line": 49
           },
           "key": "backend/src/controllers/admin-growth.controller.js#rangeQuerySchema",
           "semanticClasses": [
@@ -24219,7 +24234,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "alertListQuerySchema",
-            "line": 30
+            "line": 41
           },
           "key": "backend/src/controllers/admin-operations.controller.js#alertListQuerySchema",
           "semanticClasses": [
@@ -24341,7 +24356,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "errorListQuerySchema",
-            "line": 10
+            "line": 21
           },
           "key": "backend/src/controllers/admin-operations.controller.js#errorListQuerySchema",
           "semanticClasses": [
@@ -24410,6 +24425,14 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+              "Bracketed keys such as limit[] are stripped as unknown keys."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -24417,7 +24440,7 @@
               }
             ],
             "runtimeValidationDigest": "a7fc6c31fb993cbb5703606a068451eb31a0cdb9f7b1c184457e947621086cb4",
-            "runtimeSourceDigest": "0362fcafc21ed59e6cfb1df20628d48d83d4c2de84ee07e8d5731978662e9733"
+            "runtimeSourceDigest": "e27f45b5f01aa6348b86bbc2cba7d8d6463de8d99e7a6c4ec2ed77eec7e970f1"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -24477,7 +24500,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -24577,7 +24600,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "errorStatusSchema",
-            "line": 34
+            "line": 45
           },
           "key": "backend/src/controllers/admin-operations.controller.js#errorStatusSchema",
           "semanticClasses": [
@@ -24688,7 +24711,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -24915,7 +24938,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "healthSnapshotQuerySchema",
-            "line": 31
+            "line": 42
           },
           "key": "backend/src/controllers/admin-operations.controller.js#healthSnapshotQuerySchema",
           "semanticClasses": [
@@ -25027,7 +25050,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "incidentListQuerySchema",
-            "line": 17
+            "line": 28
           },
           "key": "backend/src/controllers/admin-operations.controller.js#incidentListQuerySchema",
           "semanticClasses": [
@@ -25098,6 +25121,14 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+              "Bracketed keys such as limit[] are stripped as unknown keys."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -25105,7 +25136,7 @@
               }
             ],
             "runtimeValidationDigest": "2054dba63d7d2cdb2d137e2a7efe9b9e045602a484e78f94f6f4a89c8b9071b7",
-            "runtimeSourceDigest": "6969df3ce94051bd158a341d22f32af9dab81a77b03deeb1ff951c58ece0a34e"
+            "runtimeSourceDigest": "83df555de53f0d3f83502bfc9834cd7feb4c7f158dc4c5c3820b4122836092c0"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -25165,7 +25196,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -25265,7 +25296,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "incidentCommentSchema",
-            "line": 42
+            "line": 53
           },
           "key": "backend/src/controllers/admin-operations.controller.js#incidentCommentSchema",
           "semanticClasses": [
@@ -25356,7 +25387,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -25519,7 +25550,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "incidentStatusSchema",
-            "line": 38
+            "line": 49
           },
           "key": "backend/src/controllers/admin-operations.controller.js#incidentStatusSchema",
           "semanticClasses": [
@@ -25634,7 +25665,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -25791,7 +25822,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "integrationListQuerySchema",
-            "line": 29
+            "line": 40
           },
           "key": "backend/src/controllers/admin-operations.controller.js#integrationListQuerySchema",
           "semanticClasses": [
@@ -25913,7 +25944,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "jobListQuerySchema",
-            "line": 28
+            "line": 39
           },
           "key": "backend/src/controllers/admin-operations.controller.js#jobListQuerySchema",
           "semanticClasses": [
@@ -26094,7 +26125,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseListQuerySchema",
-            "line": 43
+            "line": 54
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseListQuerySchema",
           "semanticClasses": [
@@ -26231,7 +26262,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseCreateSchema",
-            "line": 50
+            "line": 61
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseCreateSchema",
           "semanticClasses": [
@@ -26425,7 +26456,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -26525,7 +26556,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseAssignmentSchema",
-            "line": 62
+            "line": 73
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseAssignmentSchema",
           "semanticClasses": [
@@ -26642,7 +26673,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -26805,7 +26836,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseCommentSchema",
-            "line": 63
+            "line": 74
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseCommentSchema",
           "semanticClasses": [
@@ -26896,7 +26927,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [
@@ -27059,7 +27090,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "supportCaseStatusSchema",
-            "line": 58
+            "line": 69
           },
           "key": "backend/src/controllers/admin-operations.controller.js#supportCaseStatusSchema",
           "semanticClasses": [
@@ -27174,7 +27205,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin-operations.validators.js",
             "name": "idSchema",
-            "line": 32
+            "line": 43
           },
           "key": "backend/src/controllers/admin-operations.controller.js#idSchema",
           "semanticClasses": [

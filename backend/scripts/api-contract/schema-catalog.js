@@ -80,9 +80,11 @@ function projectSchema(schema, io = 'input', runtimeOnly = false) {
   if (jsonSchema && io === 'input' && !runtimeOnly && schema.homeservicesInputSemantics?.fieldRules) {
     jsonSchema.allOf = projectFieldRules(schema.homeservicesInputSemantics.fieldRules);
   }
+  const annotation = schema?.homeservicesInputSemantics;
   return { jsonSchema, wireParity: gaps.size ? 'UNPROVEN' : 'STRUCTURAL', gaps: [...gaps].sort(),
     ...(io === 'input' ? { semanticClasses: semantic.classes.length ? semantic.classes : ['STRUCTURAL_EQUIVALENT'],
       semanticReviewRequired: semantic.classes.length > 0, semanticFacts: semantic.facts,
+      ...(annotation ? { observedSemantics: annotation.semantics, observedEvidence: annotation.evidence } : {}),
       unknownFieldPolicies: unknownFieldPolicies(schema) } : {}) };
 }
 

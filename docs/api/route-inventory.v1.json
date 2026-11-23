@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "83d31e89f3559a3438497f8aa90a97e2f06ad37aff7e20e4f5216cade2a3c409",
+  "sourceFingerprint": "0cce5f4f3d3f14ffbd468e6aaafc04afd45e1cb9aeb44e4be7d847acb37f9cc1",
   "routes": [
     {
       "method": "GET",
@@ -28229,6 +28229,14 @@
       "semanticFacts": [
         "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
       ],
+      "observedSemantics": [
+        "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+        "Express decodes query values before Zod number coercion. Numeric strings such as 2.0, 2e1 and 0x10 are accepted.",
+        "Bracketed keys such as limit[] are stripped as unknown keys."
+      ],
+      "observedEvidence": [
+        "backend/test/integration/growth-postgres.test.js"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
@@ -28236,7 +28244,7 @@
         }
       ],
       "runtimeValidationDigest": "cbc529eb724979dbd156504e2089a8694321dc11ba29fcd9e17a0eb532bcea57",
-      "runtimeSourceDigest": "cc9857d4ae61683bd97f90d0e2d09ee679cee4011280993b600b58a9ade5e257"
+      "runtimeSourceDigest": "8c67335b7f2d58553755c386fd56946c7509f4e9f4d86baaff0544489ba05c4f"
     },
     "backend/src/controllers/admin-growth.controller.js#campaignStatusSchema": {
       "jsonSchema": {
@@ -29296,6 +29304,14 @@
       "semanticFacts": [
         "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
       ],
+      "observedSemantics": [
+        "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+        "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+        "Bracketed keys such as limit[] are stripped as unknown keys."
+      ],
+      "observedEvidence": [
+        "backend/test/integration/admin-postgres.test.js"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
@@ -29303,7 +29319,7 @@
         }
       ],
       "runtimeValidationDigest": "a7fc6c31fb993cbb5703606a068451eb31a0cdb9f7b1c184457e947621086cb4",
-      "runtimeSourceDigest": "0362fcafc21ed59e6cfb1df20628d48d83d4c2de84ee07e8d5731978662e9733"
+      "runtimeSourceDigest": "e27f45b5f01aa6348b86bbc2cba7d8d6463de8d99e7a6c4ec2ed77eec7e970f1"
     },
     "backend/src/controllers/admin-operations.controller.js#errorStatusSchema": {
       "jsonSchema": {
@@ -29584,6 +29600,14 @@
       "semanticFacts": [
         "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
       ],
+      "observedSemantics": [
+        "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+        "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+        "Bracketed keys such as limit[] are stripped as unknown keys."
+      ],
+      "observedEvidence": [
+        "backend/test/integration/admin-postgres.test.js"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
@@ -29591,7 +29615,7 @@
         }
       ],
       "runtimeValidationDigest": "2054dba63d7d2cdb2d137e2a7efe9b9e045602a484e78f94f6f4a89c8b9071b7",
-      "runtimeSourceDigest": "6969df3ce94051bd158a341d22f32af9dab81a77b03deeb1ff951c58ece0a34e"
+      "runtimeSourceDigest": "83df555de53f0d3f83502bfc9834cd7feb4c7f158dc4c5c3820b4122836092c0"
     },
     "backend/src/controllers/admin-operations.controller.js#incidentStatusSchema": {
       "jsonSchema": {
@@ -32827,6 +32851,13 @@
       ],
       "semanticReviewRequired": true,
       "semanticFacts": [],
+      "observedSemantics": [
+        "Marketing consent requires policy id/version together",
+        "Supplying either policy id or version requires the other"
+      ],
+      "observedEvidence": [
+        "backend/test/input-authority.test.js"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
@@ -36171,6 +36202,14 @@
       "semanticFacts": [
         "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
       ],
+      "observedSemantics": [
+        "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+        "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+        "Bracketed keys such as limit[] are stripped as unknown keys."
+      ],
+      "observedEvidence": [
+        "backend/test/integration/admin-postgres.test.js"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
@@ -36433,6 +36472,14 @@
       "semanticReviewRequired": true,
       "semanticFacts": [
         "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
+      ],
+      "observedSemantics": [
+        "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+        "Express decodes query values before Zod number coercion. Noncanonical spellings such as page=02 and limit=2e1 are accepted.",
+        "Bracketed keys such as limit[] are stripped as unknown keys."
+      ],
+      "observedEvidence": [
+        "backend/test/integration/admin-postgres.test.js"
       ],
       "unknownFieldPolicies": [
         {
@@ -38514,6 +38561,13 @@
       ],
       "semanticReviewRequired": true,
       "semanticFacts": [],
+      "observedSemantics": [
+        "Marketing consent requires policy id/version together",
+        "Supplying either policy id or version requires the other"
+      ],
+      "observedEvidence": [
+        "backend/test/input-authority.test.js"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
@@ -39946,6 +40000,14 @@
       "semanticReviewRequired": true,
       "semanticFacts": [
         "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
+      ],
+      "observedSemantics": [
+        "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+        "Express decodes query values before Zod number coercion. Numeric strings such as 2.0, 2e1 and 0x10 are accepted.",
+        "Bracketed keys such as limit[] are stripped as unknown keys."
+      ],
+      "observedEvidence": [
+        "backend/test/integration/growth-postgres.test.js"
       ],
       "unknownFieldPolicies": [
         {
