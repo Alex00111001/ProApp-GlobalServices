@@ -19,8 +19,9 @@ const adminDirectoryResponses = Object.freeze({
   professionals: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/professionals', operationId: 'adminDirectory.professionals',
     responses: { 200: serialized(adminListResponse(outputObject({
-      id: z.string(), status: z.string(), yearsOfExperience: z.number().int().nullable(), totalBookings: count,
-      averageRating: z.number(), totalReviews: count, createdAt: dateTime, verifiedAt: dateTime.nullable(),
+      id: z.string(), status: z.string(), yearsOfExperience: z.number().int().nullable(),
+      totalBookings: z.number().int(), averageRating: z.number(), totalReviews: z.number().int(),
+      createdAt: dateTime, verifiedAt: dateTime.nullable(),
       user: outputObject(maskedUser), _count: outputObject({ documents: count, categories: count, services: count }),
     }))) },
   }),
