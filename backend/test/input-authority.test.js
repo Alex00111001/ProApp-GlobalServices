@@ -10,6 +10,26 @@ const { bookingCancellationBody, bookingRejectionBody, paymentConfirmationBody, 
 const { bookingInputContext } = require('../src/contracts/booking.inputs');
 const { buildInventory } = require('../scripts/api-contract/inventory-command');
 const { buildOpenApi } = require('../scripts/api-contract/openapi-command');
+
+test('pagination evidence is projected without changing canonical parameters or claiming wire parity', () => {
+  const api = buildOpenApi(buildInventory());
+  const paths = {
+    '/api/v1/admin/growth/campaigns': 'growth-postgres',
+    '/api/v1/admin/operations/errors': 'admin-postgres',
+    '/api/v1/admin/operations/incidents': 'admin-postgres',
+  };
+  for (const [path, fixture] of Object.entries(paths)) {
+    const operation = api.paths[path].get;
+    const queryBinding = operation['x-homeservices-input-bindings'].find(({ input }) => input === 'req.query');
+    assert.ok(queryBinding.semanticClasses.includes('NORMALIZATION'));
+    assert.deepEqual(queryBinding.observedEvidence, [`backend/test/integration/${fixture}.test.js`]);
+    assert.match(queryBinding.observedSemantics.join(' '), /Empty or repeated values fail/);
+    const limit = operation.parameters.find((parameter) => parameter.name === 'limit');
+    assert.equal(limit.required, false);
+    assert.deepEqual(limit.schema, { default: 25, type: 'integer', minimum: 1, maximum: 100 });
+  }
+  assert.equal(api['x-homeservices-completeness'].unresolvedRouteInputProjections, 129);
+});
 const { schemaChanges, breakingChanges } = require('../scripts/api-contract/breaking-changes');
 const { catalogProjection } = require('../scripts/api-contract/schema-catalog');
 const { reasonCases, bookingCases, emailCases, paymentCases, sample, uuid } = require('./helpers/input-contract-cases');
