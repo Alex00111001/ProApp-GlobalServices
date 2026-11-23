@@ -195,6 +195,19 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
       { id: group.id, errorCode: null, lastSeenAt: fixtureTime.toISOString() },
     ]);
 
+    await prisma.incidentComment.create({ data: { incidentId: incidentIds[0], body: 'Historical synthetic comment' } });
+    const errorDetailResponse = await fetch(`${baseUrl}/operations/errors/${group.id}`, { headers: operationsHeaders });
+    assert.equal(errorDetailResponse.status, 200);
+    const { errorGroup } = await errorDetailResponse.json();
+    assert.equal(errorGroup.lastSeenAt, fixtureTime.toISOString());
+    assert.deepEqual(errorGroup.incidents.map(({ id }) => id), [incidentIds[0]]);
+
+    const incidentDetailResponse = await fetch(`${baseUrl}/operations/incidents/${incidentIds[0]}`, { headers: operationsHeaders });
+    assert.equal(incidentDetailResponse.status, 200);
+    const { incident: incidentDetail } = await incidentDetailResponse.json();
+    assert.equal(incidentDetail.errorGroup.id, group.id);
+    assert.equal(incidentDetail.comments[0].author, null);
+
     const orderedIds = [...incidentIds].sort().reverse();
     for (const [index, id] of orderedIds.entries()) {
       const page = index + 1;
