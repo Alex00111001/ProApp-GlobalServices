@@ -18,6 +18,8 @@ const { getDashboard } = require('../../src/modules/admin/admin-read.service');
 
 const runId = `admin.${Date.now().toString(36)}.${Math.random().toString(36).slice(2, 10)}`;
 const userIds = [];
+const incidentIds = [];
+let errorGroupId;
 let changeId;
 let supportCaseId;
 let passwordHash;
@@ -32,6 +34,8 @@ test.before(async () => {
 });
 
 test.after(async () => {
+  if (incidentIds.length) await prisma.incident.deleteMany({ where: { id: { in: incidentIds } } });
+  if (errorGroupId) await prisma.errorGroup.deleteMany({ where: { id: errorGroupId } });
   if (changeId) await prisma.adminRoleChangeRequest.deleteMany({ where: { id: changeId } });
   if (supportCaseId) {
     await prisma.automationEventDelivery.deleteMany({ where: { sourceEvent: { aggregateType: 'SupportCase', aggregateId: supportCaseId } } });
@@ -164,6 +168,42 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
         assert.equal(response.status, 400, `${path}?${query}`);
         assert.equal((await response.json()).code, 'VALIDATION_ERROR');
       }
+    }
+
+    const operationsHeaders = { authorization: `Bearer ${session.accessToken}` };
+    const fixtureTime = new Date('2026-09-21T08:00:00.000Z');
+    const group = await prisma.errorGroup.create({ data: {
+      fingerprint: `fixture-${runId}`, environment: 'test', service: runId,
+      normalizedMessage: 'Synthetic operations fixture', lastSeenAt: fixtureTime,
+    } });
+    errorGroupId = group.id;
+    for (const errorGroupId of [group.id, null]) {
+      const incident = await prisma.incident.create({ data: {
+        title: 'Synthetic incident fixture', service: runId, detectedAt: fixtureTime, errorGroupId,
+      } });
+      incidentIds.push(incident.id);
+    }
+    const errorList = await fetch(`${baseUrl}/operations/errors?service=${encodeURIComponent(runId)}`, { headers: operationsHeaders });
+    assert.equal(errorList.status, 200);
+    const errors = await errorList.json();
+    assert.deepEqual(errors.items.map(({ id, errorCode, lastSeenAt }) => ({ id, errorCode, lastSeenAt })), [
+      { id: group.id, errorCode: null, lastSeenAt: fixtureTime.toISOString() },
+    ]);
+
+    const orderedIds = [...incidentIds].sort().reverse();
+    for (const [index, id] of orderedIds.entries()) {
+      const page = index + 1;
+      const response = await fetch(`${baseUrl}/operations/incidents?service=${encodeURIComponent(runId)}&page=${page}&limit=1`, { headers: operationsHeaders });
+      assert.equal(response.status, 200);
+      const body = await response.json();
+      assert.deepEqual(body.pagination, { page, limit: 1, totalItems: 2, totalPages: 2 });
+      assert.equal(body.items.length, 1);
+      assert.equal(body.items[0].id, id);
+      assert.equal(body.items[0].detectedAt, fixtureTime.toISOString());
+      assert.equal(body.items[0].resolvedAt, null);
+      assert.deepEqual(body.items[0].errorGroup, id === incidentIds[0] ? {
+        id: group.id, fingerprint: group.fingerprint, errorCode: null, occurrenceCount: group.occurrenceCount,
+      } : null);
     }
 
     const deniedJobs = await fetch(`${baseUrl}/operations/jobs?page=1&limit=5`, {
