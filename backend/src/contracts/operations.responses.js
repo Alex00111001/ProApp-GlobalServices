@@ -8,6 +8,14 @@ const healthStatus = z.enum(['HEALTHY', 'DEGRADED', 'OUTAGE']);
 const dependencyHealth = outputObject({
   service: z.string(), status: healthStatus, latencyMs: z.number().int(), message: z.string().optional(),
 });
+const reconciliationSummary = outputObject({
+  id: z.string(), status: z.string(), scope: z.string(),
+  startedAt: dateTime, completedAt: dateTime.nullable(),
+  matchedCount: count, mismatchCount: count, errorCount: count,
+});
+const financialGroup = outputObject({
+  status: z.string(), currency: z.string(), count, amount: z.string(),
+});
 const overview = outputObject({
   generatedAt: dateTime,
   health: outputObject({
@@ -27,11 +35,7 @@ const overview = outputObject({
   support: countsByStatus,
   financialAttention: outputObject({
     failedRefunds: count, failedPayouts: count, activeDisputes: count,
-    latestReconciliation: outputObject({
-      id: z.string(), status: z.string(), scope: z.string(),
-      startedAt: dateTime, completedAt: dateTime.nullable(),
-      matchedCount: count, mismatchCount: count, errorCount: count,
-    }).nullable(),
+    latestReconciliation: reconciliationSummary.nullable(),
   }),
   freshness: outputObject({
     latestErrorAt: dateTime.nullable(), latestIncidentAt: dateTime.nullable(), partialData: z.boolean(),
@@ -139,6 +143,15 @@ const alert = outputObject({
 });
 
 const operationsResponses = Object.freeze({
+  financialMonitoring: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/operations/financial-monitoring', operationId: 'adminOperations.financialMonitoring',
+    responses: { 200: serialized(outputObject({
+      generatedAt: dateTime, readOnly: z.literal(true),
+      refunds: z.array(financialGroup), payouts: z.array(financialGroup),
+      disputes: z.array(financialGroup.extend({ recoveredAmount: z.string() })),
+      reconciliationRuns: z.array(reconciliationSummary),
+    })) },
+  }),
   overview: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/operations/overview', operationId: 'adminOperations.overview',
     responses: { 200: serialized(overview) },
