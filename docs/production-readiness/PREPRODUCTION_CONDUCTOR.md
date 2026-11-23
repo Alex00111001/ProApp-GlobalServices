@@ -69,6 +69,23 @@ Las entradas de cambio de estado, asignación y comentario ya tienen evidencia d
 de validador. El siguiente vacío de entrada de soporte es la consulta de la lista de casos,
 que combina paginación, filtros opcionales y búsqueda. OpenAPI sigue como candidato.
 
+**Evidencia de entrega posterior.** Los siguientes controles pasaron para cada SHA integrado,
+incluida la integración con PostgreSQL aislado. Los PR enlazan la revisión y el alcance de la
+verificación de cada cambio.
+
+| PR | SHA integrado y CI | Evidencia incorporada |
+| --- | --- | --- |
+| [#47](https://github.com/Alex00111001/ProApp-GlobalServices/pull/47) | [`52a6bbf2`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45242427680) | Paginación, filtros y búsqueda de soporte por HTTP. La equivalencia completa de la consulta sigue abierta. |
+| [#48](https://github.com/Alex00111001/ProApp-GlobalServices/pull/48) y [#49](https://github.com/Alex00111001/ProApp-GlobalServices/pull/49) | [`d31a6990`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45245008656) y [`9d34cc8a`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45245687463) | Contratos de escritura de soporte y prueba de desasignación repetida sin eventos adicionales. |
+| [#50](https://github.com/Alex00111001/ProApp-GlobalServices/pull/50) y [#51](https://github.com/Alex00111001/ProApp-GlobalServices/pull/51) | [`7e1d04a2`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45265547335) y [`5f4a2869`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45265723477) | Resumen de Operaciones y detalles de errores e incidentes. |
+| [#52](https://github.com/Alex00111001/ProApp-GlobalServices/pull/52) | [`e5376df5`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45267053749) | Lectura y transición auditada de grupos de errores históricos, con UUID aún admitidos. |
+| [#53](https://github.com/Alex00111001/ProApp-GlobalServices/pull/53) | [`e10bc5b9`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45268680005) | Contratos de escritura de Operaciones y exclusión de datos internos de las respuestas afectadas. |
+| [#54](https://github.com/Alex00111001/ProApp-GlobalServices/pull/54) | [`2899627e`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45268835640) | Monitoreo financiero de solo lectura y verificación HTTP de permiso y auditoría. |
+
+En `2899627e`, OpenAPI continúa como candidato sin publicar, con 128 entradas pendientes
+de equivalencia semántica y 173 respuestas incompletas. La verificación de estos cambios
+en CI usa PostgreSQL aislado y queda pendiente la aceptación integral en staging.
+
 ## Camino crítico
 
 El orden siguiente refleja dependencias de aceptación. El camino de calendario se actualiza
