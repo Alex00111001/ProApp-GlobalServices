@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "5dc082a259c24ef3eb120e67759d8f188e130f195501541ac54213bb49b3e1ed",
+  "sourceFingerprint": "b6890eea63f8108de284b5ceb0f1c5c6816362f24871885bee43b0969ff78edd",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -12223,7 +12223,7 @@
       "path": "/api/v1/admin/ai/costs",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 161
+        "line": 162
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -12316,7 +12316,7 @@
       "path": "/api/v1/admin/ai/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 160
+        "line": 161
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -12418,7 +12418,7 @@
       "path": "/api/v1/admin/ai/executions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 158
+        "line": 159
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -12536,7 +12536,7 @@
       "path": "/api/v1/admin/ai/executions/{id}/approvals",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 159
+        "line": 160
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -12800,7 +12800,7 @@
       "path": "/api/v1/admin/ai/model-policies/{id}/activate",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 151
+        "line": 152
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13021,7 +13021,7 @@
       "path": "/api/v1/admin/ai/model-policies/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 150
+        "line": 151
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13258,7 +13258,7 @@
       "path": "/api/v1/admin/ai/operation-versions/{id}/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 155
+        "line": 156
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13507,7 +13507,7 @@
       "path": "/api/v1/admin/ai/operations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 152
+        "line": 153
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13620,7 +13620,7 @@
       "path": "/api/v1/admin/ai/operations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 153
+        "line": 154
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -13856,7 +13856,7 @@
       "path": "/api/v1/admin/ai/operations/{id}/activate",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 156
+        "line": 157
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14077,7 +14077,7 @@
       "path": "/api/v1/admin/ai/operations/{id}/executions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 157
+        "line": 158
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14273,7 +14273,7 @@
       "path": "/api/v1/admin/ai/prompts/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 154
+        "line": 155
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14510,7 +14510,7 @@
       "path": "/api/v1/admin/ai/providers",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 146
+        "line": 147
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14623,7 +14623,7 @@
       "path": "/api/v1/admin/ai/providers",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 147
+        "line": 148
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -14828,7 +14828,7 @@
       "path": "/api/v1/admin/ai/providers/{id}/model-policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 149
+        "line": 150
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -15117,7 +15117,7 @@
       "path": "/api/v1/admin/ai/providers/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 148
+        "line": 149
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -15358,7 +15358,7 @@
       "path": "/api/v1/admin/attribution/conversions/{id}/calculate",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 88
+        "line": 89
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15504,7 +15504,7 @@
       "path": "/api/v1/admin/attribution/models",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 83
+        "line": 84
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15644,7 +15644,7 @@
       "path": "/api/v1/admin/attribution/models",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 84
+        "line": 85
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15786,7 +15786,7 @@
       "path": "/api/v1/admin/attribution/models/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 85
+        "line": 86
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -15940,7 +15940,7 @@
       "path": "/api/v1/admin/attribution/models/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 86
+        "line": 87
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -16147,7 +16147,7 @@
       "path": "/api/v1/admin/attribution/results",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 87
+        "line": 88
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -16287,7 +16287,7 @@
       "path": "/api/v1/admin/audit",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 163
+        "line": 164
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -16427,7 +16427,7 @@
       "path": "/api/v1/admin/auth/login",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 34
+        "line": 35
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -16573,7 +16573,7 @@
       "path": "/api/v1/admin/auth/logout",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 39
+        "line": 40
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -16682,7 +16682,7 @@
       "path": "/api/v1/admin/auth/me",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 38
+        "line": 39
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -16798,7 +16798,7 @@
       "path": "/api/v1/admin/auth/refresh",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 35
+        "line": 36
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -16907,7 +16907,7 @@
       "path": "/api/v1/admin/auth/sessions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 40
+        "line": 41
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -17016,7 +17016,7 @@
       "path": "/api/v1/admin/auth/sessions/{id}/revoke",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 41
+        "line": 42
       },
       "controller": {
         "file": "backend/src/controllers/admin-auth.controller.js",
@@ -17252,7 +17252,7 @@
       "path": "/api/v1/admin/automation/dead-letter",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 105
+        "line": 106
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -17287,7 +17287,7 @@
       "path": "/api/v1/admin/automation/definitions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 100
+        "line": 101
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -17420,7 +17420,7 @@
       "path": "/api/v1/admin/automation/definitions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 101
+        "line": 102
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -17667,7 +17667,7 @@
       "path": "/api/v1/admin/automation/definitions/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 103
+        "line": 104
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -17925,7 +17925,7 @@
       "path": "/api/v1/admin/automation/definitions/{id}/versions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 102
+        "line": 103
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -18192,7 +18192,7 @@
       "path": "/api/v1/admin/automation/executions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 104
+        "line": 105
       },
       "controller": {
         "file": "backend/src/controllers/admin-automation.controller.js",
@@ -18227,7 +18227,7 @@
       "path": "/api/v1/admin/bookings",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 58
+        "line": 59
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -18363,7 +18363,7 @@
       "path": "/api/v1/admin/bookings/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 59
+        "line": 60
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -18425,7 +18425,7 @@
       "path": "/api/v1/admin/content",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 122
+        "line": 123
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -18559,7 +18559,7 @@
       "path": "/api/v1/admin/content",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 123
+        "line": 124
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -18704,7 +18704,7 @@
       "path": "/api/v1/admin/content/{id}/versions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 124
+        "line": 125
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -18970,7 +18970,7 @@
       "path": "/api/v1/admin/content/publications/{id}/retire",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 128
+        "line": 129
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -19191,7 +19191,7 @@
       "path": "/api/v1/admin/content/versions/{id}/publish",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 127
+        "line": 128
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -19369,7 +19369,7 @@
       "path": "/api/v1/admin/content/versions/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 126
+        "line": 127
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -19606,7 +19606,7 @@
       "path": "/api/v1/admin/content/versions/{id}/submit",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 125
+        "line": 126
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -19726,7 +19726,7 @@
       "path": "/api/v1/admin/dashboard",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 43
+        "line": 44
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -19844,7 +19844,7 @@
       "path": "/api/v1/admin/expansion",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 141
+        "line": 142
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -19965,7 +19965,7 @@
       "path": "/api/v1/admin/expansion",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 142
+        "line": 143
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20183,7 +20183,7 @@
       "path": "/api/v1/admin/expansion/{id}/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 143
+        "line": 144
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20329,7 +20329,7 @@
       "path": "/api/v1/admin/expansion/evaluations/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 144
+        "line": 145
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -20566,7 +20566,7 @@
       "path": "/api/v1/admin/experiments",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 117
+        "line": 118
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -20688,7 +20688,7 @@
       "path": "/api/v1/admin/experiments",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 118
+        "line": 119
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -20851,7 +20851,7 @@
       "path": "/api/v1/admin/experiments/{id}/results",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 121
+        "line": 122
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -20992,7 +20992,7 @@
       "path": "/api/v1/admin/experiments/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 120
+        "line": 121
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -21254,7 +21254,7 @@
       "path": "/api/v1/admin/experiments/{id}/versions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 119
+        "line": 120
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -21431,7 +21431,7 @@
       "path": "/api/v1/admin/geography/divisions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 111
+        "line": 112
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -21552,7 +21552,7 @@
       "path": "/api/v1/admin/geography/imports",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 109
+        "line": 110
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -21658,7 +21658,7 @@
       "path": "/api/v1/admin/geography/imports",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 110
+        "line": 111
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -21746,7 +21746,7 @@
       "path": "/api/v1/admin/growth/campaigns",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 68
+        "line": 69
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -21883,7 +21883,7 @@
       "path": "/api/v1/admin/growth/campaigns",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 69
+        "line": 70
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22087,7 +22087,7 @@
       "path": "/api/v1/admin/growth/campaigns/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 70
+        "line": 71
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22377,7 +22377,7 @@
       "path": "/api/v1/admin/growth/campaigns/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 71
+        "line": 72
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22601,7 +22601,7 @@
       "path": "/api/v1/admin/growth/conversions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 73
+        "line": 74
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22731,7 +22731,7 @@
       "path": "/api/v1/admin/growth/funnel",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 67
+        "line": 68
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22853,7 +22853,7 @@
       "path": "/api/v1/admin/growth/leads",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 72
+        "line": 73
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -22982,7 +22982,7 @@
       "path": "/api/v1/admin/growth/overview",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 66
+        "line": 67
       },
       "controller": {
         "file": "backend/src/controllers/admin-growth.controller.js",
@@ -23104,7 +23104,7 @@
       "path": "/api/v1/admin/identity/documents",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 115
+        "line": 116
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23207,7 +23207,7 @@
       "path": "/api/v1/admin/identity/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 112
+        "line": 113
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23335,7 +23335,7 @@
       "path": "/api/v1/admin/identity/policies/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 113
+        "line": 114
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23601,7 +23601,7 @@
       "path": "/api/v1/admin/identity/policies/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 114
+        "line": 115
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23855,7 +23855,7 @@
       "path": "/api/v1/admin/markets",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 107
+        "line": 108
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -23972,7 +23972,7 @@
       "path": "/api/v1/admin/markets/{marketCode}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 108
+        "line": 109
       },
       "controller": {
         "file": "backend/src/controllers/admin-markets.controller.js",
@@ -24196,7 +24196,7 @@
       "path": "/api/v1/admin/operations/alerts",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 183
+        "line": 184
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24318,7 +24318,7 @@
       "path": "/api/v1/admin/operations/errors",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 174
+        "line": 175
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24462,7 +24462,7 @@
       "path": "/api/v1/admin/operations/errors/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 175
+        "line": 176
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24556,7 +24556,7 @@
       "path": "/api/v1/admin/operations/errors/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 176
+        "line": 177
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24830,7 +24830,7 @@
       "path": "/api/v1/admin/operations/financial-monitoring",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 184
+        "line": 185
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24865,7 +24865,7 @@
       "path": "/api/v1/admin/operations/health",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 172
+        "line": 173
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -24900,7 +24900,7 @@
       "path": "/api/v1/admin/operations/health/snapshots",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 173
+        "line": 174
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25012,7 +25012,7 @@
       "path": "/api/v1/admin/operations/incidents",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 177
+        "line": 178
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25158,7 +25158,7 @@
       "path": "/api/v1/admin/operations/incidents/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 178
+        "line": 179
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25252,7 +25252,7 @@
       "path": "/api/v1/admin/operations/incidents/{id}/comments",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 180
+        "line": 181
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25506,7 +25506,7 @@
       "path": "/api/v1/admin/operations/incidents/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 179
+        "line": 180
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25784,7 +25784,7 @@
       "path": "/api/v1/admin/operations/integrations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 182
+        "line": 183
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -25906,7 +25906,7 @@
       "path": "/api/v1/admin/operations/jobs",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 181
+        "line": 182
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26028,7 +26028,7 @@
       "path": "/api/v1/admin/operations/metrics",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 171
+        "line": 172
       },
       "controller": {
         "file": "backend/src/modules/observability/metrics.js",
@@ -26052,7 +26052,7 @@
       "path": "/api/v1/admin/operations/overview",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 170
+        "line": 171
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26087,7 +26087,7 @@
       "path": "/api/v1/admin/operations/support/cases",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 186
+        "line": 187
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26102,9 +26102,9 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/SupportPage.tsx",
-          "line": 16,
+          "line": 17,
           "method": "GET",
-          "path": "/api/v1/admin/operations/support/cases?page={parameter}&limit=25&search={parameter}",
+          "path": "/api/v1/admin/operations/support/cases?{parameter}",
           "operation": "GET /api/v1/admin/operations/support/cases",
           "status": "PATH_METHOD_MATCH",
           "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
@@ -26224,7 +26224,7 @@
       "path": "/api/v1/admin/operations/support/cases",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 187
+        "line": 188
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26239,7 +26239,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/SupportPage.tsx",
-          "line": 20,
+          "line": 21,
           "method": "POST",
           "path": "/api/v1/admin/operations/support/cases",
           "operation": "POST /api/v1/admin/operations/support/cases",
@@ -26418,7 +26418,7 @@
       "path": "/api/v1/admin/operations/support/cases/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 188
+        "line": 189
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26433,7 +26433,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/SupportPage.tsx",
-          "line": 17,
+          "line": 18,
           "method": "GET",
           "path": "/api/v1/admin/operations/support/cases/{parameter}",
           "operation": "GET /api/v1/admin/operations/support/cases/{id}",
@@ -26512,7 +26512,7 @@
       "path": "/api/v1/admin/operations/support/cases/{id}/assignment",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 190
+        "line": 191
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26527,7 +26527,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/SupportPage.tsx",
-          "line": 22,
+          "line": 23,
           "method": "PATCH",
           "path": "/api/v1/admin/operations/support/cases/{parameter}/assignment",
           "operation": "PATCH /api/v1/admin/operations/support/cases/{id}/assignment",
@@ -26792,7 +26792,7 @@
       "path": "/api/v1/admin/operations/support/cases/{id}/comments",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 191
+        "line": 192
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -26807,7 +26807,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/SupportPage.tsx",
-          "line": 23,
+          "line": 24,
           "method": "POST",
           "path": "/api/v1/admin/operations/support/cases/{parameter}/comments",
           "operation": "POST /api/v1/admin/operations/support/cases/{id}/comments",
@@ -27046,7 +27046,7 @@
       "path": "/api/v1/admin/operations/support/cases/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 189
+        "line": 190
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -27061,7 +27061,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/SupportPage.tsx",
-          "line": 21,
+          "line": 22,
           "method": "PATCH",
           "path": "/api/v1/admin/operations/support/cases/{parameter}/status",
           "operation": "PATCH /api/v1/admin/operations/support/cases/{id}/status",
@@ -27324,7 +27324,7 @@
       "path": "/api/v1/admin/operations/support/operators",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 185
+        "line": 186
       },
       "controller": {
         "file": "backend/src/controllers/admin-operations.controller.js",
@@ -27339,7 +27339,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/SupportPage.tsx",
-          "line": 18,
+          "line": 19,
           "method": "GET",
           "path": "/api/v1/admin/operations/support/operators",
           "operation": "GET /api/v1/admin/operations/support/operators",
@@ -27359,7 +27359,7 @@
       "path": "/api/v1/admin/privacy/consents",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 80
+        "line": 81
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -27499,7 +27499,7 @@
       "path": "/api/v1/admin/privacy/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 75
+        "line": 76
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -27639,7 +27639,7 @@
       "path": "/api/v1/admin/privacy/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 76
+        "line": 77
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -27814,7 +27814,7 @@
       "path": "/api/v1/admin/privacy/policies/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 77
+        "line": 78
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -27980,7 +27980,7 @@
       "path": "/api/v1/admin/privacy/policies/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 78
+        "line": 79
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -28189,7 +28189,7 @@
       "path": "/api/v1/admin/privacy/policies/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 79
+        "line": 80
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -28396,7 +28396,7 @@
       "path": "/api/v1/admin/privacy/touchpoints",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 82
+        "line": 83
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -28536,7 +28536,7 @@
       "path": "/api/v1/admin/privacy/withdrawals",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 81
+        "line": 82
       },
       "controller": {
         "file": "backend/src/controllers/admin-privacy.controller.js",
@@ -28676,7 +28676,7 @@
       "path": "/api/v1/admin/professionals",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 49
+        "line": 50
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -28802,7 +28802,7 @@
       "path": "/api/v1/admin/professionals/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 50
+        "line": 51
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -28864,7 +28864,7 @@
       "path": "/api/v1/admin/professionals/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 56
+        "line": 57
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -29067,7 +29067,7 @@
       "path": "/api/v1/admin/readiness/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 139
+        "line": 140
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29186,7 +29186,7 @@
       "path": "/api/v1/admin/readiness/evaluations",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 140
+        "line": 141
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29285,7 +29285,7 @@
       "path": "/api/v1/admin/readiness/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 135
+        "line": 136
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29393,7 +29393,7 @@
       "path": "/api/v1/admin/readiness/policies",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 136
+        "line": 137
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29607,7 +29607,7 @@
       "path": "/api/v1/admin/readiness/policies/{id}/activate",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 138
+        "line": 139
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -29828,7 +29828,7 @@
       "path": "/api/v1/admin/readiness/policies/{id}/review",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 137
+        "line": 138
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -30065,7 +30065,7 @@
       "path": "/api/v1/admin/referrals/codes",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 94
+        "line": 95
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30100,7 +30100,7 @@
       "path": "/api/v1/admin/referrals/conversions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 96
+        "line": 97
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30135,7 +30135,7 @@
       "path": "/api/v1/admin/referrals/programs",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 90
+        "line": 91
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30268,7 +30268,7 @@
       "path": "/api/v1/admin/referrals/programs",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 91
+        "line": 92
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30550,7 +30550,7 @@
       "path": "/api/v1/admin/referrals/programs/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 93
+        "line": 94
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -30822,7 +30822,7 @@
       "path": "/api/v1/admin/referrals/programs/{id}/versions",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 92
+        "line": 93
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -31114,7 +31114,7 @@
       "path": "/api/v1/admin/referrals/referrals",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 95
+        "line": 96
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -31149,7 +31149,7 @@
       "path": "/api/v1/admin/referrals/rewards",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 97
+        "line": 98
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -31184,7 +31184,7 @@
       "path": "/api/v1/admin/referrals/rewards/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 98
+        "line": 99
       },
       "controller": {
         "file": "backend/src/controllers/admin-referrals.controller.js",
@@ -31376,7 +31376,7 @@
       "path": "/api/v1/admin/role-change-requests",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 165
+        "line": 166
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31411,7 +31411,7 @@
       "path": "/api/v1/admin/role-change-requests",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 166
+        "line": 167
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31540,7 +31540,7 @@
       "path": "/api/v1/admin/role-change-requests/{id}/approve",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 167
+        "line": 168
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31721,7 +31721,7 @@
       "path": "/api/v1/admin/role-change-requests/{id}/reject",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 168
+        "line": 169
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31902,7 +31902,7 @@
       "path": "/api/v1/admin/roles",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 164
+        "line": 165
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -31937,7 +31937,7 @@
       "path": "/api/v1/admin/seo/redirects",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 129
+        "line": 130
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -32050,7 +32050,7 @@
       "path": "/api/v1/admin/seo/redirects",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 130
+        "line": 131
       },
       "controller": {
         "file": "backend/src/controllers/admin-f9.controller.js",
@@ -32197,7 +32197,7 @@
       "path": "/api/v1/admin/supply-demand/metrics",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 132
+        "line": 133
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -32301,7 +32301,7 @@
       "path": "/api/v1/admin/supply-demand/snapshots",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 133
+        "line": 134
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -32394,7 +32394,7 @@
       "path": "/api/v1/admin/supply-demand/snapshots",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 134
+        "line": 135
       },
       "controller": {
         "file": "backend/src/controllers/admin-f10.controller.js",
@@ -32513,7 +32513,7 @@
       "path": "/api/v1/admin/users",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 45
+        "line": 46
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -32653,7 +32653,7 @@
       "path": "/api/v1/admin/users/{id}",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 46
+        "line": 47
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
@@ -32715,7 +32715,7 @@
       "path": "/api/v1/admin/users/{id}/status",
       "router": {
         "file": "backend/src/routes/admin-v1.routes.js",
-        "line": 47
+        "line": 48
       },
       "controller": {
         "file": "backend/src/controllers/admin-v1.controller.js",
