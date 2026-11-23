@@ -259,3 +259,28 @@ Verification, exact-SHA CI and residual acceptance gates are recorded in the
 Rollback is a scoped revert of T01 authorities and generated artifacts; runtime acceptance and
 legacy endpoints are preserved. Migration NONE. PRR-105 remains open; PRR-106 not started;
 Production/Markets/CASH OFF, F11 PAUSED. Stop after exact-SHA evidence and tracker projection.
+
+## Pagination pilot — canonical values and HTTP query syntax
+
+The pilot covers `GET /api/v1/admin/growth/campaigns`,
+`GET /api/v1/admin/operations/errors` and `GET /api/v1/admin/operations/incidents`.
+Their candidate OpenAPI parameters describe optional canonical integers. The
+defaults are page 1 and limit 25, and the limit is bounded from 1 through 100.
+The Express query parser and Zod coercion also accept some noncanonical spellings,
+such as `02`, `2.0` and `2e1`. Preserve those spellings for existing clients.
+
+Keep the integer parameters as the client-facing representation. Track the
+runtime conversion and accepted HTTP spellings separately from the canonical
+schema. Before claiming equivalence, the projection must account for absent
+versus empty input, percent decoding, duplicate keys, bracketed keys, and
+ECMAScript number parsing and safe-integer bounds. The errors and campaigns
+controllers also validate sibling filters. Validating pagination alone does
+not close a binding whose sibling filters still lack semantic evidence.
+
+The [HTTP pilot PR](https://github.com/Alex00111001/ProApp-GlobalServices/pull/40)
+exercises the real admin session, mounted routes, parser, validators, and
+PostgreSQL. The PostgreSQL job passed for `f28b20cd` in
+[Platform verification](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45153876874).
+These behavioral witnesses leave canonical OpenAPI
+and the unresolved-binding counters unchanged pending a runtime-authoritative
+projection and consumer verification.
