@@ -61,6 +61,13 @@ const integration = outputObject({
   correlationId: z.string().nullable(), receivedAt: dateTime,
   processingStartedAt: dateTime.nullable(), updatedAt: dateTime,
 });
+const alert = outputObject({
+  ...processingFields,
+  aggregateId: z.string(),
+  status: z.enum(['PENDING', 'PROCESSING', 'PROCESSED', 'FAILED', 'DEAD_LETTER']),
+  availableAt: dateTime, createdAt: dateTime,
+  route: z.string().nullable(), severity: z.string().nullable(),
+});
 
 const operationsResponses = Object.freeze({
   errors: defineResponseContract({
@@ -86,6 +93,10 @@ const operationsResponses = Object.freeze({
   integrations: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/operations/integrations', operationId: 'adminOperations.integrations',
     responses: { 200: serialized(adminListResponse(integration)) },
+  }),
+  alerts: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/operations/alerts', operationId: 'adminOperations.alerts',
+    responses: { 200: serialized(adminListResponse(alert)) },
   }),
 });
 

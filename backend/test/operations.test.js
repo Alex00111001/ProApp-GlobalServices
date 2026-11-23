@@ -1,4 +1,5 @@
 process.env.NODE_ENV = 'test';
+process.env.OBSERVABILITY_ALERT_ROUTE_HIGH = 'operations-escalation-emea';
 process.env.DATABASE_URL ||= 'postgresql://user:password@localhost:5432/test';
 
 const assert = require('node:assert/strict');
@@ -16,6 +17,7 @@ const {
   operationalListQuerySchema,
 } = require('../src/validators/admin-operations.validators');
 const { ROLE_PERMISSIONS } = require('../src/modules/identity/permission-catalog');
+const { operationsResponses } = require('../src/contracts/operations.responses');
 
 test('F5 operational query contracts cap cardinality and require auditable mutation reasons', () => {
   assert.equal(errorListQuerySchema.parse({ limit: '100' }).limit, 100);
@@ -57,6 +59,34 @@ test('job, integration and alert views expose failure state without raw provider
   assert.equal(alerts.items[0].route, 'operations-on-call');
   assert.equal(JSON.stringify({ jobs, integrations, alerts }).includes(secretError), false);
   assert.equal(Object.hasOwn(alerts.items[0], 'payload'), false);
+});
+
+test('alert list keeps safe historical routing data and omits malformed metadata', async () => {
+  const time = new Date('2026-09-21T08:00:00.000Z');
+  const row = {
+    aggregateId: 'incident-1', eventType: 'incident.reopened', status: 'PENDING',
+    attempts: 0, availableAt: time, processedAt: null, createdAt: time, lastError: null,
+  };
+  const payloads = [
+    null, ['route'], { route: { internal: 'synthetic-private-value' }, severity: true },
+    { route: '', severity: '' }, { route: 'https://example.invalid/webhook', severity: 'unexpected free text' },
+    { route: 'operations-on-call', severity: 'HIGH' },
+    { route: 'operations-escalation-emea', severity: 'HIGH' },
+    { route: 'synthetic-unconfigured-long-label', severity: 'HIGH' },
+  ];
+  const response = await listAlertDeliveries({ page: 1, limit: 25 }, {
+    outboxEvent: {
+      findMany: async () => payloads.map((payload, index) => ({ ...row, id: String(index), payload })),
+      count: async () => payloads.length,
+    },
+  });
+  const { schema, serialize } = operationsResponses.alerts.responses[200];
+  const output = schema.parse(serialize(response));
+  assert.deepEqual(output.items.map(({ route, severity }) => [route, severity]), [
+    [null, null], [null, null], [null, null], [null, null], [null, null], ['operations-on-call', 'HIGH'],
+    ['operations-escalation-emea', 'HIGH'], [null, 'HIGH'],
+  ]);
+  assert.equal(JSON.stringify(output).includes('synthetic-private-value'), false);
 });
 
 test('financial monitoring is currency-separated, decimal-safe and read-only', async () => {
