@@ -21761,9 +21761,9 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/GrowthPage.tsx",
-          "line": 28,
+          "line": 29,
           "method": "GET",
-          "path": "/api/v1/admin/growth/campaigns?page={parameter}&limit=25&search={parameter}",
+          "path": "/api/v1/admin/growth/campaigns?{parameter}",
           "operation": "GET /api/v1/admin/growth/campaigns",
           "status": "PATH_METHOD_MATCH",
           "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
@@ -21898,7 +21898,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/GrowthPage.tsx",
-          "line": 30,
+          "line": 31,
           "method": "POST",
           "path": "/api/v1/admin/growth/campaigns",
           "operation": "POST /api/v1/admin/growth/campaigns",
@@ -22102,7 +22102,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/GrowthPage.tsx",
-          "line": 32,
+          "line": 33,
           "method": "PATCH",
           "path": "/api/v1/admin/growth/campaigns/{parameter}",
           "operation": "PATCH /api/v1/admin/growth/campaigns/{id}",
@@ -22392,7 +22392,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/GrowthPage.tsx",
-          "line": 31,
+          "line": 32,
           "method": "PATCH",
           "path": "/api/v1/admin/growth/campaigns/{parameter}/status",
           "operation": "PATCH /api/v1/admin/growth/campaigns/{id}/status",
@@ -22616,7 +22616,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/GrowthPage.tsx",
-          "line": 47,
+          "line": 48,
           "method": "GET",
           "path": "/api/v1/admin/growth/conversions?{parameter}",
           "operation": "GET /api/v1/admin/growth/conversions",
@@ -22868,7 +22868,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/GrowthPage.tsx",
-          "line": 42,
+          "line": 43,
           "method": "GET",
           "path": "/api/v1/admin/growth/leads?{parameter}",
           "operation": "GET /api/v1/admin/growth/leads",
@@ -24211,7 +24211,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 75,
+          "line": 77,
           "method": "GET",
           "path": "/api/v1/admin/operations/alerts?page=1&limit=50",
           "operation": "GET /api/v1/admin/operations/alerts",
@@ -24333,9 +24333,9 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 40,
+          "line": 41,
           "method": "GET",
-          "path": "/api/v1/admin/operations/errors?page={parameter}&limit=25&search={parameter}",
+          "path": "/api/v1/admin/operations/errors?{parameter}",
           "operation": "GET /api/v1/admin/operations/errors",
           "status": "PATH_METHOD_MATCH",
           "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
@@ -24477,7 +24477,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 41,
+          "line": 42,
           "method": "GET",
           "path": "/api/v1/admin/operations/errors/{parameter}",
           "operation": "GET /api/v1/admin/operations/errors/{id}",
@@ -24571,7 +24571,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 42,
+          "line": 43,
           "method": "PATCH",
           "path": "/api/v1/admin/operations/errors/{parameter}/status",
           "operation": "PATCH /api/v1/admin/operations/errors/{id}/status",
@@ -24845,7 +24845,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 76,
+          "line": 78,
           "method": "GET",
           "path": "/api/v1/admin/operations/financial-monitoring",
           "operation": "GET /api/v1/admin/operations/financial-monitoring",
@@ -24880,7 +24880,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 66,
+          "line": 68,
           "method": "GET",
           "path": "/api/v1/admin/operations/health",
           "operation": "GET /api/v1/admin/operations/health",
@@ -24915,7 +24915,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 67,
+          "line": 69,
           "method": "GET",
           "path": "/api/v1/admin/operations/health/snapshots?page=1&limit=50",
           "operation": "GET /api/v1/admin/operations/health/snapshots",
@@ -25027,9 +25027,9 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 53,
+          "line": 55,
           "method": "GET",
-          "path": "/api/v1/admin/operations/incidents?page={parameter}&limit=25&search={parameter}",
+          "path": "/api/v1/admin/operations/incidents?{parameter}",
           "operation": "GET /api/v1/admin/operations/incidents",
           "status": "PATH_METHOD_MATCH",
           "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
@@ -25173,7 +25173,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 54,
+          "line": 56,
           "method": "GET",
           "path": "/api/v1/admin/operations/incidents/{parameter}",
           "operation": "GET /api/v1/admin/operations/incidents/{id}",
@@ -25267,7 +25267,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 57,
+          "line": 59,
           "method": "POST",
           "path": "/api/v1/admin/operations/incidents/{parameter}/comments",
           "operation": "POST /api/v1/admin/operations/incidents/{id}/comments",
@@ -25521,7 +25521,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 56,
+          "line": 58,
           "method": "PATCH",
           "path": "/api/v1/admin/operations/incidents/{parameter}/status",
           "operation": "PATCH /api/v1/admin/operations/incidents/{id}/status",
@@ -25799,7 +25799,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 74,
+          "line": 76,
           "method": "GET",
           "path": "/api/v1/admin/operations/integrations?page=1&limit=50",
           "operation": "GET /api/v1/admin/operations/integrations",
@@ -25921,7 +25921,7 @@
         {
           "consumer": "Admin Web",
           "file": "admin-web/src/pages/OperationsPage.tsx",
-          "line": 73,
+          "line": 75,
           "method": "GET",
           "path": "/api/v1/admin/operations/jobs?page=1&limit=50",
           "operation": "GET /api/v1/admin/operations/jobs",

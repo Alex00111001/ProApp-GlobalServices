@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AdminLayout } from './components/AdminLayout'
@@ -130,6 +130,39 @@ describe('F7 consent and attribution', () => {
     expect(screen.getByText('EXPLICIT_GRANT')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Nueva versión de política' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Retirar' })).toBeNull()
+  })
+})
+
+describe('optional list search', () => {
+  it.each([
+    ['Campañas', '/growth/campaigns', GrowthPage],
+    ['Errores', '/operations/errors', OperationsPage],
+    ['Incidentes', '/operations/incidents', OperationsPage],
+  ] as const)('omits an empty search and includes submitted text in %s', async (tab, path, Page) => {
+    const list = { items: [], pagination: { page: 1, limit: 25, totalItems: 0, totalPages: 1 } }
+    const authorized = { ...sessionPayload, permissions: ['marketing.read', 'operations.read', 'errors.read', 'incidents.read'] }
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const login = String(input).includes('/auth/login')
+      return Response.json(login ? authorized : list, { status: login ? 201 : 200 })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    await session.login('admin@example.com', 'correct-password')
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const view = render(<QueryClientProvider client={queryClient}><MemoryRouter><Page /></MemoryRouter></QueryClientProvider>)
+    const page = within(view.container)
+    fireEvent.click(page.getByRole('button', { name: tab }))
+    const listQueries = () => fetchMock.mock.calls
+      .map(([input]) => new URL(String(input), 'http://localhost'))
+      .filter((url) => url.pathname.endsWith(path))
+      .map((url) => Object.fromEntries(url.searchParams))
+    try {
+      await waitFor(() => expect(listQueries()).toEqual([{ page: '1', limit: '25' }]))
+      fireEvent.change(page.getByRole('textbox'), { target: { value: ' A+B & C ' } })
+      fireEvent.click(page.getByRole('button', { name: 'Buscar' }))
+      await waitFor(() => expect(listQueries()).toContainEqual({ page: '1', limit: '25', search: 'A+B & C' }))
+    } finally {
+      view.unmount()
+    }
   })
 })
 
