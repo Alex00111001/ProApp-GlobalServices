@@ -274,6 +274,10 @@ migración, cambio de estado financiero, activación de Market, proveedor ni pro
 
 ## 7. Dependencia crítica
 
+El [conductor de preproducción](PREPRODUCTION_CONDUCTOR.md) aplica estas dependencias al
+candidato actual, identifica el trabajo que puede prepararse en paralelo y define cómo
+entregar cada bloque con evidencia verificable.
+
 ```text
 Autorización de gobernanza
   -> contención CASH y baseline CI
