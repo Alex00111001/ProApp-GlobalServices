@@ -278,6 +278,13 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
 
     const incidentPath = `${baseUrl}/operations/incidents/${incidentIds[0]}`;
     const operatorHeaders = { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' };
+    const rolesResponse = await fetch(`${baseUrl}/roles`, { headers: operatorHeaders });
+    assert.equal(rolesResponse.status, 200);
+    const { roles } = await rolesResponse.json();
+    const supportCatalogRole = roles.find(({ id }) => id === supportRole.id);
+    assert.equal(supportCatalogRole.key, 'SUPPORT_ADMIN');
+    assert.ok(supportCatalogRole.permissions.some(({ permission }) => permission.key === 'support.read'));
+    assert.ok(supportCatalogRole._count.assignments >= 1);
     const financialPath = `${baseUrl}/operations/financial-monitoring`;
     const deniedFinancial = await fetch(financialPath, { headers: operationsHeaders });
     assert.equal(deniedFinancial.status, 403);

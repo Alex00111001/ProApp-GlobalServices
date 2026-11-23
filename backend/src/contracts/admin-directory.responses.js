@@ -24,6 +24,18 @@ const dashboardMetricDefinition = outputObject({
 const dashboardRangeDate = z.union([dateTime, z.string().regex(/^[+-]\d{6}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u)]);
 
 const adminDirectoryResponses = Object.freeze({
+  roles: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/roles', operationId: 'adminDirectory.roles',
+    responses: { 200: outputObject({
+      roles: z.array(outputObject({
+        id: z.string(), key: z.string(), name: z.string(), description: z.string().nullable(), isSystem: z.boolean(),
+        permissions: z.array(outputObject({
+          permission: outputObject({ id: z.string(), key: z.string(), description: z.string().nullable() }),
+        })),
+        _count: outputObject({ assignments: count }),
+      })),
+    }) },
+  }),
   dashboard: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/dashboard', operationId: 'adminDirectory.dashboard',
     responses: { 200: serialized(outputObject({

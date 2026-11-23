@@ -163,7 +163,7 @@ router.get('/ai/evaluations', requirePermission(PERMISSIONS.AI_OPERATIONS_READ),
 router.get('/ai/costs', requirePermission(PERMISSIONS.AI_COSTS_READ), f10Controller.costs);
 
 router.get('/audit', requirePermission(PERMISSIONS.AUDIT_READ), controller.auditLogs);
-router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), controller.roles);
+router.get('/roles', requirePermission(PERMISSIONS.ROLES_READ), responseContract(adminDirectoryResponses.roles), controller.roles);
 router.get('/role-change-requests', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.roleChangeRequests);
 router.post('/role-change-requests', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.requestRoleChange);
 router.post('/role-change-requests/:id/approve', requirePermission(PERMISSIONS.ROLES_MANAGE), controller.approveRoleChange);
