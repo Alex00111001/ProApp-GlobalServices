@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "3eae2360ff65451b5e861653eab484fb9f1eb143dd11a616b70b85c0f0a401a1",
+  "sourceFingerprint": "b54b354e3493ea76f49386e3969e99e0fba3e7efbd300f2ecbf2c5288bce256a",
   "routes": [
     {
       "method": "GET",
@@ -20587,12 +20587,6 @@
                         "null"
                       ]
                     },
-                    "deduplicationKey": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
                     "assigneeId": {
                       "type": [
                         "string",
@@ -20618,7 +20612,6 @@
                     "closedAt",
                     "updatedAt",
                     "errorGroupId",
-                    "deduplicationKey",
                     "assigneeId",
                     "createdAt"
                   ],
@@ -59966,12 +59959,6 @@
                       "null"
                     ]
                   },
-                  "deduplicationKey": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
                   "assigneeId": {
                     "type": [
                       "string",
@@ -59997,7 +59984,6 @@
                   "closedAt",
                   "updatedAt",
                   "errorGroupId",
-                  "deduplicationKey",
                   "assigneeId",
                   "createdAt"
                 ],

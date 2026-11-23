@@ -193,6 +193,7 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     for (const errorGroupId of [group.id, null]) {
       const incident = await prisma.incident.create({ data: {
         title: 'Synthetic incident fixture', service: runId, detectedAt: fixtureTime, errorGroupId,
+        deduplicationKey: errorGroupId ? `private-recovery-fixture:${runId}` : null,
       } });
       incidentIds.push(incident.id);
     }
@@ -257,6 +258,7 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
       assert.equal(result.incident.status, 'INVESTIGATING');
       assert.equal(result.incident.errorGroupId, group.id);
       assert.equal(result.incident.assigneeId, null);
+      assert.equal(Object.hasOwn(result.incident, 'deduplicationKey'), false);
       assert.equal(new Date(result.incident.acknowledgedAt).toISOString(), result.incident.acknowledgedAt);
       if (duplicate) assert.deepEqual(result.incident, transitionedIncident);
       transitionedIncident = result.incident;

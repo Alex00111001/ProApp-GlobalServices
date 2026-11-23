@@ -106,7 +106,7 @@ const incidentDetail = incident.omit({ _count: true }).extend({
 });
 const errorGroupRecord = errorGroup.omit({ _count: true });
 const incidentRecord = incident.omit({ _count: true, errorGroup: true }).extend({
-  errorGroupId: z.string().nullable(), deduplicationKey: z.string().nullable(),
+  errorGroupId: z.string().nullable(),
   assigneeId: z.string().nullable(), createdAt: dateTime,
 });
 const incidentCommentRecord = outputObject({

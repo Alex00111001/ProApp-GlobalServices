@@ -30511,12 +30511,6 @@
                             "null"
                           ]
                         },
-                        "deduplicationKey": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
                         "assigneeId": {
                           "type": [
                             "string",
@@ -30542,7 +30536,6 @@
                         "closedAt",
                         "updatedAt",
                         "errorGroupId",
-                        "deduplicationKey",
                         "assigneeId",
                         "createdAt"
                       ],
