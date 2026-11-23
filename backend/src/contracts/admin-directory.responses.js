@@ -20,12 +20,14 @@ const dashboardMetrics = {
 const dashboardMetricDefinition = outputObject({
   label: z.string(), unit: z.enum(['count', 'money', 'percentage']), source: z.string(), description: z.string(),
 });
+// Offset normalization and default ranges can cross a four-digit year boundary.
+const dashboardRangeDate = z.union([dateTime, z.string().regex(/^[+-]\d{6}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u)]);
 
 const adminDirectoryResponses = Object.freeze({
   dashboard: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/dashboard', operationId: 'adminDirectory.dashboard',
     responses: { 200: serialized(outputObject({
-      range: outputObject({ from: dateTime, to: dateTime, timezone: z.string(), currency: z.string() }),
+      range: outputObject({ from: dashboardRangeDate, to: dashboardRangeDate, timezone: z.string(), currency: z.string() }),
       generatedAt: dateTime,
       freshness: outputObject({
         latestBookingUpdateAt: dateTime.nullable(), latestPaymentUpdateAt: dateTime.nullable(), partialData: z.boolean(),
