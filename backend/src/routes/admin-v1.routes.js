@@ -14,6 +14,8 @@ const { authenticateAdmin } = require('../middleware/authenticate-admin');
 const { requirePermission } = require('../middleware/require-permission');
 const { PERMISSIONS } = require('../modules/identity/permission-catalog');
 const { metricsHandler } = require('../modules/observability/metrics');
+const { responseContract } = require('../shared/http/response-contract');
+const { growthResponses } = require('../contracts/growth.responses');
 
 const router = express.Router();
 const authLimiter = rateLimit({
@@ -62,7 +64,7 @@ router.get(
 
 router.get('/growth/overview', requirePermission(PERMISSIONS.MARKETING_READ), growthController.overview);
 router.get('/growth/funnel', requirePermission(PERMISSIONS.MARKETING_READ), growthController.funnel);
-router.get('/growth/campaigns', requirePermission(PERMISSIONS.MARKETING_READ), growthController.campaigns);
+router.get('/growth/campaigns', requirePermission(PERMISSIONS.MARKETING_READ), responseContract(growthResponses.campaignList), growthController.campaigns);
 router.post('/growth/campaigns', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.createCampaign);
 router.patch('/growth/campaigns/:id', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.updateCampaign);
 router.patch('/growth/campaigns/:id/status', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.setCampaignStatus);

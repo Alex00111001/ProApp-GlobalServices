@@ -17606,7 +17606,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 158
+          "line": 160
         },
         "x-homeservices-input-bindings": [
           {
@@ -17715,7 +17715,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 157
+          "line": 159
         },
         "x-homeservices-input-bindings": [
           {
@@ -17835,7 +17835,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 155
+          "line": 157
         },
         "x-homeservices-input-bindings": [
           {
@@ -17988,7 +17988,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 156
+          "line": 158
         },
         "x-homeservices-input-bindings": [
           {
@@ -18134,7 +18134,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 148
+          "line": 150
         },
         "x-homeservices-input-bindings": [
           {
@@ -18288,7 +18288,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 147
+          "line": 149
         },
         "x-homeservices-input-bindings": [
           {
@@ -18528,7 +18528,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 152
+          "line": 154
         },
         "x-homeservices-input-bindings": [
           {
@@ -18650,7 +18650,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 149
+          "line": 151
         },
         "x-homeservices-input-bindings": [
           {
@@ -18863,7 +18863,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 150
+          "line": 152
         },
         "x-homeservices-input-bindings": [
           {
@@ -19003,7 +19003,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 153
+          "line": 155
         },
         "x-homeservices-input-bindings": [
           {
@@ -19147,7 +19147,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 154
+          "line": 156
         },
         "x-homeservices-input-bindings": [
           {
@@ -19301,7 +19301,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 151
+          "line": 153
         },
         "x-homeservices-input-bindings": [
           {
@@ -19419,7 +19419,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 143
+          "line": 145
         },
         "x-homeservices-input-bindings": [
           {
@@ -19609,7 +19609,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 144
+          "line": 146
         },
         "x-homeservices-input-bindings": [
           {
@@ -19844,7 +19844,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 146
+          "line": 148
         },
         "x-homeservices-input-bindings": [
           {
@@ -20000,7 +20000,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 145
+          "line": 147
         },
         "x-homeservices-input-bindings": [
           {
@@ -20126,7 +20126,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 85
+          "line": 87
         },
         "x-homeservices-input-bindings": [
           {
@@ -20285,7 +20285,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 80
+          "line": 82
         },
         "x-homeservices-input-bindings": [
           {
@@ -20441,7 +20441,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 81
+          "line": 83
         },
         "x-homeservices-input-bindings": [
           {
@@ -20590,7 +20590,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 82
+          "line": 84
         },
         "x-homeservices-input-bindings": [
           {
@@ -20737,7 +20737,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 83
+          "line": 85
         },
         "x-homeservices-input-bindings": [
           {
@@ -20896,7 +20896,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 84
+          "line": 86
         },
         "x-homeservices-input-bindings": [
           {
@@ -21054,7 +21054,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 160
+          "line": 162
         },
         "x-homeservices-input-bindings": [
           {
@@ -21170,7 +21170,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 31
+          "line": 33
         },
         "x-homeservices-input-bindings": [
           {
@@ -21246,7 +21246,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 36
+          "line": 38
         },
         "x-homeservices-input-bindings": []
       }
@@ -21312,7 +21312,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 35
+          "line": 37
         },
         "x-homeservices-input-bindings": []
       }
@@ -21377,7 +21377,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 32
+          "line": 34
         },
         "x-homeservices-input-bindings": []
       }
@@ -21445,7 +21445,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 37
+          "line": 39
         },
         "x-homeservices-input-bindings": []
       }
@@ -21562,7 +21562,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 38
+          "line": 40
         },
         "x-homeservices-input-bindings": [
           {
@@ -21624,7 +21624,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 102
+          "line": 104
         },
         "x-homeservices-input-bindings": []
       }
@@ -21757,7 +21757,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 97
+          "line": 99
         },
         "x-homeservices-input-bindings": [
           {
@@ -21972,7 +21972,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 98
+          "line": 100
         },
         "x-homeservices-input-bindings": [
           {
@@ -22131,7 +22131,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 100
+          "line": 102
         },
         "x-homeservices-input-bindings": [
           {
@@ -22340,7 +22340,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 99
+          "line": 101
         },
         "x-homeservices-input-bindings": [
           {
@@ -22410,7 +22410,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 101
+          "line": 103
         },
         "x-homeservices-input-bindings": []
       }
@@ -22539,7 +22539,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 55
+          "line": 57
         },
         "x-homeservices-input-bindings": [
           {
@@ -22631,7 +22631,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 56
+          "line": 58
         },
         "x-homeservices-input-bindings": []
       }
@@ -22760,7 +22760,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 119
+          "line": 121
         },
         "x-homeservices-input-bindings": [
           {
@@ -22890,7 +22890,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 120
+          "line": 122
         },
         "x-homeservices-input-bindings": [
           {
@@ -23102,7 +23102,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 121
+          "line": 123
         },
         "x-homeservices-input-bindings": [
           {
@@ -23248,7 +23248,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 125
+          "line": 127
         },
         "x-homeservices-input-bindings": [
           {
@@ -23378,7 +23378,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 124
+          "line": 126
         },
         "x-homeservices-input-bindings": [
           {
@@ -23534,7 +23534,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 123
+          "line": 125
         },
         "x-homeservices-input-bindings": [
           {
@@ -23639,7 +23639,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 122
+          "line": 124
         },
         "x-homeservices-input-bindings": [
           {
@@ -23753,7 +23753,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 40
+          "line": 42
         },
         "x-homeservices-input-bindings": [
           {
@@ -23879,7 +23879,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 138
+          "line": 140
         },
         "x-homeservices-input-bindings": [
           {
@@ -24026,7 +24026,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 139
+          "line": 141
         },
         "x-homeservices-input-bindings": [
           {
@@ -24154,7 +24154,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 140
+          "line": 142
         },
         "x-homeservices-input-bindings": [
           {
@@ -24308,7 +24308,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 141
+          "line": 143
         },
         "x-homeservices-input-bindings": [
           {
@@ -24442,7 +24442,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 114
+          "line": 116
         },
         "x-homeservices-input-bindings": [
           {
@@ -24590,7 +24590,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 115
+          "line": 117
         },
         "x-homeservices-input-bindings": [
           {
@@ -24712,7 +24712,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 118
+          "line": 120
         },
         "x-homeservices-input-bindings": [
           {
@@ -24874,7 +24874,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 117
+          "line": 119
         },
         "x-homeservices-input-bindings": [
           {
@@ -25004,7 +25004,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 116
+          "line": 118
         },
         "x-homeservices-input-bindings": [
           {
@@ -25152,7 +25152,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 108
+          "line": 110
         },
         "x-homeservices-input-bindings": [
           {
@@ -25252,7 +25252,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 106
+          "line": 108
         },
         "x-homeservices-input-bindings": [
           {
@@ -25362,7 +25362,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 107
+          "line": 109
         },
         "x-homeservices-input-bindings": [
           {
@@ -25461,19 +25461,177 @@
         ],
         "responses": {
           "200": {
-            "description": "Observed runtime response",
-            "x-observed-fields": [],
+            "description": "Runtime-authoritative serialized response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {},
-                  "required": [],
-                  "additionalProperties": true,
-                  "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "key": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "DRAFT",
+                              "ACTIVE",
+                              "PAUSED",
+                              "ARCHIVED"
+                            ]
+                          },
+                          "medium": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "channel": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "countryCode": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "startsAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "endsAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                          },
+                          "_count": {
+                            "type": "object",
+                            "properties": {
+                              "events": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "leads": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "conversions": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "events",
+                              "leads",
+                              "conversions"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "key",
+                          "name",
+                          "source",
+                          "status",
+                          "medium",
+                          "channel",
+                          "countryCode",
+                          "startsAt",
+                          "endsAt",
+                          "createdAt",
+                          "updatedAt",
+                          "_count"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        "totalItems": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "limit",
+                        "totalItems",
+                        "totalPages"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "pagination"
+                  ],
+                  "additionalProperties": false
                 }
               }
-            }
+            },
+            "x-homeservices-response-parity": "RUNTIME_AUTHORITATIVE"
           },
           "default": {
             "description": "Safe error envelope",
@@ -25489,7 +25647,8 @@
         "x-homeservices-auth": "ADMIN_BEARER",
         "x-homeservices-middleware": [
           "authenticateAdmin",
-          "requirePermission(PERMISSIONS.MARKETING_READ)"
+          "requirePermission(PERMISSIONS.MARKETING_READ)",
+          "responseContract(growthResponses.campaignList)"
         ],
         "x-homeservices-consumers": [
           "Admin Web"
@@ -25504,7 +25663,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 65
+          "line": 67
         },
         "x-homeservices-input-bindings": [
           {
@@ -25674,7 +25833,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 66
+          "line": 68
         },
         "x-homeservices-input-bindings": [
           {
@@ -25882,7 +26041,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 67
+          "line": 69
         },
         "x-homeservices-input-bindings": [
           {
@@ -26029,7 +26188,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 68
+          "line": 70
         },
         "x-homeservices-input-bindings": [
           {
@@ -26172,7 +26331,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 70
+          "line": 72
         },
         "x-homeservices-input-bindings": [
           {
@@ -26302,7 +26461,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 64
+          "line": 66
         },
         "x-homeservices-input-bindings": [
           {
@@ -26437,7 +26596,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 69
+          "line": 71
         },
         "x-homeservices-input-bindings": [
           {
@@ -26567,7 +26726,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 63
+          "line": 65
         },
         "x-homeservices-input-bindings": [
           {
@@ -26676,7 +26835,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 112
+          "line": 114
         },
         "x-homeservices-input-bindings": [
           {
@@ -26811,7 +26970,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 109
+          "line": 111
         },
         "x-homeservices-input-bindings": [
           {
@@ -26965,7 +27124,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 110
+          "line": 112
         },
         "x-homeservices-input-bindings": [
           {
@@ -27121,7 +27280,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 111
+          "line": 113
         },
         "x-homeservices-input-bindings": [
           {
@@ -27245,7 +27404,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 104
+          "line": 106
         },
         "x-homeservices-input-bindings": [
           {
@@ -27398,7 +27557,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 105
+          "line": 107
         },
         "x-homeservices-input-bindings": [
           {
@@ -27531,7 +27690,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 180
+          "line": 182
         },
         "x-homeservices-input-bindings": [
           {
@@ -27680,7 +27839,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 171
+          "line": 173
         },
         "x-homeservices-input-bindings": [
           {
@@ -27787,7 +27946,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 172
+          "line": 174
         },
         "x-homeservices-input-bindings": [
           {
@@ -27925,7 +28084,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 173
+          "line": 175
         },
         "x-homeservices-input-bindings": [
           {
@@ -28010,7 +28169,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 181
+          "line": 183
         },
         "x-homeservices-input-bindings": []
       }
@@ -28083,7 +28242,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 169
+          "line": 171
         },
         "x-homeservices-input-bindings": []
       }
@@ -28179,7 +28338,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 170
+          "line": 172
         },
         "x-homeservices-input-bindings": [
           {
@@ -28330,7 +28489,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 174
+          "line": 176
         },
         "x-homeservices-input-bindings": [
           {
@@ -28437,7 +28596,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 175
+          "line": 177
         },
         "x-homeservices-input-bindings": [
           {
@@ -28571,7 +28730,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 177
+          "line": 179
         },
         "x-homeservices-input-bindings": [
           {
@@ -28724,7 +28883,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 176
+          "line": 178
         },
         "x-homeservices-input-bindings": [
           {
@@ -28857,7 +29016,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 179
+          "line": 181
         },
         "x-homeservices-input-bindings": [
           {
@@ -28982,7 +29141,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 178
+          "line": 180
         },
         "x-homeservices-input-bindings": [
           {
@@ -29059,7 +29218,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 167
+          "line": 169
         },
         "x-homeservices-input-bindings": []
       }
@@ -29195,7 +29354,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 183
+          "line": 185
         },
         "x-homeservices-input-bindings": [
           {
@@ -29347,7 +29506,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 184
+          "line": 186
         },
         "x-homeservices-input-bindings": [
           {
@@ -29446,7 +29605,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 185
+          "line": 187
         },
         "x-homeservices-input-bindings": [
           {
@@ -29587,7 +29746,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 187
+          "line": 189
         },
         "x-homeservices-input-bindings": [
           {
@@ -29734,7 +29893,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 188
+          "line": 190
         },
         "x-homeservices-input-bindings": [
           {
@@ -29887,7 +30046,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 186
+          "line": 188
         },
         "x-homeservices-input-bindings": [
           {
@@ -29978,7 +30137,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 182
+          "line": 184
         },
         "x-homeservices-input-bindings": []
       }
@@ -30123,7 +30282,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 77
+          "line": 79
         },
         "x-homeservices-input-bindings": [
           {
@@ -30283,7 +30442,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 72
+          "line": 74
         },
         "x-homeservices-input-bindings": [
           {
@@ -30471,7 +30630,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 73
+          "line": 75
         },
         "x-homeservices-input-bindings": [
           {
@@ -30633,7 +30792,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 74
+          "line": 76
         },
         "x-homeservices-input-bindings": [
           {
@@ -30781,7 +30940,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 75
+          "line": 77
         },
         "x-homeservices-input-bindings": [
           {
@@ -30927,7 +31086,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 76
+          "line": 78
         },
         "x-homeservices-input-bindings": [
           {
@@ -31086,7 +31245,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 79
+          "line": 81
         },
         "x-homeservices-input-bindings": [
           {
@@ -31246,7 +31405,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 78
+          "line": 80
         },
         "x-homeservices-input-bindings": [
           {
@@ -31370,7 +31529,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 46
+          "line": 48
         },
         "x-homeservices-input-bindings": [
           {
@@ -31462,7 +31621,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 47
+          "line": 49
         },
         "x-homeservices-input-bindings": []
       }
@@ -31592,7 +31751,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 53
+          "line": 55
         },
         "x-homeservices-input-bindings": [
           {
@@ -31715,7 +31874,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 136
+          "line": 138
         },
         "x-homeservices-input-bindings": [
           {
@@ -31835,7 +31994,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 137
+          "line": 139
         },
         "x-homeservices-input-bindings": [
           {
@@ -31956,7 +32115,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 132
+          "line": 134
         },
         "x-homeservices-input-bindings": [
           {
@@ -32155,7 +32314,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 133
+          "line": 135
         },
         "x-homeservices-input-bindings": [
           {
@@ -32293,7 +32452,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 135
+          "line": 137
         },
         "x-homeservices-input-bindings": [
           {
@@ -32447,7 +32606,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 134
+          "line": 136
         },
         "x-homeservices-input-bindings": [
           {
@@ -32517,7 +32676,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 91
+          "line": 93
         },
         "x-homeservices-input-bindings": []
       }
@@ -32565,7 +32724,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 93
+          "line": 95
         },
         "x-homeservices-input-bindings": []
       }
@@ -32698,7 +32857,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 87
+          "line": 89
         },
         "x-homeservices-input-bindings": [
           {
@@ -32944,7 +33103,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 88
+          "line": 90
         },
         "x-homeservices-input-bindings": [
           {
@@ -33108,7 +33267,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 90
+          "line": 92
         },
         "x-homeservices-input-bindings": [
           {
@@ -33338,7 +33497,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 89
+          "line": 91
         },
         "x-homeservices-input-bindings": [
           {
@@ -33406,7 +33565,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 92
+          "line": 94
         },
         "x-homeservices-input-bindings": []
       }
@@ -33454,7 +33613,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 94
+          "line": 96
         },
         "x-homeservices-input-bindings": []
       }
@@ -33568,7 +33727,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 95
+          "line": 97
         },
         "x-homeservices-input-bindings": [
           {
@@ -33651,7 +33810,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 162
+          "line": 164
         },
         "x-homeservices-input-bindings": []
       },
@@ -33779,7 +33938,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 163
+          "line": 165
         },
         "x-homeservices-input-bindings": [
           {
@@ -33912,7 +34071,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 164
+          "line": 166
         },
         "x-homeservices-input-bindings": [
           {
@@ -34045,7 +34204,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 165
+          "line": 167
         },
         "x-homeservices-input-bindings": [
           {
@@ -34128,7 +34287,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 161
+          "line": 163
         },
         "x-homeservices-input-bindings": []
       }
@@ -34226,7 +34385,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 126
+          "line": 128
         },
         "x-homeservices-input-bindings": [
           {
@@ -34358,7 +34517,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 127
+          "line": 129
         },
         "x-homeservices-input-bindings": [
           {
@@ -34435,7 +34594,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 130
+          "line": 132
         },
         "x-homeservices-input-bindings": [
           {
@@ -34539,7 +34698,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 131
+          "line": 133
         },
         "x-homeservices-input-bindings": [
           {
@@ -34672,7 +34831,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 42
+          "line": 44
         },
         "x-homeservices-input-bindings": [
           {
@@ -34763,7 +34922,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 43
+          "line": 45
         },
         "x-homeservices-input-bindings": []
       }
@@ -34886,7 +35045,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/admin-v1.routes.js",
-          "line": 44
+          "line": 46
         },
         "x-homeservices-input-bindings": [
           {
@@ -38896,6 +39055,6 @@
     "executedAcceptanceEquivalentBindings": 37,
     "structurallyRepresentedRuntimeRefinedBindings": 3,
     "unprovenCatalogSchemas": 242,
-    "operationsWithoutCompleteResponseSchema": 196
+    "operationsWithoutCompleteResponseSchema": 195
   }
 }
