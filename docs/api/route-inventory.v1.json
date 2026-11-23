@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "cacf416894936f4d0ae70e94f70aef471d2df669d7158140ff42675fffb8a2c6",
+  "sourceFingerprint": "b4e0e8ad127509894693179bf8efc50bc1fd2ffbb0065e91e55579505a4d1140",
   "routes": [
     {
       "method": "GET",
@@ -452,7 +452,7 @@
       },
       "registration": {
         "file": "backend/src/routes/operations.routes.js",
-        "line": 151
+        "line": 154
       },
       "handler": {
         "file": "backend/src/routes/operations.routes.js",
@@ -463,7 +463,7 @@
         {
           "input": "req.query",
           "schema": "z.object({\n    limit: limitSchema,\n    correlationId: z.string().trim().max(128).optional(),\n    resourceType: z.string().trim().max(100).optional(),\n  })",
-          "line": 152
+          "line": 155
         }
       ],
       "response": [
@@ -475,7 +475,7 @@
             "records"
           ],
           "completeSchema": false,
-          "line": 170
+          "line": 173
         }
       ],
       "ownershipEvidence": [],
@@ -811,7 +811,7 @@
             "incidents"
           ],
           "completeSchema": false,
-          "line": 109
+          "line": 110
         }
       ],
       "ownershipEvidence": [],
@@ -843,7 +843,7 @@
       },
       "registration": {
         "file": "backend/src/routes/operations.routes.js",
-        "line": 112
+        "line": 113
       },
       "handler": {
         "file": "backend/src/routes/operations.routes.js",
@@ -854,7 +854,7 @@
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 114
+          "line": 115
         }
       ],
       "response": [
@@ -867,7 +867,7 @@
             "error"
           ],
           "completeSchema": false,
-          "line": 121
+          "line": 123
         },
         {
           "statuses": [
@@ -877,7 +877,7 @@
             "incident"
           ],
           "completeSchema": false,
-          "line": 122
+          "line": 124
         }
       ],
       "ownershipEvidence": [],
@@ -909,7 +909,7 @@
       },
       "registration": {
         "file": "backend/src/routes/operations.routes.js",
-        "line": 140
+        "line": 143
       },
       "handler": {
         "file": "backend/src/routes/operations.routes.js",
@@ -920,12 +920,12 @@
         {
           "input": "req.body",
           "schema": "z.object({ body: z.string().trim().min(1).max(5_000) })",
-          "line": 141
+          "line": 144
         },
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 143
+          "line": 146
         }
       ],
       "response": [
@@ -937,7 +937,7 @@
             "comment"
           ],
           "completeSchema": false,
-          "line": 148
+          "line": 151
         }
       ],
       "ownershipEvidence": [
@@ -969,7 +969,7 @@
       },
       "registration": {
         "file": "backend/src/routes/operations.routes.js",
-        "line": 125
+        "line": 127
       },
       "handler": {
         "file": "backend/src/routes/operations.routes.js",
@@ -980,12 +980,12 @@
         {
           "input": "req.body",
           "schema": "z.object({\n    status: z.enum(['OPEN', 'INVESTIGATING', 'IDENTIFIED', 'MONITORING', 'RESOLVED', 'CLOSED']),\n    reason: reasonSchema,\n  })",
-          "line": 126
+          "line": 128
         },
         {
           "input": "req.params.id",
           "schema": "idSchema",
-          "line": 131
+          "line": 133
         }
       ],
       "response": [
@@ -993,9 +993,11 @@
           "statuses": [
             200
           ],
-          "fields": [],
+          "fields": [
+            "incident"
+          ],
           "completeSchema": false,
-          "line": 137
+          "line": 140
         }
       ],
       "ownershipEvidence": [
@@ -20773,12 +20775,6 @@
                         "null"
                       ]
                     },
-                    "deduplicationKey": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
                     "assigneeId": {
                       "type": [
                         "string",
@@ -20804,7 +20800,6 @@
                     "closedAt",
                     "updatedAt",
                     "errorGroupId",
-                    "deduplicationKey",
                     "assigneeId",
                     "createdAt"
                   ],
@@ -60338,12 +60333,6 @@
                       "null"
                     ]
                   },
-                  "deduplicationKey": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
                   "assigneeId": {
                     "type": [
                       "string",
@@ -60369,7 +60358,6 @@
                   "closedAt",
                   "updatedAt",
                   "errorGroupId",
-                  "deduplicationKey",
                   "assigneeId",
                   "createdAt"
                 ],

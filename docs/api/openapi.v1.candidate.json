@@ -910,7 +910,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/operations.routes.js",
-          "line": 151
+          "line": 154
         },
         "x-homeservices-input-bindings": [
           {
@@ -1696,7 +1696,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/operations.routes.js",
-          "line": 112
+          "line": 113
         },
         "x-homeservices-input-bindings": [
           {
@@ -1822,7 +1822,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/operations.routes.js",
-          "line": 140
+          "line": 143
         },
         "x-homeservices-input-bindings": [
           {
@@ -1926,13 +1926,19 @@
         "responses": {
           "200": {
             "description": "Observed runtime response",
-            "x-observed-fields": [],
+            "x-observed-fields": [
+              "incident"
+            ],
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {},
-                  "required": [],
+                  "properties": {
+                    "incident": {}
+                  },
+                  "required": [
+                    "incident"
+                  ],
                   "additionalProperties": true,
                   "x-homeservices-response-parity": "PENDING_RUNTIME_OUTPUT_SCHEMA"
                 }
@@ -1967,7 +1973,7 @@
         },
         "x-homeservices-runtime-source": {
           "file": "backend/src/routes/operations.routes.js",
-          "line": 125
+          "line": 127
         },
         "x-homeservices-input-bindings": [
           {
@@ -30679,12 +30685,6 @@
                             "null"
                           ]
                         },
-                        "deduplicationKey": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
                         "assigneeId": {
                           "type": [
                             "string",
@@ -30710,7 +30710,6 @@
                         "closedAt",
                         "updatedAt",
                         "errorGroupId",
-                        "deduplicationKey",
                         "assigneeId",
                         "createdAt"
                       ],
