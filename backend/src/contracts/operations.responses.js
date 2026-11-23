@@ -3,6 +3,40 @@ const { defineResponseContract, outputObject, serialized } = require('../shared/
 const { adminListResponse, dateTime } = require('./shared.responses');
 
 const count = z.number().int().nonnegative();
+const countsByStatus = z.record(z.string(), count);
+const healthStatus = z.enum(['HEALTHY', 'DEGRADED', 'OUTAGE']);
+const dependencyHealth = outputObject({
+  service: z.string(), status: healthStatus, latencyMs: z.number().int(), message: z.string().optional(),
+});
+const overview = outputObject({
+  generatedAt: dateTime,
+  health: outputObject({
+    status: healthStatus, checkedAt: dateTime, service: z.string(),
+    dependencies: outputObject({ database: dependencyHealth, outbox: dependencyHealth }),
+  }),
+  errors: countsByStatus,
+  incidents: countsByStatus,
+  jobs: countsByStatus,
+  automation: outputObject({
+    deliveries: countsByStatus, executions: countsByStatus, manualReplayEnabled: z.boolean(),
+  }),
+  aiOperations: outputObject({
+    executions: countsByStatus, providerExecutionEnabled: z.boolean(), autonomousSensitiveActions: z.boolean(),
+  }),
+  integrations: countsByStatus,
+  support: countsByStatus,
+  financialAttention: outputObject({
+    failedRefunds: count, failedPayouts: count, activeDisputes: count,
+    latestReconciliation: outputObject({
+      id: z.string(), status: z.string(), scope: z.string(),
+      startedAt: dateTime, completedAt: dateTime.nullable(),
+      matchedCount: count, mismatchCount: count, errorCount: count,
+    }).nullable(),
+  }),
+  freshness: outputObject({
+    latestErrorAt: dateTime.nullable(), latestIncidentAt: dateTime.nullable(), partialData: z.boolean(),
+  }),
+});
 const errorGroupSummary = {
   id: z.string(),
   fingerprint: z.string(),
@@ -70,6 +104,10 @@ const alert = outputObject({
 });
 
 const operationsResponses = Object.freeze({
+  overview: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/operations/overview', operationId: 'adminOperations.overview',
+    responses: { 200: serialized(overview) },
+  }),
   errors: defineResponseContract({
     method: 'GET',
     path: '/api/v1/admin/operations/errors',
