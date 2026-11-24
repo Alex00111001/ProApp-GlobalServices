@@ -37,6 +37,21 @@ const roleChange = outputObject({
 const roleChangeResult = serialized(outputObject({ request: roleChange }));
 
 const adminDirectoryResponses = Object.freeze({
+  userStatus: defineResponseContract({
+    method: 'PATCH', path: '/api/v1/admin/users/{id}/status', operationId: 'adminDirectory.userStatus',
+    responses: { 200: serialized(outputObject({
+      user: outputObject({ id: z.string(), isActive: z.boolean(), updatedAt: dateTime }),
+    })) },
+  }),
+  professionalStatus: defineResponseContract({
+    method: 'PATCH', path: '/api/v1/admin/professionals/{id}/status', operationId: 'adminDirectory.professionalStatus',
+    responses: { 200: serialized(outputObject({
+      professional: outputObject({
+        id: z.string(), status: z.string(), verifiedAt: dateTime.nullable(),
+        rejectedReason: z.string().nullable(), updatedAt: dateTime.optional(),
+      }),
+    })) },
+  }),
   roleChangeRequests: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/role-change-requests', operationId: 'adminDirectory.roleChangeRequests',
     responses: { 200: serialized(outputObject({ requests: z.array(roleChange) })) },
