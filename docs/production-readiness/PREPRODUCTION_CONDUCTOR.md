@@ -101,6 +101,22 @@ cuando los responsables confirman duración, capacidad y fechas de decisiones ex
 
 ### Trabajo paralelo que reduce esperas
 
+**Preflight de staging, 24 de noviembre de 2026.** En el SHA `ae65df4f`, el repositorio
+solo contiene el workflow `ci.yml`. GitHub devolvió un entorno llamado `Env` y ningún
+despliegue registrado. El nombre del entorno por sí solo no acredita aislamiento.
+Este chequeo cubre el repositorio y GitHub. La existencia de infraestructura externa
+sigue sin verificar.
+
+| Bloque | Evidencia requerida para avanzar |
+| --- | --- |
+| PRR-701/702 | Platform registra el destino aislado, sus responsables, las referencias al gestor de secretos y la separación de datos y proveedores. El manifiesto identifica el SHA y el digest de la imagen non-root, junto al SBOM y el resultado del escaneo. |
+| PRR-703/704 | Platform y Release adjuntan el ensayo de restauración, checksums y RTO/RPO medidos, además del recorrido de alertas y la prueba de carga del candidato. |
+| PRR-706 y PRR-801/802 | Release enlaza los recorridos E2E, el manifiesto y el ensayo de canary y rollback del mismo candidato. |
+
+La preparación del entorno puede continuar en paralelo. La activación de PRR-701/702
+conserva la dependencia de estabilidad de contratos y el plan PRR rige los ensayos
+posteriores. La CI sobre PostgreSQL efímero aporta evidencia de integración.
+
 - Solicitar decisiones de edge y confianza territorial (PRR-201), privacidad/legal (PRR-302/305)
   y almacenamiento privado (PRR-403). Confirmar responsables y fechas de revisión.
 - Preparar criterios E2E, datos sintéticos y selección de plataforma de pruebas. Maestro para móvil
