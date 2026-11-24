@@ -31,6 +31,9 @@ test('inventory is deterministic and classifies mounted internal, webhook, admin
   assert.ok(first.routes.length > 200);
   assert.equal(first.routes.find((r) => r.path === '/api/payments/webhook').classification, 'WEBHOOK');
   assert.equal(first.routes.find((r) => r.path === '/health/ready').classification, 'INTERNAL');
+  const metrics = first.routes.find((r) => r.path === '/api/v1/admin/operations/metrics');
+  assert.equal(metrics.classification, 'INTERNAL');
+  assert.equal(metrics.responseAuthority.responses[200].mediaType, 'text/plain');
   assert.equal(first.routes.find((r) => r.path === '/api/payments/cash').classification, 'DEPRECATED');
   assert.equal(first.routes.find((r) => r.path === '/api/v1/admin/users').auth, 'ADMIN_BEARER');
   assert.equal(first.routes.find((r) => r.path === '/api/v1/admin/auth/refresh').auth, 'ADMIN_REFRESH_COOKIE_AND_CSRF');
@@ -136,6 +139,7 @@ test('breaking detector blocks endpoint/auth/status/required/type/enum/output re
 test('OpenAPI 3.1 candidate is source-derived, safe, and refuses to claim publication completeness', () => {
   const contract = buildOpenApi(buildInventory());
   assert.equal(contract.openapi, '3.1.0');
+  assert.equal(Object.hasOwn(contract.paths, '/api/v1/admin/operations/metrics'), false);
   assert.equal(contract['x-homeservices-contract-status'], 'CANDIDATE_NOT_PUBLISHED');
   assert.equal(contract['x-homeservices-completeness'].unresolvedConsumerCalls, 0);
   assert.ok(contract['x-homeservices-completeness'].unresolvedRouteInputProjections > 0);

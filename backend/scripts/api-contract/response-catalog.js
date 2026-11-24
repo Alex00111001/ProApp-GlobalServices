@@ -33,6 +33,7 @@ function responseCatalog(routes) {
         const projection = projectSchema(definition.schema, 'output');
         complete &&= projection.jsonSchema !== null && projection.gaps.length === 0;
         responses[status] = { empty: false, ...projection,
+          ...(definition.mediaType && definition.mediaType !== 'application/json' ? { mediaType: definition.mediaType } : {}),
           wireParity: projection.jsonSchema !== null && projection.gaps.length === 0 ? 'RUNTIME_AUTHORITATIVE' : 'UNPROVEN' };
       }
     }

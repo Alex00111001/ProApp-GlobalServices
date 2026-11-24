@@ -186,6 +186,13 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     });
     assert.equal(operations.status, 200);
     const operationsBody = await operations.json();
+    const metricsResponse = await fetch(`${baseUrl}/operations/metrics`, {
+      headers: { authorization: `Bearer ${session.accessToken}` },
+    });
+    assert.equal(metricsResponse.status, 200);
+    assert.match(metricsResponse.headers.get('content-type'), /^text\/plain\s*;/i);
+    assert.match(metricsResponse.headers.get('content-type'), /;\s*version=0\.0\.4(?:;|$)/i);
+    assert.match(await metricsResponse.text(), /^# (?:HELP|TYPE) homeservices_/m);
     assert.equal(typeof operationsBody.errors, 'object');
     assert.deepEqual(Object.keys(operationsBody.health.dependencies).sort(), ['database', 'outbox']);
     assert.equal(typeof operationsBody.automation.deliveries, 'object');

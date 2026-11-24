@@ -170,7 +170,7 @@ router.post('/role-change-requests/:id/approve', requirePermission(PERMISSIONS.R
 router.post('/role-change-requests/:id/reject', requirePermission(PERMISSIONS.ROLES_MANAGE), responseContract(adminDirectoryResponses.rejectRoleChange), controller.rejectRoleChange);
 
 router.get('/operations/overview', requirePermission(PERMISSIONS.OPERATIONS_READ), responseContract(operationsResponses.overview), operationsController.overview);
-router.get('/operations/metrics', requirePermission(PERMISSIONS.OPERATIONS_READ), metricsHandler);
+router.get('/operations/metrics', requirePermission(PERMISSIONS.OPERATIONS_READ), responseContract(operationsResponses.metrics), metricsHandler);
 router.get('/operations/health', requirePermission(PERMISSIONS.HEALTH_READ), responseContract(operationsResponses.health), operationsController.health);
 router.get('/operations/health/snapshots', requirePermission(PERMISSIONS.HEALTH_READ), responseContract(operationsResponses.healthSnapshots), operationsController.healthSnapshots);
 router.get('/operations/errors', requirePermission(PERMISSIONS.ERRORS_READ), responseContract(operationsResponses.errors), operationsController.errors);

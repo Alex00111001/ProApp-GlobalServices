@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "88fe867ce7b699cb5142c55bbee53f2ea00f38ce65d63f7c333e2f36f1ecdd9b",
+  "sourceFingerprint": "68bf5be6f8d89305ffd34c7a878213e896e82a158de65cd4f131596ff27c0240",
   "routes": [
     {
       "method": "GET",
@@ -21746,7 +21746,8 @@
       "auth": "ADMIN_BEARER",
       "middleware": [
         "authenticateAdmin",
-        "requirePermission(PERMISSIONS.OPERATIONS_READ)"
+        "requirePermission(PERMISSIONS.OPERATIONS_READ)",
+        "responseContract(operationsResponses.metrics)"
       ],
       "rateLimit": {
         "global": {
@@ -21768,7 +21769,22 @@
       "response": [],
       "ownershipEvidence": [],
       "ordering": [],
-      "responseAuthority": null,
+      "responseAuthority": {
+        "operationId": "adminOperations.metrics",
+        "complete": true,
+        "responses": {
+          "200": {
+            "empty": false,
+            "jsonSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "type": "string"
+            },
+            "wireParity": "RUNTIME_AUTHORITATIVE",
+            "gaps": [],
+            "mediaType": "text/plain"
+          }
+        }
+      },
       "consumers": [],
       "inputContext": {
         "clientHeaders": []
@@ -63126,6 +63142,22 @@
           },
           "wireParity": "RUNTIME_AUTHORITATIVE",
           "gaps": []
+        }
+      }
+    },
+    "GET /api/v1/admin/operations/metrics": {
+      "operationId": "adminOperations.metrics",
+      "complete": true,
+      "responses": {
+        "200": {
+          "empty": false,
+          "jsonSchema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "string"
+          },
+          "wireParity": "RUNTIME_AUTHORITATIVE",
+          "gaps": [],
+          "mediaType": "text/plain"
         }
       }
     },
