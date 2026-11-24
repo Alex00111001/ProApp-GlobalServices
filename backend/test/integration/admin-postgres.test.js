@@ -287,6 +287,32 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
 
     const incidentPath = `${baseUrl}/operations/incidents/${incidentIds[0]}`;
     const operatorHeaders = { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' };
+    const statusTarget = await createUser('HttpStatusTarget', null);
+    const profile = await prisma.professionalProfile.create({ data: { userId: statusTarget.id } });
+    const professionalStatusPath = `${baseUrl}/professionals/${profile.id}/status`;
+    const approveBody = JSON.stringify({ status: 'APPROVED', reason: 'Approve the synthetic professional profile' });
+    const deniedProfessionalStatus = await fetch(professionalStatusPath, {
+      method: 'PATCH', headers: { ...operationsHeaders, 'content-type': 'application/json' }, body: approveBody,
+    });
+    assert.equal(deniedProfessionalStatus.status, 403);
+    for (const changed of [true, false]) {
+      const response = await fetch(professionalStatusPath, { method: 'PATCH', headers: operatorHeaders, body: approveBody });
+      assert.equal(response.status, 200);
+      const { professional } = await response.json();
+      assert.equal(professional.id, profile.id);
+      assert.equal(professional.status, 'APPROVED');
+      assert.equal(new Date(professional.verifiedAt).toISOString(), professional.verifiedAt);
+      assert.equal(Object.hasOwn(professional, 'updatedAt'), changed);
+    }
+    const userStatus = await fetch(`${baseUrl}/users/${statusTarget.id}/status`, {
+      method: 'PATCH', headers: operatorHeaders,
+      body: JSON.stringify({ isActive: false, reason: 'Deactivate the synthetic test account' }),
+    });
+    assert.equal(userStatus.status, 200);
+    const { user: deactivated } = await userStatus.json();
+    assert.deepEqual(Object.keys(deactivated).sort(), ['id', 'isActive', 'updatedAt']);
+    assert.equal(deactivated.id, statusTarget.id);
+    assert.equal(deactivated.isActive, false);
     const complianceRole = await prisma.role.findUniqueOrThrow({ where: { key: 'COMPLIANCE_ADMIN' } });
     const catalogReader = await createUser('HttpCatalogReader', complianceRole.id);
     const catalogReaderSession = await createAdminSession({
