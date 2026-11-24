@@ -364,9 +364,18 @@ Next: **STOP — await independent verification** after T01 exact-SHA CI and evi
   still has 129 unresolved input bindings and 196 incomplete outputs, and its OpenAPI status is
   `CANDIDATE_NOT_PUBLISHED`. Stop at this tranche pending delivery acceptance.
 
-## Professional mobile consumer evidence
+## Delivery evidence for booking and administrative audit
 
-[PR #71](https://github.com/Alex00111001/ProApp-GlobalServices/pull/71) adds executable
-booking transport evidence to PRR-105 and records the reproducible checks and CI.
-The deployed journey awaits an isolated candidate (PRR-701/702) and the applicable
-journey and sandbox gates in the [PRR plan](../production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md).
+T01 delivery was accepted in [PR #37](https://github.com/Alex00111001/ProApp-GlobalServices/pull/37),
+with [Platform verification](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45152661024)
+passing on integrated SHA `17afcf21`. The stop above records the earlier evidence state.
+
+| Evidence | Integrated SHA and CI |
+| --- | --- |
+| [PR #71 · Professional booking transitions at the HTTP client boundary](https://github.com/Alex00111001/ProApp-GlobalServices/pull/71#issuecomment-7138258440) | [`ce88e895`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45440914900) |
+| [PR #69 · Audited administrative booking detail](https://github.com/Alex00111001/ProApp-GlobalServices/pull/69#issuecomment-7138492507) | [`c17441a4`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45442760345) |
+| [PR #70 · Protected audit list response](https://github.com/Alex00111001/ProApp-GlobalServices/pull/70#issuecomment-7138504121) | [`fb0edcf1`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45443421378) |
+
+The audit list input pagination projection and privacy review of stored metadata remain open.
+The deployed booking journey awaits an isolated candidate (PRR-701/702) and the journey
+and sandbox gates in the [PRR plan](../production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md).
