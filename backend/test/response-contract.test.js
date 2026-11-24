@@ -18,6 +18,17 @@ const { operationsResponses } = require('../src/contracts/operations.responses')
 const { adminDirectoryResponses } = require('../src/contracts/admin-directory.responses');
 const { dashboardQuerySchema } = require('../src/validators/admin.validators');
 
+test('professional status preserves the duplicate response without updatedAt', () => {
+  const { schema, serialize } = adminDirectoryResponses.professionalStatus.responses[200];
+  const professional = { id: 'synthetic-professional', status: 'PENDING_REVIEW', verifiedAt: null, rejectedReason: null };
+  assert.deepEqual(schema.parse(serialize({ professional })), { professional });
+  const timestamp = '2026-11-24T08:00:00.000Z';
+  const changed = { ...professional, status: 'APPROVED', verifiedAt: new Date(timestamp), updatedAt: new Date(timestamp) };
+  assert.deepEqual(schema.parse(serialize({ professional: changed })), {
+    professional: { ...changed, verifiedAt: timestamp, updatedAt: timestamp },
+  });
+});
+
 test('admin dashboard preserves UTC years extended by query offset normalization', () => {
   const range = adminDirectoryResponses.dashboard.responses[200].schema.shape.range;
   const request = dashboardQuerySchema.parse({

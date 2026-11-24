@@ -46,7 +46,7 @@ router.get('/dashboard', requirePermission(PERMISSIONS.DASHBOARD_READ), response
 
 router.get('/users', requirePermission(PERMISSIONS.USERS_READ), responseContract(adminDirectoryResponses.users), controller.users);
 router.get('/users/:id', requirePermission(PERMISSIONS.USERS_PII_READ), controller.user);
-router.patch('/users/:id/status', requirePermission(PERMISSIONS.USERS_MANAGE), controller.setUserStatus);
+router.patch('/users/:id/status', requirePermission(PERMISSIONS.USERS_MANAGE), responseContract(adminDirectoryResponses.userStatus), controller.setUserStatus);
 
 router.get('/professionals', requirePermission(PERMISSIONS.PROFESSIONALS_READ), responseContract(adminDirectoryResponses.professionals), controller.professionals);
 router.get(
@@ -55,7 +55,7 @@ router.get(
   requirePermission(PERMISSIONS.USERS_PII_READ),
   controller.professional
 );
-router.patch('/professionals/:id/status', requirePermission(PERMISSIONS.PROFESSIONALS_MANAGE), controller.setProfessionalStatus);
+router.patch('/professionals/:id/status', requirePermission(PERMISSIONS.PROFESSIONALS_MANAGE), responseContract(adminDirectoryResponses.professionalStatus), controller.setProfessionalStatus);
 
 router.get('/bookings', requirePermission(PERMISSIONS.BOOKINGS_READ), responseContract(adminDirectoryResponses.bookings), controller.bookings);
 router.get(
