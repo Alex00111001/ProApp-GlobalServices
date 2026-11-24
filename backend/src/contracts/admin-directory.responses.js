@@ -22,8 +22,37 @@ const dashboardMetricDefinition = outputObject({
 });
 // Offset normalization and default ranges can cross a four-digit year boundary.
 const dashboardRangeDate = z.union([dateTime, z.string().regex(/^[+-]\d{6}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u)]);
+const roleChangePerson = { id: z.string(), firstName: z.string(), lastName: z.string() };
+const roleChange = outputObject({
+  id: z.string(), targetUserId: z.string(), roleId: z.string(),
+  action: z.enum(['GRANT', 'REVOKE']), status: z.enum(['REQUESTED', 'EXECUTED', 'REJECTED', 'CANCELLED']),
+  reason: z.string(),
+  requestedById: z.string(), requestedAt: dateTime,
+  reviewedById: z.string().nullable(), reviewedAt: dateTime.nullable(), decisionReason: z.string().nullable(),
+  executedAt: dateTime.nullable(), createdAt: dateTime, updatedAt: dateTime,
+  role: outputObject({ id: z.string(), key: z.string(), name: z.string() }),
+  targetUser: outputObject({ ...roleChangePerson, emailMasked: z.string() }),
+  requestedBy: outputObject(roleChangePerson), reviewedBy: outputObject(roleChangePerson).nullable(),
+});
+const roleChangeResult = serialized(outputObject({ request: roleChange }));
 
 const adminDirectoryResponses = Object.freeze({
+  roleChangeRequests: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/role-change-requests', operationId: 'adminDirectory.roleChangeRequests',
+    responses: { 200: serialized(outputObject({ requests: z.array(roleChange) })) },
+  }),
+  requestRoleChange: defineResponseContract({
+    method: 'POST', path: '/api/v1/admin/role-change-requests', operationId: 'adminDirectory.requestRoleChange',
+    responses: { 201: roleChangeResult },
+  }),
+  approveRoleChange: defineResponseContract({
+    method: 'POST', path: '/api/v1/admin/role-change-requests/{id}/approve', operationId: 'adminDirectory.approveRoleChange',
+    responses: { 200: roleChangeResult },
+  }),
+  rejectRoleChange: defineResponseContract({
+    method: 'POST', path: '/api/v1/admin/role-change-requests/{id}/reject', operationId: 'adminDirectory.rejectRoleChange',
+    responses: { 200: roleChangeResult },
+  }),
   roles: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/roles', operationId: 'adminDirectory.roles',
     responses: { 200: outputObject({

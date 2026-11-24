@@ -17,6 +17,7 @@ const { bootstrapRbac } = require('../../src/modules/identity/bootstrap-rbac');
 const { authenticateAdminToken, createAdminSession, refreshAdminSession } = require('../../src/modules/identity/admin-session.service');
 const { decideRoleChange, requestRoleChange } = require('../../src/modules/identity/admin-role-change.service');
 const { getDashboard } = require('../../src/modules/admin/admin-read.service');
+const { adminDirectoryResponses } = require('../../src/contracts/admin-directory.responses');
 
 const runId = `admin.${Date.now().toString(36)}.${Math.random().toString(36).slice(2, 10)}`;
 const userIds = [];
@@ -96,6 +97,10 @@ test('PostgreSQL serializes four-eyes role approval and writes one effective ass
     idempotencyKey: `${runId}:grant-analyst`, req: requestContext(requester.id, 'request'),
   }, prisma, { enabled: true });
   changeId = requested.id;
+  const requestResponse = adminDirectoryResponses.requestRoleChange.responses[201];
+  const expectedRequest = JSON.parse(JSON.stringify(requested));
+  delete expectedRequest.idempotencyKey;
+  assert.deepEqual(requestResponse.schema.parse(requestResponse.serialize({ request: requested })).request, expectedRequest);
 
   const [first, replay] = await Promise.all([
     decideRoleChange({ id: requested.id, decision: 'APPROVE', reason: 'Independent integration approval A', req: requestContext(reviewerA.id, 'approve-a') }, prisma, { enabled: true }),
@@ -103,6 +108,10 @@ test('PostgreSQL serializes four-eyes role approval and writes one effective ass
   ]);
   assert.equal(first.status, 'EXECUTED');
   assert.equal(replay.status, 'EXECUTED');
+  const approvalResponse = adminDirectoryResponses.approveRoleChange.responses[200];
+  const expectedApproval = JSON.parse(JSON.stringify(first));
+  delete expectedApproval.idempotencyKey;
+  assert.deepEqual(approvalResponse.schema.parse(approvalResponse.serialize({ request: first })).request, expectedApproval);
   assert.equal(await prisma.userRoleAssignment.count({ where: { userId: target.id, roleId: analystRole.id, status: 'ACTIVE' } }), 1);
   assert.equal(await prisma.auditLog.count({ where: { resourceId: requested.id, action: 'ADMIN_ROLE_CHANGE_EXECUTED' } }), 1);
 });
@@ -294,6 +303,9 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     const restrictedRoleChanges = await fetch(`${baseUrl}/role-change-requests`, { headers: catalogHeaders });
     assert.equal(restrictedRoleChanges.status, 403);
     assert.equal((await restrictedRoleChanges.json()).code, 'INSUFFICIENT_PERMISSION');
+    const roleRequests = await fetch(`${baseUrl}/role-change-requests`, { headers: operatorHeaders });
+    assert.equal(roleRequests.status, 200);
+    assert.ok(Array.isArray((await roleRequests.json()).requests));
     const financialPath = `${baseUrl}/operations/financial-monitoring`;
     const deniedFinancial = await fetch(financialPath, { headers: operationsHeaders });
     assert.equal(deniedFinancial.status, 403);
