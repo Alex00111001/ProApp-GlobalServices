@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AdminLayout } from './components/AdminLayout'
+import { BookingsPage } from './pages/BookingsPage'
 import { OperationsPage } from './pages/OperationsPage'
 import { SupportPage } from './pages/SupportPage'
 import { GrowthPage } from './pages/GrowthPage'
@@ -41,6 +42,41 @@ describe('admin session boundary', () => {
   it('surfaces stable API authorization errors with correlation evidence', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: 'Forbidden', code: 'INSUFFICIENT_PERMISSION', correlationId: 'corr-1' }), { status: 403, headers: { 'content-type': 'application/json' } })))
     await expect(api('/v1/admin/users')).rejects.toEqual(expect.objectContaining({ status: 403, code: 'INSUFFICIENT_PERMISSION', correlationId: 'corr-1' }))
+  })
+})
+
+describe('administrative booking list', () => {
+  it('renders the booking lifecycle and payment status in separate columns', async () => {
+    const timestamp = '2027-01-15T14:30:00.000Z'
+    const booking = {
+      id: '12345678-fixture', status: 'IN_PROGRESS', payment: { status: 'COMPLETED' },
+      clientName: 'Synthetic Client', professionalName: 'Synthetic Professional',
+      city: 'Fixture city', totalPrice: '25.00', currency: 'EUR',
+      createdAt: timestamp, scheduledDate: timestamp, updatedAt: timestamp,
+    }
+    const fetchMock = vi.fn(async () => Response.json({
+      items: [booking, { ...booking, id: '87654321-fixture', status: 'PENDING', payment: null }],
+      pagination: { page: 1, limit: 25, totalItems: 2, totalPages: 1 },
+    }))
+    vi.stubGlobal('fetch', fetchMock)
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    try {
+      render(<QueryClientProvider client={client}><BookingsPage /></QueryClientProvider>)
+      const table = await screen.findByRole('table')
+      const headers = within(table).getAllByRole('columnheader').map((header) => header.textContent)
+      const rows = within(table).getAllByRole('row').slice(1)
+      const first = within(rows[0]).getAllByRole('cell')
+      expect(first[headers.indexOf('Servicio')].textContent).toBe('IN PROGRESS')
+      expect(first[headers.indexOf('Pago')].textContent).toBe('COMPLETED')
+      expect(within(rows[1]).getByText('Sin pago')).toBeTruthy()
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/v1/admin/bookings?page=1&limit=25'),
+        expect.any(Object),
+      )
+    } finally {
+      client.clear()
+      vi.unstubAllGlobals()
+    }
   })
 })
 
