@@ -105,7 +105,7 @@ function buildOpenApi(inventoryDocument = buildInventory()) {
     for (const [status, response] of Object.entries(route.responseAuthority?.responses || {})) {
       responses[status] = response.empty
         ? { description: 'No content' }
-        : { description: 'Runtime-authoritative serialized response', content: { 'application/json': {
+        : { description: 'Runtime-authoritative serialized response', content: { [response.mediaType || 'application/json']: {
           schema: externalizeDefinitions(response.jsonSchema, `${route.responseAuthority.operationId}_${status}`),
         } },
           'x-homeservices-response-parity': response.wireParity };

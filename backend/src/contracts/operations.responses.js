@@ -146,6 +146,10 @@ const alert = outputObject({
 });
 
 const operationsResponses = Object.freeze({
+  metrics: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/operations/metrics', operationId: 'adminOperations.metrics',
+    responses: { 200: { schema: z.string(), serialize: (body) => body, mediaType: 'text/plain' } },
+  }),
   health: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/operations/health', operationId: 'adminOperations.health',
     responses: { 200: outputObject({ ...healthReportFields, status: z.enum(['HEALTHY', 'DEGRADED']) }) },

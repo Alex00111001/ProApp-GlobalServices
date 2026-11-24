@@ -73,13 +73,13 @@ test('operations list DTOs preserve null fields and dates while excluding intern
   }
 });
 
-const request = async (handler) => {
+const request = async (handler, responses = { 200: outputObject({ id: z.string().uuid(), name: z.string() }), 204: null }) => {
   const app = express();
   app.use((req, res, next) => { req.context = { requestId: 'req-test', correlationId: 'corr-test' }; next(); });
   app.use(errorContract);
   app.get('/test', responseContract(defineResponseContract({
     method: 'GET', path: '/test', operationId: 'test.response',
-    responses: { 200: outputObject({ id: z.string().uuid(), name: z.string() }), 204: null },
+    responses,
   })), handler);
   app.use(createGlobalErrorHandler({ reportError: async () => ({}), ensureIncidentForError: async () => {} }));
   const server = app.listen(0);
@@ -90,6 +90,19 @@ const request = async (handler) => {
     await new Promise((resolve) => server.close(resolve));
   }
 };
+
+test('text response contracts preserve the explicit media type and reject JSON or an incorrect type', async () => {
+  const responses = operationsResponses.metrics.responses;
+  const metrics = '# TYPE homeservices_fixture counter\nhomeservices_fixture 1\n';
+  const valid = await request((req, res) => res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8').send(metrics), responses);
+  assert.equal(valid.status, 200);
+  assert.match(valid.headers.get('content-type'), /^text\/plain\s*;/i);
+  assert.match(valid.headers.get('content-type'), /;\s*version=0\.0\.4(?:;|$)/i);
+  assert.equal(await valid.text(), metrics);
+  for (const handler of [(req, res) => res.json({ metrics }), (req, res) => res.type('html').send(metrics)]) {
+    assert.equal((await request(handler, responses)).status, 500);
+  }
+});
 
 test('response contract strips undeclared fields at the runtime serialization boundary', async () => {
   const response = await request((req, res) => res.json({

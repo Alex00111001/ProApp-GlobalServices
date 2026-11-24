@@ -27,7 +27,11 @@ const defineResponseContract = ({ method, path, operationId, responses }) => {
     if (!isZodSchema(schema) || typeof serialize !== 'function') {
       throw new TypeError(`Response contract ${operationId} status ${status} requires a Zod schema and serializer.`);
     }
-    normalized[status] = Object.freeze({ schema, serialize });
+    const mediaType = definition?.mediaType ?? 'application/json';
+    if (!['application/json', 'text/plain'].includes(mediaType)) {
+      throw new TypeError(`Unsupported response media type for ${operationId}: ${mediaType}.`);
+    }
+    normalized[status] = Object.freeze({ schema, serialize, mediaType });
   }
   if (!Object.keys(normalized).length) throw new TypeError(`Response contract ${operationId} has no success responses.`);
   return Object.freeze({ method, path, operationId, responses: Object.freeze(normalized) });
@@ -62,7 +66,7 @@ const responseContract = (contract) => {
     res.json = (body) => {
       if (res.statusCode >= 400) return originalJson(body);
       const definition = contract.responses[res.statusCode];
-      if (!definition) throw Object.assign(new Error(`Undeclared success status ${res.statusCode} for ${contract.operationId}.`), {
+      if (!definition || definition.mediaType !== 'application/json') throw Object.assign(new Error(`Undeclared JSON success status ${res.statusCode} for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_STATUS_MISMATCH', statusCode: 500,
       });
       const result = definition.schema.safeParse(definition.serialize(body, req));
@@ -86,6 +90,13 @@ const responseContract = (contract) => {
           code: 'RESPONSE_CONTRACT_VIOLATION', statusCode: 500,
         });
         return originalSend();
+      }
+      if (schema.mediaType === 'text/plain') {
+        const actualMediaType = String(res.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+        const result = schema.schema.safeParse(schema.serialize(body, req));
+        if (actualMediaType === schema.mediaType && result.success && typeof result.data === 'string') {
+          return originalSend(result.data);
+        }
       }
       throw Object.assign(new Error(`Direct body send bypasses JSON serialization for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_VIOLATION', statusCode: 500,
