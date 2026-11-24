@@ -31,7 +31,11 @@ const defineResponseContract = ({ method, path, operationId, responses }) => {
     if (!['application/json', 'text/plain'].includes(mediaType)) {
       throw new TypeError(`Unsupported response media type for ${operationId}: ${mediaType}.`);
     }
-    normalized[status] = Object.freeze({ schema, serialize, mediaType });
+    const finalizeJson = definition?.finalizeJson;
+    if (finalizeJson !== undefined && (mediaType !== 'application/json' || typeof finalizeJson !== 'function')) {
+      throw new TypeError(`Invalid JSON finalizer for ${operationId} status ${status}.`);
+    }
+    normalized[status] = Object.freeze({ schema, serialize, mediaType, finalizeJson });
   }
   if (!Object.keys(normalized).length) throw new TypeError(`Response contract ${operationId} has no success responses.`);
   return Object.freeze({ method, path, operationId, responses: Object.freeze(normalized) });
@@ -73,12 +77,13 @@ const responseContract = (contract) => {
       if (!definition || definition.mediaType !== 'application/json') throw Object.assign(new Error(`Undeclared JSON success status ${res.statusCode} for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_STATUS_MISMATCH', statusCode: 500,
       });
-      const result = definition.schema.safeParse(definition.serialize(body, req));
+      const serializedBody = definition.serialize(body, req);
+      const result = definition.schema.safeParse(serializedBody);
       if (!result.success) throw Object.assign(new Error(`Response serialization failed for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_VIOLATION', statusCode: 500, cause: result.error,
       });
       serializingJson = true;
-      try { return originalJson(result.data); }
+      try { return originalJson(definition.finalizeJson ? definition.finalizeJson(result.data, serializedBody) : result.data); }
       finally { serializingJson = false; }
     };
 

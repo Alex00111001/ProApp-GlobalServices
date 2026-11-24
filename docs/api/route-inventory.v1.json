@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "4697b227a030ead009d4d9cc5ac3b3cbc8097844fcb3a8e58f67d9fecefe662d",
+  "sourceFingerprint": "7401b529924f8b729a0d183b5e4251f0454377a017d16bd3a4d24ff5c64db217",
   "routes": [
     {
       "method": "GET",

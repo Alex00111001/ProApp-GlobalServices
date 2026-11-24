@@ -62,7 +62,16 @@ const bookingDetail = outputObject({
 const adminDirectoryResponses = Object.freeze({
   bookingDetail: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/bookings/{id}', operationId: 'adminDirectory.bookingDetail',
-    responses: { 200: serialized(outputObject({ booking: bookingDetail })) },
+    responses: { 200: {
+      ...serialized(outputObject({ booking: bookingDetail })),
+      finalizeJson: (parsed, source) => ({
+        booking: {
+          ...parsed.booking,
+          // Zod drops own __proto__ members from arbitrary JSON objects.
+          pricingSnapshot: source.booking.pricingSnapshot,
+        },
+      }),
+    } },
   }),
   professionalDetail: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/professionals/{id}', operationId: 'adminDirectory.professionalDetail',
