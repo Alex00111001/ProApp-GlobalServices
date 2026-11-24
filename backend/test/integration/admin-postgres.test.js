@@ -98,7 +98,9 @@ test('PostgreSQL serializes four-eyes role approval and writes one effective ass
   }, prisma, { enabled: true });
   changeId = requested.id;
   const requestResponse = adminDirectoryResponses.requestRoleChange.responses[201];
-  assert.deepEqual(requestResponse.schema.parse(requestResponse.serialize({ request: requested })).request, JSON.parse(JSON.stringify(requested)));
+  const expectedRequest = JSON.parse(JSON.stringify(requested));
+  delete expectedRequest.idempotencyKey;
+  assert.deepEqual(requestResponse.schema.parse(requestResponse.serialize({ request: requested })).request, expectedRequest);
 
   const [first, replay] = await Promise.all([
     decideRoleChange({ id: requested.id, decision: 'APPROVE', reason: 'Independent integration approval A', req: requestContext(reviewerA.id, 'approve-a') }, prisma, { enabled: true }),
@@ -107,7 +109,9 @@ test('PostgreSQL serializes four-eyes role approval and writes one effective ass
   assert.equal(first.status, 'EXECUTED');
   assert.equal(replay.status, 'EXECUTED');
   const approvalResponse = adminDirectoryResponses.approveRoleChange.responses[200];
-  assert.deepEqual(approvalResponse.schema.parse(approvalResponse.serialize({ request: first })).request, JSON.parse(JSON.stringify(first)));
+  const expectedApproval = JSON.parse(JSON.stringify(first));
+  delete expectedApproval.idempotencyKey;
+  assert.deepEqual(approvalResponse.schema.parse(approvalResponse.serialize({ request: first })).request, expectedApproval);
   assert.equal(await prisma.userRoleAssignment.count({ where: { userId: target.id, roleId: analystRole.id, status: 'ACTIVE' } }), 1);
   assert.equal(await prisma.auditLog.count({ where: { resourceId: requested.id, action: 'ADMIN_ROLE_CHANGE_EXECUTED' } }), 1);
 });

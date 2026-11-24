@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "2c9c0ddb9e3ad4894dc1b55ea33453005099e93dd77aca30d67ab1fbd9d35e7c",
+  "sourceFingerprint": "611c0de194c38e92caae4ecc9784193203dcd8fec52b66aefe634d9326b28db8",
   "routes": [
     {
       "method": "GET",
@@ -25169,9 +25169,6 @@
                       "reason": {
                         "type": "string"
                       },
-                      "idempotencyKey": {
-                        "type": "string"
-                      },
                       "requestedById": {
                         "type": "string"
                       },
@@ -25325,7 +25322,6 @@
                       "action",
                       "status",
                       "reason",
-                      "idempotencyKey",
                       "requestedById",
                       "requestedAt",
                       "reviewedById",
@@ -25448,9 +25444,6 @@
                     "reason": {
                       "type": "string"
                     },
-                    "idempotencyKey": {
-                      "type": "string"
-                    },
                     "requestedById": {
                       "type": "string"
                     },
@@ -25604,7 +25597,6 @@
                     "action",
                     "status",
                     "reason",
-                    "idempotencyKey",
                     "requestedById",
                     "requestedAt",
                     "reviewedById",
@@ -25726,9 +25718,6 @@
                     "reason": {
                       "type": "string"
                     },
-                    "idempotencyKey": {
-                      "type": "string"
-                    },
                     "requestedById": {
                       "type": "string"
                     },
@@ -25882,7 +25871,6 @@
                     "action",
                     "status",
                     "reason",
-                    "idempotencyKey",
                     "requestedById",
                     "requestedAt",
                     "reviewedById",
@@ -26004,9 +25992,6 @@
                     "reason": {
                       "type": "string"
                     },
-                    "idempotencyKey": {
-                      "type": "string"
-                    },
                     "requestedById": {
                       "type": "string"
                     },
@@ -26160,7 +26145,6 @@
                     "action",
                     "status",
                     "reason",
-                    "idempotencyKey",
                     "requestedById",
                     "requestedAt",
                     "reviewedById",
@@ -64641,9 +64625,6 @@
                     "reason": {
                       "type": "string"
                     },
-                    "idempotencyKey": {
-                      "type": "string"
-                    },
                     "requestedById": {
                       "type": "string"
                     },
@@ -64797,7 +64778,6 @@
                     "action",
                     "status",
                     "reason",
-                    "idempotencyKey",
                     "requestedById",
                     "requestedAt",
                     "reviewedById",
@@ -64866,9 +64846,6 @@
                   "reason": {
                     "type": "string"
                   },
-                  "idempotencyKey": {
-                    "type": "string"
-                  },
                   "requestedById": {
                     "type": "string"
                   },
@@ -65022,7 +64999,6 @@
                   "action",
                   "status",
                   "reason",
-                  "idempotencyKey",
                   "requestedById",
                   "requestedAt",
                   "reviewedById",
@@ -65090,9 +65066,6 @@
                   "reason": {
                     "type": "string"
                   },
-                  "idempotencyKey": {
-                    "type": "string"
-                  },
                   "requestedById": {
                     "type": "string"
                   },
@@ -65246,7 +65219,6 @@
                   "action",
                   "status",
                   "reason",
-                  "idempotencyKey",
                   "requestedById",
                   "requestedAt",
                   "reviewedById",
@@ -65314,9 +65286,6 @@
                   "reason": {
                     "type": "string"
                   },
-                  "idempotencyKey": {
-                    "type": "string"
-                  },
                   "requestedById": {
                     "type": "string"
                   },
@@ -65470,7 +65439,6 @@
                   "action",
                   "status",
                   "reason",
-                  "idempotencyKey",
                   "requestedById",
                   "requestedAt",
                   "reviewedById",

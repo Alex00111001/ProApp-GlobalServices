@@ -26,7 +26,7 @@ const roleChangePerson = { id: z.string(), firstName: z.string(), lastName: z.st
 const roleChange = outputObject({
   id: z.string(), targetUserId: z.string(), roleId: z.string(),
   action: z.enum(['GRANT', 'REVOKE']), status: z.enum(['REQUESTED', 'EXECUTED', 'REJECTED', 'CANCELLED']),
-  reason: z.string(), idempotencyKey: z.string(),
+  reason: z.string(),
   requestedById: z.string(), requestedAt: dateTime,
   reviewedById: z.string().nullable(), reviewedAt: dateTime.nullable(), decisionReason: z.string().nullable(),
   executedAt: dateTime.nullable(), createdAt: dateTime, updatedAt: dateTime,

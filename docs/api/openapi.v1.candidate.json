@@ -37783,9 +37783,6 @@
                           "reason": {
                             "type": "string"
                           },
-                          "idempotencyKey": {
-                            "type": "string"
-                          },
                           "requestedById": {
                             "type": "string"
                           },
@@ -37939,7 +37936,6 @@
                           "action",
                           "status",
                           "reason",
-                          "idempotencyKey",
                           "requestedById",
                           "requestedAt",
                           "reviewedById",
@@ -38112,9 +38108,6 @@
                         "reason": {
                           "type": "string"
                         },
-                        "idempotencyKey": {
-                          "type": "string"
-                        },
                         "requestedById": {
                           "type": "string"
                         },
@@ -38268,7 +38261,6 @@
                         "action",
                         "status",
                         "reason",
-                        "idempotencyKey",
                         "requestedById",
                         "requestedAt",
                         "reviewedById",
@@ -38445,9 +38437,6 @@
                         "reason": {
                           "type": "string"
                         },
-                        "idempotencyKey": {
-                          "type": "string"
-                        },
                         "requestedById": {
                           "type": "string"
                         },
@@ -38601,7 +38590,6 @@
                         "action",
                         "status",
                         "reason",
-                        "idempotencyKey",
                         "requestedById",
                         "requestedAt",
                         "reviewedById",
@@ -38778,9 +38766,6 @@
                         "reason": {
                           "type": "string"
                         },
-                        "idempotencyKey": {
-                          "type": "string"
-                        },
                         "requestedById": {
                           "type": "string"
                         },
@@ -38934,7 +38919,6 @@
                         "action",
                         "status",
                         "reason",
-                        "idempotencyKey",
                         "requestedById",
                         "requestedAt",
                         "reviewedById",
