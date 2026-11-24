@@ -17,6 +17,46 @@ const { bookingResponses } = require('../src/contracts/booking.responses');
 const { operationsResponses } = require('../src/contracts/operations.responses');
 const { adminDirectoryResponses } = require('../src/contracts/admin-directory.responses');
 const { dashboardQuerySchema } = require('../src/validators/admin.validators');
+const { serializeJson } = require('../src/shared/http/response-contract');
+
+test('admin booking detail keeps stored JSON members while filtering the rest of the HTTP response', async () => {
+  const pricingSnapshot = JSON.parse('{"nested":[{"__proto__":{"historical":true}}]}');
+  const now = new Date('2026-11-24T12:00:00Z');
+  const booking = {
+    id: 'booking', clientId: 'client', professionalId: null, status: 'PENDING',
+    scheduledDate: now, endDate: null, address: 'Fixture', city: 'Fixture',
+    state: 'Fixture', postalCode: '00000', latitude: null, longitude: null, notes: null,
+    totalPrice: '10', serviceAmount: '10', platformFee: '0', platformFeeState: 'PENDING',
+    professionalCommission: '0', professionalEarnings: '10', currency: 'EUR',
+    pricingSnapshot, pricingPolicyId: null, marketId: null, addressId: null,
+    cancelledBy: null, cancellationReason: null, cancelledAt: null, completedAt: null,
+    createdAt: now, updatedAt: now,
+    client: { user: { id: 'user', firstName: 'Fixture', lastName: 'Client', email: 'fixture@example.test', phone: '0', passwordHash: 'fixture-only' } },
+    professional: null, bookingServices: [], payment: null, refunds: [], payout: null,
+  };
+  const app = express();
+  app.get('/detail', responseContract(adminDirectoryResponses.bookingDetail), (req, res) => res.json({ booking }));
+  const server = app.listen(0, '127.0.0.1');
+  try {
+    await new Promise((resolve) => server.once('listening', resolve));
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/detail`);
+    assert.equal(response.status, 200);
+    const body = (await response.json()).booking;
+    assert.deepEqual(body.pricingSnapshot, pricingSnapshot);
+    assert.equal(Object.hasOwn(body.client.user, 'passwordHash'), false);
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test('admin booking detail preserves extended dates and the legacy null end date', () => {
+  const { scheduledDate, endDate } = adminDirectoryResponses.bookingDetail.responses[200].schema.shape.booking.shape;
+  const start = new Date('9999-12-31T23:55:00.000Z');
+  const extendedEnd = new Date(start.getTime() + 10 * 60_000);
+  assert.equal(scheduledDate.parse(serializeJson(start)), start.toISOString());
+  assert.equal(endDate.parse(serializeJson(extendedEnd)), '+010000-01-01T00:05:00.000Z');
+  assert.equal(endDate.parse(serializeJson(new Date(Number.NaN))), null);
+});
 
 test('professional status preserves the duplicate response without updatedAt', () => {
   const { schema, serialize } = adminDirectoryResponses.professionalStatus.responses[200];
