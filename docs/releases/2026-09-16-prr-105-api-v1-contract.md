@@ -158,6 +158,17 @@ PRR-105 remains **PARCIAL**. Request, response, error, validation/pagination and
 
 Six mounted POST operations now bind runtime actor-safe serializers and output schemas: create, confirm, reject, start, complete and cancel. Create retains 201/new and 200/replay; other successful commands return 200. Mutation serializers compose the established customer/professional Booking read models, including safe payout/refund summaries. Negative tests exclude credentials, private contacts, coordinates, provider identifiers, internal pricing/ledger/risk/audit/notes and DB-only fields. Required/nullable fields, enums, dates, Decimal money, nested structures and arrays validate against generated OpenAPI.
 
+### Professional mobile consumer evidence
+
+The [professional booking transport regression](../../mobile-professional/test/booking-api.test.mjs)
+adds executable consumer evidence to PRR-105. It uses the production API module against a
+loopback fixture. The delivery PR records the exact checks and CI. The deployed journey
+remains pending until an isolated candidate is available (PRR-701/702), with the
+customer/professional journey and sandbox dependencies tracked in the
+[PRR plan](../production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md).
+
+### Historical backend evidence
+
 The user approved **professional-only Booking confirmation**. Stripe records payment and preserves Booking state. Capture/reject/cancel share Payment-before-Booking transaction locks and cancellation reconciliation: accepted versioned refund decision when enabled, one deduplicated HIGH incident, alert and audit. Both forced execution orders and concurrent execution produce one refund decision and preserve CANCELLED. Provider refund execution and four-eyes authorities are unchanged. Completion rechecks settled payment and active refunds before its single earning/statistics writes; historical CASH cannot authorize new completion/earnings.
 
 Intent persistence preserves terminal payments and expected intent identity. Ambiguous persistence retries transactionally; a shared in-flight intent is adopted safely and is never cancelled while persistence is uncertain. Definite terminal/conflict cleanup executes after transaction release; cleanup failure/persistence-unknown outcomes enter separate durable incident paths. Failed webhooks cannot degrade captured/refunded payments or overwrite newer intent identities.
