@@ -49,6 +49,32 @@ test('admin booking detail keeps stored JSON members while filtering the rest of
   }
 });
 
+test('admin audit HTTP response preserves historical metadata without returning raw actor fields', async () => {
+  const metadata = JSON.parse('{"nested":[{"__proto__":{"historical":true}}]}');
+  const item = {
+    id: 'audit', action: 'READ', resourceType: 'fixture', resourceId: null,
+    outcome: 'SUCCESS', reason: null, requestId: null, correlationId: null, traceId: null,
+    metadata, createdAt: new Date('2026-11-24T12:00:00Z'),
+    actor: { id: 'actor', firstName: 'Fixture', lastName: 'Actor', emailMasked: 'f***@example.test', email: 'fixture@example.test' },
+  };
+  const app = express();
+  app.get('/audit', responseContract(adminDirectoryResponses.auditList), (req, res) => res.json({
+    items: [item, { ...item, id: 'second', metadata: null, actor: null }],
+    pagination: { page: 1, limit: 25, totalItems: 2, totalPages: 1 },
+  }));
+  const server = app.listen(0, '127.0.0.1');
+  try {
+    await new Promise((resolve) => server.once('listening', resolve));
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/audit`);
+    assert.equal(response.status, 200);
+    const { items } = await response.json();
+    assert.deepEqual(items.map((entry) => entry.metadata), [metadata, null]);
+    assert.equal(Object.hasOwn(items[0].actor, 'email'), false);
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
 test('admin booking detail preserves extended dates and the legacy null end date', () => {
   const { scheduledDate, endDate } = adminDirectoryResponses.bookingDetail.responses[200].schema.shape.booking.shape;
   const start = new Date('9999-12-31T23:55:00.000Z');

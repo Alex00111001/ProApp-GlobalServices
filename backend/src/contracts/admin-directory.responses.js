@@ -60,6 +60,23 @@ const bookingDetail = outputObject({
 });
 
 const adminDirectoryResponses = Object.freeze({
+  auditList: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/audit', operationId: 'adminDirectory.auditList',
+    responses: { 200: {
+      ...serialized(adminListResponse(outputObject({
+      id: z.string(), action: z.string(), resourceType: z.string(), resourceId: z.string().nullable(),
+      outcome: z.enum(['SUCCESS', 'DENIED', 'FAILURE']), reason: z.string().nullable(),
+      requestId: z.string().nullable(), correlationId: z.string().nullable(), traceId: z.string().nullable(),
+      metadata: z.json().nullable(), createdAt: dateTime,
+      actor: outputObject({ ...roleChangePerson, emailMasked: z.string() }).nullable(),
+      }))),
+      finalizeJson: (parsed, source) => ({
+        ...parsed,
+        // Preserve stored JSON members after validating the list and its metadata.
+        items: parsed.items.map((item, index) => ({ ...item, metadata: source.items[index].metadata })),
+      }),
+    } },
+  }),
   bookingDetail: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/bookings/{id}', operationId: 'adminDirectory.bookingDetail',
     responses: { 200: {
