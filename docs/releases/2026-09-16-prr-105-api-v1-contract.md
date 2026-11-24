@@ -363,3 +363,10 @@ Next: **STOP — await independent verification** after T01 exact-SHA CI and evi
   The documentary SHA has its own Platform verification before any tracker projection. PRR-105
   still has 129 unresolved input bindings and 196 incomplete outputs, and its OpenAPI status is
   `CANDIDATE_NOT_PUBLISHED`. Stop at this tranche pending delivery acceptance.
+
+## Professional mobile consumer evidence
+
+[PR #71](https://github.com/Alex00111001/ProApp-GlobalServices/pull/71) adds executable
+booking transport evidence to PRR-105 and records the reproducible checks and CI.
+The deployed journey awaits an isolated candidate (PRR-701/702) and the applicable
+journey and sandbox gates in the [PRR plan](../production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md).
