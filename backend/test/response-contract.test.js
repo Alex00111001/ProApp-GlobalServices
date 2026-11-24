@@ -17,6 +17,16 @@ const { bookingResponses } = require('../src/contracts/booking.responses');
 const { operationsResponses } = require('../src/contracts/operations.responses');
 const { adminDirectoryResponses } = require('../src/contracts/admin-directory.responses');
 const { dashboardQuerySchema } = require('../src/validators/admin.validators');
+const { serializeJson } = require('../src/shared/http/response-contract');
+
+test('admin booking detail preserves extended dates and the legacy null end date', () => {
+  const { scheduledDate, endDate } = adminDirectoryResponses.bookingDetail.responses[200].schema.shape.booking.shape;
+  const start = new Date('9999-12-31T23:55:00.000Z');
+  const extendedEnd = new Date(start.getTime() + 10 * 60_000);
+  assert.equal(scheduledDate.parse(serializeJson(start)), start.toISOString());
+  assert.equal(endDate.parse(serializeJson(extendedEnd)), '+010000-01-01T00:05:00.000Z');
+  assert.equal(endDate.parse(serializeJson(new Date(Number.NaN))), null);
+});
 
 test('professional status preserves the duplicate response without updatedAt', () => {
   const { schema, serialize } = adminDirectoryResponses.professionalStatus.responses[200];
