@@ -379,6 +379,19 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     });
     assert.equal(auditResponse.status, 200);
     const auditPage = await auditResponse.json();
+    assert.equal(auditPage.pagination.page, 1);
+    assert.equal(auditPage.pagination.limit, 25);
+    const explicitAuditPage = await fetch(`${baseUrl}/audit?page=02&limit=2e0&correlationId=${encodeURIComponent(`${runId}-user-detail`)}`, {
+      headers: catalogHeaders,
+    });
+    assert.equal(explicitAuditPage.status, 200);
+    const explicitPagination = (await explicitAuditPage.json()).pagination;
+    assert.equal(explicitPagination.page, 2);
+    assert.equal(explicitPagination.limit, 2);
+    for (const query of ['page=1&page=2', 'limit=', 'limit=101', 'limit%5B%5D=2']) {
+      const invalidAuditPage = await fetch(`${baseUrl}/audit?${query}`, { headers: catalogHeaders });
+      assert.equal(invalidAuditPage.status, 400, query);
+    }
     const sensitiveRead = auditPage.items.find(({ action }) => action === 'ADMIN_USER_SENSITIVE_READ');
     assert.equal(sensitiveRead.resourceId, support.id);
     assert.equal(sensitiveRead.actor.id, support.id);

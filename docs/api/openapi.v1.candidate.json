@@ -20938,7 +20938,7 @@
           {
             "name": "page",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -20948,7 +20948,7 @@
           {
             "name": "limit",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -21226,6 +21226,14 @@
                 "path": "$",
                 "policy": "REJECT"
               }
+            ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before number coercion. Noncanonical numeric spellings can be accepted.",
+              "Unknown query keys, including bracketed pagination keys, are rejected."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
             ],
             "wireParity": "UNPROVEN"
           }

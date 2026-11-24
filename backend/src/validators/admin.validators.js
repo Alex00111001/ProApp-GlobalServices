@@ -1,4 +1,5 @@
 const { z } = require('zod');
+const { annotateInputSemantics } = require('../shared/http/input-contract');
 const { trimmedString, declareTrimmedInput } = require('../shared/http/input-normalization');
 const { authEmailPattern } = require('./auth-email-pattern');
 
@@ -49,13 +50,23 @@ const bookingListQuerySchema = paginationSchema.extend({
   to: z.iso.datetime({ offset: true }).optional(),
 }).strict();
 
-const auditListQuerySchema = paginationSchema.extend({
+const auditListQuerySchema = annotateInputSemantics(paginationSchema.extend({
+  page: z.coerce.number().int().min(1).max(100_000).optional().transform((value) => value ?? 1),
+  limit: z.coerce.number().int().min(1).max(100).optional().transform((value) => value ?? 25),
   actorId: z.uuid().optional(),
   resourceType: optionalQueryString(80),
   action: optionalQueryString(120),
   outcome: z.enum(['SUCCESS', 'DENIED', 'FAILURE']).optional(),
   correlationId: optionalQueryString(128),
-}).strict();
+}).strict(), {
+  classes: ['NORMALIZATION', 'TRANSFORM'],
+  evidence: ['backend/test/integration/admin-postgres.test.js'],
+  semantics: [
+    'Omitted page and limit default to 1 and 25. Empty or repeated values fail.',
+    'Express decodes query values before number coercion. Noncanonical numeric spellings can be accepted.',
+    'Unknown query keys, including bracketed pagination keys, are rejected.',
+  ],
+});
 
 const userStatusSchema = z.object({
   isActive: z.boolean(),
