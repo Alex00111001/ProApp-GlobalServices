@@ -117,6 +117,21 @@ La preparación del entorno puede continuar en paralelo. La activación de PRR-7
 conserva la dependencia de estabilidad de contratos y el plan PRR rige los ensayos
 posteriores. La CI sobre PostgreSQL efímero aporta evidencia de integración.
 
+**Ensayo de reserva.** Preparar un único caso con un cliente, un profesional habilitado,
+un servicio y una cuenta administrativa sintéticos. Platform debe identificar el destino
+aislado y el manifiesto del candidato (PRR-701/702). Release debe confirmar los prerrequisitos
+de los recorridos PRR-602/603, la verificación administrativa de PRR-604 y el proveedor de
+pago sandbox de PRR-504 antes de ejecutar.
+
+1. Crear la reserva desde la app cliente y registrar su ID y el estado de pago que requiera el flujo.
+2. Aceptarla, iniciarla y completarla en la app profesional. Comprobar el estado devuelto
+   por la API y visible en la app cliente. Verificar el rechazo de una transición fuera de orden.
+3. Localizar la misma reserva en Admin Web. Comprobar el estado de la reserva y contrastar
+   el estado del pago sandbox con la API administrativa mediante una cuenta autorizada.
+4. Adjuntar al ensayo el SHA y digest, los IDs sintéticos, la correlación por superficie y
+   los resultados por paso. El [registro PRR-105](../releases/2026-09-16-prr-105-api-v1-contract.md#delivery-evidence-for-booking-and-administrative-audit)
+   enlaza la evidencia de contrato y CI que precede a este ensayo.
+
 - Solicitar decisiones de edge y confianza territorial (PRR-201), privacidad/legal (PRR-302/305)
   y almacenamiento privado (PRR-403). Confirmar responsables y fechas de revisión.
 - Preparar criterios E2E, datos sintéticos y selección de plataforma de pruebas. Maestro para móvil
