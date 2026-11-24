@@ -375,7 +375,10 @@ passing on integrated SHA `17afcf21`. The stop above records the earlier evidenc
 | [PR #71 · Professional booking transitions at the HTTP client boundary](https://github.com/Alex00111001/ProApp-GlobalServices/pull/71#issuecomment-7138258440) | [`ce88e895`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45440914900) |
 | [PR #69 · Audited administrative booking detail](https://github.com/Alex00111001/ProApp-GlobalServices/pull/69#issuecomment-7138492507) | [`c17441a4`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45442760345) |
 | [PR #70 · Protected audit list response](https://github.com/Alex00111001/ProApp-GlobalServices/pull/70#issuecomment-7138504121) | [`fb0edcf1`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45443421378) |
+| [PR #73 · Audit pagination projection](https://github.com/Alex00111001/ProApp-GlobalServices/pull/73#issuecomment-7138875935) | [`fe9ddc88`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45446308419) |
+| [PR #75 · Customer booking creation at the HTTP client boundary](https://github.com/Alex00111001/ProApp-GlobalServices/pull/75#issuecomment-7139150557) | [`cb76c269`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45447694686) |
+| [PR #76 · Admin booking and payment status rendering](https://github.com/Alex00111001/ProApp-GlobalServices/pull/76#issuecomment-7139255943) | [`1be812c5`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45448520875) |
 
-The audit list input pagination projection and privacy review of stored metadata remain open.
-The deployed booking journey awaits an isolated candidate (PRR-701/702) and the journey
-and sandbox gates in the [PRR plan](../production-readiness/PRODUCTION_REMEDIATION_EXECUTION_PLAN.md).
+Audit list wire parity and the privacy review of stored metadata remain open. The
+[conductor](../production-readiness/PREPRODUCTION_CONDUCTOR.md#trabajo-paralelo-que-reduce-esperas)
+tracks the isolated staging booking rehearsal and its dependencies.
