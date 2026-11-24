@@ -21,7 +21,7 @@ const dashboardMetricDefinition = outputObject({
   label: z.string(), unit: z.enum(['count', 'money', 'percentage']), source: z.string(), description: z.string(),
 });
 // Offset normalization and default ranges can cross a four-digit year boundary.
-const dashboardRangeDate = z.union([dateTime, z.string().regex(/^[+-]\d{6}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u)]);
+const extendedDateTime = z.union([dateTime, z.string().regex(/^[+-]\d{6}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u)]);
 const roleChangePerson = { id: z.string(), firstName: z.string(), lastName: z.string() };
 const roleChange = outputObject({
   id: z.string(), targetUserId: z.string(), roleId: z.string(),
@@ -39,7 +39,8 @@ const bookingContact = outputObject({ ...roleChangePerson, email: z.string(), ph
 const bookingFinancialStatus = { id: z.string(), status: z.string(), currency: z.string(), processedAt: dateTime.nullable() };
 const bookingDetail = outputObject({
   id: z.string(), clientId: z.string(), professionalId: z.string().nullable(), status: z.string(),
-  scheduledDate: dateTime, endDate: dateTime, address: z.string(), city: z.string(), state: z.string(), postalCode: z.string(),
+  scheduledDate: extendedDateTime, endDate: extendedDateTime.nullable(),
+  address: z.string(), city: z.string(), state: z.string(), postalCode: z.string(),
   latitude: z.number().nullable(), longitude: z.number().nullable(), notes: z.string().nullable(),
   totalPrice: z.string(), serviceAmount: z.string(), platformFee: z.string(), platformFeeState: z.string(),
   professionalCommission: z.string(), professionalEarnings: z.string(), currency: z.string(),
@@ -151,7 +152,7 @@ const adminDirectoryResponses = Object.freeze({
   dashboard: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/dashboard', operationId: 'adminDirectory.dashboard',
     responses: { 200: serialized(outputObject({
-      range: outputObject({ from: dashboardRangeDate, to: dashboardRangeDate, timezone: z.string(), currency: z.string() }),
+      range: outputObject({ from: extendedDateTime, to: extendedDateTime, timezone: z.string(), currency: z.string() }),
       generatedAt: dateTime,
       freshness: outputObject({
         latestBookingUpdateAt: dateTime.nullable(), latestPaymentUpdateAt: dateTime.nullable(), partialData: z.boolean(),
