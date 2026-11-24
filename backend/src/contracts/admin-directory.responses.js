@@ -37,6 +37,29 @@ const roleChange = outputObject({
 const roleChangeResult = serialized(outputObject({ request: roleChange }));
 
 const adminDirectoryResponses = Object.freeze({
+  professionalDetail: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/professionals/{id}', operationId: 'adminDirectory.professionalDetail',
+    responses: { 200: serialized(outputObject({
+      professional: outputObject({
+        id: z.string(), status: z.string(), bio: z.string().nullable(), yearsOfExperience: z.number().int().nullable(),
+        hourlyRate: z.string().nullable(), serviceRadius: z.number().int().nullable(),
+        totalBookings: z.number().int(), totalEarnings: z.string(), averageRating: z.number(), totalReviews: z.number().int(),
+        verifiedAt: dateTime.nullable(), rejectedReason: z.string().nullable(), createdAt: dateTime, updatedAt: dateTime,
+        stripeTransfersStatus: z.string().nullable(),
+        user: outputObject({
+          ...roleChangePerson, email: z.string(), phone: z.string(), isActive: z.boolean(), countryCode: z.string(),
+        }),
+        documents: z.array(outputObject({
+          id: z.string(), type: z.string(), status: z.string(), reviewedAt: dateTime.nullable(),
+          rejectionReason: z.string().nullable(), expiresAt: dateTime.nullable(), createdAt: dateTime,
+        })),
+        categories: z.array(outputObject({
+          verified: z.boolean(), yearsInCategory: z.number().int().nullable(),
+          category: outputObject({ id: z.string(), name: z.string() }),
+        })),
+      }),
+    })) },
+  }),
   userDetail: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/users/{id}', operationId: 'adminDirectory.userDetail',
     responses: { 200: serialized(outputObject({

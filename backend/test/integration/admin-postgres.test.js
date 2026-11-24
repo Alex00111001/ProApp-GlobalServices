@@ -308,6 +308,18 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     const operatorHeaders = { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' };
     const statusTarget = await createUser('HttpStatusTarget', null);
     const profile = await prisma.professionalProfile.create({ data: { userId: statusTarget.id } });
+    const professionalDetailResponse = await fetch(`${baseUrl}/professionals/${profile.id}`, {
+      headers: { ...operatorHeaders, 'x-correlation-id': `${runId}-professional-detail` },
+    });
+    assert.equal(professionalDetailResponse.status, 200);
+    const { professional: professionalDetail } = await professionalDetailResponse.json();
+    assert.equal(professionalDetail.id, profile.id);
+    assert.equal(professionalDetail.totalEarnings, '0.00');
+    assert.equal(professionalDetail.hourlyRate, null);
+    assert.equal(Object.hasOwn(professionalDetail, 'stripeAccountId'), false);
+    assert.equal(await prisma.auditLog.count({
+      where: { actorId: operator.id, resourceId: profile.id, action: 'ADMIN_PROFESSIONAL_SENSITIVE_READ', correlationId: `${runId}-professional-detail` },
+    }), 1);
     const professionalStatusPath = `${baseUrl}/professionals/${profile.id}/status`;
     const approveBody = JSON.stringify({ status: 'APPROVED', reason: 'Approve the synthetic professional profile' });
     const deniedProfessionalStatus = await fetch(professionalStatusPath, {
