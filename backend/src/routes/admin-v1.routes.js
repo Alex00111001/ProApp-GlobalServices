@@ -45,7 +45,7 @@ router.post('/auth/sessions/:id/revoke', requirePermission(PERMISSIONS.SESSIONS_
 router.get('/dashboard', requirePermission(PERMISSIONS.DASHBOARD_READ), responseContract(adminDirectoryResponses.dashboard), controller.dashboard);
 
 router.get('/users', requirePermission(PERMISSIONS.USERS_READ), responseContract(adminDirectoryResponses.users), controller.users);
-router.get('/users/:id', requirePermission(PERMISSIONS.USERS_PII_READ), controller.user);
+router.get('/users/:id', requirePermission(PERMISSIONS.USERS_PII_READ), responseContract(adminDirectoryResponses.userDetail), controller.user);
 router.patch('/users/:id/status', requirePermission(PERMISSIONS.USERS_MANAGE), responseContract(adminDirectoryResponses.userStatus), controller.setUserStatus);
 
 router.get('/professionals', requirePermission(PERMISSIONS.PROFESSIONALS_READ), responseContract(adminDirectoryResponses.professionals), controller.professionals);

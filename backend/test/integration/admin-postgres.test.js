@@ -171,6 +171,18 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.equal(typeof supportUser.emailMasked, 'string');
     assert.equal(Object.hasOwn(supportUser, 'email'), false);
     assert.equal(Object.hasOwn(supportUser, 'phone'), false);
+    const userDetailResponse = await fetch(`${baseUrl}/users/${support.id}`, {
+      headers: { authorization: `Bearer ${session.accessToken}`, 'x-correlation-id': `${runId}-user-detail` },
+    });
+    assert.equal(userDetailResponse.status, 200);
+    const { user: userDetail } = await userDetailResponse.json();
+    assert.equal(userDetail.id, support.id);
+    assert.equal(userDetail.email, support.email);
+    assert.equal(Object.hasOwn(userDetail, 'passwordHash'), false);
+    assert.ok(userDetail.roles.some(({ key }) => key === 'SUPPORT_ADMIN'));
+    assert.equal(await prisma.auditLog.count({
+      where: { actorId: support.id, resourceId: support.id, action: 'ADMIN_USER_SENSITIVE_READ', correlationId: `${runId}-user-detail` },
+    }), 1);
     for (const endpoint of ['professionals', 'bookings']) {
       const emptyList = await fetch(`${baseUrl}/${endpoint}?search=${encodeURIComponent(runId)}`, {
         headers: { authorization: `Bearer ${session.accessToken}` },

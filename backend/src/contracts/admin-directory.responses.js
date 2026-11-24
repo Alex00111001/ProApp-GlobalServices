@@ -37,6 +37,25 @@ const roleChange = outputObject({
 const roleChangeResult = serialized(outputObject({ request: roleChange }));
 
 const adminDirectoryResponses = Object.freeze({
+  userDetail: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/users/{id}', operationId: 'adminDirectory.userDetail',
+    responses: { 200: serialized(outputObject({
+      user: outputObject({
+        ...roleChangePerson, email: z.string(), phone: z.string(), avatarUrl: z.string().nullable(),
+        role: z.string(), isActive: z.boolean(), countryCode: z.string(),
+        createdAt: dateTime, updatedAt: dateTime, lastLoginAt: dateTime.nullable(),
+        clientProfile: outputObject({
+          city: z.string().nullable(), state: z.string().nullable(), country: z.string(), postalCode: z.string().nullable(),
+          totalBookings: z.number().int(), totalSpent: z.string(),
+        }).nullable(),
+        professionalProfile: outputObject({
+          id: z.string(), status: z.string(), totalBookings: z.number().int(),
+          averageRating: z.number(), totalReviews: z.number().int(), createdAt: dateTime,
+        }).nullable(),
+        roles: z.array(outputObject({ id: z.string(), key: z.string(), name: z.string() })),
+      }),
+    })) },
+  }),
   userStatus: defineResponseContract({
     method: 'PATCH', path: '/api/v1/admin/users/{id}/status', operationId: 'adminDirectory.userStatus',
     responses: { 200: serialized(outputObject({
