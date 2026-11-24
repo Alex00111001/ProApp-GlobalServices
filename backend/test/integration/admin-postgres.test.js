@@ -374,6 +374,19 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
       email: catalogReader.email, password: 'integration-password', userAgent: 'integration-browser', ipAddress: '127.0.0.1',
     }, prisma);
     const catalogHeaders = { authorization: `Bearer ${catalogReaderSession.accessToken}` };
+    const auditResponse = await fetch(`${baseUrl}/audit?correlationId=${encodeURIComponent(`${runId}-user-detail`)}`, {
+      headers: { ...catalogHeaders, 'x-correlation-id': `${runId}-audit-list` },
+    });
+    assert.equal(auditResponse.status, 200);
+    const auditPage = await auditResponse.json();
+    const sensitiveRead = auditPage.items.find(({ action }) => action === 'ADMIN_USER_SENSITIVE_READ');
+    assert.equal(sensitiveRead.resourceId, support.id);
+    assert.equal(sensitiveRead.actor.id, support.id);
+    assert.equal(Object.hasOwn(sensitiveRead.actor, 'email'), false);
+    assert.equal(Object.hasOwn(sensitiveRead, 'before'), false);
+    assert.equal(await prisma.auditLog.count({
+      where: { actorId: catalogReader.id, action: 'ADMIN_AUDIT_LOG_READ', correlationId: `${runId}-audit-list` },
+    }), 1);
     const rolesResponse = await fetch(`${baseUrl}/roles`, { headers: catalogHeaders });
     assert.equal(rolesResponse.status, 200);
     const { roles } = await rolesResponse.json();
