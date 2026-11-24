@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "aaf8ac5923c1c266606cf723971e2693a6e654e2287bc157513f54d0358a2240",
+  "sourceFingerprint": "a7b2e4964737d12f66f5ef6aae26947e99ed58bc8ea772aa36f4951fb8b0e2e3",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -16325,7 +16325,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "auditListQuerySchema",
-            "line": 52
+            "line": 53
           },
           "key": "backend/src/controllers/admin-v1.controller.js#auditListQuerySchema",
           "semanticClasses": [
@@ -16342,13 +16342,11 @@
               "type": "object",
               "properties": {
                 "page": {
-                  "default": 1,
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 100000
                 },
                 "limit": {
-                  "default": 25,
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 100
@@ -16398,14 +16396,22 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before number coercion. Noncanonical numeric spellings can be accepted.",
+              "Unknown query keys, including bracketed pagination keys, are rejected."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
                 "policy": "REJECT"
               }
             ],
-            "runtimeValidationDigest": "a0a7b158277a085f498a5d39f346d16fb6217b9f7d4797976e94bc30c4560195",
-            "runtimeSourceDigest": "dc41b410e67872d224cf2663416fa809eaebc76ec55190562b76d8273abdc21b"
+            "runtimeValidationDigest": "8499db97e91bb7d5a959f2205ed10222de09e0acdbf541e7f89f9781e0de2a5f",
+            "runtimeSourceDigest": "5c4b7a386be3c0173ca2842c31ba651fcfdf860cc13aae15b1d2587f8b777141"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -16465,7 +16471,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "adminLoginSchema",
-            "line": 72
+            "line": 81
           },
           "key": "backend/src/controllers/admin-auth.controller.js#adminLoginSchema",
           "semanticClasses": [
@@ -17043,7 +17049,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "revokeSessionSchema",
-            "line": 77
+            "line": 86
           },
           "key": "backend/src/controllers/admin-auth.controller.js#revokeSessionSchema",
           "semanticClasses": [
@@ -18265,7 +18271,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "bookingListQuerySchema",
-            "line": 46
+            "line": 47
           },
           "key": "backend/src/controllers/admin-v1.controller.js#bookingListQuerySchema",
           "semanticClasses": [
@@ -19764,7 +19770,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "dashboardQuerySchema",
-            "line": 21
+            "line": 22
           },
           "key": "backend/src/controllers/admin-v1.controller.js#dashboardQuerySchema",
           "semanticClasses": [
@@ -28813,7 +28819,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "professionalListQuerySchema",
-            "line": 42
+            "line": 43
           },
           "key": "backend/src/controllers/admin-v1.controller.js#professionalListQuerySchema",
           "semanticClasses": [
@@ -29007,7 +29013,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "professionalStatusSchema",
-            "line": 67
+            "line": 76
           },
           "key": "backend/src/controllers/admin-v1.controller.js#professionalStatusSchema",
           "semanticClasses": [
@@ -31548,7 +31554,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleChangeSchema",
-            "line": 78
+            "line": 87
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleChangeSchema",
           "semanticClasses": [
@@ -31683,7 +31689,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleDecisionSchema",
-            "line": 85
+            "line": 94
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleDecisionSchema",
           "semanticClasses": [
@@ -31864,7 +31870,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleDecisionSchema",
-            "line": 85
+            "line": 94
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleDecisionSchema",
           "semanticClasses": [
@@ -32660,7 +32666,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "userListQuerySchema",
-            "line": 37
+            "line": 38
           },
           "key": "backend/src/controllers/admin-v1.controller.js#userListQuerySchema",
           "semanticClasses": [
@@ -32858,7 +32864,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "userStatusSchema",
-            "line": 62
+            "line": 71
           },
           "key": "backend/src/controllers/admin-v1.controller.js#userStatusSchema",
           "semanticClasses": [

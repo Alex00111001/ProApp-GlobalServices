@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "aaf8ac5923c1c266606cf723971e2693a6e654e2287bc157513f54d0358a2240",
+  "sourceFingerprint": "a7b2e4964737d12f66f5ef6aae26947e99ed58bc8ea772aa36f4951fb8b0e2e3",
   "routes": [
     {
       "method": "GET",
@@ -38888,13 +38888,11 @@
         "type": "object",
         "properties": {
           "page": {
-            "default": 1,
             "type": "integer",
             "minimum": 1,
             "maximum": 100000
           },
           "limit": {
-            "default": 25,
             "type": "integer",
             "minimum": 1,
             "maximum": 100
@@ -38944,14 +38942,22 @@
       "semanticFacts": [
         "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
       ],
+      "observedSemantics": [
+        "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+        "Express decodes query values before number coercion. Noncanonical numeric spellings can be accepted.",
+        "Unknown query keys, including bracketed pagination keys, are rejected."
+      ],
+      "observedEvidence": [
+        "backend/test/integration/admin-postgres.test.js"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
           "policy": "REJECT"
         }
       ],
-      "runtimeValidationDigest": "a0a7b158277a085f498a5d39f346d16fb6217b9f7d4797976e94bc30c4560195",
-      "runtimeSourceDigest": "dc41b410e67872d224cf2663416fa809eaebc76ec55190562b76d8273abdc21b"
+      "runtimeValidationDigest": "8499db97e91bb7d5a959f2205ed10222de09e0acdbf541e7f89f9781e0de2a5f",
+      "runtimeSourceDigest": "5c4b7a386be3c0173ca2842c31ba651fcfdf860cc13aae15b1d2587f8b777141"
     },
     "backend/src/controllers/admin-v1.controller.js#bookingListQuerySchema": {
       "jsonSchema": {
@@ -44476,13 +44482,11 @@
         "type": "object",
         "properties": {
           "page": {
-            "default": 1,
             "type": "integer",
             "minimum": 1,
             "maximum": 100000
           },
           "limit": {
-            "default": 25,
             "type": "integer",
             "minimum": 1,
             "maximum": 100
@@ -44532,13 +44536,21 @@
       "semanticFacts": [
         "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
       ],
+      "observedSemantics": [
+        "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+        "Express decodes query values before number coercion. Noncanonical numeric spellings can be accepted.",
+        "Unknown query keys, including bracketed pagination keys, are rejected."
+      ],
+      "observedEvidence": [
+        "backend/test/integration/admin-postgres.test.js"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
           "policy": "REJECT"
         }
       ],
-      "runtimeValidationDigest": "a0a7b158277a085f498a5d39f346d16fb6217b9f7d4797976e94bc30c4560195"
+      "runtimeValidationDigest": "8499db97e91bb7d5a959f2205ed10222de09e0acdbf541e7f89f9781e0de2a5f"
     },
     "backend/src/validators/admin.validators.js#bookingListQuerySchema": {
       "jsonSchema": {
