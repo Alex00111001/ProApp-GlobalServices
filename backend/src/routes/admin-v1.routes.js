@@ -53,6 +53,7 @@ router.get(
   '/professionals/:id',
   requirePermission(PERMISSIONS.PROFESSIONALS_READ),
   requirePermission(PERMISSIONS.USERS_PII_READ),
+  responseContract(adminDirectoryResponses.professionalDetail),
   controller.professional
 );
 router.patch('/professionals/:id/status', requirePermission(PERMISSIONS.PROFESSIONALS_MANAGE), responseContract(adminDirectoryResponses.professionalStatus), controller.setProfessionalStatus);
