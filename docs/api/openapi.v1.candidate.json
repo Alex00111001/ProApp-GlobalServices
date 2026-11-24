@@ -20938,8 +20938,9 @@
           {
             "name": "page",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
+              "default": 1,
               "type": "integer",
               "minimum": 1,
               "maximum": 100000
@@ -20948,8 +20949,9 @@
           {
             "name": "limit",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
+              "default": 25,
               "type": "integer",
               "minimum": 1,
               "maximum": 100

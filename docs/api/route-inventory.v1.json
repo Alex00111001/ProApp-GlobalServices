@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "AUDITED_SOURCE_INVENTORY_NOT_APPROVED_OPENAPI",
-  "sourceFingerprint": "fdccd37c07511ba6a779dbb897fa9763ed79b98bba6deb5a1e5319648a8c464f",
+  "sourceFingerprint": "aaf8ac5923c1c266606cf723971e2693a6e654e2287bc157513f54d0358a2240",
   "routes": [
     {
       "method": "GET",
@@ -38888,11 +38888,13 @@
         "type": "object",
         "properties": {
           "page": {
+            "default": 1,
             "type": "integer",
             "minimum": 1,
             "maximum": 100000
           },
           "limit": {
+            "default": 25,
             "type": "integer",
             "minimum": 1,
             "maximum": 100
@@ -38927,10 +38929,6 @@
             "maxLength": 128
           }
         },
-        "required": [
-          "page",
-          "limit"
-        ],
         "additionalProperties": false
       },
       "wireParity": "UNPROVEN",
@@ -38943,15 +38941,17 @@
         "TRANSFORM"
       ],
       "semanticReviewRequired": true,
-      "semanticFacts": [],
+      "semanticFacts": [
+        "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
           "policy": "REJECT"
         }
       ],
-      "runtimeValidationDigest": "94302e899d8b70aa4e15748266ef84e6673e6d398728ea4f4869dac613898ba9",
-      "runtimeSourceDigest": "151be4811afa2490d9977eee453e87ae0a9f7158ac69e3e5ded1296b63979ec3"
+      "runtimeValidationDigest": "a0a7b158277a085f498a5d39f346d16fb6217b9f7d4797976e94bc30c4560195",
+      "runtimeSourceDigest": "dc41b410e67872d224cf2663416fa809eaebc76ec55190562b76d8273abdc21b"
     },
     "backend/src/controllers/admin-v1.controller.js#bookingListQuerySchema": {
       "jsonSchema": {
@@ -44476,11 +44476,13 @@
         "type": "object",
         "properties": {
           "page": {
+            "default": 1,
             "type": "integer",
             "minimum": 1,
             "maximum": 100000
           },
           "limit": {
+            "default": 25,
             "type": "integer",
             "minimum": 1,
             "maximum": 100
@@ -44515,10 +44517,6 @@
             "maxLength": 128
           }
         },
-        "required": [
-          "page",
-          "limit"
-        ],
         "additionalProperties": false
       },
       "wireParity": "UNPROVEN",
@@ -44531,14 +44529,16 @@
         "TRANSFORM"
       ],
       "semanticReviewRequired": true,
-      "semanticFacts": [],
+      "semanticFacts": [
+        "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
+      ],
       "unknownFieldPolicies": [
         {
           "path": "$",
           "policy": "REJECT"
         }
       ],
-      "runtimeValidationDigest": "94302e899d8b70aa4e15748266ef84e6673e6d398728ea4f4869dac613898ba9"
+      "runtimeValidationDigest": "a0a7b158277a085f498a5d39f346d16fb6217b9f7d4797976e94bc30c4560195"
     },
     "backend/src/validators/admin.validators.js#bookingListQuerySchema": {
       "jsonSchema": {

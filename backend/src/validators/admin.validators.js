@@ -50,6 +50,8 @@ const bookingListQuerySchema = paginationSchema.extend({
 }).strict();
 
 const auditListQuerySchema = paginationSchema.extend({
+  page: z.coerce.number().int().min(1).max(100_000).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(25),
   actorId: z.uuid().optional(),
   resourceType: optionalQueryString(80),
   action: optionalQueryString(120),
