@@ -100,7 +100,10 @@ test('text response contracts preserve the explicit media type and reject JSON o
   assert.match(valid.headers.get('content-type'), /;\s*version=0\.0\.4(?:;|$)/i);
   assert.equal(await valid.text(), metrics);
   for (const handler of [(req, res) => res.json({ metrics }), (req, res) => res.type('html').send(metrics)]) {
-    assert.equal((await request(handler, responses)).status, 500);
+    const failure = await request(handler, responses);
+    assert.equal(failure.status, 500);
+    assert.match(failure.headers.get('content-type'), /^application\/json\b/i);
+    assert.equal((await failure.json()).code, 'INTERNAL_ERROR');
   }
 });
 

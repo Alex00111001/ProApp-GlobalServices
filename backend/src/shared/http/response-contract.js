@@ -57,6 +57,7 @@ const defineErrorResponseContract = ({ method, path, operationId, responses }) =
 
 const responseContract = (contract) => {
   if (!contract?.operationId || !contract.responses) throw new TypeError('A defined response contract is required.');
+  const hasTextResponse = Object.values(contract.responses).some((definition) => definition?.mediaType === 'text/plain');
   const middleware = (req, res, next) => {
     res.locals[RESPONSE_CONTRACT] = contract;
     const originalJson = res.json.bind(res);
@@ -64,7 +65,10 @@ const responseContract = (contract) => {
     let serializingJson = false;
 
     res.json = (body) => {
-      if (res.statusCode >= 400) return originalJson(body);
+      if (res.statusCode >= 400) {
+        if (hasTextResponse) res.type('application/json');
+        return originalJson(body);
+      }
       const definition = contract.responses[res.statusCode];
       if (!definition || definition.mediaType !== 'application/json') throw Object.assign(new Error(`Undeclared JSON success status ${res.statusCode} for ${contract.operationId}.`), {
         code: 'RESPONSE_CONTRACT_STATUS_MISMATCH', statusCode: 500,
