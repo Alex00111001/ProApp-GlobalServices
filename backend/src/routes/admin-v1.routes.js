@@ -63,6 +63,7 @@ router.get(
   '/bookings/:id',
   requirePermission(PERMISSIONS.BOOKINGS_READ),
   requirePermission(PERMISSIONS.USERS_PII_READ),
+  responseContract(adminDirectoryResponses.bookingDetail),
   controller.booking
 );
 

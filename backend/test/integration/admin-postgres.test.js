@@ -25,6 +25,7 @@ const incidentIds = [];
 let errorGroupId;
 let changeId;
 let supportCaseId;
+let bookingDetailId;
 let passwordHash;
 const requestContext = (userId, suffix) => ({
   user: { id: userId }, ip: '127.0.0.1', get: () => 'admin-integration-test',
@@ -37,6 +38,7 @@ test.before(async () => {
 });
 
 test.after(async () => {
+  if (bookingDetailId) await prisma.booking.deleteMany({ where: { id: bookingDetailId } });
   if (incidentIds.length) {
     const incidentEvents = { aggregateType: 'Incident', aggregateId: { in: incidentIds } };
     await prisma.automationEventDelivery.deleteMany({ where: { sourceEvent: incidentEvents } });
@@ -307,6 +309,28 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     const incidentPath = `${baseUrl}/operations/incidents/${incidentIds[0]}`;
     const operatorHeaders = { authorization: `Bearer ${operatorSession.accessToken}`, 'content-type': 'application/json' };
     const statusTarget = await createUser('HttpStatusTarget', null);
+    const bookingClient = await prisma.clientProfile.create({ data: { userId: statusTarget.id, country: 'ES' } });
+    const bookingFixture = await prisma.booking.create({ data: {
+      clientId: bookingClient.id, scheduledDate: new Date('2027-01-15T12:00:00.000Z'),
+      endDate: new Date('2027-01-15T13:00:00.000Z'), address: 'Synthetic booking address', city: 'Fixture city',
+      state: 'Fixture region', postalCode: '00000', currency: 'EUR', totalPrice: '10.20', professionalEarnings: '8.00',
+      pricingSnapshot: { fixtureVersion: 1 },
+    } });
+    bookingDetailId = bookingFixture.id;
+    const bookingResponse = await fetch(`${baseUrl}/bookings/${bookingDetailId}`, {
+      headers: { ...operatorHeaders, 'x-correlation-id': `${runId}-booking-detail` },
+    });
+    assert.equal(bookingResponse.status, 200);
+    const { booking } = await bookingResponse.json();
+    assert.equal(booking.id, bookingDetailId);
+    assert.equal(booking.totalPrice, '10.20');
+    assert.equal(booking.professional, null);
+    assert.equal(booking.payment, null);
+    assert.deepEqual(booking.pricingSnapshot, { fixtureVersion: 1 });
+    assert.equal(Object.hasOwn(booking.client.user, 'passwordHash'), false);
+    assert.equal(await prisma.auditLog.count({
+      where: { actorId: operator.id, resourceId: bookingDetailId, action: 'ADMIN_BOOKING_SENSITIVE_READ', correlationId: `${runId}-booking-detail` },
+    }), 1);
     const profile = await prisma.professionalProfile.create({ data: { userId: statusTarget.id } });
     const professionalDetailResponse = await fetch(`${baseUrl}/professionals/${profile.id}`, {
       headers: { ...operatorHeaders, 'x-correlation-id': `${runId}-professional-detail` },
