@@ -183,8 +183,9 @@ const observeAIOperation = ({ operation, outcome, reason = 'none', provider = 'n
 
 const metricsHandler = async (req, res, next) => {
   try {
+    const body = await registry.metrics();
     res.set('content-type', registry.contentType);
-    res.send(await registry.metrics());
+    res.send(body);
   } catch (error) {
     next(error);
   }

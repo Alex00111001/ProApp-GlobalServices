@@ -13,7 +13,18 @@ const {
 } = require('../src/modules/observability/incident-lifecycle.service');
 const { createWebhookAlertAdapter } = require('../src/modules/observability/alerting.service');
 const { getLiveness, getReadiness } = require('../src/modules/observability/health.service');
-const { registry } = require('../src/modules/observability/metrics');
+const { metricsHandler, registry } = require('../src/modules/observability/metrics');
+
+test('metrics collector failure leaves the JSON error content type available', async (t) => {
+  const failure = new Error('Synthetic metrics failure');
+  t.mock.method(registry, 'metrics', async () => { throw failure; });
+  const response = { set: t.mock.fn(), send: t.mock.fn() };
+  const next = t.mock.fn();
+  await metricsHandler({}, response, next);
+  assert.equal(response.set.mock.callCount(), 0);
+  assert.equal(response.send.mock.callCount(), 0);
+  assert.deepEqual(next.mock.calls[0].arguments, [failure]);
+});
 const { telemetryMetadata } = require('../src/modules/observability/context');
 
 test('central telemetry sanitization removes secrets, payment data and PII recursively', () => {
