@@ -44,21 +44,11 @@ const professionalListQuerySchema = paginationSchema.extend({
   status: z.enum(['PENDING_REVIEW', 'APPROVED', 'REJECTED', 'SUSPENDED', 'ACTIVE', 'INACTIVE']).optional(),
 }).strict();
 
-const bookingListQuerySchema = paginationSchema.extend({
-  status: z.enum(['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']).optional(),
-  from: z.iso.datetime({ offset: true }).optional(),
-  to: z.iso.datetime({ offset: true }).optional(),
-}).strict();
-
-const auditListQuerySchema = annotateInputSemantics(paginationSchema.extend({
+const projectedPaginationSchema = paginationSchema.extend({
   page: z.coerce.number().int().min(1).max(100_000).optional().transform((value) => value ?? 1),
   limit: z.coerce.number().int().min(1).max(100).optional().transform((value) => value ?? 25),
-  actorId: z.uuid().optional(),
-  resourceType: optionalQueryString(80),
-  action: optionalQueryString(120),
-  outcome: z.enum(['SUCCESS', 'DENIED', 'FAILURE']).optional(),
-  correlationId: optionalQueryString(128),
-}).strict(), {
+});
+const paginationEvidence = {
   classes: ['NORMALIZATION', 'TRANSFORM'],
   evidence: ['backend/test/integration/admin-postgres.test.js'],
   semantics: [
@@ -66,7 +56,21 @@ const auditListQuerySchema = annotateInputSemantics(paginationSchema.extend({
     'Express decodes query values before number coercion. Noncanonical numeric spellings can be accepted.',
     'Unknown query keys, including bracketed pagination keys, are rejected.',
   ],
-});
+};
+
+const bookingListQuerySchema = annotateInputSemantics(projectedPaginationSchema.extend({
+  status: z.enum(['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']).optional(),
+  from: z.iso.datetime({ offset: true }).optional(),
+  to: z.iso.datetime({ offset: true }).optional(),
+}).strict(), paginationEvidence);
+
+const auditListQuerySchema = annotateInputSemantics(projectedPaginationSchema.extend({
+  actorId: z.uuid().optional(),
+  resourceType: optionalQueryString(80),
+  action: optionalQueryString(120),
+  outcome: z.enum(['SUCCESS', 'DENIED', 'FAILURE']).optional(),
+  correlationId: optionalQueryString(128),
+}).strict(), paginationEvidence);
 
 const userStatusSchema = z.object({
   isActive: z.boolean(),

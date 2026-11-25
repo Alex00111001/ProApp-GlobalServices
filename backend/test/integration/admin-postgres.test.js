@@ -317,6 +317,14 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
       pricingSnapshot: { fixtureVersion: 1 },
     } });
     bookingDetailId = bookingFixture.id;
+    const bookingList = await fetch(`${baseUrl}/bookings?search=${encodeURIComponent(bookingDetailId)}`, { headers: operatorHeaders });
+    assert.equal(bookingList.status, 200);
+    const bookingListBody = await bookingList.json();
+    assert.equal(bookingListBody.pagination.page, 1);
+    assert.equal(bookingListBody.pagination.limit, 25);
+    assert.ok(bookingListBody.items.some(({ id }) => id === bookingDetailId));
+    const repeatedBookingPage = await fetch(`${baseUrl}/bookings?page=1&page=2`, { headers: operatorHeaders });
+    assert.equal(repeatedBookingPage.status, 400);
     const bookingResponse = await fetch(`${baseUrl}/bookings/${bookingDetailId}`, {
       headers: { ...operatorHeaders, 'x-correlation-id': `${runId}-booking-detail` },
     });
