@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "a7b2e4964737d12f66f5ef6aae26947e99ed58bc8ea772aa36f4951fb8b0e2e3",
+  "sourceFingerprint": "02fc5612b51c9b784fa11e4494e2a0cbec6d8dade273194a7fc9651183b9f249",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -16325,7 +16325,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "auditListQuerySchema",
-            "line": 53
+            "line": 67
           },
           "key": "backend/src/controllers/admin-v1.controller.js#auditListQuerySchema",
           "semanticClasses": [
@@ -16411,7 +16411,7 @@
               }
             ],
             "runtimeValidationDigest": "8499db97e91bb7d5a959f2205ed10222de09e0acdbf541e7f89f9781e0de2a5f",
-            "runtimeSourceDigest": "5c4b7a386be3c0173ca2842c31ba651fcfdf860cc13aae15b1d2587f8b777141"
+            "runtimeSourceDigest": "10ab33ab35abc7744639fa2c5e58fd5e0d35a00ae981be70af7b887555ab591a"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -16471,7 +16471,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "adminLoginSchema",
-            "line": 81
+            "line": 85
           },
           "key": "backend/src/controllers/admin-auth.controller.js#adminLoginSchema",
           "semanticClasses": [
@@ -17049,7 +17049,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "revokeSessionSchema",
-            "line": 86
+            "line": 90
           },
           "key": "backend/src/controllers/admin-auth.controller.js#revokeSessionSchema",
           "semanticClasses": [
@@ -18271,7 +18271,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "bookingListQuerySchema",
-            "line": 47
+            "line": 61
           },
           "key": "backend/src/controllers/admin-v1.controller.js#bookingListQuerySchema",
           "semanticClasses": [
@@ -18323,10 +18323,6 @@
                   "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
                 }
               },
-              "required": [
-                "page",
-                "limit"
-              ],
               "additionalProperties": false
             },
             "wireParity": "UNPROVEN",
@@ -18339,15 +18335,25 @@
               "TRANSFORM"
             ],
             "semanticReviewRequired": true,
-            "semanticFacts": [],
+            "semanticFacts": [
+              "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
+            ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 25. Empty or repeated values fail.",
+              "Express decodes query values before number coercion. Noncanonical numeric spellings can be accepted.",
+              "Unknown query keys, including bracketed pagination keys, are rejected."
+            ],
+            "observedEvidence": [
+              "backend/test/integration/admin-postgres.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
                 "policy": "REJECT"
               }
             ],
-            "runtimeValidationDigest": "b4d2dda1bd80c06395cd4b97ea1acefaae5040d16db6dad1cf6847b49073cebc",
-            "runtimeSourceDigest": "df8581020e0fad63fa1b25f861550feee9cd710a24e51caca80d4cd0ea8058c4"
+            "runtimeValidationDigest": "933ccc915636260e01f125a0f704c784af57f7c490c87db0b243a09ae6381906",
+            "runtimeSourceDigest": "6979d007f8e387e61c374c6bde36df319f0c019370a500296d219d95721421dd"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -29013,7 +29019,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "professionalStatusSchema",
-            "line": 76
+            "line": 80
           },
           "key": "backend/src/controllers/admin-v1.controller.js#professionalStatusSchema",
           "semanticClasses": [
@@ -31554,7 +31560,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleChangeSchema",
-            "line": 87
+            "line": 91
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleChangeSchema",
           "semanticClasses": [
@@ -31689,7 +31695,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleDecisionSchema",
-            "line": 94
+            "line": 98
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleDecisionSchema",
           "semanticClasses": [
@@ -31870,7 +31876,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "roleDecisionSchema",
-            "line": 94
+            "line": 98
           },
           "key": "backend/src/controllers/admin-v1.controller.js#roleDecisionSchema",
           "semanticClasses": [
@@ -32864,7 +32870,7 @@
           "validatorSource": {
             "file": "backend/src/validators/admin.validators.js",
             "name": "userStatusSchema",
-            "line": 71
+            "line": 75
           },
           "key": "backend/src/controllers/admin-v1.controller.js#userStatusSchema",
           "semanticClasses": [
