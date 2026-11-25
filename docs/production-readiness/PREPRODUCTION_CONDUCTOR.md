@@ -117,6 +117,16 @@ La preparación del entorno puede continuar en paralelo. La activación de PRR-7
 conserva la dependencia de estabilidad de contratos y el plan PRR rige los ensayos
 posteriores. La CI sobre PostgreSQL efímero aporta evidencia de integración.
 
+**Datos que Platform debe registrar para preparar el destino.** Usar el expediente de
+PRR-701/702 para registrar identificadores y referencias, sin valores de credenciales.
+
+| Componente | Información que debe quedar registrada |
+| --- | --- |
+| API y PostgreSQL | URL de staging, responsable y referencia del proyecto aislado. Identificar por separado las referencias de `DATABASE_URL` para la aplicación y `DIRECT_URL` para migraciones y restauración. Registrar cómo se verifica que ambas apuntan al proyecto esperado. |
+| Admin Web y aplicaciones móviles | URL de Admin Web, orígenes permitidos de staging y referencias de las builds internas de ambas apps. Confirmar que las tres superficies usan la misma API aislada. |
+| Sesiones y proveedores | Referencias de secretos de JWT y sesiones separadas de producción. Identificar cuenta, webhook y destino de correo de pruebas, y confirmar que el proveedor de pagos opera en sandbox. |
+| Artefacto y recuperación | Registro de imagen, SHA, digest, SBOM y escaneo. Identificar el destino desechable donde se verificará la restauración y el responsable de registrar sus resultados. |
+
 **Ensayo de reserva.** Preparar un único caso con un cliente, un profesional habilitado,
 un servicio y una cuenta administrativa sintéticos. Platform debe identificar el destino
 aislado y el manifiesto del candidato (PRR-701/702). Release debe confirmar los prerrequisitos
