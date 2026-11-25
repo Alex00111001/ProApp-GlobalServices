@@ -127,6 +127,14 @@ PRR-701/702 para registrar identificadores y referencias, sin valores de credenc
 | Sesiones y proveedores | Referencias de secretos de JWT y sesiones separadas de producción. Identificar cuenta, webhook y destino de correo de pruebas, y confirmar que el proveedor de pagos opera en sandbox. |
 | Artefacto y recuperación | Registro de imagen, SHA, digest, SBOM y escaneo. Identificar el destino desechable donde se verificará la restauración y el responsable de registrar sus resultados. |
 
+**Bloqueo de arranque para el ensayo con pagos.** La [configuración de la API](../../backend/src/config/env.js)
+exige una clave Stripe live cuando `NODE_ENV=production`. Usar otro valor hoy
+desactiva controles dependientes de producción, incluido el atributo `Secure` de la
+cookie administrativa. Antes de activar staging, verificar un modo de despliegue
+que conserve los controles de API y cookies, exija credenciales Stripe de prueba
+y rechace credenciales live en staging. Vincular al expediente PRR-701/702 la CI
+del SHA que pruebe ambos casos y el rechazo de claves de prueba en producción.
+
 **Ensayo de reserva.** Preparar un único caso con un cliente, un profesional habilitado,
 un servicio y una cuenta administrativa sintéticos. Platform debe identificar el destino
 aislado y el manifiesto del candidato (PRR-701/702). Release debe confirmar los prerrequisitos
