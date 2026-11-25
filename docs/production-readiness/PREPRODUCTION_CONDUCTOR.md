@@ -127,6 +127,12 @@ PRR-701/702 para registrar identificadores y referencias, sin valores de credenc
 | Sesiones y proveedores | Referencias de secretos de JWT y sesiones separadas de producción. Identificar cuenta, webhook y destino de correo de pruebas, y confirmar que el proveedor de pagos opera en sandbox. |
 | Artefacto y recuperación | Registro de imagen, SHA, digest, SBOM y escaneo. Identificar el destino desechable donde se verificará la restauración y el responsable de registrar sus resultados. |
 
+**Preparación de la base aislada, 25 de noviembre de 2026.** Platform creó
+`home-services-staging` como proyecto independiente en Supabase, región Europa,
+con Data API deshabilitada. Quedan pendientes el registro privado de referencias de
+conexión, la verificación de identidad de la base y la ejecución de las migraciones
+del candidato cuando se habilite PRR-702.
+
 **Bloqueo de arranque para el ensayo con pagos.** La [configuración de la API](../../backend/src/config/env.js)
 exige una clave Stripe live cuando `NODE_ENV=production`. Usar otro valor hoy
 desactiva controles dependientes de producción, incluido el atributo `Secure` de la
