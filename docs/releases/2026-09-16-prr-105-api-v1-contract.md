@@ -380,7 +380,9 @@ passing on integrated SHA `17afcf21`. The stop above records the earlier evidenc
 | [PR #76 · Admin booking and payment status rendering](https://github.com/Alex00111001/ProApp-GlobalServices/pull/76#issuecomment-7139255943) | [`1be812c5`](https://github.com/Alex00111001/ProApp-GlobalServices/actions/runs/45448520875) |
 
 Customer payment request and response evidence is recorded in
-[PR #83](https://github.com/Alex00111001/ProApp-GlobalServices/pull/83).
+[PR #83](https://github.com/Alex00111001/ProApp-GlobalServices/pull/83). The mounted Customer and
+Professional booking list query evidence is recorded in
+[PR #84](https://github.com/Alex00111001/ProApp-GlobalServices/pull/84).
 
 Audit list wire parity and the privacy review of stored metadata remain open. The
 [conductor](../production-readiness/PREPRODUCTION_CONDUCTOR.md#trabajo-paralelo-que-reduce-esperas)
