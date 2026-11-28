@@ -16,10 +16,54 @@ const { paymentResponses } = require('../src/contracts/payment.responses');
 const { bookingResponses } = require('../src/contracts/booking.responses');
 const { operationsResponses } = require('../src/contracts/operations.responses');
 const { adminDirectoryResponses } = require('../src/contracts/admin-directory.responses');
+const { adminSessionResponses } = require('../src/contracts/admin-session.responses');
 const { growthResponses } = require('../src/contracts/growth.responses');
 const { buildFunnel } = require('../src/modules/growth/growth-read.service');
 const { dashboardQuerySchema } = require('../src/validators/admin.validators');
 const { serializeJson } = require('../src/shared/http/response-contract');
+
+test('admin session response contracts preserve identity and exclude private session material', () => {
+  const expiresAt = new Date('2027-01-01T00:00:00.000Z');
+  const identity = {
+    user: { id: 'user', email: 'fixture@example.test', firstName: 'Test', lastName: 'Admin', avatarUrl: null, role: 'CLIENT', isActive: true, countryCode: 'ES', passwordHash: 'private' },
+    roles: [{ id: 'role', key: 'SUPPORT_ADMIN', name: 'Support', internal: 'private' }], permissions: ['users.read'],
+  };
+  const input = {
+    ...identity, session: { id: 'session', expiresAt, refreshTokenHash: 'private' },
+    accessToken: 'synthetic-access', csrfToken: 'synthetic-csrf', accessTokenExpiresInSeconds: 900, refreshToken: 'private',
+  };
+  for (const [contract, status] of [[adminSessionResponses.login, 201], [adminSessionResponses.refresh, 200]]) {
+    const definition = contract.responses[status];
+    const result = definition.schema.parse(definition.serialize(input));
+    assert.equal(result.user.role, 'CLIENT');
+    assert.equal(result.session.expiresAt, expiresAt.toISOString());
+    assert.equal(result.accessToken, 'synthetic-access');
+    assert.equal(result.csrfToken, 'synthetic-csrf');
+    assert.deepEqual(Object.keys(result).sort(), ['accessToken', 'accessTokenExpiresInSeconds', 'csrfToken', 'permissions', 'roles', 'session', 'user']);
+    assert.deepEqual(Object.keys(result.user).sort(), ['avatarUrl', 'countryCode', 'email', 'firstName', 'id', 'isActive', 'lastName', 'role']);
+    assert.deepEqual(Object.keys(result.session).sort(), ['expiresAt', 'id']);
+    assert.equal(Object.hasOwn(result, 'refreshToken'), false);
+    assert.equal(Object.hasOwn(result.session, 'refreshTokenHash'), false);
+    assert.equal(Object.hasOwn(result.user, 'passwordHash'), false);
+    assert.equal(Object.hasOwn(result.roles[0], 'internal'), false);
+  }
+  const me = adminSessionResponses.me.responses[200];
+  const meResult = me.schema.parse(me.serialize(input));
+  assert.deepEqual(Object.keys(meResult).sort(), ['permissions', 'roles', 'session', 'user']);
+  for (const field of ['accessToken', 'csrfToken', 'refreshToken']) assert.equal(Object.hasOwn(meResult, field), false);
+
+  const list = adminSessionResponses.list.responses[200];
+  const listResult = list.schema.parse(list.serialize({ sessions: [{
+    id: 'session', status: 'REVOKED', expiresAt, lastSeenAt: expiresAt, revokedAt: expiresAt,
+    revocationReason: null, createdAt: expiresAt, current: false, refreshTokenHash: 'private', csrfTokenHash: 'private',
+  }] }));
+  assert.equal(listResult.sessions[0].revokedAt, expiresAt.toISOString());
+  assert.deepEqual(Object.keys(listResult.sessions[0]).sort(), ['createdAt', 'current', 'expiresAt', 'id', 'lastSeenAt', 'revocationReason', 'revokedAt', 'status']);
+  assert.equal(Object.hasOwn(listResult.sessions[0], 'refreshTokenHash'), false);
+  assert.equal(Object.hasOwn(listResult.sessions[0], 'csrfTokenHash'), false);
+  const extendedDate = new Date('+010000-01-01T00:00:00.000Z');
+  assert.equal(me.schema.parse(me.serialize({ ...input, session: { id: 'session', expiresAt: extendedDate } })).session.expiresAt, extendedDate.toISOString());
+});
 
 test('growth funnel serializer preserves zero and above-100 rates from the real aggregation', async () => {
   const stages = buildFunnel([

@@ -39,6 +39,21 @@ describe('admin session boundary', () => {
     expect(sessionStorage.getItem('homeservices_admin_token')).toBeNull()
   })
 
+  it('consumes the refreshed session and replaces the CSRF verifier', async () => {
+    const refreshed = { ...sessionPayload, accessToken: 'refreshed-access-token-over-twenty-characters', csrfToken: 'refreshed-csrf-token-over-twenty-characters' }
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(Response.json(sessionPayload, { status: 201 }))
+      .mockResolvedValueOnce(Response.json(refreshed))
+    vi.stubGlobal('fetch', fetchMock)
+    await session.login('admin@example.com', 'correct-password')
+    expect(await session.refresh()).toBe(true)
+    expect(session.getSnapshot().accessToken).toBe(refreshed.accessToken)
+    expect(sessionStorage.getItem('homeservices_admin_csrf')).toBe(refreshed.csrfToken)
+    expect(fetchMock).toHaveBeenLastCalledWith(expect.stringContaining('/v1/admin/auth/refresh'), expect.objectContaining({
+      method: 'POST', credentials: 'include', headers: expect.objectContaining({ 'x-admin-csrf-token': sessionPayload.csrfToken }),
+    }))
+  })
+
   it('surfaces stable API authorization errors with correlation evidence', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: 'Forbidden', code: 'INSUFFICIENT_PERMISSION', correlationId: 'corr-1' }), { status: 403, headers: { 'content-type': 'application/json' } })))
     await expect(api('/v1/admin/users')).rejects.toEqual(expect.objectContaining({ status: 403, code: 'INSUFFICIENT_PERMISSION', correlationId: 'corr-1' }))
