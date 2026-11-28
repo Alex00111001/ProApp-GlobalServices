@@ -9353,6 +9353,15 @@
                 "policy": "REJECT"
               }
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 10; page is bounded by 100000 and limit by 50.",
+              "Express decodes query values before JavaScript number coercion. Noncanonical numeric spellings may be accepted.",
+              "Empty or repeated pagination values and unknown query keys are rejected."
+            ],
+            "observedEvidence": [
+              "backend/test/booking-list-query-http.test.js",
+              "backend/test/consumer-request-input.test.js"
+            ],
             "wireParity": "STRUCTURAL"
           }
         ],
@@ -9711,6 +9720,15 @@
                 "path": "$",
                 "policy": "REJECT"
               }
+            ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 10; page is bounded by 100000 and limit by 50.",
+              "Express decodes query values before JavaScript number coercion. Noncanonical numeric spellings may be accepted.",
+              "Empty or repeated pagination values and unknown query keys are rejected."
+            ],
+            "observedEvidence": [
+              "backend/test/booking-list-query-http.test.js",
+              "backend/test/consumer-request-input.test.js"
             ],
             "wireParity": "STRUCTURAL"
           }

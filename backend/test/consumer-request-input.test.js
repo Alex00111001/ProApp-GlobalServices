@@ -38,7 +38,7 @@ for (const entry of REQUEST_EVIDENCE) test(`${entry.consumer} ${entry.method}: e
   const args = entry.method === 'createBooking' ? [{ ...booking, zipCode: booking.postalCode, scheduledTime: '10:30' }, 'consumer-booking-key-001']
     : entry.method === 'login' ? [' PERSON@EXAMPLE.INVALID ', 'unit-placeholder-only']
       : entry.method === 'confirmPayment' ? [uuid, ' pi_example123 ']
-        : entry.method === 'bookings' ? [50] : [uuid];
+        : entry.method === 'bookings' ? [50] : entry.method === 'getMyBookings' ? [] : [uuid];
   const sent = await executeActualConsumer(entry, args);
   assert.equal(sent.method, entry.operation.split(' ')[0]);
   const route = inventory.routes.find((r) => `${r.method} ${r.path}` === entry.operation);
@@ -58,6 +58,13 @@ for (const entry of REQUEST_EVIDENCE) test(`${entry.consumer} ${entry.method}: e
     assert.equal(ajv.compile(operation.requestBody.content['application/json'].schema)(sent.body), true);
   } else if (entry.method === 'bookings') {
     assert.deepEqual(bookingListQuery.parse(sent.body.params), { page: 1, limit: 50 });
+    const defaultRequest = await executeActualConsumer(entry, []);
+    assert.deepEqual(bookingListQuery.parse(defaultRequest.body.params), { page: 1, limit: 50 });
+    const smallerRequest = await executeActualConsumer(entry, [5]);
+    assert.deepEqual(bookingListQuery.parse(smallerRequest.body.params), { page: 1, limit: 5 });
+  } else if (entry.method === 'getMyBookings') {
+    assert.equal(sent.body, undefined);
+    assert.deepEqual(bookingListQuery.parse({}), { page: 1, limit: 10 });
   } else {
     assert.ok(bookingIdParams.safeParse({ id: uuid }).success);
     assert.equal(sent.body, undefined, 'Professional/Customer sends bodyless lifecycle command.');
