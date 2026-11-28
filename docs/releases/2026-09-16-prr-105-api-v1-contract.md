@@ -384,6 +384,13 @@ Customer payment request and response evidence is recorded in
 Professional booking list query evidence is recorded in
 [PR #84](https://github.com/Alex00111001/ProApp-GlobalServices/pull/84).
 
+Public professional detail (`GET /api/professionals/{id}`) remains open pending a
+compatibility and privacy decision on exact coordinates. The legacy route returns
+them and the separately projected public catalog also declares them. The booking
+and professional detail screens use service and profile data without reading those
+coordinates. The public projection also needs an approved set of certification
+metadata with private document links excluded.
+
 Audit list wire parity and the privacy review of stored metadata remain open. The
 [conductor](../production-readiness/PREPRODUCTION_CONDUCTOR.md#trabajo-paralelo-que-reduce-esperas)
 tracks the isolated staging booking rehearsal and its dependencies.

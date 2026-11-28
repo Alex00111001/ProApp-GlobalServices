@@ -16,8 +16,36 @@ const { paymentResponses } = require('../src/contracts/payment.responses');
 const { bookingResponses } = require('../src/contracts/booking.responses');
 const { operationsResponses } = require('../src/contracts/operations.responses');
 const { adminDirectoryResponses } = require('../src/contracts/admin-directory.responses');
+const { growthResponses } = require('../src/contracts/growth.responses');
+const { buildFunnel } = require('../src/modules/growth/growth-read.service');
 const { dashboardQuerySchema } = require('../src/validators/admin.validators');
 const { serializeJson } = require('../src/shared/http/response-contract');
+
+test('growth funnel serializer preserves zero and above-100 rates from the real aggregation', async () => {
+  const stages = buildFunnel([
+    { eventName: 'app_opened', occurrences: 1, subjects: 1 },
+    { eventName: 'booking_created', occurrences: 3, subjects: 2 },
+    { eventName: 'payment_completed', occurrences: 1, subjects: 1 },
+  ]);
+  const payload = {
+    range: { from: '2026-01-01T00:00:00.000Z', to: '2026-02-01T00:00:00.000Z', timezone: 'UTC', campaignId: null, countryCode: null },
+    generatedAt: '2026-02-01T00:00:00.000Z', definition: 'Synthetic funnel', stages,
+  };
+  const app = express();
+  app.get('/funnel', responseContract(growthResponses.funnel), (req, res) => res.json(payload));
+  const server = app.listen(0, '127.0.0.1');
+  try {
+    await new Promise((resolve) => server.once('listening', resolve));
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/funnel`);
+    assert.equal(response.status, 200);
+    const result = await response.json();
+    assert.deepEqual(result, payload);
+    assert.equal(result.stages.find((stage) => stage.eventName === 'booking_created').rateFromFirst, '200.00');
+    assert.equal(result.stages.find((stage) => stage.eventName === 'job_completed').subjects, 0);
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
 
 test('admin booking detail keeps stored JSON members while filtering the rest of the HTTP response', async () => {
   const pricingSnapshot = JSON.parse('{"nested":[{"__proto__":{"historical":true}}]}');

@@ -172,6 +172,37 @@ test('Supabase test proves growth idempotency, privacy, RBAC and audited lifecyc
     assert.doesNotMatch(conversionsText, new RegExp(customer.id));
     assert.doesNotMatch(conversionsText, /subjectKey|raw-anonymous|customer@example\.test/);
 
+    const funnelUrl = `${baseUrl}/funnel?campaignId=${campaignId}&countryCode=ES`;
+    const emptyFunnelResponse = await fetch(funnelUrl, { headers: marketingHeaders });
+    assert.equal(emptyFunnelResponse.status, 200);
+    const emptyFunnel = await emptyFunnelResponse.json();
+    assert.equal(emptyFunnel.range.campaignId, campaignId);
+    assert.equal(emptyFunnel.range.countryCode, 'ES');
+    for (const name of ['booking_created', 'payment_completed', 'job_completed']) {
+      const stage = emptyFunnel.stages.find((item) => item.eventName === name);
+      assert.equal(stage.occurrences, 0);
+      assert.equal(stage.subjects, 0);
+    }
+
+    for (const eventName of ['booking_created', 'payment_completed', 'job_completed']) {
+      const tracked = await trackEvent({
+        eventId: `${runId}:${eventName}`, eventName,
+        utm: { campaign: `f6-${runId.replaceAll('.', '-')}`, source: 'integration' },
+        geography: { countryCode: 'ES' },
+      }, { userId: customer.id }, prisma, {});
+      eventIds.push(tracked.event.id);
+    }
+    const funnelResponse = await fetch(funnelUrl, { headers: marketingHeaders });
+    assert.equal(funnelResponse.status, 200);
+    const funnel = await funnelResponse.json();
+    for (const name of ['booking_created', 'payment_completed', 'job_completed']) {
+      const stage = funnel.stages.find((item) => item.eventName === name);
+      assert.equal(stage.occurrences, 1);
+      assert.equal(stage.subjects, 1);
+      assert.equal(typeof stage.rateFromFirst, 'string');
+      assert.equal(typeof stage.rateFromPrevious, 'string');
+    }
+
     const analystDenied = await fetch(`${baseUrl}/overview`, { headers: { authorization: `Bearer ${analystSession.accessToken}`, 'x-correlation-id': `${runId}-analyst-denied` } });
     assert.equal(analystDenied.status, 403);
     assert.equal((await analystDenied.json()).code, 'INSUFFICIENT_PERMISSION');
