@@ -143,7 +143,47 @@ test('HTTP admin contracts authenticate with cookies and audit deterministic 403
     assert.equal(login.status, 201);
     assert.match(login.headers.get('set-cookie'), /HttpOnly/i);
     assert.match(login.headers.get('set-cookie'), /SameSite=Strict/i);
-    const session = await login.json();
+    assert.match(login.headers.get('set-cookie'), /Path=\/api\/v1\/admin\/auth/i);
+    assert.equal(login.headers.get('cache-control'), 'no-store');
+    const loginCookie = login.headers.get('set-cookie').split(';')[0];
+    const originalSession = await login.json();
+    assert.equal(Object.hasOwn(originalSession, 'refreshToken'), false);
+    assert.equal(typeof originalSession.accessToken === 'string' && originalSession.accessToken.length > 0, true);
+    assert.equal(typeof originalSession.csrfToken === 'string' && originalSession.csrfToken.length > 0, true);
+    assert.equal(originalSession.user.id, support.id);
+    assert.ok(originalSession.roles.some(({ key }) => key === 'SUPPORT_ADMIN'));
+
+    const refresh = await fetch(`${baseUrl}/auth/refresh`, {
+      method: 'POST',
+      headers: { cookie: loginCookie, 'x-admin-csrf-token': originalSession.csrfToken },
+    });
+    assert.equal(refresh.status, 200);
+    assert.equal(refresh.headers.get('cache-control'), 'no-store');
+    assert.match(refresh.headers.get('set-cookie'), /HttpOnly/i);
+    assert.match(refresh.headers.get('set-cookie'), /SameSite=Strict/i);
+    assert.equal(refresh.headers.get('set-cookie').split(';')[0] !== loginCookie, true);
+    const session = await refresh.json();
+    assert.equal(Object.hasOwn(session, 'refreshToken'), false);
+    assert.equal(session.csrfToken !== originalSession.csrfToken, true);
+    assert.equal(session.session.id, originalSession.session.id);
+
+    const me = await fetch(`${baseUrl}/auth/me`, { headers: { authorization: `Bearer ${session.accessToken}` } });
+    assert.equal(me.status, 200);
+    assert.equal(me.headers.get('cache-control'), 'no-store');
+    const meBody = await me.json();
+    assert.equal(meBody.user.id, support.id);
+    assert.equal(meBody.session.id, session.session.id);
+    assert.equal(Object.hasOwn(meBody, 'accessToken'), false);
+
+    const sessionsResponse = await fetch(`${baseUrl}/auth/sessions`, { headers: { authorization: `Bearer ${session.accessToken}` } });
+    assert.equal(sessionsResponse.status, 200);
+    assert.equal(sessionsResponse.headers.get('cache-control'), 'no-store');
+    const sessionsBody = await sessionsResponse.json();
+    const currentSession = sessionsBody.sessions.find((item) => item.id === session.session.id);
+    assert.equal(currentSession.current, true);
+    assert.equal(currentSession.status, 'ACTIVE');
+    assert.equal(Object.hasOwn(currentSession, 'refreshTokenHash'), false);
+    assert.equal(Object.hasOwn(currentSession, 'csrfTokenHash'), false);
 
     const dashboardResponse = await fetch(`${baseUrl}/dashboard?currency=EUR`, {
       headers: { authorization: `Bearer ${session.accessToken}` },

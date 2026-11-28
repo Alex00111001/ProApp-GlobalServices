@@ -16,6 +16,7 @@ const { PERMISSIONS } = require('../modules/identity/permission-catalog');
 const { metricsHandler } = require('../modules/observability/metrics');
 const { responseContract } = require('../shared/http/response-contract');
 const { adminDirectoryResponses } = require('../contracts/admin-directory.responses');
+const { adminSessionResponses } = require('../contracts/admin-session.responses');
 const { growthResponses } = require('../contracts/growth.responses');
 const { operationsResponses } = require('../contracts/operations.responses');
 const { supportResponses } = require('../contracts/support.responses');
@@ -33,13 +34,13 @@ const authLimiter = rateLimit({
   }),
 });
 
-router.post('/auth/login', authLimiter, authController.login);
-router.post('/auth/refresh', authLimiter, authController.refresh);
+router.post('/auth/login', authLimiter, responseContract(adminSessionResponses.login), authController.login);
+router.post('/auth/refresh', authLimiter, responseContract(adminSessionResponses.refresh), authController.refresh);
 
 router.use(authenticateAdmin);
-router.get('/auth/me', authController.me);
+router.get('/auth/me', responseContract(adminSessionResponses.me), authController.me);
 router.post('/auth/logout', authController.logout);
-router.get('/auth/sessions', authController.listSessions);
+router.get('/auth/sessions', responseContract(adminSessionResponses.list), authController.listSessions);
 router.post('/auth/sessions/:id/revoke', requirePermission(PERMISSIONS.SESSIONS_MANAGE), authController.revokeSession);
 
 router.get('/dashboard', requirePermission(PERMISSIONS.DASHBOARD_READ), responseContract(adminDirectoryResponses.dashboard), controller.dashboard);
