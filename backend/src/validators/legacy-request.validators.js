@@ -1,5 +1,5 @@
 const { z } = require('zod');
-const { declareInputContract, trimmedAsciiIdentifier } = require('../shared/http/input-contract');
+const { annotateInputSemantics, declareInputContract, trimmedAsciiIdentifier } = require('../shared/http/input-contract');
 
 const uuid = z.string().uuid();
 const bookingStatuses = ['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW'];
@@ -22,9 +22,17 @@ const httpsUrl = z.string().trim().url().max(2048).refine(
 );
 
 const bookingIdParams = z.object({ id: uuid }).strict();
-const bookingListQuery = pagination({ defaultLimit: 10, maxLimit: 50 }).extend({
+const bookingListQuery = annotateInputSemantics(pagination({ defaultLimit: 10, maxLimit: 50 }).extend({
   status: z.enum(bookingStatuses).optional(),
-}).strict();
+}).strict(), {
+  classes: ['NORMALIZATION'],
+  evidence: ['backend/test/booking-list-query-http.test.js', 'backend/test/consumer-request-input.test.js'],
+  semantics: [
+    'Omitted page and limit default to 1 and 10; page is bounded by 100000 and limit by 50.',
+    'Express decodes query values before JavaScript number coercion. Noncanonical numeric spellings may be accepted.',
+    'Empty or repeated pagination values and unknown query keys are rejected.',
+  ],
+});
 const bookingCancellationBody = z.object({ reason: legacyReason }).strip().default({ reason: null });
 const bookingRejectionBody = z.object({ reason: legacyReason }).strip().default({ reason: null });
 // Accepted HTTP values and normalized domain values are separate contracts.

@@ -4,6 +4,7 @@ const { ROOT, readSource, walk } = require('./source-inventory');
 
 const REQUEST_EVIDENCE = Object.freeze([
   ['Customer mobile', 'mobile-client/src/services/api.ts', 'createBooking', 'POST /api/bookings'],
+  ['Customer mobile', 'mobile-client/src/services/api.ts', 'getMyBookings', 'GET /api/bookings/client/my-bookings'],
   ['Customer mobile', 'mobile-client/src/services/api.ts', 'cancelBooking', 'POST /api/bookings/{id}/cancel'],
   ['Customer mobile', 'mobile-client/src/services/api.ts', 'login', 'POST /api/auth/login'],
   ['Customer mobile', 'mobile-client/src/services/api.ts', 'confirmPayment', 'POST /api/payments/confirm'],

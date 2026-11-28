@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "status": "SOURCE_INVENTORY_NOT_SEMANTIC_PROOF",
-  "sourceFingerprint": "02fc5612b51c9b784fa11e4494e2a0cbec6d8dade273194a7fc9651183b9f249",
+  "sourceFingerprint": "60ce966e36fea3d68d0b1d333db4fbd1370f25fb015b20a605e6a60d80d1fabd",
   "semanticClasses": [
     "STRUCTURAL_EQUIVALENT",
     "NORMALIZATION",
@@ -64,7 +64,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "auditLogQuery",
-            "line": 85
+            "line": 93
           },
           "key": "backend/src/controllers/admin.controller.js#auditLogQuery",
           "semanticClasses": [
@@ -386,7 +386,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "documentIdParams",
-            "line": 83
+            "line": 91
           },
           "key": "backend/src/controllers/admin.controller.js#documentIdParams",
           "semanticClasses": [
@@ -548,7 +548,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "documentIdParams",
-            "line": 83
+            "line": 91
           },
           "key": "backend/src/controllers/admin.controller.js#documentIdParams",
           "semanticClasses": [
@@ -603,7 +603,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "documentRejectionBody",
-            "line": 89
+            "line": 97
           },
           "key": "backend/src/controllers/admin.controller.js#documentRejectionBody",
           "semanticClasses": [
@@ -777,7 +777,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "pendingDocumentQuery",
-            "line": 84
+            "line": 92
           },
           "key": "backend/src/controllers/admin.controller.js#pendingDocumentQuery",
           "semanticClasses": [
@@ -6231,7 +6231,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "bookingCancellationBody",
-            "line": 28
+            "line": 36
           },
           "key": "backend/src/controllers/booking.controller.js#bookingCancellationBody",
           "semanticClasses": [
@@ -7121,7 +7121,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "bookingRejectionBody",
-            "line": 29
+            "line": 37
           },
           "key": "backend/src/controllers/booking.controller.js#bookingRejectionBody",
           "semanticClasses": [
@@ -7655,7 +7655,14 @@
           "path": "/api/bookings/client/my-bookings",
           "operation": "GET /api/bookings/client/my-bookings",
           "status": "PATH_METHOD_MATCH",
-          "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH"
+          "requestResponseCompatibility": "NOT_PROVEN_BY_PATH_MATCH",
+          "inputCompatibilityEvidence": {
+            "status": "EXECUTABLE_REQUEST_CASES_DECLARED_NOT_GLOBAL_PARITY",
+            "method": "getMyBookings",
+            "sourceDigest": "b9102c47bc1c9c42ca5d9c5e513823baa997a10b945e021061f151b1115badb4",
+            "scope": "REQUEST_ONLY",
+            "evidence": "backend/test/consumer-request-input.test.js"
+          }
         }
       ],
       "declaredRuntimeContext": {
@@ -7734,6 +7741,15 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 10; page is bounded by 100000 and limit by 50.",
+              "Express decodes query values before JavaScript number coercion. Noncanonical numeric spellings may be accepted.",
+              "Empty or repeated pagination values and unknown query keys are rejected."
+            ],
+            "observedEvidence": [
+              "backend/test/booking-list-query-http.test.js",
+              "backend/test/consumer-request-input.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -7741,7 +7757,7 @@
               }
             ],
             "runtimeValidationDigest": "49f971f5c644f5b58bbf321e1f5cb31f4078e57cbc0ef33179118f1dbd90e148",
-            "runtimeSourceDigest": "eadf41a8cfac1f5648fce5cfef9dead3618404fdf2e013ec37198cf95fae3189"
+            "runtimeSourceDigest": "7aba1232543f46b4b258854b010897434632e28f3b64764c4e70bbe1cc5d1b4f"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -7924,6 +7940,15 @@
             "semanticFacts": [
               "HTTP_COERCION_REQUIRES_WIRE_REVIEW"
             ],
+            "observedSemantics": [
+              "Omitted page and limit default to 1 and 10; page is bounded by 100000 and limit by 50.",
+              "Express decodes query values before JavaScript number coercion. Noncanonical numeric spellings may be accepted.",
+              "Empty or repeated pagination values and unknown query keys are rejected."
+            ],
+            "observedEvidence": [
+              "backend/test/booking-list-query-http.test.js",
+              "backend/test/consumer-request-input.test.js"
+            ],
             "unknownFieldPolicies": [
               {
                 "path": "$",
@@ -7931,7 +7956,7 @@
               }
             ],
             "runtimeValidationDigest": "49f971f5c644f5b58bbf321e1f5cb31f4078e57cbc0ef33179118f1dbd90e148",
-            "runtimeSourceDigest": "eadf41a8cfac1f5648fce5cfef9dead3618404fdf2e013ec37198cf95fae3189"
+            "runtimeSourceDigest": "7aba1232543f46b4b258854b010897434632e28f3b64764c4e70bbe1cc5d1b4f"
           },
           "evidenceStatus": "NOT_PROVEN_BY_SOURCE_INVENTORY"
         }
@@ -8070,7 +8095,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "categoryCreateBody",
-            "line": 77
+            "line": 85
           },
           "key": "backend/src/controllers/category.controller.js#categoryCreateBody",
           "semanticClasses": [
@@ -8194,7 +8219,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "categoryIdParams",
-            "line": 70
+            "line": 78
           },
           "key": "backend/src/controllers/category.controller.js#categoryIdParams",
           "semanticClasses": [
@@ -8294,7 +8319,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "categoryIdParams",
-            "line": 70
+            "line": 78
           },
           "key": "backend/src/controllers/category.controller.js#categoryIdParams",
           "semanticClasses": [
@@ -8383,7 +8408,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "categoryIdParams",
-            "line": 70
+            "line": 78
           },
           "key": "backend/src/controllers/category.controller.js#categoryIdParams",
           "semanticClasses": [
@@ -8438,7 +8463,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "categoryUpdateBody",
-            "line": 78
+            "line": 86
           },
           "key": "backend/src/controllers/category.controller.js#categoryUpdateBody",
           "semanticClasses": [
@@ -8580,7 +8605,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "categoryIdParams",
-            "line": 70
+            "line": 78
           },
           "key": "backend/src/controllers/category.controller.js#categoryIdParams",
           "semanticClasses": [
@@ -9062,7 +9087,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "favoriteListQuery",
-            "line": 68
+            "line": 76
           },
           "key": "backend/src/controllers/favorite.controller.js#favoriteListQuery",
           "semanticClasses": [
@@ -9157,7 +9182,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "favoriteProfessionalBody",
-            "line": 67
+            "line": 75
           },
           "key": "backend/src/controllers/favorite.controller.js#favoriteProfessionalBody",
           "semanticClasses": [
@@ -9246,7 +9271,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "favoriteProfessionalParams",
-            "line": 66
+            "line": 74
           },
           "key": "backend/src/controllers/favorite.controller.js#favoriteProfessionalParams",
           "semanticClasses": [
@@ -9335,7 +9360,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "favoriteProfessionalParams",
-            "line": 66
+            "line": 74
           },
           "key": "backend/src/controllers/favorite.controller.js#favoriteProfessionalParams",
           "semanticClasses": [
@@ -9435,7 +9460,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "favoriteProfessionalBody",
-            "line": 67
+            "line": 75
           },
           "key": "backend/src/controllers/favorite.controller.js#favoriteProfessionalBody",
           "semanticClasses": [
@@ -9535,7 +9560,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "notificationListQuery",
-            "line": 48
+            "line": 56
           },
           "key": "backend/src/controllers/notification.controller.js#notificationListQuery",
           "semanticClasses": [
@@ -9674,7 +9699,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "notificationIdParams",
-            "line": 47
+            "line": 55
           },
           "key": "backend/src/controllers/notification.controller.js#notificationIdParams",
           "semanticClasses": [
@@ -9811,7 +9836,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "notificationIdParams",
-            "line": 47
+            "line": 55
           },
           "key": "backend/src/controllers/notification.controller.js#notificationIdParams",
           "semanticClasses": [
@@ -9937,7 +9962,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "notificationIdParams",
-            "line": 47
+            "line": 55
           },
           "key": "backend/src/controllers/notification.controller.js#notificationIdParams",
           "semanticClasses": [
@@ -10278,7 +10303,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "paymentConfirmationBody",
-            "line": 56
+            "line": 64
           },
           "key": "backend/src/controllers/payment.controller.js#paymentConfirmationBody",
           "semanticClasses": [
@@ -10484,7 +10509,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "paymentIntentBody",
-            "line": 55
+            "line": 63
           },
           "key": "backend/src/controllers/payment.controller.js#paymentIntentBody",
           "semanticClasses": [
@@ -10628,7 +10653,7 @@
           "validatorSource": {
             "file": "backend/src/validators/legacy-request.validators.js",
             "name": "paymentHistoryQuery",
-            "line": 64
+            "line": 72
           },
           "key": "backend/src/controllers/payment.controller.js#paymentHistoryQuery",
           "semanticClasses": [
