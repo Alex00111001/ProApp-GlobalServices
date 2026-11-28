@@ -382,7 +382,9 @@ passing on integrated SHA `17afcf21`. The stop above records the earlier evidenc
 Customer payment request and response evidence is recorded in
 [PR #83](https://github.com/Alex00111001/ProApp-GlobalServices/pull/83). The mounted Customer and
 Professional booking list query evidence is recorded in
-[PR #84](https://github.com/Alex00111001/ProApp-GlobalServices/pull/84).
+[PR #84](https://github.com/Alex00111001/ProApp-GlobalServices/pull/84). Admin funnel response
+evidence for booking, payment and job completion aggregates is recorded in
+[PR #85](https://github.com/Alex00111001/ProApp-GlobalServices/pull/85).
 
 Public professional detail (`GET /api/professionals/{id}`) remains open pending a
 compatibility and privacy decision on exact coordinates. The legacy route returns
