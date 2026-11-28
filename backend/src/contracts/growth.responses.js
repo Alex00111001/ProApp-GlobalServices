@@ -55,6 +55,20 @@ const conversion = outputObject({
 });
 
 const growthResponses = Object.freeze({
+  funnel: defineResponseContract({
+    method: 'GET', path: '/api/v1/admin/growth/funnel', operationId: 'adminGrowth.funnel',
+    responses: { 200: serialized(outputObject({
+      range: outputObject({
+        from: dateTime, to: dateTime, timezone: z.string(), campaignId: z.string().nullable(), countryCode: z.string().nullable(),
+      }),
+      generatedAt: dateTime,
+      definition: z.string(),
+      stages: z.array(outputObject({
+        eventName: z.string(), key: z.string(), label: z.string(), occurrences: count, subjects: count,
+        rateFromFirst: z.string(), rateFromPrevious: z.string(),
+      })),
+    })) },
+  }),
   campaignList: campaignListResponse,
   leadList: defineResponseContract({
     method: 'GET', path: '/api/v1/admin/growth/leads', operationId: 'adminGrowth.leadList',

@@ -68,7 +68,7 @@ router.get(
 );
 
 router.get('/growth/overview', requirePermission(PERMISSIONS.MARKETING_READ), growthController.overview);
-router.get('/growth/funnel', requirePermission(PERMISSIONS.MARKETING_READ), growthController.funnel);
+router.get('/growth/funnel', requirePermission(PERMISSIONS.MARKETING_READ), responseContract(growthResponses.funnel), growthController.funnel);
 router.get('/growth/campaigns', requirePermission(PERMISSIONS.MARKETING_READ), responseContract(growthResponses.campaignList), growthController.campaigns);
 router.post('/growth/campaigns', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.createCampaign);
 router.patch('/growth/campaigns/:id', requirePermission(PERMISSIONS.MARKETING_MANAGE), growthController.updateCampaign);

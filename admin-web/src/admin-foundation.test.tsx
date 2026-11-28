@@ -262,7 +262,10 @@ describe('F6 growth data', () => {
       range: overview.range,
       generatedAt: now,
       definition: 'Observed unique pseudonymous leads.',
-      stages: [{ eventName: 'app_opened', key: 'visitors', label: 'App abierta', occurrences: 120, subjects: 75, rateFromFirst: '100.00', rateFromPrevious: '100.00' }],
+      stages: [
+        { eventName: 'booking_created', key: 'bookings', label: 'Reserva creada', occurrences: 120, subjects: 75, rateFromFirst: '150.00', rateFromPrevious: '125.00' },
+        { eventName: 'payment_completed', key: 'payments', label: 'Pago completado', occurrences: 0, subjects: 0, rateFromFirst: '0.00', rateFromPrevious: '0.00' },
+      ],
     }
     vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input)
@@ -274,6 +277,11 @@ describe('F6 growth data', () => {
     render(<QueryClientProvider client={queryClient}><MemoryRouter><GrowthPage /></MemoryRouter></QueryClientProvider>)
     expect(await screen.findByText('Eventos aceptados')).toBeTruthy()
     expect(await screen.findByText('Sujetos únicos por etapa')).toBeTruthy()
+    expect(await screen.findByText('Reserva creada')).toBeTruthy()
+    expect(screen.getByText('booking_created')).toBeTruthy()
+    expect(screen.getByText('150.00%')).toBeTruthy()
+    expect(screen.getByText('125.00%')).toBeTruthy()
+    expect(screen.getByText('Pago completado')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Nueva campaña' })).toBeNull()
   })
 })
